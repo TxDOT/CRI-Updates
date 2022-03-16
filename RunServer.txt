@@ -1,0 +1,6 @@
+npm run server */to run server/*
+
+
+--------------installing esri js ESM-------------------------------------
+
+npm install @arcgis/core
