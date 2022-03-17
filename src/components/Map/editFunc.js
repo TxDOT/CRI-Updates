@@ -82,7 +82,7 @@ async function queryFeatureTables(tblqry){
 export async function countyInfo(){
   let countyInfoPromise =  new Promise(function(res){
     let queryUrl = window.location.href
-    let crInfo = queryUrl.split('https://dprosack.github.io/CRI-Updates/')[1]
+    let crInfo = queryUrl.split('http://localhost:8080/')[1]
     //console.log(crInfo.toString())
     for (let j=0; j < cntyNbrNm.length; j++){
       console.log(cntyNbrNm[j][crInfo])
@@ -736,7 +736,7 @@ function getNewDfoDist(objectid, x, y){
     return;
   }
   let path = objid.paths[0].slice(index, index+2)
-
+  console.log(path)
   let direction = path[0][0] > path[1][0]
   console.log(direction) 
   let x2 = nearVert[0]
@@ -769,7 +769,7 @@ function getNewDfoDist(objectid, x, y){
 
   }
   else if (dir > 0 && !direction){
-    console.log('2',Math.abs(path[0][2] + (pointAPointB.distance/1609.344)))
+    console.log('1',Math.abs(path[0][2] + (pointAPointB.distance/1609.344)))
   }
   else if (dir < 0 && direction){
     console.log('2',Math.abs(path[0][2] + (pointAPointB.distance/1609.344)))
@@ -780,18 +780,22 @@ function getNewDfoDist(objectid, x, y){
   //let newDfo;
   console.log(path[0][2])
   let newDfo;
-
+  let mnbv;
   if(dir < 0 && !direction){
     newDfo = Math.abs(path[0][2] - (pointAPointB.distance/1609.344))
+    mnbv = index
   }
   else if (dir > 0 && !direction){
     newDfo = Math.abs(path[0][2] + (pointAPointB.distance/1609.344))
+    mnbv = index+1
   }
   else if (dir < 0 && direction){
     newDfo = Math.abs(path[0][2] + (pointAPointB.distance/1609.344))
+    mnbv = index+1
   }
   else if (dir > 0 && direction){
     newDfo = Math.abs(path[0][2] - (pointAPointB.distance/1609.344))
+    mnbv = index
   }
   
   if(dir === 0 && dir2 < 0){
@@ -800,11 +804,12 @@ function getNewDfoDist(objectid, x, y){
   else if(dir === 0 && dir2 > 0){
     newDfo = Math.abs(path[0][2] + (pointAPointB.distance/1609.344))
   }
+  console.log(newDfo)
   if(Number(nearVert[2].toFixed(3)) === Number(newDfo.toFixed(3))){
     console.log('Points Match')
     return;
   }
-  objid.insertPoint(0,index, [x, y, newDfo])
+  console.log(objid.insertPoint(0,mnbv, [x, y, newDfo]))
 
   console.log(newDfo)
   return newDfo
@@ -916,29 +921,41 @@ export async function updateAsset(y){
   }
   let oddAsst = [];
   let evenAsst = [];
+
   if(oddAsst.length && evenAsst.length){
     oddAsst.length = 0
     evenAsst.length = 0
   }
 
   assetInfo.sort((a,b) => a.AssetBeginDfo > b.AssetBeginDfo)
+  console.log(assetInfo)
   for(let i=1; i<assetInfo.length; i+=2){
+    console.log(i,i-1)
     oddAsst.push(assetInfo[i-1])
     evenAsst.push(assetInfo[i])
   }
-        
+  console.log(oddAsst)
+  console.log(evenAsst)
   for(let t=0; t < oddAsst.length; t++){
     let eDFO = oddAsst[t].AssetEndDfo
     let bDFO = evenAsst[t].AssetBeginDfo
-
+    console.log(eDFO, bDFO)
+    
     if(eDFO === bDFO){
       console.log('DFO Match')
     }
-    else if (evenAsst[t].edit === true){
-      oddAsst[t].AssetEndDfo = eDFO
+
+    if (evenAsst[t].edit === true){
+      console.log(t, evenAsst[t], oddAsst[t+1])
+      oddAsst[t+1].AssetBeginDfo = evenAsst[t].AssetEndDfo
+      //evenAsst[t].AssetEndDfo = oddAsst[t+1].AssetBeginDfo
+    
     }
-    else if(oddAsst[t].edit === true){
-      evenAsst[t].AssetBeginDfo = eDFO
+
+    if(oddAsst[t].edit === true){
+      evenAsst[t].AssetBeginDfo = oddAsst[t].AssetEndDfo
+      //oddAsst[t].AssetEndDfo = evenAsst[t+1].AssetBeginDfo
+      
     }
   }
   if(assetInfo.length){
