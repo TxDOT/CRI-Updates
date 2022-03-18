@@ -947,7 +947,7 @@ export async function updateAsset(y){
         console.log('end')
       }
     }
-    
+    //comment this bud
   console.log(assetInfo) 
   }
   console.log(assetInfo)
