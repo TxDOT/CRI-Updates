@@ -152,7 +152,7 @@
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import { getGraphic, modifyRoadbed, saveInfo,getCoordsRange, updateAsset, addAssetBreakPts, removeAsstPoints} from '../components/Map/editFunc'
+import { getGraphic, modifyRoadbed, saveInfo,getCoordsRange, updateAsset, addAssetBreakPts, removeAsstPoints,sketchCompete} from '../components/Map/editFunc'
 import {roadInfo} from '../store'
 //import Map from '../components/Map/Map.vue'
 
@@ -189,6 +189,7 @@ export default {
         assetLnInfo: null,
         disabled: false,
         objectid: 0,
+        newDfo:0,
         //working on form validation
         dfoRules:{
           DFO: value => !!value || 'Required',
@@ -239,6 +240,13 @@ export default {
           document.getElementById("step").style.width='450px'
         }, 
          immediate: true,
+      }, 
+      newDfo(){
+        console.log(this.newDfo)
+        for(let d in this.rdbdSurf){
+            this.rdbdSurf[d].asset_ln_begin_dfo_ms = this.newDfo[d].AssetBeginDfo
+            this.rdbdSurf[d].asset_ln_end_dfo_ms = this.newDfo[d].AssetEndDfo
+          }
       },
       // clickCountF:{
       //   handler: async function(){
@@ -260,16 +268,26 @@ export default {
       removeAsstPt(){
         removeAsstPoints();
       },
-      executeDFOgraph(x,y){
+      async executeDFOgraph(x,y){
         console.log(x)
+        console.log(this.rdbdSurf)
+        sketchCompete()
         const dfoAssets = [];
         if(dfoAssets.length){
           dfoAssets.length = 0
         }
         console.log(dfoAssets)
-        if(x==='point'){
+        if(x==='point' && this.feature===true){
           for(let b in this.fRdbdSurf){
             let srfcType = {srfcType: this.fRdbdSurf[b].srfc_type_id, AssetBeginDfo: this.fRdbdSurf[b].asset_ln_begin_dfo_ms, AssetEndDfo: this.fRdbdSurf[b].asset_ln_end_dfo_ms, objectid: this.objectid}
+            dfoAssets.push(srfcType)
+          }
+          console.log(dfoAssets)
+          getCoordsRange(dfoAssets)
+        }
+        else if(x==='point' && this.feature===false){
+          for(let b in this.rdbdSurf){
+            let srfcType = {srfcType: this.rdbdSurf[b].srfc_type_id, AssetBeginDfo: this.rdbdSurf[b].asset_ln_begin_dfo_ms, AssetEndDfo: this.rdbdSurf[b].asset_ln_end_dfo_ms, objectid: this.objectid}
             dfoAssets.push(srfcType)
           }
           console.log(dfoAssets)
@@ -285,15 +303,19 @@ export default {
         }
         else if(x==='draw'){
           console.log(y)
+          
           for(let z in this.rdbdSurf){
             if(this.rdbdSurf[z].asset_ln_end_dfo_ms === y){
-              console.log(this.rdbdSurf[z])
               let array = {srfcType: this.rdbdSurf[z].srfc_type_id, AssetBeginDfo: parseFloat(this.rdbdSurf[z].asset_ln_begin_dfo_ms), AssetEndDfo: parseFloat(this.rdbdSurf[z].asset_ln_end_dfo_ms),objectid: this.objectid}
               dfoAssets.push(array)
             }
           }
           console.log(dfoAssets)
-          updateAsset(dfoAssets)
+          let uptDFO = await updateAsset(dfoAssets)
+          console.log(uptDFO)
+          this.newDfo = uptDFO
+          //editAsstObj[0].asset_ln_end_dfo_ms = uptDFO
+          //editAsstObj[1].asset_ln_begin_dfo_ms = uptDFO
         }
       },
       getElement(){
@@ -356,6 +378,7 @@ export default {
     computed:{ //Used to work with the vue properties without modifying them
       rdbdSurf(){
         this.clickCount;
+        console.log(this.newDfo)
         let srfc = roadInfo.getSurface
         console.log(srfc)
         return srfc
@@ -366,6 +389,7 @@ export default {
         console.log(Fsrfc)
         return Fsrfc
       },
+
     }
 }
 </script>

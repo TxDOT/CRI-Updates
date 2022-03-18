@@ -82,6 +82,9 @@ async function queryFeatureTables(tblqry){
 export async function countyInfo(){
   let countyInfoPromise =  new Promise(function(res){
     let queryUrl = window.location.href
+    console.log(typeof (queryUrl))
+    let regExUrl = /http(s)?:\/\/(www\.)?[a-zA-Z0-9]{1,256}\.[a-zA-Z]{1,6}\/|http(s)?:\/\/(www\.)?[a-zA-Z0-9:]{1,256}\//
+    console.log(queryUrl.split(regExUrl)[1])
     let crInfo = queryUrl.split('http://localhost:8080/')[1]
     //console.log(crInfo.toString())
     for (let j=0; j < cntyNbrNm.length; j++){
@@ -598,8 +601,9 @@ export function addAssetBreakPts(y)
 }
 //gets asset break points and plots on the route
 export function getCoordsRange(y){
-   console.log(rdbdAssetPt)
-    let dens;
+  console.log(y)
+  console.log(rdbdAssetPt)
+  let dens;
   // if(check !== false){
     console.log(gLayer)
     //get graphic layer geometry; matching on objectid 
@@ -911,63 +915,44 @@ export async function updateAsset(y){
   if(assetInfo.length){
     assetInfo.length = 0
   }
+  roadInfo.getUpdateDfo = newAssetPt.attributes.eDfo
+  console.log(roadInfo.getUpdateDfo)
   //returns all asset points related by objectid
   let currentAsst = rdbdAssetPt.graphics.items.filter(ca => ca.attributes.objectid === y[0].objectid)
   console.log(currentAsst)
   //making sure there aren't any gaps/overlaps. Adjusting asset Break Dfos.
   for(let h=0; h < currentAsst.length; h++){
+    console.log(h)
     let add = {srfcType: currentAsst[h].attributes.assetTyp, AssetBeginDfo: currentAsst[h].attributes.bDfo, AssetEndDfo: parseFloat(currentAsst[h].attributes.eDfo), objectid: currentAsst[h].attributes.objectid, edit: currentAsst[h].attributes.edit}
+    console.log(add.AssetBeginDfo)
     assetInfo.push(add)
   }
-  let oddAsst = [];
-  let evenAsst = [];
-
-  if(oddAsst.length && evenAsst.length){
-    oddAsst.length = 0
-    evenAsst.length = 0
-  }
-
+ 
   assetInfo.sort((a,b) => a.AssetBeginDfo > b.AssetBeginDfo)
   console.log(assetInfo)
-  for(let i=1; i<assetInfo.length; i+=2){
-    console.log(i,i-1)
-    oddAsst.push(assetInfo[i-1])
-    evenAsst.push(assetInfo[i])
-  }
-  console.log(oddAsst)
-  console.log(evenAsst)
-  for(let t=0; t < oddAsst.length; t++){
-    let eDFO = oddAsst[t].AssetEndDfo
-    let bDFO = evenAsst[t].AssetBeginDfo
-    console.log(eDFO, bDFO)
+  for(let i=0; i<assetInfo.length; i++){
+    if(!assetInfo[i+1] || !assetInfo[i])  {
+      console.log('end')
+    }
+    else{
+      if(assetInfo[i].AssetEndDfo !== assetInfo[i+1].AssetBeginDfo && assetInfo[i].edit === true){
+        assetInfo[i+1].AssetBeginDfo = assetInfo[i].AssetEndDfo
+      }
+  
+      if(assetInfo[i].AssetEndDfo !== assetInfo[i+1].AssetBeginDfo && assetInfo[i+1].edit === true){
+        assetInfo[i].AssetEndDfo = assetInfo[i+1].AssetBeginDfo
+      }
+  
+      else{
+        console.log('end')
+      }
+    }
     
-    if(eDFO === bDFO){
-      console.log('DFO Match')
-    }
-
-    if (evenAsst[t].edit === true){
-      console.log(t, evenAsst[t], oddAsst[t+1])
-      oddAsst[t+1].AssetBeginDfo = evenAsst[t].AssetEndDfo
-      //evenAsst[t].AssetEndDfo = oddAsst[t+1].AssetBeginDfo
-    
-    }
-
-    if(oddAsst[t].edit === true){
-      evenAsst[t].AssetBeginDfo = oddAsst[t].AssetEndDfo
-      //oddAsst[t].AssetEndDfo = evenAsst[t+1].AssetBeginDfo
-      
-    }
-  }
-  if(assetInfo.length){
-    assetInfo.length = 0
-    for(let oa=0; oa<oddAsst.length; oa++){
-      assetInfo.push(oddAsst[oa])
-      assetInfo.push(evenAsst[oa])
-    }
+  console.log(assetInfo) 
   }
   console.log(assetInfo)
   addAssetBreakPts(assetInfo)
-  return;
+  return assetInfo;
 }
 //******************************************************************************************************/
 //Removes graphics points on click
@@ -976,6 +961,12 @@ export function removeAsstPoints(){
   console.log(rdbdAssetPt)
   return;
 }
+
+export function sketchCompete(){
+  sketch.complete()
+  return;
+}
+
 // function mDisplay(){
 
 // }
