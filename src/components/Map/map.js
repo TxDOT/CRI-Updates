@@ -39,7 +39,7 @@ export const featLayer = new FeatureLayer({
     url: criConstants.refernceLayer,
     opacity: 0,
     editingEnabled: true,
-    geometryTypeRd: criConstants.geomType,
+    //geometryTypeRd: criConstants.geomType,
     //definitionExpression: "CNTY_NM= 'Travis'",
     returnM: true,
     returnZ: true,
@@ -87,7 +87,7 @@ const concrete = {
 
 const rdbdTypeRendere = {
     type: "unique-value",
-    field: "surface",
+    field: "SURFACE",
     uniqueValueInfos:[
         {
             value: 10,

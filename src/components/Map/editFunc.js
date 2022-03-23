@@ -28,10 +28,10 @@ export function login(){
 //querys the Refernce Layer table return geometry/attributes
 function queryFeat(qry){
   let queryFeat = featLayer.queryFeatures({
-    objectIds: [qry.results[0].graphic.attributes.objectid],
+    objectIds: [qry.results[0].graphic.attributes.OBJECTID],
     outFields: ["*"],
     returnGeometry: true,
-    returnM: true
+    returnM: true,
   })
   return queryFeat
 }
@@ -39,15 +39,17 @@ function queryFeat(qry){
 async function queryFeatureTables(tblqry){
   //let length = parseFloat(geometryEngine.geodesicLength(tblqry.features[0].geometry, "miles")).toFixed(3)
   let featIndex = tblqry.features[0].geometry.paths[0].length-1
-  
+  console.log(tblqry)
   const query = new Query();
-  query.where = `RDBD_GMTRY_LN_ID = ${tblqry.features[0].attributes.gid}`
+  query.where = `RDBD_GMTRY_LN_ID = ${tblqry.features[0].attributes.GID}`
+  console.log(query.where)
   query.outFields = [ "*" ]
   const rdbdSrfc = rdbdSrfcAsst.queryFeatures(query)
   const rdbdDsgn = rdbdDsgnAsst.queryFeatures(query)
   const rdbdName = rdbdNameAsst.queryFeatures(query)
   const rdbdLane = rdbdLaneAsst.queryFeatures(query)
   const rdbdSrfcAtt = await rdbdSrfc
+  console.log(rdbdSrfcAtt)
   const rdbdDsgnAtt = await rdbdDsgn
   const rdbdNameAtt = await rdbdName
   const rdbdLaneAtt = await rdbdLane
@@ -60,29 +62,40 @@ async function queryFeatureTables(tblqry){
   for(let srf in rdbdSrfcAtt.features){
     let surface = criConstants.surface
     for(let i in surface){
-      if(surface[i]['num'] === rdbdSrfcAtt.features[srf].attributes.srfc_type_id){
-        rdbdSrfcAtt.features[srf].attributes.srfc_type_id = surface[i]['name']
+      if(surface[i]['num'] === rdbdSrfcAtt.features[srf].attributes.SRFC_TYPE_ID){
+        console.log(surface[i]['name'])
+        rdbdSrfcAtt.features[srf].attributes.SRFC_TYPE_ID = surface[i]['name']
       }
     }
     rdbdSrfArry.push(rdbdSrfcAtt.features[srf].attributes)
   }
   //sort surface type array by ascending values based on beginDFO
-  rdbdSrfArry.sort((a,b)=>(a.asset_ln_begin_dfo_ms > b.asset_ln_begin_dfo_ms)? 1:-1)
+  rdbdSrfArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
   //console.log(tblqry.features[0].geometry.paths[0][tblqry.features[0].geometry.paths[0].length-1][2].toFixed(3))
   //rdbdSrfArry[rdbdSrfArry.length - 1].asset_ln_end_dfo_ms = parseFloat(tblqry.features[0].geometry.paths[0][tblqry.features[0].geometry.paths[0].length-1][2].toFixed(3))
-  console.log(tblqry.features[0].geometry.paths[0][featIndex][2] = rdbdSrfArry[rdbdSrfArry.length - 1].asset_ln_end_dfo_ms)
+  console.log(tblqry.features[0].geometry.paths[0][featIndex][2] = Number(rdbdSrfArry[rdbdSrfArry.length - 1].ASSET_LN_END_DFO_MS.toFixed(3)))
   console.log(tblqry.features[0].geometry.paths[0])
-  //push values to setters and getters are in vue components 
+  //push values to setters and getters are in vue components
+  for(let i=0; i < rdbdSrfArry.length; i++){
+    rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3))
+    rdbdSrfArry[i].ASSET_LN_END_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_END_DFO_MS.toFixed(3))
+  } 
   roadInfo.getSurface = rdbdSrfArry //push surface type values to getSurface setter
-  roadInfo.getDesign = rdbdDsgnAtt.features[0].attributes.rdway_dsgn_type_dscr
-  roadInfo.getName = rdbdNameAtt.features[0].attributes.st_defn_nm
-  roadInfo.getLane = rdbdLaneAtt.features[0].attributes.nbr_thru_lane_cnt
+  roadInfo.getDesign = rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR
+  roadInfo.getName = rdbdNameAtt.features[0].attributes.ST_DEFN_NM
+  roadInfo.getLane = rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT
 }
 //get county name and road totals. Filters county for map zoom and definition query
 export async function countyInfo(){
   let countyInfoPromise =  new Promise(function(res){
     let queryUrl = window.location.href
+<<<<<<< HEAD
     let crInfo = queryUrl.split('https://dprosack.github.io/CRI-Updates/')[1]
+=======
+    let regExUrl = /http(s)?:\/\/(www\.)?[a-zA-Z0-9]{1,256}\.[a-zA-Z]{1,6}\/|http(s)?:\/\/(www\.)?[a-zA-Z0-9:]{1,256}\//
+    console.log(queryUrl.split(regExUrl)[1])
+    let crInfo = queryUrl.split('http://localhost:8080/')[1]
+>>>>>>> davidAsstGraphicUpd
     //console.log(crInfo.toString())
     for (let j=0; j < cntyNbrNm.length; j++){
       console.log(cntyNbrNm[j][crInfo])
@@ -141,12 +154,11 @@ export async function modifyRoadbed(clickType){
   })
 
   let feature = await promise;
-  console.log(feature)
   //rdbdSrfc.then(result => console.log(result))
   await queryFeatureTables(feature)
   defineGraphic(feature,clickType)
   if(clickType === "immediate-click"){
-    roadInfo.getObjectId = feature.features[0].attributes.objectid
+    roadInfo.getObjectId = feature.features[0].attributes.OBJECTID
     return 1 //provide increments for stepper
   }
   return feature//geometryEngine.geodesicLength(feature.features[0].geometry, "miles")
@@ -185,6 +197,7 @@ export function hightlightFeat(){
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
 function defineGraphic(graphics, clickType){
+  console.log(graphics)
   if (clickType === "double-click"){
     let newGraphic = new Graphic({
     geometry: {
@@ -197,8 +210,8 @@ function defineGraphic(graphics, clickType){
     },
 
     attributes: {
-      gid: graphics.features[0].attributes.gid,
-      objectid: graphics.features[0].attributes.objectid,
+      gid: graphics.features[0].attributes.GID,
+      objectid: graphics.features[0].attributes.OBJECTID,
       roadbedName: roadInfo.getName,
       roadbedDesign: roadInfo.getDesign,
       roadbedSurface: roadInfo.getSurface,
@@ -217,14 +230,14 @@ function defineGraphic(graphics, clickType){
   let objectidList = [];
   gLayer.graphics.add(newGraphic);
   console.log(gLayer.graphics)
-  roadInfo.getObjectId = graphics.features[0].attributes.objectid
+  roadInfo.getObjectId = graphics.features[0].attributes.OBJECTID
   for(let id in gLayer.graphics.items)
     if(gLayer.graphics.items[id].attributes !== null){
       objectidList.push(gLayer.graphics.items[id].attributes.objectid)
     }
     console.log(objectidList)
     //Hides Reference Layer so it cant create multiple graphics. OBJECTID gets applied to objectidList array
-    featLayer.definitionExpression = `objectid not in (${objectidList}) and cnty_nm = '${roadInfo.getcntyName}'`
+    featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_NM = '${roadInfo.getcntyName}'`
     //rdbdSrfcGeom.definitionExpression = `gid not in (${objectidList}) and cnty_nm = '${roadInfo.getcntyName}'` TODO - Hide rdbdSrfcGeom (split asset feature service)
   }
 }
@@ -350,7 +363,7 @@ export function saveInfo(id){
   let gid;
   for(let x in graphic){
     console.log(graphic[x].attributes)
-    if(graphic[x].attributes.objectid === id.objectid){
+    if(graphic[x].attributes.OBJECTID === id.objectid){
       geomPath = graphic[x].geometry
       createdate = graphic[x].attributes.createDt
       createName = graphic[x].attributes.createNm
@@ -598,8 +611,9 @@ export function addAssetBreakPts(y)
 }
 //gets asset break points and plots on the route
 export function getCoordsRange(y){
-   console.log(rdbdAssetPt)
-    let dens;
+  console.log(y)
+  console.log(rdbdAssetPt)
+  let dens;
   // if(check !== false){
     console.log(gLayer)
     //get graphic layer geometry; matching on objectid 
@@ -911,63 +925,41 @@ export async function updateAsset(y){
   if(assetInfo.length){
     assetInfo.length = 0
   }
+  roadInfo.getUpdateDfo = newAssetPt.attributes.eDfo
+  console.log(roadInfo.getUpdateDfo)
   //returns all asset points related by objectid
   let currentAsst = rdbdAssetPt.graphics.items.filter(ca => ca.attributes.objectid === y[0].objectid)
   console.log(currentAsst)
   //making sure there aren't any gaps/overlaps. Adjusting asset Break Dfos.
   for(let h=0; h < currentAsst.length; h++){
+    console.log(h)
     let add = {srfcType: currentAsst[h].attributes.assetTyp, AssetBeginDfo: currentAsst[h].attributes.bDfo, AssetEndDfo: parseFloat(currentAsst[h].attributes.eDfo), objectid: currentAsst[h].attributes.objectid, edit: currentAsst[h].attributes.edit}
+    console.log(add.AssetBeginDfo)
     assetInfo.push(add)
-  }
-  let oddAsst = [];
-  let evenAsst = [];
-
-  if(oddAsst.length && evenAsst.length){
-    oddAsst.length = 0
-    evenAsst.length = 0
   }
 
   assetInfo.sort((a,b) => a.AssetBeginDfo > b.AssetBeginDfo)
   console.log(assetInfo)
-  for(let i=1; i<assetInfo.length; i+=2){
-    console.log(i,i-1)
-    oddAsst.push(assetInfo[i-1])
-    evenAsst.push(assetInfo[i])
-  }
-  console.log(oddAsst)
-  console.log(evenAsst)
-  for(let t=0; t < oddAsst.length; t++){
-    let eDFO = oddAsst[t].AssetEndDfo
-    let bDFO = evenAsst[t].AssetBeginDfo
-    console.log(eDFO, bDFO)
-    
-    if(eDFO === bDFO){
-      console.log('DFO Match')
+  for(let i=0; i<assetInfo.length; i++){
+    if(!assetInfo[i+1] || !assetInfo[i]){
+      console.log('end')
     }
-
-    if (evenAsst[t].edit === true){
-      console.log(t, evenAsst[t], oddAsst[t+1])
-      oddAsst[t+1].AssetBeginDfo = evenAsst[t].AssetEndDfo
-      //evenAsst[t].AssetEndDfo = oddAsst[t+1].AssetBeginDfo
-    
-    }
-
-    if(oddAsst[t].edit === true){
-      evenAsst[t].AssetBeginDfo = oddAsst[t].AssetEndDfo
-      //oddAsst[t].AssetEndDfo = evenAsst[t+1].AssetBeginDfo
-      
-    }
-  }
-  if(assetInfo.length){
-    assetInfo.length = 0
-    for(let oa=0; oa<oddAsst.length; oa++){
-      assetInfo.push(oddAsst[oa])
-      assetInfo.push(evenAsst[oa])
+    else{
+      if(assetInfo[i].AssetEndDfo !== assetInfo[i+1].AssetBeginDfo && assetInfo[i].edit === true){
+        assetInfo[i+1].AssetBeginDfo = assetInfo[i].AssetEndDfo
+      }
+  
+      if(assetInfo[i].AssetEndDfo !== assetInfo[i+1].AssetBeginDfo && assetInfo[i+1].edit === true){
+        assetInfo[i].AssetEndDfo = assetInfo[i+1].AssetBeginDfo
+      }
+      else{
+        console.log('end')
+      }
     }
   }
   console.log(assetInfo)
   addAssetBreakPts(assetInfo)
-  return;
+  return assetInfo;
 }
 //******************************************************************************************************/
 //Removes graphics points on click
@@ -976,6 +968,12 @@ export function removeAsstPoints(){
   console.log(rdbdAssetPt)
   return;
 }
+
+export function sketchCompete(){
+  sketch.complete()
+  return;
+}
+
 // function mDisplay(){
 
 // }

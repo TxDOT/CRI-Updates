@@ -321,9 +321,9 @@ export default {
            },
            async goToMap(){
             this.$router.push('/map')
-            featLayer.definitionExpression =`cnty_nm = '${this.county}'`
+            featLayer.definitionExpression =`CNTY_NM = '${this.county}'`
             txCounties.definitionExpression=`CNTY_NM='${this.county}'`
-            rdbdSrfcGeom.definitionExpression=`cnty_nm='${this.county}'`
+            rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
             const query = new Query();
             query.where = `CNTY_NM = '${this.county}'`
             query.outFields = [ "*" ]

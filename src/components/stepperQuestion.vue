@@ -62,13 +62,13 @@
           <div class="scroller"> 
           <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
           <v-col v-for="(item,index) in rdbdSurf" :key="index" >
-          <v-select :items="surface" label="Road Surface" outlined v-model="item.srfc_type_id"></v-select> <!-- //v-model="roadbedSurface" -->
+          <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID"></v-select> <!-- //v-model="roadbedSurface" -->
           <v-row>
                <v-col sm="6">
-                 <v-text-field label='A' v-model="item.asset_ln_begin_dfo_ms"></v-text-field>
+                 <v-text-field label='A' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field>
                </v-col>
                <v-col sm="6">
-                 <v-text-field label='B' v-model="item.asset_ln_end_dfo_ms"></v-text-field><v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.asset_ln_end_dfo_ms)"><v-icon>mdi-pencil</v-icon></v-btn>
+                 <v-text-field label='B' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field><v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)"><v-icon>mdi-pencil</v-icon></v-btn>
                </v-col>
           </v-row>
           <!-- Deletes asset break in the form -->
@@ -76,13 +76,13 @@
           </v-col>
           <!-- Adds new asset breaks to form based on mileInfo array (populated by user click addRoadSurface function) -->
         <v-card v-for="(item,index) in mileInfo" :key="index" >
-            <v-select :items="surface" label="Road Surface" outlined v-model="item.srfc_type_id"></v-select>
+            <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID"></v-select>
             <v-row>
                <v-col>
-                 <v-text-field  label='A' v-model="item.asset_ln_begin_dfo_ms"></v-text-field>
+                 <v-text-field  label='A' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field>
                </v-col>
                <v-col sm="6">
-                 <v-text-field label='B' v-model="item.asset_ln_end_dfo_ms"></v-text-field><v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.asset_ln_end_dfo_ms)"><v-icon>mdi-pencil</v-icon></v-btn>
+                 <v-text-field label='B' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field><v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)"><v-icon>mdi-pencil</v-icon></v-btn>
                </v-col>
             </v-row>
             <v-btn id="addSurf"><img src="..\assets\outline_delete_black_24dp.png" @click="deleteSurface()"></v-btn>
@@ -95,13 +95,13 @@
         <v-card  v-if='graphic===false'>
           <div class="scroller">
           <v-col v-for="(item,index) in fRdbdSurf" :key="index">
-            <v-select :items="surface" label="Road Surface" outlined v-model="item.srfc_type_id" disabled></v-select> 
+            <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID" disabled></v-select> 
               <v-row>
                 <v-col sm="6">
-                 <v-text-field label='A' v-model="item.asset_ln_begin_dfo_ms" disabled></v-text-field>
+                 <v-text-field label='A' v-model="item.ASSET_LN_BEGIN_DFO_MS" disabled></v-text-field>
                 </v-col>
                 <v-col sm="6">
-                 <v-text-field label='B' v-model="item.asset_ln_end_dfo_ms" disabled></v-text-field>
+                 <v-text-field label='B' v-model="item.ASSET_LN_END_DFO_MS" disabled></v-text-field>
                 </v-col>
               </v-row>
           </v-col>
@@ -152,7 +152,7 @@
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import { getGraphic, modifyRoadbed, saveInfo,getCoordsRange, updateAsset, addAssetBreakPts, removeAsstPoints} from '../components/Map/editFunc'
+import { getGraphic, modifyRoadbed, saveInfo,getCoordsRange, updateAsset, addAssetBreakPts, removeAsstPoints,sketchCompete} from '../components/Map/editFunc'
 import {roadInfo} from '../store'
 //import Map from '../components/Map/Map.vue'
 
@@ -189,6 +189,7 @@ export default {
         assetLnInfo: null,
         disabled: false,
         objectid: 0,
+        newDfo:0,
         //working on form validation
         dfoRules:{
           DFO: value => !!value || 'Required',
@@ -239,6 +240,17 @@ export default {
           document.getElementById("step").style.width='450px'
         }, 
          immediate: true,
+      }, 
+      newDfo(){
+        console.log(this.newDfo)
+        if(this.rdbdSurf.length){
+          this.rdbdSurf.length = 0
+        }
+        for(let d in this.newDfo){
+            this.rdbdSurf.push({ASSET_LN_BEGIN_DFO_MS: this.newDfo[d].AssetBeginDfo, ASSET_LN_END_DFO_MS: this.newDfo[d].AssetEndDfo, objectid: this.newDfo[d].objectid, SRFC_TYPE_ID:this.newDfo[d].srfcType})
+            //this.rdbdSurf[d].ASSET_LN_BEGIN_DFO_MS = this.newDfo[d].AssetBeginDfo
+            //this.rdbdSurf[d].asset_ln_end_dfo_ms = this.newDfo[d].AssetEndDfo
+          }
       },
       // clickCountF:{
       //   handler: async function(){
@@ -260,17 +272,32 @@ export default {
       removeAsstPt(){
         removeAsstPoints();
       },
-      executeDFOgraph(x,y){
+      async executeDFOgraph(x,y){
         console.log(x)
+        console.log(this.rdbdSurf)
+        sketchCompete()
         const dfoAssets = [];
         if(dfoAssets.length){
           dfoAssets.length = 0
         }
         console.log(dfoAssets)
-        if(x==='point'){
+        if(x==='point' && this.feature===true){
           for(let b in this.fRdbdSurf){
-            let srfcType = {srfcType: this.fRdbdSurf[b].srfc_type_id, AssetBeginDfo: this.fRdbdSurf[b].asset_ln_begin_dfo_ms, AssetEndDfo: this.fRdbdSurf[b].asset_ln_end_dfo_ms, objectid: this.objectid}
+            let srfcType = {srfcType: this.fRdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: this.fRdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.fRdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid}
             dfoAssets.push(srfcType)
+          }
+          console.log(dfoAssets)
+          getCoordsRange(dfoAssets)
+        }
+        else if(x==='point' && this.feature===false){
+          for(let b in this.rdbdSurf){
+            let srfcType = {srfcType: this.rdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.rdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid}
+            dfoAssets.push(srfcType)
+          }
+          for(let i in this.mileInfo){
+            console.log(this.mileInfo[i])
+            let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), AssetEndDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid}
+            dfoAssets.push(array)
           }
           console.log(dfoAssets)
           getCoordsRange(dfoAssets)
@@ -278,22 +305,33 @@ export default {
         else if(x==='line'){
           for(let z in this.rdbdSurf){
             console.log(this.rdbdSurf[z])
-            let array = {srfcType: this.rdbdSurf[z].srfc_type_id, AssetBeginDfo: parseFloat(this.rdbdSurf[z].asset_ln_begin_dfo_ms), AssetEndDfo: parseFloat(this.rdbdSurf[z].asset_ln_end_dfo_ms),objectid: this.objectid}
+            let array = {srfcType: this.rdbdSurf[z].SRFC_TYPE_ID, AssetBeginDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_END_DFO_MS),objectid: this.objectid}
             dfoAssets.push(array)
           }
           addAssetBreakPts(dfoAssets)
         }
         else if(x==='draw'){
           console.log(y)
+          
           for(let z in this.rdbdSurf){
-            if(this.rdbdSurf[z].asset_ln_end_dfo_ms === y){
-              console.log(this.rdbdSurf[z])
-              let array = {srfcType: this.rdbdSurf[z].srfc_type_id, AssetBeginDfo: parseFloat(this.rdbdSurf[z].asset_ln_begin_dfo_ms), AssetEndDfo: parseFloat(this.rdbdSurf[z].asset_ln_end_dfo_ms),objectid: this.objectid}
+            if(this.rdbdSurf[z].ASSET_LN_END_DFO_MS === y){
+              let array = {srfcType: this.rdbdSurf[z].SRFC_TYPE_ID, AssetBeginDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_END_DFO_MS),objectid: this.objectid}
               dfoAssets.push(array)
             }
           }
+           for(let i in this.mileInfo){
+             if(Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)) === Number(y)){
+                console.log(this.mileInfo[i])
+                let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), AssetEndDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid}
+                dfoAssets.push(array)
+              }
+            }
           console.log(dfoAssets)
-          updateAsset(dfoAssets)
+          let uptDFO = await updateAsset(dfoAssets)
+          console.log(uptDFO)
+          this.newDfo = uptDFO
+          //editAsstObj[0].asset_ln_end_dfo_ms = uptDFO
+          //editAsstObj[1].asset_ln_begin_dfo_ms = uptDFO
         }
       },
       getElement(){
@@ -309,9 +347,9 @@ export default {
       //pushes new blank object row into mileInfo asset form
       addRoadSurface(){
         this.mileInfo.push({
-          srfc_type_id:'',
-          asset_ln_begin_dfo_ms: 0,
-          asset_ln_end_dfo_ms:0
+          SRFC_TYPE_ID:'',
+          ASSET_LN_BEGIN_DFO_MS: 0,
+          ASSET_LN_END_DFO_MS:0
         })
       },
       clearTable(){
@@ -331,12 +369,12 @@ export default {
       saveAttri(){
         const rdbdSurface = [];
         for(let i in this.rdbdSurf){
-          let srfcType = {srfcType: this.rdbdSurf[i].srfc_type_id, AssetBeginDfo: this.rdbdSurf[i].asset_ln_begin_dfo_ms, AssetEndDfo: this.rdbdSurf[i].asset_ln_end_dfo_ms}
+          let srfcType = {srfcType: this.rdbdSurf[i].SRFC_TYPE_ID, AssetBeginDfo: this.rdbdSurf[i].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.rdbdSurf[i].ASSET_LN_END_DFO_MS}
           rdbdSurface.push(srfcType)
         }
           
         for(let i in this.mileInfo){
-          let array = {srfcType: this.mileInfo[i].srfc_type_id, AssetBeginDfo: parseInt(this.mileInfo[i].asset_ln_begin_dfo_ms), AssetEndDfo: parseInt(this.mileInfo[i].asset_ln_end_dfo_ms)}
+          let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: parseInt(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: parseInt(this.mileInfo[i].ASSET_LN_END_DFO_MS)}
           rdbdSurface.push(array)
         }
           
@@ -356,6 +394,7 @@ export default {
     computed:{ //Used to work with the vue properties without modifying them
       rdbdSurf(){
         this.clickCount;
+        console.log(this.newDfo)
         let srfc = roadInfo.getSurface
         console.log(srfc)
         return srfc
@@ -366,6 +405,7 @@ export default {
         console.log(Fsrfc)
         return Fsrfc
       },
+
     }
 }
 </script>
@@ -379,4 +419,3 @@ export default {
 }
 
 </style>
-
