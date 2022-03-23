@@ -27,12 +27,14 @@ export function login(){
 }
 //querys the Refernce Layer table return geometry/attributes
 function queryFeat(qry){
+  console.log(qry.results[0].graphic.attributes.OBJECTID)
   let queryFeat = featLayer.queryFeatures({
     objectIds: [qry.results[0].graphic.attributes.OBJECTID],
     outFields: ["*"],
     returnGeometry: true,
     returnM: true,
   })
+  console.log(queryFeat)
   return queryFeat
 }
 //Querying asset (nonGeom) tables and pushing values to store
@@ -89,13 +91,9 @@ async function queryFeatureTables(tblqry){
 export async function countyInfo(){
   let countyInfoPromise =  new Promise(function(res){
     let queryUrl = window.location.href
-<<<<<<< HEAD
-    let crInfo = queryUrl.split('https://dprosack.github.io/CRI-Updates/')[1]
-=======
     let regExUrl = /http(s)?:\/\/(www\.)?[a-zA-Z0-9]{1,256}\.[a-zA-Z]{1,6}\/|http(s)?:\/\/(www\.)?[a-zA-Z0-9:]{1,256}\//
     console.log(queryUrl.split(regExUrl)[1])
-    let crInfo = queryUrl.split('http://localhost:8080/')[1]
->>>>>>> davidAsstGraphicUpd
+    let crInfo = queryUrl.split('https://dprosack.github.io/CRI-Updates/')[1]
     //console.log(crInfo.toString())
     for (let j=0; j < cntyNbrNm.length; j++){
       console.log(cntyNbrNm[j][crInfo])
