@@ -91,9 +91,7 @@ async function queryFeatureTables(tblqry){
 export async function countyInfo(){
   let countyInfoPromise =  new Promise(function(res){
     let queryUrl = window.location.href
-    let regExUrl = /http(s)?:\/\/(www\.)?[a-zA-Z0-9]{1,256}\.[a-zA-Z]{1,6}\/|http(s)?:\/\/(www\.)?[a-zA-Z0-9:]{1,256}\//
-    console.log(queryUrl.split(regExUrl)[1])
-    let crInfo = queryUrl.split('https://dprosack.github.io/CRI-Updates/')[1]
+    let crInfo = queryUrl.split('https://txdot.github.io/CRI-Updates/')[1]
     //console.log(crInfo.toString())
     for (let j=0; j < cntyNbrNm.length; j++){
       console.log(cntyNbrNm[j][crInfo])
