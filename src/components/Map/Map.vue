@@ -143,7 +143,7 @@ export default {
        
         modifyLine:{
              handler: async function(){
-                let modify = await modifyRoadbed("double-click")
+                let modify = await modifyRoadbed("click")
                 this.editTest = true;
                 this.modifyLine += parseFloat(geometryEngine.geodesicLength(modify.features[0].geometry, "miles").toFixed(3))
                 console.log(modify.features[0].geometry)

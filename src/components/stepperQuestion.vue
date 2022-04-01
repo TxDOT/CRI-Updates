@@ -53,7 +53,7 @@
       editable
       :complete="e1 > 3"
       step="3"
-      @click="executeDFOgraph('point')"> <!-- Get asset breaks and draw graphic points -->
+      > <!-- Get asset breaks and draw graphic points -->
       Road Surface
     </v-stepper-step>
     <v-stepper-content step="3">
@@ -68,11 +68,12 @@
                  <v-text-field label='A' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field>
                </v-col>
                <v-col sm="6">
-                 <v-text-field label='B' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field><v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)"><v-icon>mdi-pencil</v-icon></v-btn>
+                 <v-text-field label='B' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field>
+                 <v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)"><v-icon>mdi-pencil</v-icon></v-btn>
                </v-col>
           </v-row>
           <!-- Deletes asset break in the form -->
-          <v-btn id="currentSurf"><img src="..\assets\outline_delete_black_24dp.png" @click="deleteSurface()"></v-btn> 
+          <v-btn id="currentSurf" @click="deleteSurface(index)" elevation=0><v-icon>mdi-delete</v-icon></v-btn> 
           </v-col>
           <!-- Adds new asset breaks to form based on mileInfo array (populated by user click addRoadSurface function) -->
         <v-card v-for="(item,index) in mileInfo" :key="index" >
@@ -85,8 +86,7 @@
                  <v-text-field label='B' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field><v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)"><v-icon>mdi-pencil</v-icon></v-btn>
                </v-col>
             </v-row>
-            <v-btn id="addSurf"><img src="..\assets\outline_delete_black_24dp.png" @click="deleteSurface()"></v-btn>
-            <!-- <v-btn @click="deleteSurface()">Delete</v-btn> -->
+            <v-btn id="addSurf" @click="deleteSurface()" elevation=0><v-icon>mdi-delete</v-icon></v-btn>
         </v-card>
         </div>
         <v-btn color="pink" @click="addRoadSurface">add additional Road Surface Types</v-btn>
@@ -107,6 +107,11 @@
           </v-col>
           </div>
         </v-card>
+         <v-btn
+            color="primary"
+            @click="executeDFOgraph('point')">
+            Draw Surface Graphic
+        </v-btn>
         <v-btn
             color="primary"
            @click="e1 = 4;">
@@ -152,7 +157,7 @@
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import { getGraphic, modifyRoadbed, saveInfo,getCoordsRange, updateAsset, addAssetBreakPts, removeAsstPoints,sketchCompete} from '../components/Map/editFunc'
+import { getGraphic, modifyRoadbed, saveInfo, updateAsset, addAssetBreakPts, removeAsstPoints,sketchCompete,applyMToAsset} from '../components/Map/editFunc'
 import {roadInfo} from '../store'
 //import Map from '../components/Map/Map.vue'
 
@@ -211,7 +216,7 @@ export default {
       //Interacting with reference layer
       clickCountF:{ //roadbedName
         handler: async function(){
-          const click = "immediate-click"
+          const click = "pointer-move"
           let countF = await modifyRoadbed(click)
           this.feature = true;
           this.graphic = false;
@@ -243,29 +248,14 @@ export default {
       }, 
       newDfo(){
         console.log(this.newDfo)
-        if(this.rdbdSurf.length){
+        if(this.rdbdSurf.length || this.mileInfo.length){
           this.rdbdSurf.length = 0
+          this.mileInfo.length = 0
         }
         for(let d in this.newDfo){
             this.rdbdSurf.push({ASSET_LN_BEGIN_DFO_MS: this.newDfo[d].AssetBeginDfo, ASSET_LN_END_DFO_MS: this.newDfo[d].AssetEndDfo, objectid: this.newDfo[d].objectid, SRFC_TYPE_ID:this.newDfo[d].srfcType})
-            //this.rdbdSurf[d].ASSET_LN_BEGIN_DFO_MS = this.newDfo[d].AssetBeginDfo
-            //this.rdbdSurf[d].asset_ln_end_dfo_ms = this.newDfo[d].AssetEndDfo
           }
       },
-      // clickCountF:{
-      //   handler: async function(){
-      //     let countF = await getFeature()
-      //     this.feature = true;
-      //     this.graphic = false;
-      //     this.clickCountF += countF
-      //     this.roadbedName = roadInfo.getName
-      //     this.roadbedDesign = roadInfo.getDesign
-      //     this.numLane = roadInfo.getLane
-      //     document.getElementById("step").style.width='450px'
-         
-      //   }, 
-      //    immediate: true,
-      // },
     },
 
     methods:{
@@ -275,32 +265,33 @@ export default {
       async executeDFOgraph(x,y){
         console.log(x)
         console.log(this.rdbdSurf)
-        sketchCompete()
+        sketchCompete();
         const dfoAssets = [];
         if(dfoAssets.length){
           dfoAssets.length = 0
         }
         console.log(dfoAssets)
-        if(x==='point' && this.feature===true){
-          for(let b in this.fRdbdSurf){
-            let srfcType = {srfcType: this.fRdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: this.fRdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.fRdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid}
-            dfoAssets.push(srfcType)
-          }
-          console.log(dfoAssets)
-          getCoordsRange(dfoAssets)
-        }
-        else if(x==='point' && this.feature===false){
+        // if(x==='point' && this.feature===true){
+        //   for(let b in this.fRdbdSurf){
+        //     let srfcType = {srfcType: this.fRdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: this.fRdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.fRdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid}
+        //     dfoAssets.push(srfcType)
+        //   }
+        //   console.log(dfoAssets)
+        //   getCoordsRange(dfoAssets)
+        // }
+        if(x==='point' && this.feature===false){
           for(let b in this.rdbdSurf){
             let srfcType = {srfcType: this.rdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.rdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid}
             dfoAssets.push(srfcType)
           }
           for(let i in this.mileInfo){
             console.log(this.mileInfo[i])
-            let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), AssetEndDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid}
+            let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), AssetEndDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid, edit: this.mileInfo[i].EDIT}
             dfoAssets.push(array)
           }
           console.log(dfoAssets)
-          getCoordsRange(dfoAssets)
+          //console.log(applyMToAsset(dfoAssets))
+          this.newDfo = applyMToAsset(dfoAssets)
         }
         else if(x==='line'){
           for(let z in this.rdbdSurf){
@@ -349,7 +340,8 @@ export default {
         this.mileInfo.push({
           SRFC_TYPE_ID:'',
           ASSET_LN_BEGIN_DFO_MS: 0,
-          ASSET_LN_END_DFO_MS:0
+          ASSET_LN_END_DFO_MS:0,
+          EDIT: true
         })
       },
       clearTable(){
@@ -359,8 +351,9 @@ export default {
         this.numLane = undefined
       },
       deleteSurface(index){
-        if(document.getElementById('addSurf')){
-          this.mileInfo.splice(index, 1) 
+        console.log(index)
+        if(document.getElementById('currentSurf')){
+          console.log(this.rdbdSurf.splice(index, 1))
         }
           // if(document.getElementById('currentSurf')){
           //   this.rdbdSurf.splice(index, 1) 
@@ -389,7 +382,7 @@ export default {
         }
         console.log(createObj)
         saveInfo(createObj)
-      }
+      },
     },
     computed:{ //Used to work with the vue properties without modifying them
       rdbdSurf(){
@@ -402,10 +395,8 @@ export default {
       fRdbdSurf(){
         this.clickCountF;
         let Fsrfc = roadInfo.getSurface
-        console.log(Fsrfc)
         return Fsrfc
       },
-
     }
 }
 </script>
