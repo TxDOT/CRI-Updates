@@ -183,8 +183,13 @@ watchUtils.whenOnce(view,"ready").then(
 function stopEvtPropagation(event) {
     event.stopPropagation();
 }
+
+// function pauseHoverPropagation(){
+//     setTimeout(1000)
+// }
 //TODO - disable graphics from drag, resize, flip, keyboard shortcuts
 view.on('double-click', stopEvtPropagation)
+//view.on("pointer-move", pauseHoverPropagation)
 view.ui.remove("zoom")  
 
 

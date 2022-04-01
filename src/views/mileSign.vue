@@ -130,7 +130,7 @@
           <label> I certify, I am {{judgeName}}</label>
         </div>
         <v-spacer></v-spacer>
-        <v-btn outlined color="blue" :disabled="!valid" @click="alert = true; agree=false;">Submit</v-btn>
+        <v-btn outlined color="blue" :disabled="!valid" @click="alert = true; agree=false; submit();">Submit</v-btn>
       </div>
         <v-spacer></v-spacer>
         <v-alert style="left:15px; top:5px" borderd="bottom" type="info" v-html="certiAlert" max-width=550></v-alert>
@@ -207,7 +207,7 @@
 </template>
 
 <script>
-import {countyInfo} from '../components/Map/editFunc'
+import {countyInfo, autoDrawAsset} from '../components/Map/editFunc'
 import {featLayer,txCounties,view,rdbdSrfcGeom} from '../components/Map/map'
 import Query from "@arcgis/core/rest/support/Query"
 import {roadInfo} from '../store'
@@ -312,6 +312,19 @@ export default {
                                                                   An Equal Opportunity Employer</p></footer>`
         },
          methods:{
+          submit(){
+            // submit data to fme server workspace via webhook for processing
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.responseType = 'json';
+            xmlhttp.onreadystatechange=function() {
+              if (xmlhttp.readyState==4 && xmlhttp.status==200)   {
+                console.log("Webhook fired! Check your email...");
+              }
+              };
+            let theService = `https://gis-batch-dev.txdot.gov:8443/fmejobsubmitter/DUSA/emailer.fmw?email="TXDOT.SPM@gmail.com"&name=${this.judgeName}&opt_showresult=false&opt_servicemode=sync&token=a421aac78d7326aca5457e78d144e64cd972f885`;
+            xmlhttp.open("GET",theService,true);
+            xmlhttp.send();
+          },
            addSignature(){
              return this.signature
            },
@@ -321,7 +334,7 @@ export default {
            },
            async goToMap(){
             this.$router.push('/map')
-            featLayer.definitionExpression =`CNTY_NM = '${this.county}'`
+            let queryFeat = featLayer.definitionExpression =`CNTY_NM = '${this.county}'`
             txCounties.definitionExpression=`CNTY_NM='${this.county}'`
             rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
             const query = new Query();
@@ -333,6 +346,7 @@ export default {
             view.goTo({
               target: returnCountyObj.features[0].geometry
             })
+            autoDrawAsset(queryFeat)
           },
           sendCountyName(){
             this.sendData = parseInt(this.currentMiles)
