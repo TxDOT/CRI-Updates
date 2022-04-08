@@ -8,17 +8,18 @@ import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 //import Graphic from "@arcgis/core/Graphic";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import * as watchUtils from "@arcgis/core/core/watchUtils";
+
 // import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 //import SnappingOptions from "@arcgis/core/views/interactive/snapping/SnappingOptions";
-
 export const gLayer = new GraphicsLayer();
+export const addRdbd = new GraphicsLayer();
 export const delgLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
 
 export const map = new Map({
     basemap: criConstants.basemap,
-    layers: [rdbdAssetLine,rdbdAssetPt,gLayer]
+    layers: [rdbdAssetLine,rdbdAssetPt,gLayer,addRdbd]
 });
 
 export const view = new MapView({
@@ -153,15 +154,25 @@ export const sketch = new Sketch({
     viewModel: new SketchViewModel({
         view: view,
         layer: gLayer,
+    }),
+
+});
+
+export const newSketch = new Sketch({
+    view: view,
+    layer: [addRdbd],
+    viewModel: new SketchViewModel({
+        view: view,
+        layer: addRdbd,
         polylineSymbol: {
           type: "simple-line",
           color: [127, 255, 212	],
           width: 2,
           style: "dash"
-        }
+        },
     }),
 });
-
+newSketch.id = "newSketch"
 export const sketchPoint = new Sketch({
     view: view,
     viewModel: new SketchViewModel({
@@ -180,15 +191,20 @@ export const sketchPoint = new Sketch({
 watchUtils.whenOnce(view,"ready").then(
     map.addMany([rdbdSrfcGeom,featLayer,txCounties])
 );
-function stopEvtPropagation(event) {
-    event.stopPropagation();
-}
 
 // function pauseHoverPropagation(){
 //     setTimeout(1000)
 // }
 //TODO - disable graphics from drag, resize, flip, keyboard shortcuts
-view.on('double-click', stopEvtPropagation)
+view.on('double-click', (event)=>{
+    event.stopPropagation();
+})
+// view.on('resize', (event)=>{
+//     event.stopPropagation();
+// })
+// view.on('drag', (event)=>{
+//     event.stopPropagation();
+// })
 //view.on("pointer-move", pauseHoverPropagation)
 view.ui.remove("zoom")  
 
@@ -201,7 +217,6 @@ export const initialize = (container) => {
     view.container = container;
     view.when()
         .then(() => {
-
             console.log('Map and View are ready');
         })
         .catch(error => {

@@ -1,6 +1,6 @@
 <template>
     <div id="viewDiv" class="main">
-        
+
         <div class="banner">
             <v-toolbar dark>
             <v-app-bar-nav-icon @click="expand"></v-app-bar-nav-icon>
@@ -24,7 +24,7 @@
             
              <div class="mileInfo">
                 <v-card dark height="50">
-                <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots" v-cloak><p class="font-weight-regular">County: {{county}}&nbsp; &nbsp; &nbsp; User Name: {{username}}
+                <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"><p class="font-weight-regular">County: {{county}}&nbsp; &nbsp; &nbsp; User Name: {{username}}
                 &nbsp; &nbsp; &nbsp; Previous Total Mileage: {{countyTotal}}&nbsp;&nbsp;&nbsp; 
                 Current Mileage: {{currentMiles}}&nbsp;&nbsp;&nbsp; 
                 New Total Miles: {{countyTots}}</p></v-card-text>
@@ -105,7 +105,7 @@ export default {
             })            
         },
         cancelEditing(){
-            stopEditing();
+            stopEditing()
             //this.editTest = true
             console.log(this.editTest)
         },
@@ -242,6 +242,7 @@ export default {
     top: 0;
     left: 0;
 }
+
 /* .footer{
     position: absolute;
     width: 100%;
