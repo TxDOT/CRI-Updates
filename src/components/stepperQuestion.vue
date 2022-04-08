@@ -281,7 +281,8 @@ export default {
         // }
         if(x==='point' && this.feature===false){
           for(let b in this.rdbdSurf){
-            let srfcType = {srfcType: this.rdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.rdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid}
+            console.log(this.fRdbdSurf[b])
+            let srfcType = {srfcType: this.rdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: Number(this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: Number(this.rdbdSurf[b].ASSET_LN_END_DFO_MS), objectid: this.objectid}
             dfoAssets.push(srfcType)
           }
           for(let i in this.mileInfo){
@@ -353,7 +354,7 @@ export default {
       deleteSurface(index){
         console.log(index)
         if(document.getElementById('currentSurf')){
-          console.log(this.rdbdSurf.splice(index, 1))
+          console.log(this.mileInfo.splice(index, 1))
         }
           // if(document.getElementById('currentSurf')){
           //   this.rdbdSurf.splice(index, 1) 

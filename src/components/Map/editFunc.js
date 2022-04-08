@@ -1,5 +1,5 @@
 //import const from map.js
-import {sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, map, rdbdSrfcAsst, rdbdDsgnAsst, rdbdNameAsst, rdbdLaneAsst, editsLayer, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
+import {sketch, newSketch, sketchPoint, view, featLayer, gLayer, addRdbd, countyOfficialInfo, map, rdbdSrfcAsst, rdbdDsgnAsst, rdbdNameAsst, rdbdLaneAsst, editsLayer, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
 import {cntyNbrNm} from '../../common/txCnt' //importing county name/nbr table via txCnt.js
 import {roadInfo} from '../../store' //importing Getters/Setters via store.js
 import { criConstants } from '../../common/cri_constants';
@@ -40,7 +40,7 @@ function queryFeat(qry){
 //Querying asset (nonGeom) tables and pushing values to store
 async function queryFeatureTables(tblqry){
   //let length = parseFloat(geometryEngine.geodesicLength(tblqry.features[0].geometry, "miles")).toFixed(3)
-  let featIndex = tblqry.features[0].geometry.paths[0].length-1
+  //let featIndex = tblqry.features[0].geometry.paths[0].length-1
   const query = new Query();
   query.where = `RDBD_GMTRY_LN_ID = ${tblqry.features[0].attributes.GID}`
   query.outFields = [ "*" ]
@@ -70,17 +70,25 @@ async function queryFeatureTables(tblqry){
   rdbdSrfArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
   //console.log(tblqry.features[0].geometry.paths[0][tblqry.features[0].geometry.paths[0].length-1][2].toFixed(3))
   //rdbdSrfArry[rdbdSrfArry.length - 1].asset_ln_end_dfo_ms = parseFloat(tblqry.features[0].geometry.paths[0][tblqry.features[0].geometry.paths[0].length-1][2].toFixed(3))
-  console.log(tblqry.features[0].geometry.paths[0][featIndex][2] = Number(rdbdSrfArry[rdbdSrfArry.length - 1].ASSET_LN_END_DFO_MS.toFixed(3)))
-  console.log(tblqry.features[0].geometry.paths[0])
+  //console.log(tblqry.features[0].geometry.paths[0][featIndex][2] = Number(rdbdSrfArry[rdbdSrfArry.length - 1].ASSET_LN_END_DFO_MS.toFixed(3)))
+  //console.log(tblqry.features[0].geometry.paths[0])
   //push values to setters and getters are in vue components
   for(let i=0; i < rdbdSrfArry.length; i++){
     rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3))
     rdbdSrfArry[i].ASSET_LN_END_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_END_DFO_MS.toFixed(3))
   } 
-  roadInfo.getSurface = rdbdSrfArry //push surface type values to getSurface setter
-  roadInfo.getDesign = rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR
-  roadInfo.getName = rdbdNameAtt.features[0].attributes.ST_DEFN_NM
-  roadInfo.getLane = rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT
+  setDataToStore(rdbdSrfArry, rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR, rdbdNameAtt.features[0].attributes.ST_DEFN_NM, rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT)
+  // roadInfo.getSurface = rdbdSrfArry //push surface type values to getSurface setter
+  // roadInfo.getDesign = rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR
+  // roadInfo.getName = rdbdNameAtt.features[0].attributes.ST_DEFN_NM
+  // roadInfo.getLane = rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT
+}
+//Sets Road Data in the data store. 
+function setDataToStore(surface, design, name, lane){
+  roadInfo.getSurface = surface //push surface type values to getSurface setter
+  roadInfo.getDesign = design
+  roadInfo.getName = name
+  roadInfo.getLane = lane
 }
 //get county name and road totals. Filters county for map zoom and definition query
 export async function countyInfo(){
@@ -98,6 +106,7 @@ export async function countyInfo(){
         query.outFields = [ "*" ]
         let newQuery = countyOfficialInfo.queryFeatures(query)
         res({response:true, nbr:parseInt(crInfo), query:newQuery})
+        roadInfo.geomTypep = 'hallo'
       }
       else{
         res({response:false})
@@ -112,13 +121,30 @@ export async function countyInfo(){
 // Adding a new Roadbed to map
 export async function addRoadbed(){
     return await new Promise(function(res){
-        sketch.create("polyline",{mode:"click", hasZ: false})
-        sketch.on('create', (event) => {
+      newSketch.create("polyline",{mode:"click", hasZ: false})
+      newSketch.on('create', (event) => {
             let lengthMiles;
             if(event.state === "complete"){
                 //creating the length of road in miles for user
                 lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
                 res(lengthMiles);
+
+                event.graphic.geometry.hasM = true
+                event.graphic.attributes = {
+                  gid: 9999,
+                  objectid: Number(new Date().getTime().toFixed(7)),
+                  roadbedName: 'UNKNOWN',
+                  roadbedDesign: 'One Way',
+                  roadbedSurface: [{
+                    SRFC_TYPE_ID: "Paved",
+                    ASSET_LN_BEGIN_DFO_MS: 0,
+                    ASSET_LN_END_DFO_MS: Number(lengthMiles.toFixed(3))
+                  }],
+                  numLane: 1,
+                  createDt: new Date().getTime(),
+                  createNm: "DPROSACK" //replace with user login info. TODO
+                }
+                setDataToStore(event.graphic.attributes.roadbedSurface, event.graphic.attributes.roadbedDesign, event.graphic.attributes.roadbedName, event.graphic.attributes.numLane)
             }
         });
     }) 
@@ -127,6 +153,7 @@ export async function addRoadbed(){
 //clickType = immediate-click; returns attributes
 //clickType = double-click; creates graphic for editing
 export async function modifyRoadbed(clickType){
+  console.log('click me')
   let promise = new Promise(function(res){
     view.on(clickType,(event) => {
       let opts = { include: featLayer }
@@ -185,6 +212,12 @@ export function hightlightFeat(){
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
 function defineGraphic(graphics, clickType){
+  let exist = gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.features[0].attributes.OBJECTID)
+  console.log(exist)
+  if(exist.length){
+    console.log(exist)
+    return;
+  }
   if (clickType === "click"){
     let newGraphic = new Graphic({
     geometry: {
@@ -230,8 +263,12 @@ function defineGraphic(graphics, clickType){
 export async function updateLength(){
   let oldLength;
   view.on("click", function (event) {
-    let opts = {include: gLayer}
+    let opts = {include: [gLayer, addRdbd]}
+    console.log(event)
     if (sketch.state === "active") {
+      return;
+    }
+    else if (newSketch.state === "active") {
       return;
     }
     //get old Length from existing line geometry
@@ -239,30 +276,58 @@ export async function updateLength(){
       .then(function (response) {
         let results = response.results;
         results.forEach(function (result) {
+          console.log(result)
           //needsReview -> dont remember why I did this - djp
-          if(result.graphic.layer === sketch.layer && result.graphic.attributes)
-          {
-            sketch.update([result.graphic], { tool: "reshape" });
-          }
-          if(result.graphic.layer === sketch.layer && !result.graphic.attributes)
-          {
-            sketch.update([result.graphic], { tool: "reshape" });
-          }
+          // if(result.graphic.layer === sketch.layer && result.graphic.attributes)
+          // {
+          sketch.update([result.graphic], { tool: "reshape" });
+          newSketch.update([result.graphic], { tool: "reshape" });
+          // }
+          // if(result.graphic.layer === sketch.layer && !result.graphic.attributes)
+          // {
+          //   sketch.update([result.graphic], { tool: "reshape" });
+          // }
         });
         oldLength = geometryEngine.geodesicLength(response.results[0].graphic.geometry, "miles")
+        console.log(oldLength)
       })
       .catch(err => err)
     });
   //get new length from modified graphic
   let updatePromise = new Promise(function(res){
     view.when(function(){
+      newSketch.on('update', (event)=>{
+        let newLength;
+        //check sketch is done. Get delta between old and new length. Return delta value
+        if(!event.toolEventInfo && event.state === 'complete'){
+          newLength = geometryEngine.geodesicLength(event.graphics[0].geometry, "miles")
+          console.log(newLength)
+          newSketch.complete();
+          let M = reapplyM(event.graphics[0])
+          console.log(M)
+        }
+        console.log(newLength, oldLength)
+        const deltaLength = newLength - oldLength
+        if(oldLength < newLength){
+          let addMiles = Math.abs(deltaLength)
+          res(addMiles)
+        }
+        if (oldLength > newLength){
+          let subMiles = -Math.abs(deltaLength)
+          res(subMiles)
+        }
+      })
       sketch.on('update', (event)=>{
         let newLength;
         //check sketch is done. Get delta between old and new length. Return delta value
         if(!event.toolEventInfo && event.state === 'complete'){
           newLength = geometryEngine.geodesicLength(event.graphics[0].geometry, "miles")
+          console.log(newLength)
           sketch.complete();
+          let M = reapplyM(event.graphics[0])
+          console.log(M)
         }
+        console.log(newLength, oldLength)
         const deltaLength = newLength - oldLength
         if(oldLength < newLength){
           let addMiles = Math.abs(deltaLength)
@@ -282,13 +347,13 @@ export async function updateLength(){
 }
 //Stop Editing by calling the sketch cancel() method.
 export function stopEditing(){
-  sketch.cancel()
+  newSketch.cancel()
 }
 //populates stepper form when graphic is clicked.
 export async function getGraphic(){
   let getGraphPromise = new Promise(function(resp){
       view.on("immediate-click", function(event){
-        let option = {include: gLayer}
+        let option = {include: [gLayer, addRdbd]}
         if (sketch.state === "active") {
           return;
         }
@@ -313,27 +378,69 @@ export async function getGraphic(){
  return returnGetGraph
 }
 //setting M-Vaules on geometry changes
-//function reapplyM(arr){
-//   let testArr = []
-//   while(arr.length){
-//     let split1 = arr.splice(0,2)
-//     testArr.push(split1)
-//   }
-//   console.log(testArr)
-//   for (let i=0; i < testArr.length; i++){
-//     console.log(testArr[i])
-//     //x2-x1
-//     let xDiff = Math.pow(Math.abs(testArr[i][1][0] - testArr[i][0][0]), 2)
-//     // console.log(xDiff)
-//     //y2-y1
-//     let yDiff = Math.pow(Math.abs(testArr[i][1][1] - testArr[i][0][1]), 2)
-//     // console.log(yDiff)
-//     const m = Math.sqrt(xDiff + yDiff) * 0.0006213712
-//     console.log(m)
-//     testArr[i][1].slice(3,0,m)
-//   }
-//   return testArr
-//} //TODO
+function reapplyM(arr){
+  console.log(arr)
+  let gl = gLayer.graphics.items.filter(x => x.objectid = arr.attributes.objectid).at(-1)
+  let addRd = []
+  if(addRd.length){
+    addRd.length = 0
+  }
+  for(let x=0; x < addRdbd.graphics.items.length; x++){
+    if(addRdbd.graphics.items[x].attributes.objectid === arr.attributes.objectid){
+      addRd.push(addRdbd.graphics.items[x])
+    }
+  }
+  console.log(gl)
+  console.log(addRd)
+  let applyM = [];
+  console.log(applyM)
+  try{
+    let segMil = arr.geometry.paths[0][0][2];
+    applyM.push(arr.geometry.paths[0][0][2])
+    for(let i=0; i < arr.geometry.paths[0].length; i++){
+      
+      let pointA = new Graphic({
+        geometry:{
+          type: "point",
+          longitude: arr.geometry.paths[0][i][0],
+          latitude: arr.geometry.paths[0][i][1]
+        }
+      })
+        
+      let pointB = new Graphic({
+        geometry:{
+          type: "point",
+          longitude: arr.geometry.paths[0][i+1][0],
+          latitude: arr.geometry.paths[0][i+1][1]
+        }
+      })
+      let miles = geodesicUtils.geodesicDistance(webMercatorUtils.webMercatorToGeographic(pointB.geometry), webMercatorUtils.webMercatorToGeographic(pointA.geometry), "miles")
+      segMil += miles.distance
+      applyM.push(segMil)
+    }
+  }
+  catch{
+    console.log('end of the line')
+  }
+  console.log(addRd)
+  if(gl){
+    for(let j=0; j < applyM.length; j++){
+      gl.geometry.setPoint(0,j,[arr.geometry.paths[0][j][0],arr.geometry.paths[0][j][1],applyM[j]])
+    }
+    roadInfo.getSurface.at(-1).ASSET_LN_END_DFO_MS = Number(gl.geometry.paths[0].at(-1)[2].toFixed(3))
+  }
+  else{
+    console.log('addRd')
+    for(let h=0; h < applyM.length; h++){
+      console.log(addRd[0].geometry.setPoint(0,h,[arr.geometry.paths[0][h][0],arr.geometry.paths[0][h][1],applyM[h]]))
+    }
+    roadInfo.getSurface.at(-1).ASSET_LN_END_DFO_MS = Number(addRd.geometry.paths[0].at(-1)[2].toFixed(3))
+    console.log(addRd)
+  }
+  console.log(addRd)
+  console.log(gl)
+  return;
+} //TODO
 //push asset/geometry to edits feature layer
 export function saveInfo(id){
   //get graphic layer and match by objectid
@@ -408,202 +515,65 @@ function createAssetGraph(pathArr,y){
     mArr.push(Number(parseFloat(densUpdate[i][2]).toFixed(3))) //mval
   }
 
-  
   for(let d in y){
     console.log(y[d].srfcType)
-    if(y[d].srfcType === 'Paved'){
-      console.log(y[d].objectid)
-      let getstart = (element) => element >= y[d].AssetBeginDfo;
-      let endstart = (element) => element >= y[d].AssetEndDfo;
-      console.log(mArr.findIndex(getstart))
-      console.log(mArr.findIndex(endstart))
-
-      let beginSplit;
-      let endSplit;
-
-      mArr.at(mArr.findIndex(endstart)) === y[d].AssetEndDfo ? endSplit = mArr.findIndex(endstart)+1 : endSplit = mArr.findIndex(endstart)
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) === 0 ? beginSplit = mArr.findIndex(getstart) : null
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) !== 0 ? beginSplit = mArr.findIndex(getstart) : beginSplit = mArr.findIndex(getstart)
-      
-      let geom = densUpdate.slice(beginSplit, endSplit)
-      console.log(geom)
-      let pavement = new Graphic({
-        geometry: {
-          type: "polyline",
-          paths: geom,
-          hasM: true,
-          spatialReference: {
-            wkid: 3857
-          }
-        },
-    
-        attributes: {
-          objectid: y[d].objectid,
-        },
-                  
-        symbol: {
+    let getstart = (element) => element >= y[d].AssetBeginDfo;
+    let endstart = (element) => element >= y[d].AssetEndDfo;
+    console.log(mArr.findIndex(getstart))
+    console.log(mArr.findIndex(endstart)-1)
+    console.log(mArr.findIndex(endstart))
+    //extract closest index for begin/end dfo values
+    console.log(densUpdate.length)
+    console.log(densUpdate.slice(mArr.findIndex(getstart),mArr.findIndex(endstart)+1))
+    console.log(densUpdate.slice(mArr.findIndex(getstart),mArr.findIndex(endstart)))
+    let geom = mArr.findIndex(endstart) === -1 ? densUpdate.slice(mArr.findIndex(getstart),) : densUpdate.slice(mArr.findIndex(getstart),mArr.findIndex(endstart)+1)
+    //let geom = densUpdate.slice(mArr.findIndex(endstart)-1,mArr.findIndex(endstart)+1)
+    //convert to points to graphic and plot on route
+    console.log(geom)
+    let assetLineType = y[d].srfcType
+        let pointColor;
+        switch(assetLineType){
+          case "Paved":
+            pointColor = "#FF6700"		
+          break;
+          case "Brick":
+            pointColor = "#FF0800"
+          break;
+          case "Dirt/Natural":
+            pointColor = "#CF71AF"
+          break;
+          case "Gravel":
+            pointColor = "#36454F"
+          break;
+          case "Concrete":
+            pointColor = "#CFCFC4"
+        } 
+  
+        const assetLineSym = {
           type: "simple-line",
-          color: '#8DB600',
+          color: pointColor,
           width: 5,
           style: "solid"
         }
-      })
-      rdbdAssetLine.graphics.add(pavement);
-    }
-    else if(y[d].srfcType === 'Gravel'){
-      let getstart = (element) => element >= y[d].AssetBeginDfo;
-      let endstart = (element) => element >= y[d].AssetEndDfo;
-      console.log(mArr.findIndex(getstart))
-      console.log(mArr.findIndex(endstart))
-      
-      let endSplit;
-      let beginSplit;
-
-      mArr.at(mArr.findIndex(endstart)) === y[d].AssetEndDfo ? endSplit = mArr.findIndex(endstart)+1 : endSplit = mArr.findIndex(endstart)
-      mArr.at(mArr.findIndex(endstart)) === y[d].AssetEndDfo ? endSplit = mArr.findIndex(endstart)+1 : endSplit = mArr.findIndex(endstart)
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) === 0 ? beginSplit = mArr.findIndex(getstart) : null
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) !== 0? beginSplit = mArr.findIndex(getstart) : beginSplit = mArr.findIndex(getstart)-1
-      
-      let geom = densUpdate.slice(beginSplit, endSplit)
-      console.log(geom)
-      let gravel = new Graphic({
-        geometry: {
-          type: "polyline",
-          paths: geom,
-          hasM: true,
-          spatialReference: {
-            wkid: 3857
-          }
-        },
-    
-        attributes: {
-          objectid: y[d].objectid,
-        },
-                  
-        symbol: {
-          type: "simple-line",
-          color: '#4B5320',
-          width: 5,
-          style: "solid"
+    let pavement = new Graphic({
+      geometry: {
+        type: "polyline",
+        paths: geom,
+        hasM: true,
+        spatialReference: {
+          wkid: 3857
         }
-      })
-      rdbdAssetLine.graphics.add(gravel);
-    }
-    else if(y[d].srfcType === 'Dirt/Natural'){
-      let getstart = (element) => element >= y[d].AssetBeginDfo;
-      let endstart = (element) => element >= y[d].AssetEndDfo;
-      console.log(mArr.findIndex(getstart))
-      console.log(mArr.findIndex(endstart))
-
-      let beginSplit;
-      let endSplit;
-
-      mArr.at(mArr.findIndex(endstart)) === y[d].AssetEndDfo ? endSplit = mArr.findIndex(endstart)+1 : endSplit = mArr.findIndex(endstart)
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) === 0 ? beginSplit = mArr.findIndex(getstart) : null
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) !== 0 ? beginSplit = mArr.findIndex(getstart) : beginSplit = mArr.findIndex(getstart)
-      
-      let geom = densUpdate.slice(beginSplit, endSplit)
-      console.log(geom)
-      let dirtNatural = new Graphic({
-        geometry: {
-          type: "polyline",
-          paths: geom,
-          hasM: true,
-          spatialReference: {
-            wkid: 3857
-          }
-        },
-    
-        attributes: {
-          objectid: y[d].objectid,
-        },
-                  
-        symbol: {
-          type: "simple-line",
-          color: '#FFD12A',
-          width: 5,
-          style: "solid"
-        }
-      })
-      rdbdAssetLine.graphics.add(dirtNatural);
-    }
-    else if(y[d].srfcType === 'Concrete'){
-      let getstart = (element) => element >= y[d].AssetBeginDfo;
-      let endstart = (element) => element >= y[d].AssetEndDfo;
-      console.log(mArr.findIndex(getstart))
-      console.log(mArr.findIndex(endstart))
-
-      let beginSplit;
-      let endSplit;
-
-      mArr.at(mArr.findIndex(endstart)) === y[d].AssetEndDfo ? endSplit = mArr.findIndex(endstart)+1 : endSplit = mArr.findIndex(endstart)
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) === 0 ? beginSplit = mArr.findIndex(getstart) : null
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) !== 0 ? beginSplit = mArr.findIndex(getstart) : beginSplit = mArr.findIndex(getstart)
-      
-      let geom = densUpdate.slice(beginSplit, endSplit)
-      console.log(geom)
-      let concrete = new Graphic({
-        geometry: {
-          type: "polyline",
-          paths: geom,
-          hasM: true,
-          spatialReference: {
-            wkid: 3857
-          }
-        },
-    
-        attributes: {
-          objectid: y[d].objectid,
-        },
-                  
-        symbol: {
-          type: "simple-line",
-          color: '#000000',
-          width: 5,
-          style: "solid"
-        }
-      })
-      rdbdAssetLine.graphics.add(concrete);
-    }
-    else if(y[d].srfcType === 'Brick'){
-      let getstart = (element) => element >= y[d].AssetBeginDfo;
-      let endstart = (element) => element >= y[d].AssetEndDfo;
-      console.log(mArr.findIndex(getstart))
-      console.log(mArr.findIndex(endstart))
-
-      let beginSplit;
-      let endSplit;
-
-      mArr.at(mArr.findIndex(endstart)) === y[d].AssetEndDfo ? endSplit = mArr.findIndex(endstart)+1 : endSplit = mArr.findIndex(endstart)
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) === 0 ? beginSplit = mArr.findIndex(getstart) : null
-      mArr.at(mArr.findIndex(getstart)) === y[d].AssetBeginDfo && mArr.findIndex(getstart) !== 0? beginSplit = mArr.findIndex(getstart) : beginSplit = mArr.findIndex(getstart)-1
-      
-      let geom = densUpdate.slice(beginSplit, endSplit)
-      console.log(geom)
-      let brick = new Graphic({
-        geometry: {
-          type: "polyline",
-          paths: geom,
-          hasM: true,
-          spatialReference: {
-            wkid: 3857
-          }
-        },
-    
-        attributes: {
-          objectid: y[d].objectid,
-        },
-                  
-        symbol: {
-          type: "simple-line",
-          color: '#CC0000',
-          width: 5,
-          style: "solid"
-        }
-      })
-      rdbdAssetLine.graphics.add(brick);
-    }
+      },
+  
+      attributes: {
+        objectid: y[d].objectid,
+      },
+                
+      symbol: assetLineSym
+    })
+    rdbdAssetLine.graphics.add(pavement);
   }
+  
   return;
 }
 //adding new Asset vertex to pre-existing geometry line. An Anchor vertex  
@@ -628,7 +598,6 @@ export function addAssetBreakPts(y, type)
       }
     }
   }
-
   createAssetGraph(g.at(-1).geometry,y)
   return;
 }
@@ -636,114 +605,126 @@ export function addAssetBreakPts(y, type)
 export function getCoordsRange(y){
   console.log(y)
   console.log(rdbdAssetPt)
-  if(rdbdAssetPt.length){
-    rdbdAssetPt.length = 0
-  }
-  let dens;
-  // if(check !== false){
-    console.log(gLayer)
-    //get graphic layer geometry; matching on objectid 
-    for(let id in gLayer.graphics.items){
-      if(gLayer.graphics.items[id].attributes.objectid === y[0].objectid){
-        console.log(gLayer.graphics.items[id])
-        dens = gLayer.graphics.items[id].geometry
-      } 
+  try{
+    if(rdbdAssetPt.length){
+      rdbdAssetPt.length = 0
     }
-    //get geometry x,y,m
-    let densUpdate = dens.paths[0];
-  
-    let mArr = [];
-    if(mArr.length){
-      mArr.length = 0
-    }
-    //populates mArr with m-values
-    for(let i = 0; i < densUpdate.length; i++){
-      //console.log(x[i][2])
-      mArr.push(densUpdate[i][2]) //mval
-    }
-    //gets the closest M-values to the assetBegin/assetEnd DFO. Provided by the stepper
-    for(let d in y){
-      console.log(y[d].srfcType)
-      let getstart = (element) => element >= y[d].AssetBeginDfo;
-      let endstart = (element) => element >= y[d].AssetEndDfo;
-      console.log(mArr.findIndex(getstart))
-      console.log(mArr.findIndex(endstart)-1)
-      console.log(mArr.findIndex(endstart))
-      //extract closest index for begin/end dfo values
-      let geom = densUpdate.slice(mArr.findIndex(endstart)-1,mArr.findIndex(endstart)+1)
-      //convert to points to graphic and plot on route
-      console.log(geom)
-      const radius = (Math.abs(geom[0][2] - y[d].AssetEndDfo)) * 1609.344
-      console.log(radius)
-      const pointA =  new Graphic({
-       geometry: {
-          type: "point", 
-          longitude: geom[0][0],
-          latitude: geom[0][1]
-        },
-      })
-      const pointB = new Graphic({
-        geometry: {
-          type: "point", 
-          longitude: geom[1][0],
-          latitude: geom[1][1]
-        },
-      })
-      let a = webMercatorUtils.webMercatorToGeographic(pointA.geometry)
-      let b = webMercatorUtils.webMercatorToGeographic(pointB.geometry)
-          
-      const findAzmith = geodesicUtils.geodesicDistance(a, b)
-      const newDFO = geodesicUtils.pointFromDistance(a, radius,findAzmith.azimuth)
-      console.log(newDFO.x, newDFO.y, y[d].srfcType)
-      const geoToMerca = webMercatorUtils.geographicToWebMercator(newDFO)
-
-      let assetType = y[d].srfcType
-      let pointColor;
-      switch(assetType){
-        case "Paved":
-          pointColor = "#5D8AA8"		
-        break;
-        case "Brick":
-          pointColor = "#E32636"
-        break;
-        case "Dirt/Natural":
-          pointColor = "#98777B"
-        break;
-        case "Gravel":
-          pointColor = "#848482"
-        break;
-        case "Concrete":
-          pointColor = "#000000"
-      } 
-
-      const assetSym = {
-        type: "simple-marker",
-        color: pointColor
+    let dens;
+    // if(check !== false){
+      console.log(gLayer)
+      //get graphic layer geometry; matching on objectid 
+      for(let id in gLayer.graphics.items){
+        if(gLayer.graphics.items[id].attributes.objectid === y[0].objectid){
+          console.log(gLayer.graphics.items[id])
+          dens = gLayer.graphics.items[id].geometry
+        } 
       }
-      console.log(geoToMerca)
-      let assetPoint = new Graphic({
-        geometry: {
-          type: "point",
-          hasM: true,
-          longitude: newDFO.x,
-          latitude: newDFO.y,
-          spatialReference: {
-            wkid: 3857
-          }
-        },
-        attributes: {
-          objectid: y[d].objectid,
-          assetTyp: assetType,
-          bDfo: y[d].AssetBeginDfo,
-          eDfo: y[d].AssetEndDfo
-        },
-        symbol: assetSym
-      })
+      //get geometry x,y,m
+      let densUpdate = dens.paths[0];
     
-      rdbdAssetPt.graphics.add(assetPoint)
-      console.log(rdbdAssetPt)
-    }
-  addAssetBreakPts(y)
+      let mArr = [];
+      if(mArr.length){
+        mArr.length = 0
+      }
+      //populates mArr with m-values
+      for(let i = 0; i < densUpdate.length; i++){
+        //console.log(x[i][2])
+        mArr.push(densUpdate[i][2]) //mval
+      }
+      //gets the closest M-values to the assetBegin/assetEnd DFO. Provided by the stepper
+      
+      for(let d in y){
+        console.log(y[d].srfcType)
+        let getstart = (element) => element >= y[d].AssetBeginDfo;
+        let endstart = (element) => element >= y[d].AssetEndDfo;
+        console.log(mArr.findIndex(getstart))
+        console.log(mArr.findIndex(endstart)-1)
+        console.log(mArr.findIndex(endstart))
+        //extract closest index for begin/end dfo values
+        console.log(densUpdate.length)
+        console.log(densUpdate.slice(mArr.findIndex(endstart)-1,))
+        let geom = mArr.findIndex(endstart) === -1 ? densUpdate.slice(mArr.findIndex(endstart)-1,) : densUpdate.slice(mArr.findIndex(endstart)-1,mArr.findIndex(endstart)+1)
+        //let geom = densUpdate.slice(mArr.findIndex(endstart)-1,mArr.findIndex(endstart)+1)
+        //convert to points to graphic and plot on route
+        console.log(geom)
+        const radius = (Math.abs(geom[0][2] - y[d].AssetEndDfo)) * 1609.344
+        console.log(radius)
+        const pointA =  new Graphic({
+         geometry: {
+            type: "point", 
+            longitude: geom[0][0],
+            latitude: geom[0][1]
+          },
+        })
+        const pointB = new Graphic({
+          geometry: {
+            type: "point", 
+            longitude: geom[1][0],
+            latitude: geom[1][1]
+          },
+        })
+        let a = webMercatorUtils.webMercatorToGeographic(pointA.geometry)
+        let b = webMercatorUtils.webMercatorToGeographic(pointB.geometry)
+            
+        const findAzmith = geodesicUtils.geodesicDistance(a, b)
+        const pointDFO = geodesicUtils.pointFromDistance(a, radius,findAzmith.azimuth)
+        console.log(pointDFO.x, pointDFO.y, y[d].srfcType)
+        const geoToMerca = webMercatorUtils.geographicToWebMercator(pointDFO)
+  
+        let assetType = y[d].srfcType
+        let pointColor;
+        switch(assetType){
+          case "Paved":
+            pointColor = "#FF6700"		
+          break;
+          case "Brick":
+            pointColor = "#FF0800"
+          break;
+          case "Dirt/Natural":
+            pointColor = "#CF71AF"
+          break;
+          case "Gravel":
+            pointColor = "#36454F"
+          break;
+          case "Concrete":
+            pointColor = "#CFCFC4"
+        } 
+  
+        const assetSym = {
+          type: "simple-marker",
+          color: pointColor
+        }
+        console.log(geoToMerca)
+        let assetPoint = new Graphic({
+          geometry: {
+            type: "point",
+            hasM: true,
+            longitude: pointDFO.x,
+            latitude: pointDFO.y,
+            spatialReference: {
+              wkid: 3857
+            }
+          },
+          attributes: {
+            objectid: y[d].objectid,
+            assetTyp: assetType,
+            bDfo: y[d].AssetBeginDfo,
+            eDfo: y[d].AssetEndDfo
+          },
+          symbol: assetSym
+        })
+      
+        rdbdAssetPt.graphics.add(assetPoint)
+        console.log(rdbdAssetPt)
+      }
+    addAssetBreakPts(y)
+  }
+  catch(error){
+    console.log(Error)
+    alert('You have selected a value that is greater than the length of road')
+    return;
+  }
+ 
   return;
 }
 //Getting new M-Value for new asset Point
@@ -766,17 +747,23 @@ function getNewDfoDist(objectid, x, y){
   for(let id in gLayer.graphics.items){
     if(gLayer.graphics.items[id].attributes.objectid === objectid){
       objid = gLayer.graphics.items[id].geometry
+      console.log(objid)
     }
   }
   console.log(objid.paths[0].length)
   let index = geometryEngine.nearestVertex(objid, pointA.geometry).vertexIndex
   let nearVert = objid.paths[0].at(index)
   console.log(index)
-  if(objid.paths[0].length-1 === index){
+  let path;
+  if(objid.paths[0].at(-1) === nearVert){
     console.log("End of the line")
+    //path = objid.paths[0].slice(index-2, index)
+    //console.log(path)
     return;
   }
-  let path = objid.paths[0].slice(index, index+2)
+  else{
+    path = objid.paths[0].slice(index, index+2)
+  }
   console.log(path)
   let direction = path[0][0] > path[1][0]
   console.log(direction) 
@@ -800,7 +787,7 @@ function getNewDfoDist(objectid, x, y){
   }
 
   let webMercaPointB = webMercatorUtils.webMercatorToGeographic(pointB.geometry)
-  const pointAPointB = geodesicUtils.geodesicDistance(webMercaPointA, webMercaPointB)
+  const pointAPointB = geodesicUtils.geodesicDistance(webMercaPointB, webMercaPointA)
   console.log(pointAPointB)
 
   console.log(path[0][2])
@@ -822,6 +809,10 @@ function getNewDfoDist(objectid, x, y){
   console.log(path[0][2])
   let newDfo;
   let mnbv;
+  if(dir === 0){
+    newDfo = path[0][2]
+    mnbv = index
+  }
   if(dir < 0 && !direction){
     newDfo = Math.abs(path[0][2] - (pointAPointB.distance/1609.344))
     mnbv = index
@@ -846,15 +837,16 @@ function getNewDfoDist(objectid, x, y){
     newDfo = Math.abs(path[0][2] + (pointAPointB.distance/1609.344))
   }
   console.log(newDfo)
+  if(!newDfo){
+    return;
+  }
   // if(Number(nearVert[2].toFixed(3)) === Number(newDfo.toFixed(3))){
   //   console.log('Points Match')
   //   return;
   // }
   objid.insertPoint(0,mnbv, [x, y, Number(newDfo.toFixed(3))])
 
-  if(!newDfo){
-    return;
-  }
+  
   return newDfo;
   ///path[0][2] may be in correct, may need to be path[1][2]
 }
@@ -866,8 +858,10 @@ export async function updateAsset(y){
   if(rdbdobj.length){rdbdobj.length = 0}
   //gathering asset points and zooming to location. 
   for(let i in rdbdAssetPt.graphics.items){
+    console.log(rdbdAssetPt.graphics.items[i])
     if((rdbdAssetPt.graphics.items[i].attributes.objectid === y[0].objectid) && (rdbdAssetPt.graphics.items[i].attributes.assetTyp === y[0].srfcType) && rdbdAssetPt.graphics.items[i].attributes.eDfo === y[0].AssetEndDfo){
       view.goTo({center: rdbdAssetPt.graphics.items[i].geometry, zoom: 20})
+      rdbdAssetPt.graphics.items[i].attributes.edit = null
       console.log(rdbdAssetPt.graphics.items[i])
       rdbdobj = rdbdAssetPt.graphics.items[i]
     }
@@ -894,19 +888,19 @@ export async function updateAsset(y){
   //setting point symbol on surface type
   switch(assetType){
     case "Paved":
-      pointColors = "#5D8AA8"		
+      pointColors = "#536878"		
     break;
     case "Brick":
-      pointColors = "#E32636"
+      pointColors = "#FF0800"
     break;
     case "Dirt/Natural":
-      pointColors = "#98777B"
+      pointColors = "#004225"
     break;
     case "Gravel":
-      pointColors = "#848482"
+      pointColors = "#36454F"
     break;
     case "Concrete":
-      pointColors = "#000000"
+      pointColors = "#C0C0C0"
     break;
   }
 
@@ -923,6 +917,7 @@ export async function updateAsset(y){
       m: Number(parseFloat(newDfo).toFixed(3))
     },
   })
+
   let a = webMercatorUtils.webMercatorToGeographic(convertPt.geometry)
   let newAssetPt = new Graphic({
     geometry: {
@@ -957,7 +952,7 @@ export async function updateAsset(y){
   let currentAsst = rdbdAssetPt.graphics.items.filter(ca => ca.attributes.objectid === y[0].objectid)
   let assetArray=[]
   for(let x=0; x < currentAsst.length; x++){
-    console.log(currentAsst[x])
+    console.log(currentAsst[x].attributes.assetTyp,Number(parseFloat(currentAsst[x].attributes.bDfo)),Number(parseFloat(currentAsst[x].attributes.eDfo)),currentAsst[x].attributes.objectid,currentAsst[x].attributes.edit)
     assetArray.push({
       srfcType: currentAsst[x].attributes.assetTyp,
       AssetBeginDfo: Number(parseFloat(currentAsst[x].attributes.bDfo)),
@@ -983,7 +978,18 @@ export function removeAsstPoints(){
 
 export function applyMToAsset(assetArray, type){
   console.log(assetArray)
-  
+  let length = []
+  for(let x=0; x < gLayer.graphics.items.length; x++){
+    if(gLayer.graphics.items[x].attributes.objectid === assetArray[0].objectid){
+      length.push(gLayer.graphics.items[x])
+    }
+  }
+  console.log(length)
+  for(let z=0; z < length[0].attributes.roadbedSurface.length; z++){
+    if(typeof(length[0].attributes.roadbedSurface[z].ASSET_LN_BEGIN_DFO_MS) === "string" || typeof(length[0].attributes.roadbedSurface[z].ASSET_LN_END_DFO_MS) === "string" ){
+      assetArray[z].edit = true;
+    }
+  }
   rdbdAssetLine.removeAll();
   // let assetInfo = [];
   // if(assetInfo.length){
@@ -1005,15 +1011,21 @@ export function applyMToAsset(assetArray, type){
     if(assetArray[i].edit){
       console.log(assetArray[i-1],assetArray[i])
       assetArray[i-1].AssetEndDfo = assetArray[i].AssetBeginDfo
-      assetArray[i+1].AssetBeginDfo = assetArray[i].AssetEndDfo
+      if(assetArray[i+1]){
+        assetArray[i+1].AssetBeginDfo = assetArray[i].AssetEndDfo
+      }
+      
     }
     if(assetArray[i-1].edit){
       console.log(assetArray[i-1],assetArray[i])
       assetArray[i].AssetBeginDfo = assetArray[i-1].AssetEndDfo
       if(assetArray[i+1]){
-        assetArray[i+1].AssetEndDfo = assetArray[i].AssetBeginDfo
+        assetArray[i+1].AssetBeginDfo = assetArray[i].AssetEndDfo
       }
     }
+  }
+  if(assetArray.at(-1).AssetEndDfo !== Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))){
+    assetArray.at(-1).AssetEndDfo = Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))
   }
   console.log(assetArray)
   if(type!=='click'){
