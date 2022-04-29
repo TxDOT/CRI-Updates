@@ -1,9 +1,9 @@
 <template>
     <div id="viewDiv" class="main">
-
+<!-- 
         <div class="banner">
             <v-toolbar dark>
-            <v-app-bar-nav-icon @click="expand"></v-app-bar-nav-icon>
+            
             <v-toolbar-title justify="center">Welcome to DUSA</v-toolbar-title>
             <v-btn-toggle id="delBtn">
                 <v-btn color="red" small>Delete Roads</v-btn>
@@ -15,14 +15,14 @@
                 <v-btn color="Black" small>Save & Exit</v-btn>
             </v-btn-toggle>
             </v-toolbar>
-        </div>
-            <div class="text-center">
+        </div> -->
+            <!-- <div class="text-center">
                 <v-snackbar style="bottom:50px;" v-model = snackbar timeout=-1>
                     <v-btn dark color="pink" text @click="snackbar = false; cancelEditing()" width=600> Stop Editing </v-btn>
                 </v-snackbar>
-            </div>
+            </div> -->
             
-             <div class="mileInfo">
+             <!-- <div class="mileInfo">
                 <v-card dark height="50">
                 <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"><p class="font-weight-regular">County: {{county}}&nbsp; &nbsp; &nbsp; User Name: {{username}}
                 &nbsp; &nbsp; &nbsp; Previous Total Mileage: {{countyTotal}}&nbsp;&nbsp;&nbsp; 
@@ -31,9 +31,9 @@
                 <v-btn elevation=0 style="bottom:65px; right:44%">Criteria</v-btn>
                 <v-btn elevation=0 style="bottom:65px; right:43%">About</v-btn>
                 </v-card>
-            </div>
-        <div id="step"><stepper :received="editTest"/></div>
-       <v-dialog
+            </div> -->
+        <div id="step"><stepper/></div>
+       <!-- <v-dialog
         v-model="submitCertify"
         max-width="500">
             <v-card v-model="submitCertify" height="300">
@@ -41,7 +41,7 @@
             <v-card-actions>
             <div style="position:absolute; top:20%; left: 5%" class="black--text mb-3">
             <v-card-text >
-                 You are about to submit and certify county mileage for {{county}} County.<br>
+                 You are about to submit and certify county mileage for {{cntyName}} County.<br>
                  The previous years mileage was <b>{{this.countyTotal}} miles</b>.<br>The new total mileage is <b>{{countyTots}} miles.</b>
             </v-card-text>
             </div>
@@ -54,69 +54,55 @@
           </div>
         </v-card-actions>
       </v-card>
-        </v-dialog>
+        </v-dialog> -->
     </div>
 </template>
 
 <script>
-import {addRoadbed, updateLength, zoomExtents, hightlightFeat, stopEditing, modifyRoadbed} from '../Map/editFunc'
+//import {zoomExtents, } from '../Map/editFunc'
 import stepper from '../../components/stepperQuestion.vue'
+
 //import mapFooter from '../Map/mapFooter.vue'
-import {roadInfo} from '../../store'
+//import {roadInfo} from '../../store'
 //import { gLayer } from '../Map/map';
 //import Graphic from "@arcgis/core/Graphic";
-import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
+// import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 
 export default {
     name: 'Map',
     components: {stepper},
     data(){
         return{
-            submitCertify:false,
-            snackbar: false,
+            // submitCertify:false,
+            //snackbar: false,
             stepper: false,
             addButton: "add Road",
             previousTotal: 0,
-            county:  roadInfo.getcntyName,
-            username: 'DPROSACK', //TODO Dynamic
-            countyTotal: roadInfo.getcntyMiles,
+            //county:  roadInfo.getcntyName,
+            // username: 'DPROSACK', //TODO Dynamic
+            //countyTotal: roadInfo.getcntyMiles,
             lineLength: {},
             newMiles: '',
             modifyLine: 0,
-            modifyLength: 0,
-            editTest: false,
+            //modifyLength: 0,
         }
     },
     async mounted() { //async waits for map to load
         const app = await import('../Map/map');
         app.initialize(this.$el); //assigns esri map to the container
-        zoomExtents();
-        hightlightFeat();
-        //console.log(this.captureMiles)
-        
+        //zoomExtents();
+        //hightlightFeat();
+        console.log(this.cntyName)
     },
     methods: {
-        addRoad() {
-            addRoadbed().then(result=>{
-            this.previousTotal += parseFloat(result.toFixed(3))
-    
-            //this.editTest = false
-            console.log(this.editTest)
-            })            
-        },
-        cancelEditing(){
-            stopEditing()
-            //this.editTest = true
-            console.log(this.editTest)
-        },
-        expand(){
-            if (document.getElementById("step").style.width==='0px'){
-                document.getElementById("step").style.width='450px'
-            }
-            else{
-                document.getElementById("step").style.width='0px'
-            }
-        },
+        // addRoad() {
+        //     addRoadbed().then(result=>{
+        //     this.previousTotal += parseFloat(result.toFixed(3))         
+        //     })            
+        // },
+        // cancelEditing(){
+        //     stopEditing()
+        // },
         uploadFile(){
             document.getElementById("upldFile").click()
         },
@@ -133,52 +119,50 @@ export default {
     },
     
     watch:{
-       previousTotal() {
-            addRoadbed().then(result=>
-            this.previousTotal += parseFloat(result.toFixed(3)))
-            document.getElementById("step").style.width='450px'
+    //    previousTotal() {
+    //         addRoadbed().then(result=>
+    //         this.previousTotal += parseFloat(result.toFixed(3)))
+    //         document.getElementById("step").style.width='450px'
             
-        },
+    //     },
        // converts refLayer to graphicsLayer
        
-        modifyLine:{
-             handler: async function(){
-                let modify = await modifyRoadbed("click")
-                this.editTest = true;
-                this.modifyLine += parseFloat(geometryEngine.geodesicLength(modify.features[0].geometry, "miles").toFixed(3))
-                console.log(modify.features[0].geometry)
-                
-            },
-            immediate:true,
-        },
-       modifyLength:{
-            handler: async function(){
-                let crow = await updateLength()
-                console.log(crow)
-                this.modifyLength += crow
+        // modifyLine:{
+        //      handler: async function(){
+        //         let modify = await modifyRoadbed("click")
+        //         this.modifyLine += parseFloat(geometryEngine.geodesicLength(modify.features[0].geometry, "miles").toFixed(3))
+        //         console.log(modify.features[0].geometry)
+        //     },
+        //     immediate:true,
+        // },
+    //    modifyLength:{
+    //         handler: async function(){
+    //             let crow = await updateLength()
+    //             console.log(crow)
+    //             this.modifyLength += crow
                
-            },
-            immediate: true, 
-        }
+    //         },
+    //         immediate: true, 
+    //     },
     },
 
     computed:{
-        countyTots: function(){
-            return Number(this.countyTotal) + Number(this.previousTotal) + Number(this.modifyLength)
-        },
+        // countyTots: function(){
+        //     return Number(this.countyTotal) + Number(this.previousTotal) + Number(this.modifyLength)
+        // },
 
-        currentMiles: function(){
-            return Number(this.previousTotal) + Number(this.modifyLength)
-        },
-        getCount:{//testing function; not working
-            get(){
-                return roadInfo.getCount
-            },   
-            set(x){
-                this.$set(roadInfo,'getCount',x)
-            }
-        },
-        
+        // currentMiles: function(){
+        //     return Number(this.previousTotal) + Number(this.modifyLength)
+        // },
+        // cntyName:{
+        //     get(){
+        //         return this.$store.state.cntyName
+        //     },
+        //     // set(cntyName){
+        //     //     this.$store.commit('setCntyName',cntyName)
+        //     // }
+        // },
+
 
 
     }

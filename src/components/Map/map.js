@@ -8,7 +8,17 @@ import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 //import Graphic from "@arcgis/core/Graphic";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import * as watchUtils from "@arcgis/core/core/watchUtils";
-
+import VectorTileLayer from "@arcgis/core/layers/VectorTileLayer";
+import WMTSLayer from "@arcgis/core/layers/WMTSLayer";
+import Basemap from "@arcgis/core/Basemap";
+import BasemapToggle from "@arcgis/core/widgets/BasemapToggle";
+import Viewpoint from "@arcgis/core/Viewpoint";
+import Home from "@arcgis/core/widgets/Home";
+import Zoom from "@arcgis/core/widgets/Zoom";
+import ScaleBar from "@arcgis/core/widgets/ScaleBar";
+import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
+import Search from "@arcgis/core/widgets/Search";
+//import {store} from '../../storeUpd'
 // import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 //import SnappingOptions from "@arcgis/core/views/interactive/snapping/SnappingOptions";
 export const gLayer = new GraphicsLayer();
@@ -17,9 +27,29 @@ export const delgLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
 
+const txdotVectorTiles = new VectorTileLayer({
+    url: "https://tiles.arcgis.com/tiles/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Vector_Tile_Basemap/VectorTileServer",
+    id: "txdot"
+});
+
+// ADD GOOGLE IMAGERY WMTS LAYER
+const imagery = new WMTSLayer({
+    url: "https://txgi.tnris.org/login/path/corner-express-popcorn-compact/wmts",
+    serviceMode: "KVP",
+    id: "imagery"
+});
+
+const vTBasemap = new Basemap({
+    baseLayers: txdotVectorTiles
+});
+
+const imgBasemap = new Basemap({
+    baseLayers: imagery
+});
+
 export const map = new Map({
-    basemap: criConstants.basemap,
-    layers: [rdbdAssetLine,rdbdAssetPt,gLayer,addRdbd]
+    basemap: vTBasemap,
+    layers: [rdbdAssetLine,rdbdAssetPt,gLayer,addRdbd, rdbdAssetLine,rdbdAssetPt,gLayer]
 });
 
 export const view = new MapView({
@@ -36,16 +66,111 @@ export const view = new MapView({
       }
 });
 
+// ESRI UI WIDGETS
+export const basemapToggle = new BasemapToggle({
+    view: view,
+    nextBasemap: imgBasemap
+});
+
+export const viewPoint = new Viewpoint();
+
+export const home = new Home({
+    view: view,
+});
+
+const zoom = new Zoom({
+    view: view
+});
+
+const scaleBar = new ScaleBar({
+    view: view
+});
+
+const ccWidget = new CoordinateConversion({
+    view: view
+});
+
+// SEARCH WIDGET
+export const search = new Search({
+    // UNCOMMENT TO CONSTRUCT SEARCH IN NAVBAR
+    // container: "searchWidgetDiv",
+    view: view,
+    allPlaceholder: "County Road Name...",
+    includeDefaultSources: false,
+    sources: []
+});
+
+
+
+// PUSH SOURCES TO SEARCH WIDGET
+search.sources.push({
+    layer: new FeatureLayer({
+        url: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/0",
+        //definitionExpression: "CNTY_NBR = 11"//need to set dynamically using vuex store
+    }),
+    searchFields: ["RTE_NBR"],
+    displayField: "RTE_NBR",
+    exactMatch: false,
+    autoSelect: true,
+    outFields: ["*"],
+    name: "County Road",
+    placeholder: "Ex: 7, 240, 243",//need to set dynamically using vuex store
+    maxResults: 12,
+    maxSuggestions: 12,
+    suggestionsEnabled: true,
+    minCharacters: 0,
+    popupEnabled: false,
+    popupOpenOnSelect: false,
+    resultSymbol: {
+        type: "simple-line",
+        color: "cyan",
+        width: "6px",
+    }
+});
+console.log(search);
+// ADD AND POSITION WIDGETS IN THE MAPVIEW
+view.ui.remove("attribution");
+view.ui.empty("top-left");
+view.ui.add([
+  {
+    component: home,
+    position: "top-right",
+    index: 3
+  }, 
+  {
+    component: zoom,
+    position: "top-right",
+    index: 2
+  }, 
+  {
+    component: basemapToggle,
+    position: "bottom-right"
+  },
+  {
+    component: scaleBar,
+    position: "bottom-right"
+  },
+  {
+    component: ccWidget,
+    position: "bottom-left"   
+  },
+  {
+    component: search,
+    position: "top-right",
+    index: 0
+  },
+]);
+
 export const featLayer = new FeatureLayer({
     url: criConstants.refernceLayer,
-    opacity: 0,
+    opacity: 1,
     editingEnabled: true,
     //geometryTypeRd: criConstants.geomType,
     //definitionExpression: "CNTY_NM= 'Travis'",
     returnM: true,
     returnZ: true,
     hasM: true,
-    visible: false,
+    visible: true,
     renderer:{
         type: "simple",
         symbol:{
