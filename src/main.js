@@ -5,11 +5,13 @@ import '@arcgis/core/assets/esri/themes/light/main.css';
 import vuetify from './plugins/vuetify'
 import router from './router'
 import {roadInfo} from './store'
+import {store} from './storeUpd'
 Vue.config.productionTip = false
 
 new Vue({
   vuetify,
   router,
   roadInfo,
+  store,
   render: h => h(App)
 }).$mount('#app')

@@ -210,7 +210,7 @@
 import {countyInfo, autoDrawAsset} from '../components/Map/editFunc'
 import {featLayer,txCounties,view,rdbdSrfcGeom} from '../components/Map/map'
 import Query from "@arcgis/core/rest/support/Query"
-import {roadInfo} from '../store'
+//import {roadInfo} from '../store'
 //import MileSignConfirmation from '../components/Map/mileageConfirmation.vue'
 export default {
         name:"MileSign",
@@ -270,7 +270,7 @@ export default {
           this.sendData = parseInt(this.currentMiles)
           this.sendCountyName();
           //this.sendCountyName(Number(getCntyInfoQuery.features[0].attributes['Total_Mileage']))
-          roadInfo.getcntyMiles = this.currentMiles
+          this.$store.commit('setCntyMiles',this.currentMiles)
           this.dialog = true
           this.agreeTxt = `<br><br><p align="justify">You are about to certify your county mileage. The current mileage for <b>${this.county}</b> is <b>${this.currentMiles}</b>. Only the county judge can certify the county road inventory.<br><br>
                           If you are not the county judge, please exit this form, or proceed to the DUSA application to start making edits.<br></p><br>`
@@ -333,6 +333,7 @@ export default {
              this.emailList.push(count)
            },
            async goToMap(){
+            //login();
             this.$router.push('/map')
             let queryFeat = featLayer.definitionExpression =`CNTY_NM = '${this.county}'`
             txCounties.definitionExpression=`CNTY_NM='${this.county}'`
