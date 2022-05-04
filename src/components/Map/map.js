@@ -1,5 +1,5 @@
 import { criConstants } from '../../common/cri_constants';
-
+//import {getNewLength} from '../Map/editFunc'
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 import Sketch from "@arcgis/core/widgets/Sketch";
@@ -49,7 +49,7 @@ const imgBasemap = new Basemap({
 
 export const map = new Map({
     basemap: vTBasemap,
-    layers: [rdbdAssetLine,rdbdAssetPt,gLayer,addRdbd, rdbdAssetLine,rdbdAssetPt,gLayer]
+    layers: [rdbdAssetLine,rdbdAssetPt,gLayer,addRdbd]
 });
 
 export const view = new MapView({
@@ -273,14 +273,23 @@ export const countyOfficialInfo = new FeatureLayer({
     url: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_County_Info_Test/FeatureServer/0'
 })
 
-export const sketch = new Sketch({
-    view: view,
-    layer: [gLayer],
-    viewModel: new SketchViewModel({
+// export const sketch = new Sketch({
+//     view: view,
+//     layer: [gLayer],
+//     viewModel: new SketchViewModel({
+//         view: view,
+//         layer: gLayer,
+//     }),
+
+// });
+
+export const sketch = new SketchViewModel({
         view: view,
         layer: gLayer,
-    }),
-
+        updateOnGraphicClick: true,
+        defaultUpdateOptions:{
+            toggleToolOnClick: false
+        }
 });
 
 export const newSketch = new Sketch({
@@ -312,6 +321,10 @@ export const sketchPoint = new Sketch({
    
 });
 
+// view.when(() => { 
+//     console.log('one')
+//     sketch.on(['update'], getNewLength)
+// });
   //add portal service to map
 watchUtils.whenOnce(view,"ready").then(
     map.addMany([rdbdSrfcGeom,featLayer,txCounties])

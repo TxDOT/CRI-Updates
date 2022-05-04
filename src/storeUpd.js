@@ -16,8 +16,13 @@ export const store = new Vuex.Store({
         cntyMiles:0,
         count:0,
         updateDfo:0,
+        oldLength: 0,
+        deltaDistance: 0
     },
     getters:{
+        getOldLength(state){
+            return state.oldLength
+        },
         getUpdateDfo(state){
             return state.updateDfo
         },
@@ -55,6 +60,25 @@ export const store = new Vuex.Store({
         }
     },
     mutations:{
+        setDeltaDis(state, newLen){
+            let delta = newLen - state.oldLength
+            let mileage;
+            if(state.oldLength < newLen){
+                let addMiles = Math.abs(delta)
+                mileage = addMiles
+            }
+            if (state.oldLength > newLen){
+                let subMiles = -Math.abs(delta)
+                mileage = subMiles
+            }
+            if(state.oldLength === newLen){
+                mileage = 0
+            }
+            state.deltaDistance = mileage
+        },
+        setOldLength(state, oldLen){
+            state.oldLength = oldLen
+        },
         setUpdateDfo(state, updateDfo){
             state.updateDfo = updateDfo
         },

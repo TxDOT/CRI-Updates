@@ -144,15 +144,16 @@ export async function countyInfo(){
 }
 // Adding a new Roadbed to map
 export async function addRoadbed(){
-    return await new Promise(function(res){
-      newSketch.create("polyline",{mode:"click", hasZ: false})
-      newSketch.on('create', (event) => {
-            let lengthMiles;
-            if(event.state === "complete"){
-                //creating the length of road in miles for user
-                lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
-                res(lengthMiles);
-
+    let addNewRoad = new Promise(function(res){
+      sketch.create("polyline",{mode:"click", hasZ: false})
+      sketch.on('create', (event) => {
+        let lengthMiles;
+        if(event.state === "complete"){
+          //creating the length of road in miles for user
+          lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
+          res([lengthMiles, event.graphic.geometry]);
+          console.log(newSketch.layer.graphics.items.at(-1))
+             
                 // event.graphic.geometry.hasM = true
                 // event.graphic.attributes = {
                 //   gid: 9999,
@@ -170,12 +171,61 @@ export async function addRoadbed(){
                 // }
                 // reapplyM(event.graphic)
                 // setDataToStore(event.graphic.attributes.roadbedSurface, event.graphic.attributes.roadbedDesign, event.graphic.attributes.roadbedName, event.graphic.attributes.numLane, event.graphic.attributes.objectid)
-                // newSketch.complete();
-              }
-            
+                sketch.complete();
+            }
         });
-   
-    }) 
+    })
+    let returnAddNewRoad = await addNewRoad
+    console.log(returnAddNewRoad)
+    sketch.layer.graphics.items.at(-1).geometry.hasM = true
+    sketch.layer.graphics.items.at(-1).attributes = {
+      gid: 9999,
+      objectid: Number(new Date().getTime().toFixed(7)),
+      roadbedName: 'UNKNOWN',
+      roadbedDesign: 'One Way',
+      roadbedSurface: JSON.stringify([{
+        SRFC_TYPE_ID: "Paved",
+        ASSET_LN_BEGIN_DFO_MS: 0,
+        ASSET_LN_END_DFO_MS: Number(returnAddNewRoad[0].toFixed(3))
+      }]),
+      numLane: 1,
+      createDt: new Date().getTime(),
+      createNm: "DPROSACK" //replace with user login info. TODO
+    }
+    // const addGraphic = new Graphic({
+    //   geometry: {
+    //     type: "polyline",
+    //     paths: returnAddNewRoad[1].paths[0],
+    //     hasM: true,
+    //     spatialReference: {
+    //       wkid: 3857
+    //     }
+    //   },
+  
+    //   attributes: {
+    //     gid: 9999,
+    //     objectid: Number(new Date().getTime().toFixed(7)),
+    //     roadbedName: 'UNKNOWN',
+    //     roadbedDesign: 'One Way',
+    //     roadbedSurface: JSON.stringify([{
+    //       SRFC_TYPE_ID: "Paved",
+    //       ASSET_LN_BEGIN_DFO_MS: 0,
+    //       ASSET_LN_END_DFO_MS: Number(returnAddNewRoad[0].toFixed(3))
+    //     }]),
+    //     numLane: 1,
+    //     createDt: new Date().getTime(),
+    //     createNm: "DPROSACK" //replace with user login info. TODO
+    //   },
+    //   symbol: {
+    //     type: "simple-line",
+    //     color: [127, 255, 212],
+    //     width: 2,
+    //     style: "dash"
+    //   },
+    // })
+    // addRdbd.graphics.add(addGraphic);
+
+    return returnAddNewRoad[0]
 }
 
 
@@ -324,12 +374,12 @@ async function getNewLength(oldLength){
         reapplyM(event.graphics[0])
       }
     })
-    newSketch.on('update', (event) => {
-      if(event.state === 'complete'){
-        res(event)
-        reapplyM(event.graphics[0])
-      }
-    })
+    // newSketch.on('update', (event) => {
+    //   if(event.state === 'complete'){
+    //     res(event)
+    //     reapplyM(event.graphics[0])
+    //   }
+    // })
   })
   let returnNewLength = await newLengthPromise;
   let newLength = geometryEngine.geodesicLength(returnNewLength.graphics[0].geometry, "miles")
@@ -352,39 +402,47 @@ async function getNewLength(oldLength){
 }
 
 export async function updateLength(){
-  let newMileagePromise = new Promise(function(res){
-    view.on('click', (event) =>{
-      console.log(event)
-      if (sketch.state === "active") {
-        return;
-      }
-      if (newSketch.state === "active") {
-        return;
-      }
-      let opts = {include: [gLayer, addRdbd]}
-      view.hitTest(event,opts).then((response) =>{
-        const results = response.results;
-        console.log(results)
-        //console.log(gLayer.graphics.items.filter(objid => objid.attributes.objectid === results.graphic.attributes.objectid) ? 'true': 'false')
-        results.forEach(function (result) {
-          const reshapeME = gLayer.graphics.items.filter(objid => objid.attributes.objectid === result.graphic.attributes.objectid).length ? sketch: newSketch
-          reshapeME.update([result.graphic], { tool: "reshape" });
-          //sketch.update([result.graphic], { tool: "reshape" });
-          let oldLength = geometryEngine.geodesicLength(response.results[0].graphic.geometry, "miles")
-          res(getNewLength(oldLength))
+  try{
+    let newMileagePromise = new Promise(function(res){
+      view.on('click', (event) =>{
+        console.log(event)
+        if (sketch.state === "active") {
+          console.log('sketch state is active')
+        }
+        // if (newSketch.state === "active") {
+        //   return;
+        // }
+        let opts = {include: gLayer}
+        view.hitTest(event,opts).then((response) =>{
+          const results = response.results;
+          console.log(results)
+          //console.log(gLayer.graphics.items.filter(objid => objid.attributes.objectid === results.graphic.attributes.objectid) ? 'true': 'false')
+          results.forEach(function (result) {
+            //const reshapeME = gLayer.graphics.items.filter(objid => objid.attributes.objectid === result.graphic.attributes.objectid).length ? sketch: newSketch
+            sketch.update([result.graphic], { tool: "reshape" });
+            //sketch.update([result.graphic], { tool: "reshape" });
+            let oldLength = geometryEngine.geodesicLength(response.results[0].graphic.geometry, "miles")
+            res(getNewLength(oldLength))
+            sketch.complete();
+          })
         })
       })
     })
-  })
+  
+    let returnNewMileagePromise = await newMileagePromise
+    console.log(returnNewMileagePromise)
+    return returnNewMileagePromise
+  }
+  catch(Error){
+    console.log('updateLength error', Error)
+  }
 
-  let returnNewMileagePromise = await newMileagePromise
-  console.log(returnNewMileagePromise)
-  return returnNewMileagePromise
+  
 }
 //Stop Editing by calling the sketch cancel() method.
 
 export function stopEditing(){
-  newSketch.cancel()
+  sketch.cancel()
 }
 //populates stepper form when graphic is clicked.
 export async function getGraphic(){
@@ -441,7 +499,6 @@ function reapplyM(arr){
   let applyM = [];
   console.log(applyM)
   try{
-    console.log(!(arr.geometry.paths[0][0][2]) ? 0 : arr.geometry.paths[0][0][2])
     let segMil = arr.geometry.paths[0][0][2];
     applyM.push(arr.geometry.paths[0][0][2])
     for(let i=0; i < arr.geometry.paths[0].length; i++){
