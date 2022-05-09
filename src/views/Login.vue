@@ -65,3 +65,197 @@ export default {
     }
 }
 </script>
+
+    <v-dialog
+      v-model="disagree"
+      persistent
+      max-width="500">
+      <v-card v-model="disagree" height="300">
+         <v-img><img style="position:relative; top:0%;" src="@/assets/favicon-32x32.png"></v-img>
+        <v-card-actions>
+          <div style="position:absolute; top:10%; left: 0%" v-if="certify===false">
+          <v-alert color="red lighten-2" border="top" dark v-html="statusMessageFalse" class="black--text mb-3" >
+          </v-alert>
+          </div>
+          <div style="position:absolute; top:10%; left: 0%" v-if="certify===true">
+          <v-alert color="green" border="top" dark v-html="statusMessageTrue" class="black--text mb-3" >
+          </v-alert>
+          </div>
+          <div style="position:absolute; top:20%; left: 5%" class="black--text mb-3">
+            <v-card-text v-html="disagreeTxt">
+            </v-card-text>
+          </div>
+          <div style="position:absolute; left: 10%; bottom: 5%; width=100%">
+            <div style="position:relative; left:200%; top:0%">
+              <v-btn id="loginButton" elevation="2" @click="disagree = false;logMeIn()" color="primary"> <!-- goToMap() -->
+                Login
+              </v-btn>
+            </div>
+            <div style="position:relative; right:50%; bottom:10%">
+              <v-btn x-small elevation="0" outlined color="primary" onclick="window.location.href='https://www.dot.state.tx.us/apps-cg/contact_us/form/dusa-form.htm'" >
+                Sign-Up
+              </v-btn>
+            </div>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+</template>
+
+<script>
+import {autoDrawAsset} from '../components/Map/editFunc'
+import {txCounties,view,rdbdSrfcGeom, featLayer} from '../components/Map/map'
+import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
+import esriId from "@arcgis/core/identity/IdentityManager";
+import Portal from "@arcgis/core/portal/Portal";
+import Query from "@arcgis/core/rest/support/Query"
+export default {
+    name: 'Login',
+    props:['id'],
+    data(){
+        return{
+        statusMessageTrue:'',
+        statusMessageFalse:'',
+        certify: false,
+        disagree: true,
+        disagreeTxt:'<br><br>Click on the Login button to use your CRI credentials to access DUSA. If you do not have a DUSA account, click on the sign up button to register.',
+        judgeName:'',
+        county:'',
+        auth: {},
+        cntyNme:''
+        }
+    },
+    async mounted(){
+      // this.cntyNme = this.$store.state.cntyNme
+      // console.log(this.cntyNme)
+      //this.cntyNme = this.countyName
+      //console.log(this.cntyNme)
+      this.auth = new OAuthInfo({
+        appId:"Chsd9GwkzlckpRBr",
+        expiration: 10080,
+        flowType: 'auto',
+        popup: false,
+        portalUrl: "https://txdot.maps.arcgis.com",
+        preserveUrlHash: true
+      });
+      esriId.registerOAuthInfos([this.auth]);
+      console.log(this.auth)
+      
+      this.loginStatus()
+      //esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
+      //   .then((value) => {
+      //     console.log(value)
+      //     window.location = 'http://localhost:8080/11'
+      //     this.goToMap()
+      //   })
+      //     .catch((error) => {
+      //       'error',error
+      //     })
+      
+      
+
+      this.certify = false;
+      // let readCntyInfo = await countyInfo()
+      // let getCntyInfoQuery = await readCntyInfo['query']
+      // this.judgeName = getCntyInfoQuery.features[0].attributes['Judge_Name']
+      // this.county = getCntyInfoQuery.features[0].attributes['County_Name']
+      const todayDate = new Date();
+      this.certiAlert = `<p>By clicking submit, you are certifying the mileage for your county and completing the process for ${todayDate.getFullYear()-1}.<br> Edits made in ${todayDate.getFullYear()} after certifying are allowed, but will need to be recertified by the county judge prior to <DATE> in order to be accepted.`
+      todayDate.toDateString()
+      this.statusMessageFalse =`As of today, ${todayDate.toDateString().substring(4,15)}, Judge David P, has not certified the mileage for County Fake `
+      this.statusMessageTrue =`As of today, ${todayDate.toDateString().substring(4,15)}, Judge David P, has certified the mileage for County Fake`
+    },
+    methods:{
+      logMeIn(){
+        esriId.getCredential(this.auth.portalUrl + "/sharing")
+          .then((value)=>{
+            console.log(value)
+            esriId.setOAuthRedirectionHandler(function(info){
+              console.log(info)
+            })
+          })
+          .catch(error =>{
+            console.log('error', error)
+          })
+        console.log('logging in')
+      },
+      loginStatus(){
+        esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
+          .then((value) => {
+            console.log(value.userId)
+            this.userName = value.userId
+            let county = JSON.parse(localStorage.getItem('county'))
+            let cntyNumber = county[1]
+            let cntyName = county[0]
+            this.countyName = cntyName
+            this.countyNumber = cntyNumber
+            this.countyMiles = county[2]
+            this.goToMap(cntyName,cntyNumber)
+          })
+      },
+      async goToMap(name, nbr){
+        this.$router.push('/map')
+        console.log(nbr)
+        let queryFeat = featLayer.definitionExpression =`CNTY_NM = '${name}'`
+        txCounties.definitionExpression=`CNTY_NM='${name}'`
+        rdbdSrfcGeom.definitionExpression=`CNTY_NM='${name}'`
+        const query = new Query();
+        query.where = `CNTY_NM = '${name}'`
+        query.outFields = [ "*" ]
+        query.returnGeometry = true
+        let countyQuery = txCounties.queryFeatures(query)
+        let returnCountyObj = await countyQuery
+        view.goTo({
+          target: returnCountyObj.features[0].geometry
+        })
+        autoDrawAsset(queryFeat)
+      },
+      handleSignedIn() {
+
+        const portal = new Portal();
+        portal.load().then(() => {
+          const results = { name: portal.user.fullName, username: portal.user.username };
+          console.log(results)
+        });
+
+      }
+    },
+    computed:{
+      countyName:{
+        get(){
+          return this.$store.state.cntyName
+        },
+        set(countyName){
+          this.$store.commit('setCntyName',countyName)
+        }
+      },
+      countyNumber:{
+        get(){
+          return this.$store.state.cntyNmbr
+        },
+        set(countyNumber){
+          this.$store.commit('setCntyNmbr', countyNumber)
+        }
+      },
+      countyMiles:{
+        get(){
+          return this.$store.state.cntyMiles
+        },
+        set(countyMiles){
+          this.$store.commit('setCntyMiles',countyMiles)
+        }
+      },
+      userName:{
+        get(){
+          return this.$store.state.username
+        },
+        set(userName){
+          this.$store.commit('setUserName', userName)
+        }
+      }
+    }
+    
+}
+
+
+</script>
