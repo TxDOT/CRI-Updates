@@ -268,6 +268,7 @@ export default {
           this.currentMiles = getCntyInfoQuery.features[0].attributes['Total_Mileage']
           this.county = getCntyInfoQuery.features[0].attributes['County_Name']
           this.sendData = parseInt(this.currentMiles)
+          localStorage.setItem('county',JSON.stringify([this.county,this.countyNbr,this.currentMiles]))
           this.sendCountyName();
           //this.sendCountyName(Number(getCntyInfoQuery.features[0].attributes['Total_Mileage']))
           this.$store.commit('setCntyMiles',this.currentMiles)
