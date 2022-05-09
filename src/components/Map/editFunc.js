@@ -81,7 +81,7 @@ async function queryFeatureTables(tblqry){
     rdbdSrfArry[i].ASSET_LN_END_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_END_DFO_MS.toFixed(3))
   } 
   setDataToStore(rdbdSrfArry, rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR, rdbdNameAtt.features[0].attributes.ST_DEFN_NM, rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT)
-  roadInfo.getSurface = rdbdSrfArry //push surface type values to getSurface setter
+  //roadInfo.getSurface = rdbdSrfArry //push surface type values to getSurface setter
   // roadInfo.getDesign = rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR
   // roadInfo.getName = rdbdNameAtt.features[0].attributes.ST_DEFN_NM
   // roadInfo.getLane = rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT
@@ -252,10 +252,11 @@ export async function modifyRoadbed(clickType){
   defineGraphic(feature,clickType)
   //rdbdSrfc.then(result => console.log(result))
   if(clickType === "pointer-move"){
-    roadInfo.getObjectId = feature.features[0].attributes.OBJECTID
+    
+    store.commit('setObjectid', feature.features[0].attributes.OBJECTID)
+    //roadInfo.getObjectId = feature.features[0].attributes.OBJECTID
     return 1 //provide increments for stepper
   }
-
   return feature//geometryEngine.geodesicLength(feature.features[0].geometry, "miles")
 }
 //turn on/off imagery at zoom level 9; NeedsReview
@@ -366,7 +367,7 @@ function hideEditedRoads(graphicL){
 }
 //Updates Length Measurements when vertex on Graphics layer moves for readout
 async function getNewLength(oldLength){
-  console.log(oldLength)
+  let oldLen = Number(oldLength.toFixed(5))
   let newLengthPromise = new Promise(function(res){
     sketch.on('update', (event) => {
       if(event.state === 'complete'){
@@ -382,20 +383,20 @@ async function getNewLength(oldLength){
     // })
   })
   let returnNewLength = await newLengthPromise;
-  let newLength = geometryEngine.geodesicLength(returnNewLength.graphics[0].geometry, "miles")
-  console.log(newLength, oldLength)
-  const deltaLength = newLength - oldLength
+  let newLength = Number(geometryEngine.geodesicLength(returnNewLength.graphics[0].geometry, "miles").toFixed(5))
+  console.log(newLength, oldLen)
+  const deltaLength = newLength - oldLen
   let mileage;
-  if(oldLength < newLength){
+  if(oldLen < newLength){
     let addMiles = Math.abs(deltaLength)
     mileage = addMiles
   }
-  if (oldLength > newLength){
+  if (oldLen > newLength){
     let subMiles = -Math.abs(deltaLength)
     mileage = subMiles
   }
-  if(oldLength === newLength){
-    mileage = 0
+  if(oldLen === newLength){
+    mileage = 0;
   }
   console.log(mileage)
   return mileage;  
@@ -844,7 +845,7 @@ function getNewDfoDist(objectid, x, y){
   if(objid.length){
     objid.length=0
   }
-  
+  //new point clicked in the map
   let pointA = new Graphic({
     geometry:{
       type: "point",
@@ -852,7 +853,7 @@ function getNewDfoDist(objectid, x, y){
       latitude: y
     }
   })
-
+//convert new point to Geograpic i.e lat/long
   let webMercaPointA = webMercatorUtils.webMercatorToGeographic(pointA.geometry)
   for(let id in gLayer.graphics.items){
     if(gLayer.graphics.items[id].attributes.objectid === objectid){
@@ -861,9 +862,10 @@ function getNewDfoDist(objectid, x, y){
     }
   }
   console.log(objid.paths[0].length)
+  //find neartest vertex for the new point along the line and return vertex Index
   let index = geometryEngine.nearestVertex(objid, pointA.geometry).vertexIndex
   let nearVert = objid.paths[0].at(index)
-  console.log(index)
+  console.log(index, nearVert)
   let path;
   if(objid.paths[0].at(-1) === nearVert){
     console.log("End of the line")
@@ -875,11 +877,12 @@ function getNewDfoDist(objectid, x, y){
     path = objid.paths[0].slice(index, index+2)
   }
   console.log(path)
+  //determine the direction of the line
   let direction = path[0][0] > path[1][0]
   console.log(direction) 
   let x2 = nearVert[0]
   let y2 = nearVert[1]
-
+  //neareast vertex point
   let pointB = new Graphic({
     geometry:{
       type: "point",
@@ -890,30 +893,32 @@ function getNewDfoDist(objectid, x, y){
   console.log(pointA, pointB)
   //determine point is left or right of another point; (+) to the right. (-) to the left
   let dir = x - x2
- 
+  console.log(dir > 0 ? index+1:index-2, index)
+  console.log(y - y2)
   let dir2;
   if(dir === 0 ){
     dir2 = y - y2
   }
-
+  //convert GraphicB to Geographic i.e lat/long
   let webMercaPointB = webMercatorUtils.webMercatorToGeographic(pointB.geometry)
+  //find distance between clicked point and nearest point
   const pointAPointB = geodesicUtils.geodesicDistance(webMercaPointB, webMercaPointA)
   console.log(pointAPointB)
 
   console.log(path[0][2])
   console.log(path[1][2])
   if(dir < 0 && !direction){
-    console.log('1',Math.abs(path[0][2] - (pointAPointB.distance/1609.344)))
+    console.log('1',Math.abs(path[0][2] - (pointAPointB.distance/1609.344)),dir)
 
   }
   else if (dir > 0 && !direction){
-    console.log('1',Math.abs(path[0][2] + (pointAPointB.distance/1609.344)))
+    console.log('1',Math.abs(path[0][2] + (pointAPointB.distance/1609.344)),dir)
   }
   else if (dir < 0 && direction){
-    console.log('2',Math.abs(path[0][2] + (pointAPointB.distance/1609.344)))
+    console.log('2',Math.abs(path[0][2] + (pointAPointB.distance/1609.344)),dir)
   }
   else if (dir > 0 && direction){
-    console.log('2',Math.abs(path[0][2] - (pointAPointB.distance/1609.344)))
+    console.log('2',Math.abs(path[0][2] - (pointAPointB.distance/1609.344)),dir)
   }
   //let newDfo;
   console.log(path[0][2])
@@ -926,18 +931,22 @@ function getNewDfoDist(objectid, x, y){
   if(dir < 0 && !direction){
     newDfo = Math.abs(path[0][2] - (pointAPointB.distance/1609.344))
     mnbv = index
+    console.log(mnbv,index)
   }
   else if (dir > 0 && !direction){
     newDfo = Math.abs(path[0][2] + (pointAPointB.distance/1609.344))
     mnbv = index+1
+    console.log(mnbv,index)
   }
   else if (dir < 0 && direction){
     newDfo = Math.abs(path[0][2] + (pointAPointB.distance/1609.344))
     mnbv = index+1
+    console.log(mnbv,index)
   }
   else if (dir > 0 && direction){
     newDfo = Math.abs(path[0][2] - (pointAPointB.distance/1609.344))
     mnbv = index
+    console.log(mnbv,index)
   }
   
   if(dir === 0 && dir2 < 0){
@@ -954,6 +963,7 @@ function getNewDfoDist(objectid, x, y){
   //   console.log('Points Match')
   //   return;
   // }
+  console.log(mnbv,x,y,newDfo)
   objid.insertPoint(0,mnbv, [x, y, Number(newDfo.toFixed(3))])
 
   
@@ -1056,8 +1066,7 @@ export async function updateAsset(y){
   rdbdAssetPt.graphics.add(newAssetPt)
   console.log(rdbdAssetPt)
   
-  roadInfo.getUpdateDfo = newAssetPt.attributes.eDfo
-  console.log(roadInfo.getUpdateDfo)
+  store.commit('setUpdateDfo',newAssetPt.attributes.eDfo)
   //returns all asset points related by objectid
   let currentAsst = rdbdAssetPt.graphics.items.filter(ca => ca.attributes.objectid === y[0].objectid)
   let assetArray=[]

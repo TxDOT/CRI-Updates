@@ -4,14 +4,16 @@
     v-model="e1"
     vertical
     non-linear
-    class="mb-12">
+    class="mb-12"
+    >
+    <small>Fill out this form to complete editing your road.</small>
     <v-stepper-step
       editable
       :complete="e1 > 1"
       step="1"
       @click="removeAsstPt()">
       Road Name: 
-      <small>Fill out this form to complete editing your road.</small>
+      
     </v-stepper-step>
 
     <v-stepper-content step="1">
@@ -53,7 +55,8 @@
       editable
       :complete="e1 > 3"
       step="3"
-      > <!-- Get asset breaks and draw graphic points -->
+      @click="executeDFOgraph('point')" 
+      > //change location of executeGraph function<!-- Get asset breaks and draw graphic points -->
       Road Surface
     </v-stepper-step>
     <v-stepper-content step="3">
@@ -65,28 +68,36 @@
           <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID" :disabled="graphic ? disabled : ''"></v-select> <!-- //v-model="roadbedSurface" -->
           <v-row>
                <v-col sm="6">
-                 <v-text-field label='A' v-model="item.ASSET_LN_BEGIN_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field>
+                 <v-text-field label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field> //changed label and added disabled
                </v-col>
                <v-col sm="6">
-                 <v-text-field label='B' v-model="item.ASSET_LN_END_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field>
-                 <v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)"><v-icon>mdi-pencil</v-icon></v-btn>
+                 <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field> //changed label and added disabled
+                 <v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)" :disabled="graphic ? disabled : ''"> //added disabled and changed icon location
+                    <v-icon color="blue">mdi-pencil</v-icon> //changed icon location
+                  </v-btn> //changed icon location
+                    <v-btn id="currentSurf" small @click="deleteSurface(index)" elevation=0 :disabled="graphic ? disabled : ''"><v-icon color="red">mdi-delete</v-icon> //added disabled and changed icon
+                  </v-btn> 
                </v-col>
           </v-row>
           <!-- Deletes asset break in the form -->
-          <v-btn id="currentSurf" @click="deleteSurface(index)" elevation=0><v-icon>mdi-delete</v-icon></v-btn> 
           </v-col>
           <!-- Adds new asset breaks to form based on mileInfo array (populated by user click addRoadSurface function) -->
         <v-card v-for="(item,index) in mileInfo" :key="index" >
             <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID"></v-select>
             <v-row>
                <v-col>
-                 <v-text-field  label='A' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field>
+                 <v-text-field  label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field> //changed label
                </v-col>
                <v-col sm="6">
-                 <v-text-field label='B' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field><v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)"><v-icon>mdi-pencil</v-icon></v-btn>
+                 <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field> //changed label
+                 <v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)"> //changed icon
+                    <v-icon color="blue">mdi-pencil</v-icon> //changed icon
+                  </v-btn> //changed icon
+                  <v-btn id="addSurf" small @click="deleteSurface()" elevation=0> //changed icon
+                    <v-icon color="red">mdi-delete</v-icon> //changed icon
+                  </v-btn> //changed icon
                </v-col>
             </v-row>
-            <v-btn id="addSurf" @click="deleteSurface()" elevation=0><v-icon>mdi-delete</v-icon></v-btn>
         </v-card>
         </div>
         <v-btn color="pink" @click="addRoadSurface">add additional Road Surface Types</v-btn>
@@ -109,7 +120,7 @@
         </v-card> -->
          <v-btn
             color="primary"
-            @click="executeDFOgraph('point')">
+          >
             Draw Surface Graphic
         </v-btn>
         <v-btn
@@ -217,13 +228,16 @@ export default {
       //Interacting with reference layer
       clickCountF:{ //roadbedName
         handler: async function(){
+          console.log('hover')
+          document.body.style.cursor = "pointer"
+          setTimeout(()=>{console.log('hello')},2000)
           const click = "pointer-move"
           let countF = await modifyRoadbed(click)
           this.feature = true;
           this.graphic = false;
           this.clickCountF += countF
           console.log(countF)
-          document.getElementById("step").style.width='450px'
+          //document.getElementById("step").style.width='450px'
         },
         immediate: true,
       },
@@ -344,6 +358,7 @@ export default {
       cancel(){
         document.getElementById("step").style.width = '0px'
         console.log(this.getCount)
+        sketchCompete();
       },
       //pushes new blank object row into mileInfo asset form
       addRoadSurface(){
@@ -436,8 +451,6 @@ export default {
           return this.$store.state.objectid
         }
       }
-
-      
     }
 }
 </script>
@@ -449,5 +462,4 @@ export default {
   scrollbar-color: grey;
   scrollbar-width: thin;
 }
-
 </style>

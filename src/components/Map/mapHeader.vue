@@ -1,7 +1,7 @@
 <template>
     <div id ="mapHeader">
         <v-toolbar dark>
-            <v-app-bar-nav-icon @click="expand"></v-app-bar-nav-icon>
+            <v-btn @click="expand()">Open Form<v-icon>mdi-arrow-right-circle</v-icon></v-btn> //added expand
             <v-toolbar-title justify="center">Welcome to DUSA</v-toolbar-title>
             <v-btn-toggle id="editBtns">
                 <v-btn color="red" small>Delete Roads</v-btn>
@@ -65,6 +65,15 @@ export default {
         cancelEditing(){
             stopEditing()
         },
+        expand(){ //added 
+            if(document.getElementById("step").style.width==='450px'){  //added 
+                document.getElementById("step").style.width='0px'  //added 
+                //document.getElementById("step").style.height='100px'  //added 
+            }  //added 
+            else{  //added 
+                document.getElementById("step").style.width='450px'  //added 
+            }  //added 
+        }  //added 
     },
 }    
 </script>
