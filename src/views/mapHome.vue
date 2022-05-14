@@ -4,6 +4,8 @@
     <mapHeader/>
     <Map/>
     <mapFooter/>
+    <navSideBar/>
+    <!-- <stepper/> -->
   </div>
 </template>
 
@@ -11,11 +13,13 @@
 import Map from '../components/Map/Map.vue'
 import mapHeader from '../components/Map/mapHeader.vue'
 import mapFooter from '../components/Map/mapFooter.vue'
+import navSideBar from '../components/navigationSideBar.vue'
+//import stepper from '../components/stepperQuestion.vue'
 //import {countyInfo} from '../components/Map/editFunc'
 import {roadInfo} from '../store'
 export default {
     name: 'MapHome',
-    components: {Map, mapHeader, mapFooter},
+    components: {Map, mapHeader, mapFooter,navSideBar},
     props:["id"],
     methods:{
       expand(){

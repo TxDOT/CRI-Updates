@@ -1,10 +1,12 @@
 <template>
-  <v-stepper
-    id="stepper"
+  <div id="stepper">
+    <v-stepper
     v-model="e1"
     vertical
     non-linear
     class="mb-12"
+    max-width="300"
+    min-width="0"
     >
     <small>Fill out this form to complete editing your road.</small>
     <v-stepper-step
@@ -34,7 +36,7 @@
       editable
       :complete="e1 > 2"
       step="2"
-      @click="removeAsstPt()">
+      @click="removeAsstPt(); complete();">
       Road Design
     </v-stepper-step>
 
@@ -55,8 +57,8 @@
       editable
       :complete="e1 > 3"
       step="3"
-      @click="executeDFOgraph('point')" 
-      > //change location of executeGraph function<!-- Get asset breaks and draw graphic points -->
+      @click="executeDFOgraph('point'); complete();" 
+      ><!-- Get asset breaks and draw graphic points -->
       Road Surface
     </v-stepper-step>
     <v-stepper-content step="3">
@@ -68,14 +70,14 @@
           <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID" :disabled="graphic ? disabled : ''"></v-select> <!-- //v-model="roadbedSurface" -->
           <v-row>
                <v-col sm="6">
-                 <v-text-field label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field> //changed label and added disabled
+                 <v-text-field label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field> 
                </v-col>
                <v-col sm="6">
-                 <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field> //changed label and added disabled
-                 <v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)" :disabled="graphic ? disabled : ''"> //added disabled and changed icon location
-                    <v-icon color="blue">mdi-pencil</v-icon> //changed icon location
-                  </v-btn> //changed icon location
-                    <v-btn id="currentSurf" small @click="deleteSurface(index)" elevation=0 :disabled="graphic ? disabled : ''"><v-icon color="red">mdi-delete</v-icon> //added disabled and changed icon
+                 <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field>
+                 <v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)" :disabled="graphic ? disabled : ''">
+                    <v-icon color="blue">mdi-pencil</v-icon>
+                  </v-btn>
+                    <v-btn id="currentSurf" small @click="deleteSurface(index)" elevation=0 :disabled="graphic ? disabled : ''"><v-icon color="red">mdi-delete</v-icon>
                   </v-btn> 
                </v-col>
           </v-row>
@@ -86,16 +88,16 @@
             <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID"></v-select>
             <v-row>
                <v-col>
-                 <v-text-field  label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field> //changed label
+                 <v-text-field  label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field>
                </v-col>
                <v-col sm="6">
-                 <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field> //changed label
-                 <v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)"> //changed icon
-                    <v-icon color="blue">mdi-pencil</v-icon> //changed icon
-                  </v-btn> //changed icon
-                  <v-btn id="addSurf" small @click="deleteSurface()" elevation=0> //changed icon
-                    <v-icon color="red">mdi-delete</v-icon> //changed icon
-                  </v-btn> //changed icon
+                 <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field>
+                 <v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)">
+                    <v-icon color="blue">mdi-pencil</v-icon>
+                  </v-btn>
+                  <v-btn id="addSurf" small @click="deleteSurface()" elevation=0>
+                    <v-icon color="red">mdi-delete</v-icon>
+                  </v-btn>
                </v-col>
             </v-row>
         </v-card>
@@ -120,6 +122,7 @@
         </v-card> -->
          <v-btn
             color="primary"
+            @click="complete();"
           >
             Draw Surface Graphic
         </v-btn>
@@ -133,7 +136,7 @@
         </v-btn>
     </v-stepper-content>
 
-    <v-stepper-step step="4" editable @click="removeAsstPt()">
+    <v-stepper-step step="4" editable @click="removeAsstPt();complete();">
       Number of Lanes
     </v-stepper-step>
     <v-stepper-content step="4">
@@ -149,7 +152,7 @@
       </v-btn>
     </v-stepper-content>
 
-    <v-stepper-step step="5" editable @click="removeAsstPt()">
+    <v-stepper-step step="5" editable @click="removeAsstPt(); complete();">
       Completed?
     </v-stepper-step>
     <v-stepper-content step="5">
@@ -164,11 +167,13 @@
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
   </v-stepper>
+  </div>
+  
 </template>
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import { getGraphic, saveInfo, removeAsstPoints, modifyRoadbed, applyMToAsset, updateAsset, sketchCompete} from '../components/Map/editFunc'
+import { getGraphic, saveInfo, removeAsstPoints, applyMToAsset, updateAsset, sketchCompete} from '../components/Map/editFunc'
 //import {roadInfo} from '../store'
 //import Map from '../components/Map/Map.vue'
 
@@ -217,30 +222,26 @@ export default {
         }
       }
     },
-    mounted(){
-      document.getElementById('addBtn').onclick = this.clearTable
-     
-    },
     watch:{
       received(){
         console.log(this.received)
       },
       //Interacting with reference layer
-      clickCountF:{ //roadbedName
-        handler: async function(){
-          console.log('hover')
-          document.body.style.cursor = "pointer"
-          setTimeout(()=>{console.log('hello')},2000)
-          const click = "pointer-move"
-          let countF = await modifyRoadbed(click)
-          this.feature = true;
-          this.graphic = false;
-          this.clickCountF += countF
-          console.log(countF)
-          //document.getElementById("step").style.width='450px'
-        },
-        immediate: true,
-      },
+      // clickCountF:{ //roadbedName
+      //   handler: async function(){
+      //     console.log('hover')
+      //     document.body.style.cursor = "pointer"
+      //     setTimeout(()=>{console.log('hello')},2000)
+      //     const click = "pointer-move"
+      //     let countF = await modifyRoadbed(click)
+      //     this.feature = true;
+      //     this.graphic = false;
+      //     this.clickCountF += countF
+      //     console.log(countF)
+      //     //document.getElementById("step").style.width='450px'
+      //   },
+      //   immediate: true,
+      // },
       //Interacting with Graphic layer
       clickCount:{
         handler: async function(){
@@ -250,7 +251,7 @@ export default {
           this.graphic = true;
           this.clickCount += countG
           //this.numLane = roadInfo.getLane
-          document.getElementById("step").style.width='450px'
+          // document.getElementById("step").style.width='450px'
           this.rdbdSurf
           this.roadbedName
           this.roadbedDesign
@@ -291,12 +292,12 @@ export default {
         if(x==='point'){
           console.log(this.rdbdSurf)
           for(let b in this.rdbdSurf){
-            let srfcType = {SRFC_TYPE_ID: this.rdbdSurf[b].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: Number(this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS), ASSET_LN_END_DFO_MS: Number(this.rdbdSurf[b].ASSET_LN_END_DFO_MS), objectid: this.objectid}
+            let srfcType = {SRFC_TYPE_ID: this.rdbdSurf[b].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, ASSET_LN_END_DFO_MS: this.rdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid, edit: false}
             dfoAssets.push(srfcType)
           }
           for(let i in this.mileInfo){
             console.log(this.mileInfo[i])
-            let array = {SRFC_TYPE_ID: this.mileInfo[i].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), ASSET_LN_END_DFO_MS: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid, edit: this.mileInfo[i].EDIT}
+            let array = {SRFC_TYPE_ID: this.mileInfo[i].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS, ASSET_LN_END_DFO_MS: this.mileInfo[i].ASSET_LN_END_DFO_MS,objectid: this.objectid, edit: this.mileInfo[i].EDIT}
             dfoAssets.push(array)
           }
           this.newDfo = applyMToAsset(dfoAssets)
@@ -356,7 +357,7 @@ export default {
         }
       },
       cancel(){
-        document.getElementById("step").style.width = '0px'
+        document.getElementById("stepper").style.width = '0px'
         console.log(this.getCount)
         sketchCompete();
       },
@@ -408,6 +409,9 @@ export default {
         console.log(createObj)
         saveInfo(createObj)
       },
+      complete(){
+        sketchCompete();
+      }
     },
     computed:{ //Used to work with the vue properties without modifying them
       // rdbdSurf(){
@@ -455,6 +459,13 @@ export default {
 }
 </script>
 <style scoped>
+#stepper{
+  position: absolute;
+  top: 30%;
+  width: 300px;
+  left:100%;
+  border: red;
+}
 .scroller {
   width: auto;
   height: 300px;

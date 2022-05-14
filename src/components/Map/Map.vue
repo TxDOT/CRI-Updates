@@ -1,6 +1,6 @@
 <template>
     <div id="viewDiv" class="main">
-        <div id="step"><stepper/></div>
+        <!-- <div id="step"><stepper/></div> -->
         <div id="welcomeAlert">
             <v-alert 
                 v-model="alert"
@@ -10,7 +10,7 @@
                 elevation="5"
                 colored-border
                 icon="@/assets/favicon-32x32.png"
-            >//added alert
+            >
      To Begin Editing, Add a New Road or click on an existing Road.
     </v-alert>
         </div>
@@ -19,7 +19,7 @@
 
 <script>
 //import {zoomExtents, } from '../Map/editFunc'
-import stepper from '../../components/stepperQuestion.vue'
+//import stepper from '../../components/stepperQuestion.vue'
 
 //import mapFooter from '../Map/mapFooter.vue'
 //import {roadInfo} from '../../store'
@@ -29,7 +29,7 @@ import stepper from '../../components/stepperQuestion.vue'
 
 export default {
     name: 'Map',
-    components: {stepper},
+    //components: {stepper},
     data(){
         return{
             // submitCertify:false,
@@ -43,6 +43,7 @@ export default {
             lineLength: {},
             newMiles: '',
             modifyLine: 0,
+            alert:''
             //modifyLength: 0,
         }
     },

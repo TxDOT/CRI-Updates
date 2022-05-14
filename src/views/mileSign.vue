@@ -20,7 +20,7 @@
             small
             dark
             color="red"
-            @click="dialog=false; disagree = true; "><!-- goToMap() -->
+            @click="dialog=false; logMeIn()"><!-- goToMap() -->
             Review & Edit
             </v-btn>
             </div>
@@ -101,8 +101,9 @@
             required
             outlined
         ></v-text-field>
-        <v-text-field v-for="item in emailList" :key="item"
+        <v-text-field v-for="(item, index) in emailList" :key="index"  
             :rules="emailRules"
+            v-model="item.index"
             label="CC E-mail"
             required
             outlined
@@ -208,7 +209,7 @@
 
 <script>
 import {countyInfo, autoDrawAsset} from '../components/Map/editFunc'
-import {featLayer,txCounties,view,rdbdSrfcGeom} from '../components/Map/map'
+import {featLayer,txCounties,view} from '../components/Map/map'
 import Query from "@arcgis/core/rest/support/Query"
 //import {roadInfo} from '../store'
 //import MileSignConfirmation from '../components/Map/mileageConfirmation.vue'
@@ -315,30 +316,32 @@ export default {
          methods:{
           submit(){
             // submit data to fme server workspace via webhook for processing
-            let xmlhttp = new XMLHttpRequest();
-            xmlhttp.responseType = 'json';
-            xmlhttp.onreadystatechange=function() {
-              if (xmlhttp.readyState==4 && xmlhttp.status==200)   {
-                console.log("Webhook fired! Check your email...");
-              }
-              };
-            let theService = `https://gis-batch-dev.txdot.gov:8443/fmejobsubmitter/DUSA/emailer.fmw?email="TXDOT.SPM@gmail.com"&name=${this.judgeName}&opt_showresult=false&opt_servicemode=sync&token=a421aac78d7326aca5457e78d144e64cd972f885`;
-            xmlhttp.open("GET",theService,true);
-            xmlhttp.send();
+            console.log(this.emailList)
+            // let xmlhttp = new XMLHttpRequest();
+            // xmlhttp.responseType = 'json';
+            // xmlhttp.onreadystatechange=function() {
+            //   if (xmlhttp.readyState==4 && xmlhttp.status==200)   {
+            //     console.log("Webhook fired! Check your email...");
+            //   }
+            //   };
+            // let theService = `https://gis-batch-dev.txdot.gov:8443/fmejobsubmitter/DUSA/emailer.fmw?email="TXDOT.SPM@gmail.com"&name=${this.judgeName}&opt_showresult=false&opt_servicemode=sync&token=a421aac78d7326aca5457e78d144e64cd972f885`;
+            // xmlhttp.open("GET",theService,true);
+            // xmlhttp.send();
           },
            addSignature(){
              return this.signature
            },
            addEmail(){
              let count= this.counter++
-             this.emailList.push(count)
+            this.emailList.push(count)
+            //this.emailList.push({"count": count, "email":''})
            },
            async goToMap(){
             //login();
             this.$router.push('/map')
             let queryFeat = featLayer.definitionExpression =`CNTY_NM = '${this.county}'`
             txCounties.definitionExpression=`CNTY_NM='${this.county}'`
-            rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
+            //rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
             const query = new Query();
             query.where = `CNTY_NM = '${this.county}'`
             query.outFields = [ "*" ]
@@ -357,6 +360,9 @@ export default {
           deleteEmail(index){
           this.emailList.splice(index, 1)
           },
+          logMeIn(){
+             this.$router.push('/login')
+           },
           // validate(){
           //   this.$refs.form.validate()
           // }

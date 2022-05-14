@@ -16,13 +16,12 @@ import Viewpoint from "@arcgis/core/Viewpoint";
 import Home from "@arcgis/core/widgets/Home";
 import Zoom from "@arcgis/core/widgets/Zoom";
 import ScaleBar from "@arcgis/core/widgets/ScaleBar";
-import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
+//import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
 import Search from "@arcgis/core/widgets/Search";
 //import {store} from '../../storeUpd'
 // import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 //import SnappingOptions from "@arcgis/core/views/interactive/snapping/SnappingOptions";
 export const gLayer = new GraphicsLayer();
-export const addRdbd = new GraphicsLayer();
 export const delgLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
@@ -49,7 +48,7 @@ const imgBasemap = new Basemap({
 
 export const map = new Map({
     basemap: vTBasemap,
-    layers: [rdbdAssetLine,rdbdAssetPt,gLayer,addRdbd]
+    layers: [rdbdAssetLine,rdbdAssetPt,gLayer]
 });
 
 export const view = new MapView({
@@ -86,9 +85,9 @@ const scaleBar = new ScaleBar({
     view: view
 });
 
-const ccWidget = new CoordinateConversion({
-    view: view
-});
+// const ccWidget = new CoordinateConversion({
+//     view: view
+// });
 
 // SEARCH WIDGET
 export const search = new Search({
@@ -150,10 +149,10 @@ view.ui.add([
     component: scaleBar,
     position: "bottom-right"
   },
-  {
-    component: ccWidget,
-    position: "bottom-left"   
-  },
+//   {
+//     component: ccWidget,
+//     position: "bottom-left"   
+//   },
   {
     component: search,
     position: "top-right",
@@ -180,74 +179,74 @@ export const featLayer = new FeatureLayer({
     }
   });
 
-const paved = {
-    type: "simple-line",
-    color: "#FFBF00",
-    width: "1.5px",
-    style: "solid"
-};
-const brick = {
-    type: "simple-line",
-    color: "#FF9966",
-    width: "1px",
-    style: "solid"
-};
-const dirtNatural = {
-    type: "simple-line",
-    color: "#7B3F00",
-    width: "1px",
-    style: "solid"
-};
-const gravel = {
-    type: "simple-line",
-    color: "#89CFF0",
-    width: "1.5px",
-    style: "solid"
-};
-const concrete = {
-    type: "simple-line",
-    color: "#FFA700",
-    width: "1px",
-    style: "solid"
-};
+// const paved = {
+//     type: "simple-line",
+//     color: "#FFBF00",
+//     width: "1.5px",
+//     style: "solid"
+// };
+// const brick = {
+//     type: "simple-line",
+//     color: "#FF9966",
+//     width: "1px",
+//     style: "solid"
+// };
+// const dirtNatural = {
+//     type: "simple-line",
+//     color: "#7B3F00",
+//     width: "1px",
+//     style: "solid"
+// };
+// const gravel = {
+//     type: "simple-line",
+//     color: "#89CFF0",
+//     width: "1.5px",
+//     style: "solid"
+// };
+// const concrete = {
+//     type: "simple-line",
+//     color: "#FFA700",
+//     width: "1px",
+//     style: "solid"
+// };
 
-const rdbdTypeRendere = {
-    type: "unique-value",
-    field: "SURFACE",
-    uniqueValueInfos:[
-        {
-            value: 10,
-            symbol: paved,
-            label: "Paved"
-        },
-        {
-            value: 11,
-            symbol: brick,
-            label: "Brick"
-        },
-        {
-            value: 12,
-            symbol: dirtNatural,
-            label: "Dirt/Natural"
-        },
-        {
-            value: 13,
-            symbol: gravel,
-            label: "Gravel"
-        },
-        {
-            value: 2,
-            symbol: concrete,
-            label: "Concrete"
-        },
+// const rdbdTypeRendere = {
+//     type: "unique-value",
+//     field: "SURFACE",
+//     uniqueValueInfos:[
+//         {
+//             value: 10,
+//             symbol: paved,
+//             label: "Paved"
+//         },
+//         {
+//             value: 11,
+//             symbol: brick,
+//             label: "Brick"
+//         },
+//         {
+//             value: 12,
+//             symbol: dirtNatural,
+//             label: "Dirt/Natural"
+//         },
+//         {
+//             value: 13,
+//             symbol: gravel,
+//             label: "Gravel"
+//         },
+//         {
+//             value: 2,
+//             symbol: concrete,
+//             label: "Concrete"
+//         },
 
-    ]
-}
+//     ]
+// }
 
-export const rdbdSrfcGeom = new FeatureLayer({
-    url: criConstants.portalUrl,
-    renderer: rdbdTypeRendere
-}) 
+// export const rdbdSrfcGeom = new FeatureLayer({
+//     url: criConstants.portalUrl,
+//     renderer: rdbdTypeRendere
+// }) 
 export const rdbdSrfcAsst = new FeatureLayer({
     url: criConstants.assetLyrRdbSrf
 })
@@ -288,25 +287,32 @@ export const sketch = new SketchViewModel({
         layer: gLayer,
         updateOnGraphicClick: true,
         defaultUpdateOptions:{
-            toggleToolOnClick: false
+            tool:"reshape",
+            toggleToolOnClick: false,
+            enableRotation: false,
+            enableScaling: false,
+            multipleSelectionEnabled: false,
+            reshapeOption:{
+                shapeOperation:"none"
+            }
         }
 });
 
-export const newSketch = new Sketch({
-    view: view,
-    layer: [addRdbd],
-    viewModel: new SketchViewModel({
-        view: view,
-        layer: addRdbd,
-        polylineSymbol: {
-          type: "simple-line",
-          color: [127, 255, 212	],
-          width: 2,
-          style: "dash"
-        },
-    }),
-});
-newSketch.id = "newSketch"
+// export const newSketch = new Sketch({
+//     view: view,
+//     layer: [addRdbd],
+//     viewModel: new SketchViewModel({
+//         view: view,
+//         layer: addRdbd,
+//         polylineSymbol: {
+//           type: "simple-line",
+//           color: [127, 255, 212	],
+//           width: 2,
+//           style: "dash"
+//         },
+//     }),
+// });
+// newSketch.id = "newSketch"
 export const sketchPoint = new Sketch({
     view: view,
     viewModel: new SketchViewModel({
@@ -326,9 +332,10 @@ export const sketchPoint = new Sketch({
 //     sketch.on(['update'], getNewLength)
 // });
   //add portal service to map
-watchUtils.whenOnce(view,"ready").then(
-    map.addMany([rdbdSrfcGeom,featLayer,txCounties])
-);
+watchUtils.whenOnce(view,"ready").then(()=>{
+    document.getElementById('stepper').style.width = '0px'
+    map.addMany([featLayer,txCounties])
+});
 
 // function pauseHoverPropagation(){
 //     setTimeout(1000)
@@ -336,7 +343,8 @@ watchUtils.whenOnce(view,"ready").then(
 //TODO - disable graphics from drag, resize, flip, keyboard shortcuts
 view.on('double-click', (event)=>{
     event.stopPropagation();
-})
+});
+
 // view.on('resize', (event)=>{
 //     event.stopPropagation();
 // })

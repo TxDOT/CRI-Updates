@@ -17,11 +17,26 @@ export const store = new Vuex.Store({
         count:0,
         updateDfo:0,
         oldLength: 0,
-        deltaDistance: 0
+        newTotalLength: 0,
+        deltaDistance: 0,
+        username: '',
+        alertDisplay: false
     },
     getters:{
+        getAlertDisplay(state){
+            return state.alertDisplay
+        },
+        getUserName(state){
+            return state.username
+        },
         getOldLength(state){
             return state.oldLength
+        },
+        getDeltaDistance(state){
+            return state.deltaDistance
+        },
+        getNewTotalLength(){
+
         },
         getUpdateDfo(state){
             return state.updateDfo
@@ -51,33 +66,48 @@ export const store = new Vuex.Store({
             return state.roadbedDesign
         } ,
         roadbedSurface(state){
-            console.log(state)
             return state.roadbedSurface
         },
-
         getNumLane(state){
             return state.numLane
         }
     },
     mutations:{
+        setAlertDisplay(state, alertStatus){
+            state.alertDisplay = alertStatus
+        },
+        setUserName(state, userName){
+            state.username = userName
+        },
         setDeltaDis(state, newLen){
-            let delta = newLen - state.oldLength
-            let mileage;
-            if(state.oldLength < newLen){
-                let addMiles = Math.abs(delta)
-                mileage = addMiles
+            if(newLen[1] === "Add"){
+                state.deltaDistance += newLen[0]
             }
-            if (state.oldLength > newLen){
-                let subMiles = -Math.abs(delta)
-                mileage = subMiles
+            else{
+                let delta = newLen[0] - state.oldLength
+                let mileage;
+                if(state.oldLength < newLen[0]){
+                    let addMiles = Math.abs(delta)
+                    mileage = addMiles
+                }
+                if (state.oldLength > newLen[0]){
+                    let subMiles = -Math.abs(delta)
+                    console.log(subMiles)
+                    mileage = subMiles
+                }
+                if(state.oldLength === newLen[0]){
+                    mileage = 0
+                }
+                console.log(mileage)
+                state.deltaDistance += mileage
             }
-            if(state.oldLength === newLen){
-                mileage = 0
-            }
-            state.deltaDistance = mileage
+
         },
         setOldLength(state, oldLen){
             state.oldLength = oldLen
+        },
+        setNewTotalLength(state, newLen){
+            state.newTotalLength = newLen
         },
         setUpdateDfo(state, updateDfo){
             state.updateDfo = updateDfo
@@ -107,7 +137,6 @@ export const store = new Vuex.Store({
             state.roadbedDesign = roadbedDesign
         } ,
         setRoadbedSurface(state, newRoadbedSurface){
-            console.log(state.roadbedSurface , newRoadbedSurface)
             state.roadbedSurface = newRoadbedSurface
         },
         setNumLane(state, numLane){

@@ -1,16 +1,15 @@
 <template>
     <div id ="mapHeader">
-        <v-toolbar dark>
-            <v-btn @click="expand()">Open Form<v-icon>mdi-arrow-right-circle</v-icon></v-btn> //added expand
-            <v-toolbar-title justify="center">Welcome to DUSA</v-toolbar-title>
-            <v-btn-toggle id="editBtns">
+        <v-toolbar color="#204E70" class="white--text">
+            <v-toolbar-title class="h1-text">Welcome to DUSA - The County Road Inventory App</v-toolbar-title>
+            <!-- <v-btn-toggle id="editBtns">
                 <v-btn color="red" small>Delete Roads</v-btn>
                 <v-btn color="primary" small @click="addRoad(); snackbar = true" id="addBtn">Add Roads</v-btn>
                 <input id="upldFile" type="file" hidden @change="fileValid()"><v-btn @click="uploadFile()" color="blue-grey" small component="span" variant="contained">Upload Files</v-btn>
-            </v-btn-toggle>
+            </v-btn-toggle> -->
             <v-btn-toggle id="submitExitBtns">
                 <v-btn color="green" small @click="submitCertify=true">Submit & Certify</v-btn>
-                <v-btn color="Black" small>Save & Exit</v-btn>
+                <v-btn color="Black" small @click="ExitDestroyLogIn()">Save & Exit</v-btn>
             </v-btn-toggle>
         </v-toolbar>
         <div class="text-center">
@@ -27,7 +26,7 @@
                     <div style="position:absolute; top:20%; left: 5%" class="black--text mb-3">
                         <v-card-text >
                             You are about to submit and certify county mileage for {{cntyName}} County.<br>
-                            The previous years mileage was <b>{{this.countyTotal}} miles</b>.<br>The new total mileage is <b>{{countyTots}} miles.</b>
+                            The previous years mileage was <b>{{countyTotal}} miles</b>.<br>The new total mileage is <b>{{countyTots}} miles.</b>
                         </v-card-text>
                     </div>
                     <div style="position:absolute; left: 10%; bottom: 5%; width=100%">
@@ -45,6 +44,7 @@
 
 <script>
 import {addRoadbed, stopEditing} from '../Map/editFunc';
+import esriId from "@arcgis/core/identity/IdentityManager";
 // import {roadInfo} from '../../store'
 export default {
     name:"mapHeader",
@@ -65,25 +65,44 @@ export default {
         cancelEditing(){
             stopEditing()
         },
-        expand(){ //added 
-            if(document.getElementById("step").style.width==='450px'){  //added 
-                document.getElementById("step").style.width='0px'  //added 
-                //document.getElementById("step").style.height='100px'  //added 
-            }  //added 
-            else{  //added 
-                document.getElementById("step").style.width='450px'  //added 
-            }  //added 
-        }  //added 
+        ExitDestroyLogIn(){
+            esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
+                .then(()=>{
+                    esriId.destroyCredentials()
+                    this.$router.push('/Login')
+                })
+                .catch(()=>{
+                    this.$router.push('/Login')
+                })
+        }
     },
+    computed:{
+        cntyName:{
+            get(){
+                return this.$store.state.cntyName
+            }
+        },
+        countyTotal:{
+            get(){
+                return this.$store.state.cntyMiles
+            }
+        },
+
+    }
 }    
 </script>
 <style scoped>
-    #editBtns {
+    #mapHeader {
         position: absolute;
-        left: 35%;
+        left: 0%;
+        width:100%;
     }
     #submitExitBtns {
         position: absolute;
         right: 2.5%;
+    }
+    .h1-text{
+        position: relative;
+        left:30%;
     }
 </style>
