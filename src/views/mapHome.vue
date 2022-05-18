@@ -5,7 +5,7 @@
     <Map/>
     <mapFooter/>
     <navSideBar/>
-    <!-- <stepper/> -->
+    <stepper v-if="display === true"/>
   </div>
 </template>
 
@@ -14,35 +14,26 @@ import Map from '../components/Map/Map.vue'
 import mapHeader from '../components/Map/mapHeader.vue'
 import mapFooter from '../components/Map/mapFooter.vue'
 import navSideBar from '../components/navigationSideBar.vue'
-//import stepper from '../components/stepperQuestion.vue'
+import stepper from '../components/stepperQuestion.vue'
 //import {countyInfo} from '../components/Map/editFunc'
-import {roadInfo} from '../store'
 export default {
     name: 'MapHome',
-    components: {Map, mapHeader, mapFooter,navSideBar},
-    props:["id"],
-    methods:{
-      expand(){
-        if (document.getElementById("step").style.width==='0px'){
-          document.getElementById("step").style.width='450px'
-        }
-        else{
-          document.getElementById("step").style.width='0px'
-        }
-      },
+    data(){
+      return{
+        display:true
+      }
     },
-    mounted(){
-      roadInfo
-    }
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper},
+    props:["id"],
 }
 </script>
 
 <style scoped>
 #viewDiv {
     position: absolute;
-    top: 4.9%;
-    right: 0;
-    height: 90%;
+    top: 0%;
+    right: 0%;
+    height: 100%;
     width: 100%;
     }
 </style>

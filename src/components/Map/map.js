@@ -292,7 +292,7 @@ export const sketch = new SketchViewModel({
             enableRotation: false,
             enableScaling: false,
             multipleSelectionEnabled: false,
-            reshapeOption:{
+            reshapeOptions:{
                 shapeOperation:"none"
             }
         }
@@ -333,7 +333,7 @@ export const sketchPoint = new Sketch({
 // });
   //add portal service to map
 watchUtils.whenOnce(view,"ready").then(()=>{
-    document.getElementById('stepper').style.width = '0px'
+    // document.getElementById('stepper').style.width = '0px'
     map.addMany([featLayer,txCounties])
 });
 
@@ -361,7 +361,7 @@ view.ui.remove("zoom")
 */
 export const initialize = (container) => {
     view.container = container;
-    view.when()
+    watchUtils.whenOnce(view,"ready")
         .then(() => {
             console.log('Map and View are ready');
         })

@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { jumpToGoogle } from './mapNav'
   //import { addRoadbed } from "./Map/editFunc"
   //import stepper from "../components/stepperQuestion.vue"
   //import alert from './Map/alert.vue'
@@ -28,7 +29,7 @@
         display:false,
         drawer: true,
         items: [
-          { title: 'Jump To Google', icon: 'mdi-run',action: ()=>{}},
+          { title: 'Jump To Google', icon: 'mdi-run',action: ()=>{jumpToGoogle();}},
           { title: 'Undo Edit', icon: 'mdi-undo'},
           { title: 'Redo Edit ', icon: 'mdi-redo'},
           // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}
@@ -40,14 +41,18 @@
 </script>
 <style scoped>
 #mapTools{
-    position: relative;
-    background: #15648C;
-    color:white;
-    font-size: 16px;
-    width: 100%;
-    height: 40px;
-    padding: 0px;
-    text-align: center;
+  position: relative;
+  background: #15648C;
+  color:white;
+  font-size: 16px;
+  width: 100%;
+  height: 40px;
+  padding: 0px;
+  text-align: center;
+}
+.v-list-item{
+  display: flex;
+  text-align: left;
 }
 
 </style>

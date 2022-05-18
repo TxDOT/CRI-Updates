@@ -43,4 +43,9 @@ export default {
     }
   }
 }
+
+.esri-view .esri-view-surface--inset-outline:focus::after{
+  outline: none !important;
+}
+
 </style>

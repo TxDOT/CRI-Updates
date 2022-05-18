@@ -20,11 +20,11 @@ export const store = new Vuex.Store({
         newTotalLength: 0,
         deltaDistance: 0,
         username: '',
-        alertDisplay: false
+        stepperClose: false
     },
     getters:{
-        getAlertDisplay(state){
-            return state.alertDisplay
+        getStepperClose(state){
+            return state.stepperClose
         },
         getUserName(state){
             return state.username
@@ -73,8 +73,8 @@ export const store = new Vuex.Store({
         }
     },
     mutations:{
-        setAlertDisplay(state, alertStatus){
-            state.alertDisplay = alertStatus
+        setStepperClose(state, steppClose){
+            state.stepperClose = steppClose
         },
         setUserName(state, userName){
             state.username = userName

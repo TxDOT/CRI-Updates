@@ -1,6 +1,6 @@
 <template>
-    <div>
-      <v-card color="#204E70" class="white--text" id="footerCard">
+    <v-footer color="grey" app style="height:35px; opacity: .5;" >
+      <v-card color="grey" class="black--text" id="footerCard">
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
           <div class="f1-text">County: {{county}}&nbsp; &nbsp; &nbsp; User Name: {{userName}}
             &nbsp; &nbsp; &nbsp; Previous Total Mileage: {{countyTotal}}&nbsp;&nbsp;&nbsp; 
@@ -12,15 +12,15 @@
         <v-btn style="right: 40%; bottom: 20%">About</v-btn>
         <v-btn id="googleBtn" color="blue" @click="google()">Jump to Google</v-btn> -->
       </v-card>   
-    </div>
+    </v-footer>
 </template>
 
 <script>
-import {updateLength,modifyRoadbed} from '../Map/editFunc'
+import {updateLength} from '../Map/editFunc'
 import {jumpToGoogle} from '../Map/mapNav';
 // import {roadInfo} from '../../store'
 // import{addRoad} from '../Map/Map.vue'
-import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
+//import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 export default {
   name:"mapFooter",
   data () {
@@ -38,19 +38,19 @@ export default {
   watch:{
     modifyLength:{
       handler: async function(){
-        await updateLength()
+        updateLength();
         this.modifyLength += this.rdbdDeltaDist
       },
       immediate: true, 
     },
-    modifyLine:{
-      handler: async function(){
-        let modify = await modifyRoadbed("click")
-        this.modifyLine += parseFloat(geometryEngine.geodesicLength(modify.features[0].geometry, "miles").toFixed(3))
-        console.log(modify.features[0].geometry)
-      },
-      immediate:true,
-    },
+    // modifyLine:{
+    //   handler: async function(){
+    //     let modify = await modifyRoadbed("click")
+    //     this.modifyLine += parseFloat(geometryEngine.geodesicLength(modify.features[0].geometry, "miles").toFixed(3))
+    //     console.log(modify.features[0].geometry)
+    //   },
+    //   immediate:true,
+    // },
   },
   computed:{
     county:{
@@ -91,14 +91,13 @@ export default {
     left: 600px;
   }
   #footerCard{
-    position: absolute;
-    top: 94.8%;
+    top: 0%;
     width:100%;
-    height: 5.1%;
+    height:100%;
   }
   .f1-text{
     position: relative;
-    top:30%;
+    top:10%;
   }
 
 </style>

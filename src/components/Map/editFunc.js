@@ -319,7 +319,6 @@ export function updateLength(){
   try{
     setUpGraphic();
     sketch.on('update', (event)=>{
-      console.log(event.toolEventInfo.type)
       if(event.state === 'complete'){
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(5))
         store.commit('setDeltaDis',[newLengths, 'Edit'])
@@ -366,7 +365,6 @@ export async function getGraphic(){
             view.hitTest(event,option)
             .then(function(response){
               if(response.results.length){
-                console.log(response.results[0])
                 // roadInfo.getObjectId = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['objectid'] : null
                 // roadInfo.getName = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['roadbedName'] : null
                 // roadInfo.roadbedSurface = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['roadbedSurface'] : null

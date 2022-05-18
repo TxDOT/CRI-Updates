@@ -96,6 +96,7 @@ export default {
         position: absolute;
         left: 0%;
         width:100%;
+        z-index: 1;
     }
     #submitExitBtns {
         position: absolute;

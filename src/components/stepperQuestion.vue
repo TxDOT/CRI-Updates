@@ -1,34 +1,60 @@
 <template>
   <div id="stepper">
+    <!-- <v-stepper-header class="stepHead" v-if="forAdd">Add a New Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forEdit">Edit an Existing Road</v-stepper-header> -->
     <v-stepper
+    style="margin-bottom:unset;"
     v-model="e1"
     vertical
     non-linear
     class="mb-12"
-    max-width="300"
+    max-width="400"
     min-width="0"
     >
-    <small>Fill out this form to complete editing your road.</small>
+    <v-stepper-header class="stepHead">Edit an Existing Road</v-stepper-header>
     <v-stepper-step
       editable
       :complete="e1 > 1"
       step="1"
-      @click="removeAsstPt()">
-      Road Name: 
-      
+      @click="removeAsstPt()"
+      class="font-weight-regular; body-1;">
+      Road Name:
     </v-stepper-step>
 
     <v-stepper-content step="1">
-      <!-- Disable dictates whether fields in the stepper form are editable or not.  -->
-      <v-card><v-text-field v-model="roadbedName" label="Road Name" :disabled="graphic ? disabled : ''"></v-text-field>
+      <!-- Disabled -- dictates whether fields in the stepper form are editable or not.  -->
+      <v-card>
+        <v-row no gutters>
+          <v-col>
+            <v-text-field v-model="roadbedName" label="Road Name" :disabled="graphic ? disabled : ''">
+            </v-text-field>
+          </v-col>
+        <v-col>
+          <v-card-text class="roadName" outlined>
+            <v-autocomplete :items="roadType" label="Roadbed Type" dense>
+            </v-autocomplete>
+          </v-card-text>
+        </v-col>
+        </v-row>
+      </v-card>
+      <v-card>
+        <v-row no gutters>
+          <v-col>
+          <v-btn text color="primary" small >
+            <u>Add a Prefix</u>
+          </v-btn>
+          </v-col>
+          <v-col>
+            <v-card-text style="bottom:10%;">
+              <v-autocomplete></v-autocomplete>
+            </v-card-text>
+          </v-col>
+        </v-row>
       </v-card>
       <v-btn
         color="primary"
         @click="e1 = 2">
         Continue
-      </v-btn>
-      <v-btn @click="cancel()" text>
-        Cancel
       </v-btn>
     </v-stepper-content>
 
@@ -49,9 +75,6 @@
         @click="e1 = 3">
         Continue
       </v-btn>
-      <v-btn @click="cancel()" text>
-        Cancel
-      </v-btn>
     </v-stepper-content>
     <v-stepper-step
       editable
@@ -63,7 +86,7 @@
     </v-stepper-step>
     <v-stepper-content step="3">
         <!-- If graphic is clicked (true), it presents this form -->
-        <v-card>
+        <v-card height="100px">
           <div class="scroller"> 
           <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
           <v-col v-for="(item,index) in rdbdSurf" :key="index" >
@@ -131,9 +154,6 @@
            @click="e1 = 4;">
             Continue
         </v-btn>
-        <v-btn @click="cancel()" text>
-            Cancel
-        </v-btn>
     </v-stepper-content>
 
     <v-stepper-step step="4" editable @click="removeAsstPt();complete();">
@@ -147,13 +167,10 @@
         @click="e1 = 5">
         Continue
       </v-btn>
-      <v-btn @click="cancel()" text>
-        Cancel
-      </v-btn>
     </v-stepper-content>
 
     <v-stepper-step step="5" editable @click="removeAsstPt(); complete();">
-      Completed?
+      Comments
     </v-stepper-step>
     <v-stepper-content step="5">
       <!-- Send Asset/geometry edits to editFunc.js function -->
@@ -162,18 +179,24 @@
         Save Edits
       </v-btn>
       <v-btn @click="cancel()" text :disabled="graphic ? disabled : ''">
-        Cancel
+        Close Form
       </v-btn>
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
+    <v-btn-toggle>
+      <v-btn small>Cancel</v-btn>
+      <v-btn small color="#15648C" text="white"><u>Save</u></v-btn>
+    </v-btn-toggle>
+
   </v-stepper>
+
   </div>
   
 </template>
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import { getGraphic, saveInfo, removeAsstPoints, applyMToAsset, updateAsset, sketchCompete} from '../components/Map/editFunc'
+import {saveInfo, removeAsstPoints, applyMToAsset, updateAsset, sketchCompete, getGraphic} from '../components/Map/editFunc'
 //import {roadInfo} from '../store'
 //import Map from '../components/Map/Map.vue'
 
@@ -191,6 +214,7 @@ export default {
         design: ['One Way', 'Two-way', 'Boulevard'],
         surface: ['Paved','Brick','Dirt/Natural','Gravel','Concrete'],
         lanes:[1,2,3,4,5,6],
+        roadType: ['ALLEY','ANEX','ARCADE','AVENUE','BAYOU','BEACH','BEND','BLUFF','BLUFFS','BOTTOM','BOULEVARD','BRANCH','BRIDGE','BROOK','BROOKS','BURG','BURGS','BYPAS','CAMP','CANYON','CAPE','CAUSEWAY','CENTER','CENTERS','CIRCLE','CIRCLES','CLIFF','CLIFFS','CLUB','COMMON','COMMONS','CORNER','CORNERS','COURSE','COURT','COURTS','COVE','COVES','CREEK','CRESCENT','CREST','CROSSING','CROSSROAD','CROSSROADS','CURVE','DALE','DAM','DIVIDE','DRIVE','DRIVES','ESTATE','ESTATES','EXPRESSWAY','EXTENSION','EXTENSIONS','FALL','FALLS','FERRY','FIELD','FIELDS','FLAT','FLATS','FORD','FORDS','FOREST','FORGE','FORGES','FORK','FORKS','FORT','FREEWAY','GARDEN','GARDENS','GATEWAY','GLEN','GLENS','GREEN','GREENS','GROVE','GROVES','HARBOR','HARBORS','HAVEN','HEIGHTS','HIGHWAY','HILL','HILLS','HOLLOW','INLET','ISLAND','ISLANDS','ISLE','JUNCTION','JUNCTIONS','KEY','KEYS','KNOLL','KNOLLS','LAKE','LAKES','LAND','LANDING','LANE','LIGHT','LIGHTS','LOAF','LOCK','LOCKS','LODGE','LOOP','MALL','MANOR','MANORS','MEADOW','MEADOWS','MEWS','MILL','MILLS','MISSION','MOTORWAY','MOUNT','MOUNTAIN','MOUNTAINS','NECK','NOT APPLICABLE','ORCHARD','OTHER','OVAL','OVERPASS','PARKS','PARKWAYS','PASS','PASSAGE','PATH','PIKE','PINE','PINES','PLACE','PLAIN','PLAINS','PLAZA','POINT','POINTS','PORT','PORTS','PRAIRIE','RADIAL','RAMP','RANCH','RAPID','RAPIDS','REST','RIDGE','RIDGES','RIVER','ROAD','ROADS','ROUTE','ROW','RUE','RUN','SHOAL','SHOALS','SHORE','SHORES','SKYWAY','SPRING','SPRINGS','SPURS','SQUARE','SQUARES','STATION','STRAVENUE','STREAM','STREET','STREETS','SUMMIT','TERRACE','THROUGHWAY','TRACE','TRACK','TRAFFICWAY','TRAIL','TRAILER','TUNNEL','TURNPIKE','UNDERPASS','UNION','UNIONS','VALLEY','VALLEYS','VIADUCT','VIEW','VIEWS','VILLAGE','VILLAGES','VILLE','VISTA','WALKS','WALL','WAY','WAYS','WELL','WELLS'],
         counter:0,
         // //roadSurface:[],
         // roadbedName: null,
@@ -198,6 +222,8 @@ export default {
         //roadbedSurface:'', 
         beginDFO:null,
         endDFO:null,
+        forAdd: true,
+        forEdit: false,
         //numLane:null,
         editTest: false,
         clickCount: 0,
@@ -358,7 +384,7 @@ export default {
       },
       cancel(){
         document.getElementById("stepper").style.width = '0px'
-        console.log(this.getCount)
+        this.stepperClose = false;
         sketchCompete();
       },
       //pushes new blank object row into mileInfo asset form
@@ -454,23 +480,43 @@ export default {
         get(){
           return this.$store.state.objectid
         }
+      },
+      stepperClose:{
+        set(stepClose){
+          this.$store.commit('setStepperClose', stepClose)
+        }
       }
     }
 }
 </script>
 <style scoped>
+
 #stepper{
-  position: absolute;
-  top: 30%;
-  width: 300px;
-  left:100%;
-  border: red;
+  position: fixed;
+  top: 10%;
+  left: 12.5%;
+  padding-bottom: 0%;
+  font-size: 16px;
 }
 .scroller {
   width: auto;
-  height: 300px;
+  height: 100px;
   overflow-y: scroll;
   scrollbar-color: grey;
   scrollbar-width: thin;
+}
+.stepHead{
+  padding-top:5%;
+  padding-left:20%;
+  background: #15648C;
+  color: white;
+  font-size: 24px;
+  }
+
+.v-stepper--vertical{
+  padding-bottom: unset;
+}
+.v-autocomplete >>> label{
+  font-size: 15px;
 }
 </style>

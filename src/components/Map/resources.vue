@@ -49,5 +49,9 @@
     padding: 0px;
     text-align: center;
 }
+.v-list-item{
+  display: flex;
+  text-align: left;
+}
 
 </style>
