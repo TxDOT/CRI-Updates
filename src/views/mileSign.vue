@@ -20,7 +20,7 @@
             small
             dark
             color="red"
-            @click="dialog=false; disagree = true; "><!-- goToMap() -->
+            @click="dialog=false; logMeIn()"><!-- goToMap() -->
             Review & Edit
             </v-btn>
             </div>
@@ -101,9 +101,9 @@
             required
             outlined
         ></v-text-field>
-        <v-text-field v-for="(item, index) in emailCounter" :key="index"
+        <v-text-field v-for="(item, index) in emailCounter" :key="index"  
             :rules="emailRules"
-            v-model="item.ccEmail"
+            v-model="item.index"
             label="CC E-mail"
             required
             outlined
@@ -154,6 +154,7 @@
           <!-- <p class="text-body-1" v-html="delegateTxt"></p> -->
         </v-card-text>
         <div>
+          <v-card-action>
           <v-text-field
             :counter="30"
             required
@@ -168,9 +169,11 @@
             outlined
             style="width:60%; left:20%"
           ></v-text-field>
+          </v-card-action>
         </div>
         <v-divider></v-divider>
         <div v-for="(i, item) in emailCounter" :key="item">
+        <v-card-action>
         <v-text-field
             :counter="30"
             required
@@ -186,6 +189,7 @@
             style="width:60%; left:20%"
         ></v-text-field>
         <v-divider></v-divider>
+      </v-card-action>
       <div style="position:relative; left:40%; bottom: 110px">
         <v-icon @click="deleteEmail(index)">mdi-delete</v-icon>
       </div>
@@ -205,7 +209,7 @@
 
 <script>
 import {countyInfo, autoDrawAsset} from '../components/Map/editFunc'
-import {featLayer,txCounties,view} from '../components/Map/map'
+import {featLayer,txCounties,view, rdbdSrfcGeom} from '../components/Map/map'
 import Query from "@arcgis/core/rest/support/Query"
 import {criConstants} from '../common/cri_constants';
 //import {roadInfo} from '../store'
@@ -248,7 +252,7 @@ export default {
             ],
             select: null,
             emailCounter:[],
-            ccEmailList: [],
+            ccEmailList:[],
             counter:0,
             message:'',
             certiAlert:'',
@@ -256,6 +260,7 @@ export default {
             //signature: false
           }
         },
+
         async mounted(){
           this.certify = false;
           let readCntyInfo = await countyInfo()
@@ -266,6 +271,7 @@ export default {
           this.currentMiles = getCntyInfoQuery.features[0].attributes['Total_Mileage']
           this.county = getCntyInfoQuery.features[0].attributes['County_Name']
           this.sendData = parseInt(this.currentMiles)
+          localStorage.setItem('county',JSON.stringify([this.county,this.countyNbr,this.currentMiles]))
           this.sendCountyName();
           //this.sendCountyName(Number(getCntyInfoQuery.features[0].attributes['Total_Mileage']))
           this.$store.commit('setCntyMiles',this.currentMiles)
@@ -283,7 +289,9 @@ export default {
           this.date = todayDate.toDateString().substring(4,15)
           this.txt = `<p align="justify">${todayDate.toDateString().substring(4,15)}</p>
           </br>
+
           <p align="justify" style=font-family: Arial, Helvetica, sans-serif>Dear ${this.judgeName},</p><br>
+
           <p align="justify" style=font-family: Arial, Helvetica, sans-serif>The Texas Department of Transportation (TxDOT) is soliciting updates to the county road inventory (CRI) from your county. The deadline for the ${todayDate.getFullYear()} submission is <u>August 31</u>.<br><br>
            
           In September ${todayDate.getFullYear()}, the certified county-maintained road mileage from ${todayDate.getFullYear()-1} will be submitted to the Texas Department of Motor Vehicles for disbursement of the tile
@@ -293,7 +301,9 @@ export default {
           Your ${todayDate.getFullYear()} certified mileage is: <b><u>${this.currentMiles}</b></u><br><br>
             
           Please click the appropriate response below to agree or disagree with this mileage.  You may also delegate the certification to another county official.<br><br>
+
           Thank you for your assistance in keeping the county road inventory up to date. If you have any questions or need clarification, please contact us by email or phone. <br><br>
+
           Sincerely,<br><br> 
           Michael Chamberlain<br>  
           Transportation Planning and Programming Division<br>  
@@ -306,10 +316,8 @@ export default {
                                                                   An Equal Opportunity Employer</p></footer>`
         },
          methods:{
-           //submit('submit') this will be called on each button click
           submit(step){
-            
-            // loop through emailCounter object and extract values
+             // loop through emailCounter object and extract values
             for (let e =0; e < this.emailCounter.length; e++){
               this.ccEmailList.push(this.emailCounter[e].ccEmail)
             }
@@ -354,18 +362,19 @@ export default {
              return this.signature
            },
            addEmail(){
-             let count= this.counter++
-             this.emailCounter.push({
+            let count= this.counter++
+            this.emailCounter.push({
                "counter":count,
                "ccEmail": ""
               });
+            //this.emailList.push({"count": count, "email":''})
            },
            async goToMap(){
             //login();
             this.$router.push('/map')
             let queryFeat = featLayer.definitionExpression =`CNTY_NM = '${this.county}'`
             txCounties.definitionExpression=`CNTY_NM='${this.county}'`
-            //rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
+            rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
             const query = new Query();
             query.where = `CNTY_NM = '${this.county}'`
             query.outFields = [ "*" ]
@@ -384,6 +393,9 @@ export default {
           deleteEmail(index){
           this.emailCounter.splice(index, 1)
           },
+          logMeIn(){
+             this.$router.push('/login')
+           },
           // validate(){
           //   this.$refs.form.validate()
           // }
@@ -408,12 +420,14 @@ export default {
     position: absolute;
     right: 29.5%;
   }
+
   #agreeTxtBox{
     /* border: 3px solid green; */
     left:120px;
     position: relative;
     width:50%;
   }
+
   #sign{
     /* border: 3px solid green; */
     top: 550px;
