@@ -4,6 +4,9 @@
     <mapHeader/>
     <Map/>
     <mapFooter/>
+    <navSideBar/>
+    <stepper v-if="display === true"/>
+    <editExistingRd/>
   </div>
 </template>
 
@@ -11,34 +14,45 @@
 import Map from '../components/Map/Map.vue'
 import mapHeader from '../components/Map/mapHeader.vue'
 import mapFooter from '../components/Map/mapFooter.vue'
+import navSideBar from '../components/navigationSideBar.vue'
+import stepper from '../components/stepperQuestion.vue'
+import editExistingRd from "../components/Map/editExistingRd.vue"
 //import {countyInfo} from '../components/Map/editFunc'
-import {roadInfo} from '../store'
 export default {
-    name: 'MapHome',
-    components: {Map, mapHeader, mapFooter},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd},
     props:["id"],
-    methods:{
-      expand(){
-        if (document.getElementById("step").style.width==='0px'){
-          document.getElementById("step").style.width='450px'
-        }
-        else{
-          document.getElementById("step").style.width='0px'
-        }
-      },
+    name: 'MapHome',
+    data(){
+      return{
+        display:true,
+        edit: false
+      }
     },
-    mounted(){
-      roadInfo
+    watch:{
+      editStatus:{
+        handler: function(){
+          console.log(this.editStatus)
+          this.edit = this.editStatus
+        },
+        immediate: true,
+      }
+    },
+    computed:{
+      editStatus:{
+        get(){
+          return this.$store.state.editExisting
+        },
+      }
     }
 }
 </script>
 
 <style scoped>
 #viewDiv {
-    position: absolute;
-    top: 4.9%;
-    right: 0;
-    height: 90%;
-    width: 100%;
-    }
+  position: absolute;
+  top: 6%;
+  right: 0%;
+  height: 94%;
+  width: 100%;
+}
 </style>

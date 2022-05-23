@@ -1,5 +1,5 @@
 //import const from map.js
-import {search, sketch, newSketch, sketchPoint, view, featLayer, gLayer, addRdbd, countyOfficialInfo, txCounties, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdNameAsst, rdbdLaneAsst, editsLayer, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
+import {search, sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, txCounties, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdNameAsst, rdbdLaneAsst, editsLayer, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
 import {cntyNbrNm} from '../../common/txCnt' //importing county name/nbr table via txCnt.js
 import {roadInfo} from '../../store' //importing Getters/Setters via store.js
 import { criConstants } from '../../common/cri_constants';
@@ -24,8 +24,7 @@ export function login(){
   })
   //console.log(esriId.findfindOAuthInfo(auth.portalUrl))
   esriId.registerOAuthInfos([auth]);
-  const id = esriId.getCredential(auth.portalUrl + "/sharing");
-  console.log(id)
+  esriId.getCredential(auth.portalUrl + "/sharing");
 }
 //querys the Refernce Layer table return geometry/attributes
 function queryFeat(qry){
@@ -41,6 +40,7 @@ function queryFeat(qry){
 }
 //Querying asset (nonGeom) tables and pushing values to store
 async function queryFeatureTables(tblqry){
+  console.log(tblqry)
   //let length = parseFloat(geometryEngine.geodesicLength(tblqry.features[0].geometry, "miles")).toFixed(3)
   //let featIndex = tblqry.features[0].geometry.paths[0].length-1
   const query = new Query();
@@ -66,7 +66,6 @@ async function queryFeatureTables(tblqry){
         rdbdSrfcAtt.features[srf].attributes.SRFC_TYPE_ID = surface[i]['name']
       }
     }
-    console.log(rdbdSrfcAtt.features[srf].attributes)
     rdbdSrfArry.push(rdbdSrfcAtt.features[srf].attributes)
   }
   //let copyAsset = [...rdbdSrfArry]
@@ -82,21 +81,19 @@ async function queryFeatureTables(tblqry){
     rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3))
     rdbdSrfArry[i].ASSET_LN_END_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_END_DFO_MS.toFixed(3))
   } 
-  setDataToStore(rdbdSrfArry, rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR, rdbdNameAtt.features[0].attributes.ST_DEFN_NM, rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT)
-  roadInfo.getSurface = rdbdSrfArry //push surface type values to getSurface setter
+  setDataToStore(rdbdSrfArry, rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR, rdbdNameAtt.features[0].attributes.ST_DEFN_NM, rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT, tblqry.features[0].attributes.OBJECTID)
+  //roadInfo.getSurface = rdbdSrfArry //push surface type values to getSurface setter
   // roadInfo.getDesign = rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR
   // roadInfo.getName = rdbdNameAtt.features[0].attributes.ST_DEFN_NM
   // roadInfo.getLane = rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT
 }
 //Sets Road Data in the data store. 
 function setDataToStore(surface, design, name, lane, objectid){
-  console.log(surface)
   store.commit('setRoadbedSurface', JSON.stringify(surface)) //push surface type values to getSurface setter
   store.commit('setRoadbedDesign', design) 
   store.commit('setRoadbedName', name)
   store.commit('setNumLane', lane)
   store.commit('setObjectid', objectid)
-  console.log(store.getters.roadbedSurface)
 }
 //get county name and road totals. Filters county for map zoom and definition query
 export async function countyInfo(){
@@ -144,40 +141,50 @@ export async function countyInfo(){
 }
 // Adding a new Roadbed to map
 export async function addRoadbed(){
-    return await new Promise(function(res){
-      newSketch.create("polyline",{mode:"click", hasZ: false})
-      newSketch.on('create', (event) => {
-            let lengthMiles;
-            if(event.state === "complete"){
-                //creating the length of road in miles for user
-                lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
-                res(lengthMiles);
-
-                // event.graphic.geometry.hasM = true
-                // event.graphic.attributes = {
-                //   gid: 9999,
-                //   objectid: Number(new Date().getTime().toFixed(7)),
-                //   roadbedName: 'UNKNOWN',
-                //   roadbedDesign: 'One Way',
-                //   roadbedSurface: JSON.stringify([{
-                //     SRFC_TYPE_ID: "Paved",
-                //     ASSET_LN_BEGIN_DFO_MS: 0,
-                //     ASSET_LN_END_DFO_MS: Number(lengthMiles.toFixed(3))
-                //   }]),
-                //   numLane: 1,
-                //   createDt: new Date().getTime(),
-                //   createNm: "DPROSACK" //replace with user login info. TODO
-                // }
-                // reapplyM(event.graphic)
-                // setDataToStore(event.graphic.attributes.roadbedSurface, event.graphic.attributes.roadbedDesign, event.graphic.attributes.roadbedName, event.graphic.attributes.numLane, event.graphic.attributes.objectid)
-                // newSketch.complete();
-              }
-            
-        });
-   
-    }) 
+  let addNewRoad = new Promise(function(res){
+    sketch.create("polyline",{mode:"click", hasZ: false})
+    sketch.on('create', (event) => {
+      let lengthMiles;
+      if(event.state === "complete"){
+      //creating the length of road in miles for user
+        lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
+        res([lengthMiles, event.graphic.geometry]);
+        sketch.complete();
+      }
+    });
+  })
+  let returnAddNewRoad = await addNewRoad
+  sketch.layer.graphics.items.at(-1).geometry.hasM = true
+  //add reApply M Measures function
+  sketch.layer.graphics.items.at(-1).attributes = {
+    gid: 9999,
+    objectid: Number(new Date().getTime().toFixed(7)),
+    roadbedName: 'UNKNOWN',
+    roadbedDesign: 'One Way',
+    roadbedSurface: JSON.stringify([{
+      SRFC_TYPE_ID: "Paved",
+      ASSET_LN_BEGIN_DFO_MS: 0,
+      ASSET_LN_END_DFO_MS: Number(returnAddNewRoad[0].toFixed(3))
+    }]),
+    numLane: 1,
+    createDt: new Date().getTime(),
+    createNm: store.getters.getUserName
+  }
+  sketch.layer.graphics.items.at(-1).symbol = {
+    type: "simple-line",
+    color: [141, 182, 0],
+    width: 2,
+    style: "dash"
+  }
+  store.commit('setDeltaDis',[Number(returnAddNewRoad[0].toFixed(5)), 'Add'])
+  setDataToStore(sketch.layer.graphics.items.at(-1).attributes.roadbedSurface, 
+                 sketch.layer.graphics.items.at(-1).attributes.roadbedDesign,
+                 sketch.layer.graphics.items.at(-1).attributes.roadbedName,
+                 sketch.layer.graphics.items.at(-1).attributes.numLane,
+                 sketch.layer.graphics.items.at(-1).attributes.objectid)
+  
+  return returnAddNewRoad[0]
 }
-
 
 //Modifying Existing Road and gathering existing road attributes based on clickType variable
 //clickType = immediate-click; returns attributes
@@ -202,10 +209,11 @@ export async function modifyRoadbed(clickType){
   defineGraphic(feature,clickType)
   //rdbdSrfc.then(result => console.log(result))
   if(clickType === "pointer-move"){
-    roadInfo.getObjectId = feature.features[0].attributes.OBJECTID
+    
+    store.commit('setObjectid', feature.features[0].attributes.OBJECTID)
+    //roadInfo.getObjectId = feature.features[0].attributes.OBJECTID
     return 1 //provide increments for stepper
   }
-
   return feature//geometryEngine.geodesicLength(feature.features[0].geometry, "miles")
 }
 //turn on/off imagery at zoom level 9; NeedsReview
@@ -243,13 +251,12 @@ export async function modifyRoadbed(clickType){
 //called in modifyRoadbed function
 async function defineGraphic(graphics, clickType){
   let exist = gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.features[0].attributes.OBJECTID)
-  console.log(exist)
   if(exist.length){
-    console.log(exist)
     return;
   }
 
   if (clickType === "click"){
+    document.body.style.cursor = 'context-menu'
     let graphicPromise = new Promise(function(res){
       let newGraphic = new Graphic({
         geometry: {
@@ -280,6 +287,8 @@ async function defineGraphic(graphics, clickType){
         }
       })
       gLayer.graphics.add(newGraphic);
+      console.log(gLayer.graphics)
+      //sketch.update([newGraphic], {tool:'reshape'})
       res(gLayer)
     })
 
@@ -302,6 +311,7 @@ async function defineGraphic(graphics, clickType){
   //   //Hides Reference Layer so it cant create multiple graphics. OBJECTID gets applied to objectidList array
   //   featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_NM = '${roadInfo.getcntyName}'` //add to go first, a new functoin
     //rdbdSrfcGeom.definitionExpression = `gid not in (${objectidList}) and cnty_nm = '${roadInfo.getcntyName}'` TODO - Hide rdbdSrfcGeom (split asset feature service)
+    
   }
 }
 //hides feature roadbeds when converted to graphic
@@ -314,87 +324,51 @@ function hideEditedRoads(graphicL){
   }
   featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_NM = '${store.getters.cntyName}'`
 }
-//Updates Length Measurements when vertex on Graphics layer moves for readout
-async function getNewLength(oldLength){
-  console.log(oldLength)
-  let newLengthPromise = new Promise(function(res){
-    sketch.on('update', (event) => {
+//updateLength() gets new length of selected graphic and sends new length to store
+export function updateLength(){
+  try{
+    setUpGraphic();
+    sketch.on('update', (event)=>{
       if(event.state === 'complete'){
-        res(event)
+        let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(5))
+        store.commit('setDeltaDis',[newLengths, 'Edit'])
         reapplyM(event.graphics[0])
       }
     })
-    newSketch.on('update', (event) => {
-      if(event.state === 'complete'){
-        res(event)
-        reapplyM(event.graphics[0])
-      }
-    })
-  })
-  let returnNewLength = await newLengthPromise;
-  let newLength = geometryEngine.geodesicLength(returnNewLength.graphics[0].geometry, "miles")
-  console.log(newLength, oldLength)
-  const deltaLength = newLength - oldLength
-  let mileage;
-  if(oldLength < newLength){
-    let addMiles = Math.abs(deltaLength)
-    mileage = addMiles
   }
-  if (oldLength > newLength){
-    let subMiles = -Math.abs(deltaLength)
-    mileage = subMiles
+  catch(Error){
+    console.log('updateLength error', Error)
   }
-  if(oldLength === newLength){
-    mileage = 0
-  }
-  console.log(mileage)
-  return mileage;  
 }
-
-export async function updateLength(){
-  let newMileagePromise = new Promise(function(res){
-    view.on('click', (event) =>{
-      console.log(event)
-      if (sketch.state === "active") {
-        return;
-      }
-      if (newSketch.state === "active") {
-        return;
-      }
-      let opts = {include: [gLayer, addRdbd]}
-      view.hitTest(event,opts).then((response) =>{
-        const results = response.results;
-        console.log(results)
-        //console.log(gLayer.graphics.items.filter(objid => objid.attributes.objectid === results.graphic.attributes.objectid) ? 'true': 'false')
-        results.forEach(function (result) {
-          const reshapeME = gLayer.graphics.items.filter(objid => objid.attributes.objectid === result.graphic.attributes.objectid).length ? sketch: newSketch
-          reshapeME.update([result.graphic], { tool: "reshape" });
-          //sketch.update([result.graphic], { tool: "reshape" });
-          let oldLength = geometryEngine.geodesicLength(response.results[0].graphic.geometry, "miles")
-          res(getNewLength(oldLength))
-        })
-      })
-    })
-  })
-
-  let returnNewMileagePromise = await newMileagePromise
-  console.log(returnNewMileagePromise)
-  return returnNewMileagePromise
+//setUpGraphic() gets old length of selected graphic and send old length to store
+function setUpGraphic(){
+  view.on('click',(event)=>{
+    if(sketch.state === 'active'){
+      return;
+    }
+    let opts = [gLayer]
+    view.hitTest(event,opts).then((response)=>{
+      response.results.forEach((result)=>{
+        if(result.graphic.layer === sketch.layer && result.graphic.attributes){
+          sketch.update([result.graphic], {tool:"reshape"});
+          let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(5))
+          console.log(oldLength)
+          store.commit('setOldLength',oldLength)
+        }
+      });
+    });
+  });
 }
 //Stop Editing by calling the sketch cancel() method.
-
 export function stopEditing(){
-  newSketch.cancel()
+  sketch.cancel()
 }
 //populates stepper form when graphic is clicked.
 export async function getGraphic(){
   let getGraphPromise = new Promise(function(resp){
       view.on("click", function(event){
-        let option = {include: [gLayer, addRdbd]}
+        let option = {include: [gLayer]}
         if (sketch.state === "active") {
-          return;
-        }
-        if (newSketch.state === "active") {
           return;
         }
           view.when(function(){
@@ -402,7 +376,8 @@ export async function getGraphic(){
             view.hitTest(event,option)
             .then(function(response){
               if(response.results.length){
-                console.log(response.results[0].graphic.attributes)
+                console.log(response.results[0].graphic.attributes['objectid'])
+                store.commit('setStepperClose', true)
                 // roadInfo.getObjectId = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['objectid'] : null
                 // roadInfo.getName = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['roadbedName'] : null
                 // roadInfo.roadbedSurface = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['roadbedSurface'] : null
@@ -414,7 +389,7 @@ export async function getGraphic(){
                 store.commit('setRoadbedDesign', response.results[0].graphic.attributes['roadbedDesign'])
                 store.commit('setNumLane', response.results[0].graphic.attributes['numLane'])
                 store.commit('setRoadbedSurface', response.results[0].graphic.attributes['roadbedSurface'])
-                resp(1)
+                resp(response.results[0].graphic)
               }
             })
           })
@@ -425,23 +400,14 @@ export async function getGraphic(){
 }
 //setting M-Vaules on geometry changes
 function reapplyM(arr){
-  console.log(arr)
   let gl = gLayer.graphics.items.filter(x => x.objectid = arr.attributes.objectid).at(-1)
   let addRd = []
   if(addRd.length){
     addRd.length = 0
   }
-  for(let x=0; x < addRdbd.graphics.items.length; x++){
-    if(addRdbd.graphics.items[x].attributes.objectid === arr.attributes.objectid){
-      addRd.push(addRdbd.graphics.items[x])
-    }
-  }
-  console.log(gl)
-  console.log(addRd)
   let applyM = [];
-  console.log(applyM)
+  
   try{
-    console.log(!(arr.geometry.paths[0][0][2]) ? 0 : arr.geometry.paths[0][0][2])
     let segMil = arr.geometry.paths[0][0][2];
     applyM.push(arr.geometry.paths[0][0][2])
     for(let i=0; i < arr.geometry.paths[0].length; i++){
@@ -469,7 +435,6 @@ function reapplyM(arr){
   catch{
     console.log('end of the line')
   }
-  console.log(addRd)
   if(gl){
     for(let j=0; j < applyM.length; j++){
       gl.geometry.setPoint(0,j,[arr.geometry.paths[0][j][0],arr.geometry.paths[0][j][1],applyM[j]])
@@ -477,15 +442,11 @@ function reapplyM(arr){
     //roadInfo.getSurface.at(-1).ASSET_LN_END_DFO_MS = Number(gl.geometry.paths[0].at(-1)[2].toFixed(3))
   }
   else{
-    console.log('addRd')
     for(let h=0; h < applyM.length; h++){
-      console.log(addRd[0].geometry.setPoint(0,h,[arr.geometry.paths[0][h][0],arr.geometry.paths[0][h][1],applyM[h]]))
+      addRd[0].geometry.setPoint(0,h,[arr.geometry.paths[0][h][0],arr.geometry.paths[0][h][1],applyM[h]])
     }
     //roadInfo.getSurface.at(-1).ASSET_LN_END_DFO_MS = Number(addRd.geometry.paths[0].at(-1)[2].toFixed(3))
-    console.log(addRd)
   }
-  console.log(addRd)
-  console.log(gl)
   return;
 } //TODO
 //push asset/geometry to edits feature layer
@@ -537,13 +498,9 @@ export function saveInfo(id){
 //*************************************************************************************************/
 //Drawing the new Asset Graphics on the route
 function createAssetGraph(pathArr,y){
-  console.log(y)
-  console.log(pathArr)
   let assetGeom = rdbdAssetLine.graphics.items
-  console.log(assetGeom)
   for(let a=0; a<assetGeom.length; a++){
     if(assetGeom[a].attributes.objectid === y[0].objectid){
-      console.log(assetGeom[a].attributes.objectid)
       rdbdAssetLine.graphics.remove(assetGeom[a])
     }
   }
@@ -551,7 +508,6 @@ function createAssetGraph(pathArr,y){
   let densUpdate = pathArr.paths[0]
   
   let mArr = [];
-  console.log(mArr)
   if(mArr.length){
     mArr.length = 0
   }
@@ -565,17 +521,12 @@ function createAssetGraph(pathArr,y){
   for(let d in y){
     let getstart = (element) => element >= y[d].ASSET_LN_BEGIN_DFO_MS;
     let endstart = (element) => element >= y[d].ASSET_LN_END_DFO_MS;
-    console.log(mArr.findIndex(getstart))
-    console.log(mArr.findIndex(endstart)-1)
-    console.log(mArr.findIndex(endstart))
+
     //extract closest index for begin/end dfo values
-    console.log(densUpdate.length)
-    console.log(densUpdate.slice(mArr.findIndex(getstart),mArr.findIndex(endstart)+1))
-    console.log(densUpdate.slice(mArr.findIndex(getstart),mArr.findIndex(endstart)))
+
     let geom = mArr.findIndex(endstart) === -1 ? densUpdate.slice(mArr.findIndex(getstart),) : densUpdate.slice(mArr.findIndex(getstart),mArr.findIndex(endstart)+1)
     //let geom = densUpdate.slice(mArr.findIndex(endstart)-1,mArr.findIndex(endstart)+1)
     //convert to points to graphic and plot on route
-    console.log(geom)
     let assetLineType = y[d].SRFC_TYPE_ID
         let pointColor;
         switch(assetLineType){
@@ -626,22 +577,17 @@ function createAssetGraph(pathArr,y){
 export function addAssetBreakPts(y, type)
 {
   //need to loop through points and add to line
-  console.log(y)
-  console.log(rdbdAssetPt)
   let a = rdbdAssetPt.graphics.items.filter(al => al.attributes.objectid === y[0].objectid)
   let g = gLayer.graphics.items.filter(gl => gl.attributes.objectid === y[0].objectid)
-  console.log(JSON.stringify(y))
   store.commit('setRoadbedSurface', JSON.stringify(y))
   g[0].attributes.roadbedSurface = store.getters.roadbedSurface
   
   if(type !== 'click'){
     // let m = applyMToAsset(a)
     // console.log(m)
-    console.log(a)
     for(let x=0; x<a.length; x++){
       if(!a[x].attributes.edit){
-        console.log(a[x])
-        console.log(getNewDfoDist(a[x].attributes.objectid, a[x].geometry.x, a[x].geometry.y))
+        getNewDfoDist(a[x].attributes.objectid, a[x].geometry.x, a[x].geometry.y)
       }
       else{
         console.log('fail',a[x])
@@ -653,20 +599,16 @@ export function addAssetBreakPts(y, type)
 }
 //gets asset break points and plots on the route
 export function getCoordsRange(y){
-  console.log(y)
-  console.log(rdbdAssetPt)
   try{
     if(rdbdAssetPt.length){
       rdbdAssetPt.length = 0
     }
     let dens;
     // if(check !== false){
-      console.log(gLayer)
       
       //get graphic layer geometry; matching on objectid 
       for(let id in gLayer.graphics.items){
         if(gLayer.graphics.items[id].attributes.objectid === y[0].objectid){
-          console.log(gLayer.graphics.items[id])
           dens = gLayer.graphics.items[id].geometry
         } 
       }
@@ -685,21 +627,14 @@ export function getCoordsRange(y){
       //gets the closest M-values to the assetBegin/assetEnd DFO. Provided by the stepper
       
       for(let d in y){
-        console.log(y[d].srfcType)
-        let getstart = (element) => element >= y[d].ASSET_LN_BEGIN_DFO_MS;
+        (element) => element >= y[d].ASSET_LN_BEGIN_DFO_MS;
         let endstart = (element) => element >= y[d].ASSET_LN_END_DFO_MS;
-        console.log(mArr.findIndex(getstart))
-        console.log(mArr.findIndex(endstart)-1)
-        console.log(mArr.findIndex(endstart))
         //extract closest index for begin/end dfo values
-        console.log(densUpdate.length)
-        console.log(densUpdate.slice(mArr.findIndex(endstart)-1,))
         let geom = mArr.findIndex(endstart) === -1 ? densUpdate.slice(mArr.findIndex(endstart)-1,) : densUpdate.slice(mArr.findIndex(endstart)-1,mArr.findIndex(endstart)+1)
         //let geom = densUpdate.slice(mArr.findIndex(endstart)-1,mArr.findIndex(endstart)+1)
         //convert to points to graphic and plot on route
-        console.log(geom)
+
         const radius = (Math.abs(geom[0][2] - y[d].ASSET_LN_END_DFO_MS)) * 1609.344
-        console.log(radius)
         const pointA =  new Graphic({
          geometry: {
             type: "point", 
@@ -719,8 +654,7 @@ export function getCoordsRange(y){
             
         const findAzmith = geodesicUtils.geodesicDistance(a, b)
         const pointDFO = geodesicUtils.pointFromDistance(a, radius,findAzmith.azimuth)
-        console.log(pointDFO.x, pointDFO.y, y[d].SRFC_TYPE_ID)
-        const geoToMerca = webMercatorUtils.geographicToWebMercator(pointDFO)
+        webMercatorUtils.geographicToWebMercator(pointDFO)
   
         let assetType = y[d].SRFC_TYPE_ID
         let pointColor;
@@ -747,7 +681,6 @@ export function getCoordsRange(y){
           color: pointColor
         }
 
-        console.log(geoToMerca)
         let assetPoint = new Graphic({
           geometry: {
             type: "point",
@@ -768,7 +701,6 @@ export function getCoordsRange(y){
         })
       
         rdbdAssetPt.graphics.add(assetPoint)
-        console.log(rdbdAssetPt)
       }
     addAssetBreakPts(y)
   }
@@ -787,7 +719,7 @@ function getNewDfoDist(objectid, x, y){
   if(objid.length){
     objid.length=0
   }
-  
+  //new point clicked in the map
   let pointA = new Graphic({
     geometry:{
       type: "point",
@@ -795,34 +727,27 @@ function getNewDfoDist(objectid, x, y){
       latitude: y
     }
   })
-
+//convert new point to Geograpic i.e lat/long
   let webMercaPointA = webMercatorUtils.webMercatorToGeographic(pointA.geometry)
   for(let id in gLayer.graphics.items){
     if(gLayer.graphics.items[id].attributes.objectid === objectid){
       objid = gLayer.graphics.items[id].geometry
-      console.log(objid)
     }
   }
-  console.log(objid.paths[0].length)
+  //find neartest vertex for the new point along the line and return vertex Index
   let index = geometryEngine.nearestVertex(objid, pointA.geometry).vertexIndex
   let nearVert = objid.paths[0].at(index)
-  console.log(index)
   let path;
   if(objid.paths[0].at(-1) === nearVert){
     console.log("End of the line")
-    //path = objid.paths[0].slice(index-2, index)
+    path = objid.paths[0].slice(index-2, index)
     //console.log(path)
     return;
   }
-  else{
-    path = objid.paths[0].slice(index, index+2)
-  }
-  console.log(path)
-  let direction = path[0][0] > path[1][0]
-  console.log(direction) 
+  //determine the direction of the line 
   let x2 = nearVert[0]
   let y2 = nearVert[1]
-
+  //neareast vertex point
   let pointB = new Graphic({
     geometry:{
       type: "point",
@@ -830,66 +755,59 @@ function getNewDfoDist(objectid, x, y){
       latitude: y2
     }
   })
+  let nextPt = objid.paths[0].at(index+1)
+  console.log(x2 > nextPt[0]) //true=line going to the left; false=line is going to the right
   console.log(pointA, pointB)
   //determine point is left or right of another point; (+) to the right. (-) to the left
-  let dir = x - x2
- 
+  let dist = x - x2
+
+  path = dist > 0 ? objid.paths[0].slice(index-1, index+2) : objid.paths[0].slice(index, index+2);
+  console.log(path[0][0] > x)
+  console.log(path[1][0] < x)
+  // if(path[0][0] > x && path[1][0] < x){
+  //   path = objid.paths[0].slice(index-1, index+2)
+  // }
   let dir2;
-  if(dir === 0 ){
+  if(dist === 0 ){
     dir2 = y - y2
   }
-
+  let direction = path[0][0] > path[1][0]
+  console.log(direction, dist)
+  //convert GraphicB to Geographic i.e lat/long
   let webMercaPointB = webMercatorUtils.webMercatorToGeographic(pointB.geometry)
+  //find distance between clicked point and nearest point
   const pointAPointB = geodesicUtils.geodesicDistance(webMercaPointB, webMercaPointA)
-  console.log(pointAPointB)
 
-  console.log(path[0][2])
-  console.log(path[1][2])
-  if(dir < 0 && !direction){
-    console.log('1',Math.abs(path[0][2] - (pointAPointB.distance/1609.344)))
-
-  }
-  else if (dir > 0 && !direction){
-    console.log('1',Math.abs(path[0][2] + (pointAPointB.distance/1609.344)))
-  }
-  else if (dir < 0 && direction){
-    console.log('2',Math.abs(path[0][2] + (pointAPointB.distance/1609.344)))
-  }
-  else if (dir > 0 && direction){
-    console.log('2',Math.abs(path[0][2] - (pointAPointB.distance/1609.344)))
-  }
-  //let newDfo;
-  console.log(path[0][2])
   let newDfo;
   let mnbv;
-  if(dir === 0){
-    newDfo = path[0][2]
+  if(dist === 0){
+    newDfo = nearVert[2]
     mnbv = index
   }
-  if(dir < 0 && !direction){
-    newDfo = Math.abs(path[0][2] - (pointAPointB.distance/1609.344))
+  if(dist < 0 && !direction){
+    newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
     mnbv = index
   }
-  else if (dir > 0 && !direction){
-    newDfo = Math.abs(path[0][2] + (pointAPointB.distance/1609.344))
+  else if (dist > 0 && !direction){
+    newDfo = Math.abs(nearVert[2] + (pointAPointB.distance/1609.344))
     mnbv = index+1
   }
-  else if (dir < 0 && direction){
-    newDfo = Math.abs(path[0][2] + (pointAPointB.distance/1609.344))
+  else if (dist < 0 && direction){
+    newDfo = Math.abs(nearVert[2] + (pointAPointB.distance/1609.344))
     mnbv = index+1
   }
-  else if (dir > 0 && direction){
-    newDfo = Math.abs(path[0][2] - (pointAPointB.distance/1609.344))
+  else if (dist > 0 && direction){
+    newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
     mnbv = index
   }
   
-  if(dir === 0 && dir2 < 0){
-    newDfo = Math.abs(path[0][2] - (pointAPointB.distance/1609.344))
+  if(dist === 0 && dir2 < 0){
+    newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
   }
-  else if(dir === 0 && dir2 > 0){
-    newDfo = Math.abs(path[0][2] + (pointAPointB.distance/1609.344))
+  else if(dist === 0 && dir2 > 0){
+    newDfo = Math.abs(nearVert[2] + (pointAPointB.distance/1609.344))
   }
-  console.log(newDfo)
+
   if(!newDfo){
     return;
   }
@@ -898,7 +816,6 @@ function getNewDfoDist(objectid, x, y){
   //   return;
   // }
   objid.insertPoint(0,mnbv, [x, y, Number(newDfo.toFixed(3))])
-
   
   return newDfo;
   ///path[0][2] may be in correct, may need to be path[1][2]
@@ -911,15 +828,12 @@ export async function updateAsset(y){
   if(rdbdobj.length){rdbdobj.length = 0}
   //gathering asset points and zooming to location. 
   for(let i in rdbdAssetPt.graphics.items){
-    console.log(rdbdAssetPt.graphics.items[i])
-    if((rdbdAssetPt.graphics.items[i].attributes.objectid === y[0].objectid) && (rdbdAssetPt.graphics.items[i].attributes.assetTyp === y[0].SRFC_TYPE_ID) && rdbdAssetPt.graphics.items[i].attributes.eDfo === y[0].ASSET_LN_END_DFO_MS){
+    if((rdbdAssetPt.graphics.items[i].attributes.objectid === y[0].objectid) && (rdbdAssetPt.graphics.items[i].attributes.assetTyp === y[0].SRFC_TYPE_ID) && Number(rdbdAssetPt.graphics.items[i].attributes.eDfo) === y[0].ASSET_LN_END_DFO_MS){
       view.goTo({center: rdbdAssetPt.graphics.items[i].geometry, zoom: 20})
       rdbdAssetPt.graphics.items[i].attributes.edit = null
-      console.log(rdbdAssetPt.graphics.items[i])
       rdbdobj = rdbdAssetPt.graphics.items[i]
     }
   }
-  console.log(rdbdobj)
   //start Sketch for placement of new asset break point
   let assetPtPromise = new Promise(function(res){
     sketchPoint.create("point",{mode: "click"})
@@ -930,12 +844,9 @@ export async function updateAsset(y){
   })
   //returns new point x,y
   let returnAssetPt = await assetPtPromise
-  console.log(returnAssetPt)
-  console.log(rdbdobj)
+
   //gets new DFO Distance (m-value) of new asset break point
   let newDfo = getNewDfoDist(rdbdobj.attributes.objectid, returnAssetPt.graphic.geometry.x, returnAssetPt.graphic.geometry.y)
-  console.log(newDfo)
-  console.log(returnAssetPt)
   let assetType = y[0].SRFC_TYPE_ID
   let pointColors;
   //setting point symbol on surface type
@@ -992,20 +903,15 @@ export async function updateAsset(y){
     symbol: assetSymb
   });
 
-  console.log(rdbdobj)
-  console.log(rdbdobj.attributes.objectid)
   //removes old graphic and add new asset point
   rdbdAssetPt.graphics.remove(rdbdobj)
   rdbdAssetPt.graphics.add(newAssetPt)
-  console.log(rdbdAssetPt)
-  
-  roadInfo.getUpdateDfo = newAssetPt.attributes.eDfo
-  console.log(roadInfo.getUpdateDfo)
+
+  store.commit('setUpdateDfo',newAssetPt.attributes.eDfo)
   //returns all asset points related by objectid
   let currentAsst = rdbdAssetPt.graphics.items.filter(ca => ca.attributes.objectid === y[0].objectid)
   let assetArray=[]
   for(let x=0; x < currentAsst.length; x++){
-    console.log(currentAsst[x].attributes.assetTyp,Number(parseFloat(currentAsst[x].attributes.bDfo)),Number(parseFloat(currentAsst[x].attributes.eDfo)),currentAsst[x].attributes.objectid,currentAsst[x].attributes.edit)
     assetArray.push({
       SRFC_TYPE_ID: currentAsst[x].attributes.assetTyp,
       ASSET_LN_BEGIN_DFO_MS: Number(parseFloat(currentAsst[x].attributes.bDfo)),
@@ -1014,10 +920,8 @@ export async function updateAsset(y){
       edit: currentAsst[x].attributes.edit
     })
   }
-  console.log(assetArray)
   //making sure there aren't any gaps/overlaps. Adjusting asset Break Dfos.
   let updateM = applyMToAsset(assetArray, "click")
-  console.log(updateM)
   addAssetBreakPts(updateM, 'click')
   return updateM;
 }
@@ -1025,20 +929,20 @@ export async function updateAsset(y){
 //Removes graphics points on click
 export function removeAsstPoints(){
   rdbdAssetPt.graphics.removeAll();
-  console.log(rdbdAssetPt)
   return;
 }
 
 export function applyMToAsset(assetArray, type){
   console.log(assetArray)
   let length = []
-  console.log(gLayer.graphics.items.filter(x => x.attributes.objectid === assetArray[0].objectid).length ? gLayer : addRdbd)
+  console.log(gLayer.graphics.items.filter(x => x.attributes.objectid === assetArray[0].objectid).length)
   for(let x=0; x < gLayer.graphics.items.length; x++){
     if(gLayer.graphics.items[x].attributes.objectid === assetArray[0].objectid){
       length.push(gLayer.graphics.items[x])
     }
   }
   console.log(length)
+  length[0].attributes.roadbedSurface = assetArray
   for(let z=0; z < length[0].attributes.roadbedSurface.length; z++){
     if(typeof(length[0].attributes.roadbedSurface[z].ASSET_LN_BEGIN_DFO_MS) === "string" || typeof(length[0].attributes.roadbedSurface[z].ASSET_LN_END_DFO_MS) === "string" ){
       assetArray[z].edit = true;
@@ -1064,17 +968,17 @@ export function applyMToAsset(assetArray, type){
   for(let i=1; i<assetArray.length; i++){
     if(assetArray[i].edit){
       console.log(assetArray[i-1],assetArray[i])
-      assetArray[i-1].ASSET_LN_END_DFO_MS = assetArray[i].ASSET_LN_BEGIN_DFO_MS
+      assetArray[i-1].ASSET_LN_END_DFO_MS = Number(assetArray[i].ASSET_LN_BEGIN_DFO_MS)
       if(assetArray[i+1]){
-        assetArray[i+1].ASSET_LN_BEGIN_DFO_MS = assetArray[i].ASSET_LN_END_DFO_MS
+        assetArray[i+1].ASSET_LN_BEGIN_DFO_MS = Number(assetArray[i].ASSET_LN_END_DFO_MS)
       }
       
     }
     if(assetArray[i-1].edit){
       console.log(assetArray[i-1],assetArray[i])
-      assetArray[i].ASSET_LN_BEGIN_DFO_MS = assetArray[i-1].ASSET_LN_END_DFO_MS
+      assetArray[i].ASSET_LN_BEGIN_DFO_MS = Number(assetArray[i-1].ASSET_LN_END_DFO_MS)
       if(assetArray[i+1]){
-        assetArray[i+1].ASSET_LN_BEGIN_DFO_MS = assetArray[i].ASSET_LN_END_DFO_MS
+        assetArray[i+1].ASSET_LN_BEGIN_DFO_MS = Number(assetArray[i].ASSET_LN_END_DFO_MS)
       }
     }
   }
@@ -1086,6 +990,7 @@ export function applyMToAsset(assetArray, type){
     rdbdAssetPt.removeAll();
     getCoordsRange(assetArray)
   }
+  console.log(assetArray)
   return assetArray
 }
 
@@ -1103,8 +1008,7 @@ export async function autoDrawAsset(z){
   query.outFields = [ "*" ]
   query.returnGeometry = true
   query.returnM = true
-  let featQuery = await featLayer.queryFeatures(query)
-  console.log(featQuery)
+  await featLayer.queryFeatures(query)
 
   // for(i in featQuery.features){
   //   let gid = featQuery.features[i].attributes.GID
@@ -1116,6 +1020,8 @@ export async function autoDrawAsset(z){
 
 
 }
+
+
 
 // function mDisplay(){
 

@@ -17,6 +17,10 @@ export const criConstants = {
     roadSurfaceMouseType: "cursor:crosshair",
 
     fmeurl: 'http://api.fmeserver.com/js/v3/FMEServer.js',
+    webhookUrl: "https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_DUSA2Email.fmw?params=",
+    headerName: "Authorization",
+    headerValue: "fmetoken token=0f9f9976018726f7a4397a8e98294edc615a5512",
+    
     design: [{num:'1', name:'One Way'}, {num:'2',name:'Two Way'}, {num:'3',name:'Boulevard'}],
     surface: [{num:10, name:'Paved'}, {num:11, name:'Brick'},{num:12, name:'Dirt/Natural'},{num:13, name:'Gravel'},{num:2, name:'Concrete'}],
     testRoadInfo: [{type:"Paved",bdfo:'0', edfo:'12'},{type:"Brick",bdfo:'12', edfo:'24'}],

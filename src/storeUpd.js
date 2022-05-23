@@ -16,8 +16,40 @@ export const store = new Vuex.Store({
         cntyMiles:0,
         count:0,
         updateDfo:0,
+        oldLength: 0,
+        newTotalLength: 0,
+        deltaDistance: 0,
+        username: '',
+        stepperClose: null,
+        addRd:false,
+        editExisting: null,
+        executeDfoPts: ''
     },
     getters:{
+        getExecuteDfoPts(state){
+            return state.executeDfoPts
+        },
+        getEditExisting(state){
+            return state.editExisting
+        },
+        getAddRd(state){
+            return state.addRd
+        },
+        getStepperClose(state){
+            return state.stepperClose
+        },
+        getUserName(state){
+            return state.username
+        },
+        getOldLength(state){
+            return state.oldLength
+        },
+        getDeltaDistance(state){
+            return state.deltaDistance
+        },
+        getNewTotalLength(){
+
+        },
         getUpdateDfo(state){
             return state.updateDfo
         },
@@ -46,20 +78,70 @@ export const store = new Vuex.Store({
             return state.roadbedDesign
         } ,
         roadbedSurface(state){
-            console.log(state)
             return state.roadbedSurface
         },
-
         getNumLane(state){
             return state.numLane
         }
     },
     mutations:{
+        setExecuteDfoPts(state, point){
+            state.executeDfoPts = point
+        },
+        setEditExisting(state, edit){
+            state.editExisting = edit
+        },
+        setAddRd(state, add){
+            state.addRd = add
+        },
+        setStepperClose(state, steppClose){
+            if(steppClose === true){
+                document.getElementById('stepper').style.width = '500px'
+            }
+            state.stepperClose = steppClose
+        },
+        setUserName(state, userName){
+            state.username = userName
+        },
+        setDeltaDis(state, newLen){
+            if(newLen[1] === "Add"){
+                state.deltaDistance += newLen[0]
+            }
+            else{
+                if(state.oldLength === 0){
+                    return;
+                }
+                console.log(newLen[0], state.oldLength)
+                let delta = newLen[0] - state.oldLength
+                let mileage;
+                if(state.oldLength < newLen[0]){
+                    let addMiles = Math.abs(delta)
+                    mileage = addMiles
+                }
+                if (state.oldLength > newLen[0]){
+                    let subMiles = -Math.abs(delta)
+                    console.log(subMiles)
+                    mileage = subMiles
+                }
+                if(state.oldLength === newLen[0]){
+                    mileage = 0
+                }
+                console.log(mileage)
+                state.deltaDistance += mileage
+            }
+
+        },
+        setOldLength(state, oldLen){
+            state.oldLength = oldLen
+        },
+        setNewTotalLength(state, newLen){
+            state.newTotalLength = newLen
+        },
         setUpdateDfo(state, updateDfo){
             state.updateDfo = updateDfo
         },
-        setObjectid(state, objectid){
-            state.objectid = objectid
+        setObjectid(state, objid){
+            state.objectid = objid
         },
         setCount(state, count){
             state.count = count
@@ -83,7 +165,6 @@ export const store = new Vuex.Store({
             state.roadbedDesign = roadbedDesign
         } ,
         setRoadbedSurface(state, newRoadbedSurface){
-            console.log(state.roadbedSurface , newRoadbedSurface)
             state.roadbedSurface = newRoadbedSurface
         },
         setNumLane(state, numLane){

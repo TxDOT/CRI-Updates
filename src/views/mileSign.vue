@@ -101,8 +101,9 @@
             required
             outlined
         ></v-text-field>
-        <v-text-field v-for="item in emailList" :key="item"
+        <v-text-field v-for="(item, index) in emailCounter" :key="index"
             :rules="emailRules"
+            v-model="item.ccEmail"
             label="CC E-mail"
             required
             outlined
@@ -130,7 +131,7 @@
           <label> I certify, I am {{judgeName}}</label>
         </div>
         <v-spacer></v-spacer>
-        <v-btn outlined color="blue" :disabled="!valid" @click="alert = true; agree=false; submit();">Submit</v-btn>
+        <v-btn outlined color="blue" :disabled="!valid" @click="alert = true; agree=false; submit('certify');">Submit</v-btn>
       </div>
         <v-spacer></v-spacer>
         <v-alert style="left:15px; top:5px" borderd="bottom" type="info" v-html="certiAlert" max-width=550></v-alert>
@@ -153,7 +154,6 @@
           <!-- <p class="text-body-1" v-html="delegateTxt"></p> -->
         </v-card-text>
         <div>
-          <v-card-action>
           <v-text-field
             :counter="30"
             required
@@ -168,11 +168,9 @@
             outlined
             style="width:60%; left:20%"
           ></v-text-field>
-          </v-card-action>
         </div>
         <v-divider></v-divider>
-        <div v-for="item in emailList" :key="item">
-        <v-card-action>
+        <div v-for="(i, item) in emailCounter" :key="item">
         <v-text-field
             :counter="30"
             required
@@ -188,7 +186,6 @@
             style="width:60%; left:20%"
         ></v-text-field>
         <v-divider></v-divider>
-      </v-card-action>
       <div style="position:relative; left:40%; bottom: 110px">
         <v-icon @click="deleteEmail(index)">mdi-delete</v-icon>
       </div>
@@ -198,7 +195,7 @@
       </div>
       <v-btn-toggle>
         <v-btn color="primary" @click="dialog=true; delegate=false">Back to Certification Page</v-btn>
-        <v-btn color="primary">Send</v-btn>
+        <v-btn color="primary" @click="submit('delegate')">Send</v-btn>
         <v-btn color="primary" href="https://www.txdot.gov/">Exit</v-btn>
       </v-btn-toggle>
      </v-card>
@@ -208,8 +205,9 @@
 
 <script>
 import {countyInfo, autoDrawAsset} from '../components/Map/editFunc'
-import {featLayer,txCounties,view,rdbdSrfcGeom} from '../components/Map/map'
+import {featLayer,txCounties,view} from '../components/Map/map'
 import Query from "@arcgis/core/rest/support/Query"
+import {criConstants} from '../common/cri_constants';
 //import {roadInfo} from '../store'
 //import MileSignConfirmation from '../components/Map/mileageConfirmation.vue'
 export default {
@@ -249,7 +247,8 @@ export default {
               v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
             select: null,
-            emailList:[],
+            emailCounter:[],
+            ccEmailList: [],
             counter:0,
             message:'',
             certiAlert:'',
@@ -257,7 +256,6 @@ export default {
             //signature: false
           }
         },
-
         async mounted(){
           this.certify = false;
           let readCntyInfo = await countyInfo()
@@ -285,9 +283,7 @@ export default {
           this.date = todayDate.toDateString().substring(4,15)
           this.txt = `<p align="justify">${todayDate.toDateString().substring(4,15)}</p>
           </br>
-
           <p align="justify" style=font-family: Arial, Helvetica, sans-serif>Dear ${this.judgeName},</p><br>
-
           <p align="justify" style=font-family: Arial, Helvetica, sans-serif>The Texas Department of Transportation (TxDOT) is soliciting updates to the county road inventory (CRI) from your county. The deadline for the ${todayDate.getFullYear()} submission is <u>August 31</u>.<br><br>
            
           In September ${todayDate.getFullYear()}, the certified county-maintained road mileage from ${todayDate.getFullYear()-1} will be submitted to the Texas Department of Motor Vehicles for disbursement of the tile
@@ -297,9 +293,7 @@ export default {
           Your ${todayDate.getFullYear()} certified mileage is: <b><u>${this.currentMiles}</b></u><br><br>
             
           Please click the appropriate response below to agree or disagree with this mileage.  You may also delegate the certification to another county official.<br><br>
-
           Thank you for your assistance in keeping the county road inventory up to date. If you have any questions or need clarification, please contact us by email or phone. <br><br>
-
           Sincerely,<br><br> 
           Michael Chamberlain<br>  
           Transportation Planning and Programming Division<br>  
@@ -312,7 +306,13 @@ export default {
                                                                   An Equal Opportunity Employer</p></footer>`
         },
          methods:{
-          submit(){
+           //submit('submit') this will be called on each button click
+          submit(step){
+            
+            // loop through emailCounter object and extract values
+            for (let e =0; e < this.emailCounter.length; e++){
+              this.ccEmailList.push(this.emailCounter[e].ccEmail)
+            }
             // submit data to fme server workspace via webhook for processing
             let xmlhttp = new XMLHttpRequest();
             xmlhttp.responseType = 'json';
@@ -320,9 +320,34 @@ export default {
               if (xmlhttp.readyState==4 && xmlhttp.status==200)   {
                 console.log("Webhook fired! Check your email...");
               }
-              };
-            let theService = `https://gis-batch-dev.txdot.gov:8443/fmejobsubmitter/DUSA/emailer.fmw?email="TXDOT.SPM@gmail.com"&name=${this.judgeName}&opt_showresult=false&opt_servicemode=sync&token=a421aac78d7326aca5457e78d144e64cd972f885`;
+            };
+            
+            // populate from data properties
+            let theJson = {
+              "workflow":{
+                  "step": step,
+                  "countyInfo": {
+                      "countyName": this.county,
+                      "countyMileage": this.currentMiles
+                  },
+                  "judgeName": this.judgeName,
+                  "delegateName": [
+                    "Json Ferrell",
+                    "Matplotlib Washburn",
+                    "David Interoperability"
+                  ],
+                  "email": [
+                      "TXDOT.SPM@gmail.com"                      
+                  ],
+                  "ccEmails": this.ccEmailList,
+                }
+            };
+            
+            // prepare params for sending
+            let params = encodeURIComponent(JSON.stringify(theJson));
+            let theService = criConstants.webhookUrl + params;
             xmlhttp.open("GET",theService,true);
+            xmlhttp.setRequestHeader(criConstants.headerName, criConstants.headerValue)
             xmlhttp.send();
           },
            addSignature(){
@@ -330,14 +355,17 @@ export default {
            },
            addEmail(){
              let count= this.counter++
-             this.emailList.push(count)
+             this.emailCounter.push({
+               "counter":count,
+               "ccEmail": ""
+              });
            },
            async goToMap(){
             //login();
             this.$router.push('/map')
             let queryFeat = featLayer.definitionExpression =`CNTY_NM = '${this.county}'`
             txCounties.definitionExpression=`CNTY_NM='${this.county}'`
-            rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
+            //rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
             const query = new Query();
             query.where = `CNTY_NM = '${this.county}'`
             query.outFields = [ "*" ]
@@ -354,7 +382,7 @@ export default {
             this.$emit("county-miles", this.sendData)
           },
           deleteEmail(index){
-          this.emailList.splice(index, 1)
+          this.emailCounter.splice(index, 1)
           },
           // validate(){
           //   this.$refs.form.validate()
@@ -380,14 +408,12 @@ export default {
     position: absolute;
     right: 29.5%;
   }
-
   #agreeTxtBox{
     /* border: 3px solid green; */
     left:120px;
     position: relative;
     width:50%;
   }
-
   #sign{
     /* border: 3px solid green; */
     top: 550px;
