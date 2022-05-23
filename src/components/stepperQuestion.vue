@@ -7,9 +7,10 @@
     v-model="e1"
     vertical
     non-linear
-    class="mb-12"
+    class="mb-12; scroller"
     max-width="400"
     min-width="0"
+    
     >
     <v-stepper-header class="stepHead" v-if="forAdd">Add a New Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="!forAdd">Edit an Existing Road</v-stepper-header>
@@ -441,24 +442,26 @@ export default {
 
 #stepper{
   position: fixed;
-  top: 10%;
-  left: 14.5%;
+  top: 65px;
+  left: 260px;
   padding-bottom: 0%;
   font-size: 16px;
+  width:0%;
 }
 .scroller {
   width: auto;
-  height: 100px;
+  height: 500px;
   overflow-y: scroll;
   scrollbar-color: grey;
   scrollbar-width: thin;
 }
 .stepHead{
-  padding-top:5%;
-  padding-left:20%;
+  padding-top:1%;
+  padding-left:25%;
   background: #15648C;
   color: white;
-  font-size: 24px;
+  font-size: 20px;
+  height: 35px;;
   }
 
 .v-stepper--vertical{
