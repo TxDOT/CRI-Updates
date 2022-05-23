@@ -1,5 +1,5 @@
 <template>
-  <v-container id="nav">
+  
     <v-card>
       <v-navigation-drawer app>
       <!-- <alert v-if="display === true"/> -->
@@ -21,10 +21,8 @@
         </v-list>
         <mapTools/>
       <aboutHelp/>
-        </v-navigation-drawer>
+      </v-navigation-drawer>
       </v-card>
-      
-  </v-container>
 </template>
 <script>
   import { addRoadbed, modifyRoadbed} from "./Map/editFunc"
@@ -162,7 +160,7 @@
   color:white;
   font-size: 17px;
   height: 60px;
-  padding-left: 10%;
+  padding-left: 10px;
   padding-top: 5%;
   text-align: center;
   z-index:1;

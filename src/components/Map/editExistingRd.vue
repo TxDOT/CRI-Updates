@@ -1,5 +1,4 @@
 <template>
-    <v-container>
         <v-card  id="edit">
         <v-card-title class="editRdTitle" v-if="edit===true">
             Edit an Existing Road
@@ -19,9 +18,7 @@
             <v-card-text v-if="edit ===false">
                 Click on the Map to add a new Road
             </v-card-text>
-            
         </v-card>
-    </v-container>
 </template>
 
 <script>
@@ -69,9 +66,9 @@ export default {
         left: 100%;
     }
     #edit{
-        position: absolute;
+        position: relative;
         top:121px;
-        left:15%;
+        left:295px;
         width: 15%;
         color: #15648C;
     }
