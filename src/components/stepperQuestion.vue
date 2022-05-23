@@ -11,7 +11,8 @@
     max-width="400"
     min-width="0"
     >
-    <v-stepper-header class="stepHead">Edit an Existing Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forAdd">Add a New Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forAdd">Edit an Existing Road</v-stepper-header>
     <v-stepper-step
       editable
       :complete="e1 > 1"
@@ -23,37 +24,11 @@
 
     <v-stepper-content step="1">
       <!-- Disabled -- dictates whether fields in the stepper form are editable or not.  -->
-      <v-card>
-        <v-row no gutters>
-          <v-col>
-            <v-text-field v-model="roadbedName" label="Road Name" :disabled="graphic ? disabled : ''">
-            </v-text-field>
-          </v-col>
-        <v-col>
-          <v-card-text class="roadName" outlined>
-            <v-autocomplete :items="roadType" label="Roadbed Type" dense>
-            </v-autocomplete>
-          </v-card-text>
-        </v-col>
-        </v-row>
-      </v-card>
-      <v-card>
-        <v-row no gutters>
-          <v-col>
-          <v-btn text color="primary" small >
-            <u>Add a Prefix</u>
-          </v-btn>
-          </v-col>
-          <v-col>
-            <v-card-text style="bottom:10%;">
-              <v-autocomplete></v-autocomplete>
-            </v-card-text>
-          </v-col>
-        </v-row>
-      </v-card>
+      <roadName/>
       <v-btn
         color="primary"
-        @click="e1 = 2">
+        @click="e1 = 2"
+        :disabled="!roadbedName">
         Continue
       </v-btn>
     </v-stepper-content>
@@ -65,68 +40,28 @@
       @click="removeAsstPt(); complete();">
       Road Design
     </v-stepper-step>
-
+    
     <v-stepper-content step="2">
       <!-- Ternery statement if disabled property = true and graphic property = true then disable the v-select tag -->
-      <v-card><v-select v-model="roadbedDesign" :items="design" label="Design" outlined filled :disabled="graphic ? disabled : ''"></v-select>
-      </v-card>
+      <roadDesign/>
       <v-btn
         color="primary"
         @click="e1 = 3">
         Continue
       </v-btn>
     </v-stepper-content>
+
     <v-stepper-step
       editable
       :complete="e1 > 3"
       step="3"
-      @click="executeDFOgraph('point'); complete();" 
+      @click="startExecuteDfoPts(); complete();" 
       ><!-- Get asset breaks and draw graphic points -->
       Road Surface
     </v-stepper-step>
     <v-stepper-content step="3">
         <!-- If graphic is clicked (true), it presents this form -->
-        <v-card height="100px">
-          <div class="scroller"> 
-          <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
-          <v-col v-for="(item,index) in rdbdSurf" :key="index" >
-          <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID" :disabled="graphic ? disabled : ''"></v-select> <!-- //v-model="roadbedSurface" -->
-          <v-row>
-               <v-col sm="6">
-                 <v-text-field label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field> 
-               </v-col>
-               <v-col sm="6">
-                 <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field>
-                 <v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)" :disabled="graphic ? disabled : ''">
-                    <v-icon color="blue">mdi-pencil</v-icon>
-                  </v-btn>
-                    <v-btn id="currentSurf" small @click="deleteSurface(index)" elevation=0 :disabled="graphic ? disabled : ''"><v-icon color="red">mdi-delete</v-icon>
-                  </v-btn> 
-               </v-col>
-          </v-row>
-          <!-- Deletes asset break in the form -->
-          </v-col>
-          <!-- Adds new asset breaks to form based on mileInfo array (populated by user click addRoadSurface function) -->
-        <v-card v-for="(item,index) in mileInfo" :key="index" >
-            <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID"></v-select>
-            <v-row>
-               <v-col>
-                 <v-text-field  label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field>
-               </v-col>
-               <v-col sm="6">
-                 <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field>
-                 <v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)">
-                    <v-icon color="blue">mdi-pencil</v-icon>
-                  </v-btn>
-                  <v-btn id="addSurf" small @click="deleteSurface()" elevation=0>
-                    <v-icon color="red">mdi-delete</v-icon>
-                  </v-btn>
-               </v-col>
-            </v-row>
-        </v-card>
-        </div>
-        <v-btn color="pink" @click="addRoadSurface">add additional Road Surface Types</v-btn>
-        </v-card>
+      <roadSurface/>
         <!-- Form disabled on single click of reference layer in map (read only)  -->
         <!-- <v-card  v-if='graphic===false'>
           <div class="scroller">
@@ -160,8 +95,7 @@
       Number of Lanes
     </v-stepper-step>
     <v-stepper-content step="4">
-      <v-card :disabled="graphic ? disabled : ''"><v-select v-model="numLane" :items="lanes" label="Number of Lanes" outlined filled></v-select>
-      </v-card>
+      <numOfLane/>
       <v-btn
         color="primary"
         @click="e1 = 5">
@@ -174,6 +108,7 @@
     </v-stepper-step>
     <v-stepper-content step="5">
       <!-- Send Asset/geometry edits to editFunc.js function -->
+      <comment/>
       <v-btn
         color="primary" @click="saveAttri()" :disabled="graphic ? disabled : ''">
         Save Edits
@@ -184,8 +119,8 @@
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
     <v-btn-toggle>
-      <v-btn small>Cancel</v-btn>
-      <v-btn small color="#15648C" text="white"><u>Save</u></v-btn>
+      <v-btn small @click="cancel()">Cancel</v-btn>
+      <v-btn small color="#15648C" text @click="saveAttri()"><u>Save</u></v-btn>
     </v-btn-toggle>
 
   </v-stepper>
@@ -196,37 +131,40 @@
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import {saveInfo, removeAsstPoints, applyMToAsset, updateAsset, sketchCompete, getGraphic} from '../components/Map/editFunc'
-//import {roadInfo} from '../store'
+import {removeAsstPoints, sketchCompete,getGraphic} from '../components/Map/editFunc'
+import roadName from '../components/Map/stepperContent/RoadName.vue'
+import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
+import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
+import numOfLane from './Map/stepperContent/NumberOfLanes.vue'
+import comment from './Map/stepperContent/Comment.vue'
+//import {roadInfo} from '../store'a
 //import Map from '../components/Map/Map.vue'
 
 
 export default {
     name:"stepper",
+    components:{roadName,roadDesign, roadSurface, numOfLane, comment},
     props:{
       received: Boolean
     },
     //components: {Map},
     data () {
       return {
-        mileInfo:[],
+        // mileInfo:[],
+        //prefix: false,
+        //suffix: false,
         e1: 1,
-        design: ['One Way', 'Two-way', 'Boulevard'],
-        surface: ['Paved','Brick','Dirt/Natural','Gravel','Concrete'],
-        lanes:[1,2,3,4,5,6],
-        roadType: ['ALLEY','ANEX','ARCADE','AVENUE','BAYOU','BEACH','BEND','BLUFF','BLUFFS','BOTTOM','BOULEVARD','BRANCH','BRIDGE','BROOK','BROOKS','BURG','BURGS','BYPAS','CAMP','CANYON','CAPE','CAUSEWAY','CENTER','CENTERS','CIRCLE','CIRCLES','CLIFF','CLIFFS','CLUB','COMMON','COMMONS','CORNER','CORNERS','COURSE','COURT','COURTS','COVE','COVES','CREEK','CRESCENT','CREST','CROSSING','CROSSROAD','CROSSROADS','CURVE','DALE','DAM','DIVIDE','DRIVE','DRIVES','ESTATE','ESTATES','EXPRESSWAY','EXTENSION','EXTENSIONS','FALL','FALLS','FERRY','FIELD','FIELDS','FLAT','FLATS','FORD','FORDS','FOREST','FORGE','FORGES','FORK','FORKS','FORT','FREEWAY','GARDEN','GARDENS','GATEWAY','GLEN','GLENS','GREEN','GREENS','GROVE','GROVES','HARBOR','HARBORS','HAVEN','HEIGHTS','HIGHWAY','HILL','HILLS','HOLLOW','INLET','ISLAND','ISLANDS','ISLE','JUNCTION','JUNCTIONS','KEY','KEYS','KNOLL','KNOLLS','LAKE','LAKES','LAND','LANDING','LANE','LIGHT','LIGHTS','LOAF','LOCK','LOCKS','LODGE','LOOP','MALL','MANOR','MANORS','MEADOW','MEADOWS','MEWS','MILL','MILLS','MISSION','MOTORWAY','MOUNT','MOUNTAIN','MOUNTAINS','NECK','NOT APPLICABLE','ORCHARD','OTHER','OVAL','OVERPASS','PARKS','PARKWAYS','PASS','PASSAGE','PATH','PIKE','PINE','PINES','PLACE','PLAIN','PLAINS','PLAZA','POINT','POINTS','PORT','PORTS','PRAIRIE','RADIAL','RAMP','RANCH','RAPID','RAPIDS','REST','RIDGE','RIDGES','RIVER','ROAD','ROADS','ROUTE','ROW','RUE','RUN','SHOAL','SHOALS','SHORE','SHORES','SKYWAY','SPRING','SPRINGS','SPURS','SQUARE','SQUARES','STATION','STRAVENUE','STREAM','STREET','STREETS','SUMMIT','TERRACE','THROUGHWAY','TRACE','TRACK','TRAFFICWAY','TRAIL','TRAILER','TUNNEL','TURNPIKE','UNDERPASS','UNION','UNIONS','VALLEY','VALLEYS','VIADUCT','VIEW','VIEWS','VILLAGE','VILLAGES','VILLE','VISTA','WALKS','WALL','WAY','WAYS','WELL','WELLS'],
+        // design: ['One Way', 'Two-way', 'Boulevard'],
+        // surface: ['Paved','Brick','Dirt/Natural','Gravel','Concrete'],
+        // lanes:[1,2,3,4,5,6],
+        //roadType: ['ALLEY','ANEX','ARCADE','AVENUE','BAYOU','BEACH','BEND','BLUFF','BLUFFS','BOTTOM','BOULEVARD','BRANCH','BRIDGE','BROOK','BROOKS','BURG','BURGS','BYPAS','CAMP','CANYON','CAPE','CAUSEWAY','CENTER','CENTERS','CIRCLE','CIRCLES','CLIFF','CLIFFS','CLUB','COMMON','COMMONS','CORNER','CORNERS','COURSE','COURT','COURTS','COVE','COVES','CREEK','CRESCENT','CREST','CROSSING','CROSSROAD','CROSSROADS','CURVE','DALE','DAM','DIVIDE','DRIVE','DRIVES','ESTATE','ESTATES','EXPRESSWAY','EXTENSION','EXTENSIONS','FALL','FALLS','FERRY','FIELD','FIELDS','FLAT','FLATS','FORD','FORDS','FOREST','FORGE','FORGES','FORK','FORKS','FORT','FREEWAY','GARDEN','GARDENS','GATEWAY','GLEN','GLENS','GREEN','GREENS','GROVE','GROVES','HARBOR','HARBORS','HAVEN','HEIGHTS','HIGHWAY','HILL','HILLS','HOLLOW','INLET','ISLAND','ISLANDS','ISLE','JUNCTION','JUNCTIONS','KEY','KEYS','KNOLL','KNOLLS','LAKE','LAKES','LAND','LANDING','LANE','LIGHT','LIGHTS','LOAF','LOCK','LOCKS','LODGE','LOOP','MALL','MANOR','MANORS','MEADOW','MEADOWS','MEWS','MILL','MILLS','MISSION','MOTORWAY','MOUNT','MOUNTAIN','MOUNTAINS','NECK','NOT APPLICABLE','ORCHARD','OTHER','OVAL','OVERPASS','PARKS','PARKWAYS','PASS','PASSAGE','PATH','PIKE','PINE','PINES','PLACE','PLAIN','PLAINS','PLAZA','POINT','POINTS','PORT','PORTS','PRAIRIE','RADIAL','RAMP','RANCH','RAPID','RAPIDS','REST','RIDGE','RIDGES','RIVER','ROAD','ROADS','ROUTE','ROW','RUE','RUN','SHOAL','SHOALS','SHORE','SHORES','SKYWAY','SPRING','SPRINGS','SPURS','SQUARE','SQUARES','STATION','STRAVENUE','STREAM','STREET','STREETS','SUMMIT','TERRACE','THROUGHWAY','TRACE','TRACK','TRAFFICWAY','TRAIL','TRAILER','TUNNEL','TURNPIKE','UNDERPASS','UNION','UNIONS','VALLEY','VALLEYS','VIADUCT','VIEW','VIEWS','VILLAGE','VILLAGES','VILLE','VISTA','WALKS','WALL','WAY','WAYS','WELL','WELLS'],
         counter:0,
-        // //roadSurface:[],
-        // roadbedName: null,
-        // roadbedDesign:'',
-        //roadbedSurface:'', 
+        //prefixSuffixList: ['East','North','Northeast','Northwest','Not Applicable','South','Southeast','Southwest','West'],
         beginDFO:null,
         endDFO:null,
         forAdd: true,
         forEdit: false,
-        //numLane:null,
-        editTest: false,
-        clickCount: 0,
+        graphicObj: {},
         graphic: false,
         feature: false,
         clickCountF:0,
@@ -236,8 +174,10 @@ export default {
         assetLnInfo: null,
         disabled: false,
         //objectid: 0,
-        newDfo:0,
+        // newDfo:0,
         //working on form validation
+        //emptyValues:[v => !!v || 'Road Name is required'],
+         
         dfoRules:{
           DFO: value => !!value || 'Required',
           gather: value => {
@@ -249,35 +189,29 @@ export default {
       }
     },
     watch:{
-      received(){
-        console.log(this.received)
+      nextStep:{
+        handler:function(){
+          return this.nextStep
+        }
       },
-      //Interacting with reference layer
-      // clickCountF:{ //roadbedName
-      //   handler: async function(){
-      //     console.log('hover')
-      //     document.body.style.cursor = "pointer"
-      //     setTimeout(()=>{console.log('hello')},2000)
-      //     const click = "pointer-move"
-      //     let countF = await modifyRoadbed(click)
-      //     this.feature = true;
-      //     this.graphic = false;
-      //     this.clickCountF += countF
-      //     console.log(countF)
-      //     //document.getElementById("step").style.width='450px'
-      //   },
-      //   immediate: true,
-      // },
+      addRdBoolean:{
+        handler: function(){
+          this.forAdd = this.addRdBoolean
+        },
+        immediate: true,
+      },
+
+
       //Interacting with Graphic layer
-      clickCount:{
+      objectid:{
         handler: async function(){
-          let countG = await getGraphic(false)
+          let countG = await getGraphic()
           console.log(countG)
           this.feature = false;
           this.graphic = true;
-          this.clickCount += countG
-          //this.numLane = roadInfo.getLane
-          // document.getElementById("step").style.width='450px'
+          this.graphicObj = countG
+          //this.numLane = roadInfo.getLan
+          this.stepperClose = true;
           this.rdbdSurf
           this.roadbedName
           this.roadbedDesign
@@ -298,6 +232,9 @@ export default {
     },
 
     methods:{
+      startExecuteDfoPts(){
+        this.executeDfoPts = 'point'
+      },
       emptyMileArr(){
         if(this.mileInfo.length){
           this.mileInfo.length = 0
@@ -306,76 +243,76 @@ export default {
       removeAsstPt(){
         removeAsstPoints();
       },
-      async executeDFOgraph(x,y){
-        console.log(x,y)
-        // console.log(this.rdbdSurf)
-        sketchCompete();
-        const dfoAssets = [];
-        // if(dfoAssets.length){
-        //   dfoAssets.length = 0
-        // }
-        // console.log(dfoAssets)
-        if(x==='point'){
-          console.log(this.rdbdSurf)
-          for(let b in this.rdbdSurf){
-            let srfcType = {SRFC_TYPE_ID: this.rdbdSurf[b].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, ASSET_LN_END_DFO_MS: this.rdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid, edit: false}
-            dfoAssets.push(srfcType)
-          }
-          for(let i in this.mileInfo){
-            console.log(this.mileInfo[i])
-            let array = {SRFC_TYPE_ID: this.mileInfo[i].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS, ASSET_LN_END_DFO_MS: this.mileInfo[i].ASSET_LN_END_DFO_MS,objectid: this.objectid, edit: this.mileInfo[i].EDIT}
-            dfoAssets.push(array)
-          }
-          this.newDfo = applyMToAsset(dfoAssets)
-          //addAssetBreakPts(dfoAssets)
-        }
-        // if(x==='point' && this.feature===false){
-        //   for(let b in this.rdbdSurf){
-        //     console.log(this.fRdbdSurf[b])
-        //     let srfcType = {srfcType: this.rdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: Number(this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: Number(this.rdbdSurf[b].ASSET_LN_END_DFO_MS), objectid: this.objectid}
-        //     dfoAssets.push(srfcType)
-        //   }
-        //   for(let i in this.mileInfo){
-        //     console.log(this.mileInfo[i])
-        //     let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), AssetEndDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid, edit: this.mileInfo[i].EDIT}
-        //     dfoAssets.push(array)
-        //   }
-        //   console.log(dfoAssets)
-        //   //console.log(applyMToAsset(dfoAssets))
-        //   this.newDfo = applyMToAsset(dfoAssets)
-        // }
-        // else if(x==='line'){
-        //   for(let z in this.rdbdSurf){
-        //     console.log(this.rdbdSurf[z])
-        //     let array = {srfcType: this.rdbdSurf[z].SRFC_TYPE_ID, AssetBeginDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_END_DFO_MS),objectid: this.objectid}
-        //     dfoAssets.push(array)
-        //   }
-        //   addAssetBreakPts(dfoAssets)
-        // }
-        else if(x==='draw'){
-          console.log(y)
+      // async executeDFOgraph(x,y){
+      //   console.log(x,y)
+      //   // console.log(this.rdbdSurf)
+      //   sketchCompete();
+      //   const dfoAssets = [];
+      //   // if(dfoAssets.length){
+      //   //   dfoAssets.length = 0
+      //   // }
+      //   // console.log(dfoAssets)
+      //   if(x==='point'){
+      //     console.log(this.rdbdSurf)
+      //     for(let b in this.rdbdSurf){
+      //       let srfcType = {SRFC_TYPE_ID: this.rdbdSurf[b].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, ASSET_LN_END_DFO_MS: this.rdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid, edit: false}
+      //       dfoAssets.push(srfcType)
+      //     }
+      //     for(let i in this.mileInfo){
+      //       console.log(this.mileInfo[i])
+      //       let array = {SRFC_TYPE_ID: this.mileInfo[i].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS, ASSET_LN_END_DFO_MS: this.mileInfo[i].ASSET_LN_END_DFO_MS,objectid: this.objectid, edit: this.mileInfo[i].EDIT}
+      //       dfoAssets.push(array)
+      //     }
+      //     this.newDfo = applyMToAsset(dfoAssets)
+      //     //addAssetBreakPts(dfoAssets)
+      //   }
+      //   // if(x==='point' && this.feature===false){
+      //   //   for(let b in this.rdbdSurf){
+      //   //     console.log(this.fRdbdSurf[b])
+      //   //     let srfcType = {srfcType: this.rdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: Number(this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: Number(this.rdbdSurf[b].ASSET_LN_END_DFO_MS), objectid: this.objectid}
+      //   //     dfoAssets.push(srfcType)
+      //   //   }
+      //   //   for(let i in this.mileInfo){
+      //   //     console.log(this.mileInfo[i])
+      //   //     let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), AssetEndDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid, edit: this.mileInfo[i].EDIT}
+      //   //     dfoAssets.push(array)
+      //   //   }
+      //   //   console.log(dfoAssets)
+      //   //   //console.log(applyMToAsset(dfoAssets))
+      //   //   this.newDfo = applyMToAsset(dfoAssets)
+      //   // }
+      //   // else if(x==='line'){
+      //   //   for(let z in this.rdbdSurf){
+      //   //     console.log(this.rdbdSurf[z])
+      //   //     let array = {srfcType: this.rdbdSurf[z].SRFC_TYPE_ID, AssetBeginDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_END_DFO_MS),objectid: this.objectid}
+      //   //     dfoAssets.push(array)
+      //   //   }
+      //   //   addAssetBreakPts(dfoAssets)
+      //   // }
+      //   else if(x==='draw'){
+      //     console.log(y)
           
-          for(let z in this.rdbdSurf){
-            if(this.rdbdSurf[z].ASSET_LN_END_DFO_MS === y){
-              let array = {SRFC_TYPE_ID: this.rdbdSurf[z].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: parseFloat(this.rdbdSurf[z].ASSET_LN_BEGIN_DFO_MS), ASSET_LN_END_DFO_MS: parseFloat(this.rdbdSurf[z].ASSET_LN_END_DFO_MS),objectid: this.objectid}
-              dfoAssets.push(array)
-            }
-          }
-           for(let i in this.mileInfo){
-             if(Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)) === Number(y)){
-                console.log(this.mileInfo[i])
-                let array = {SRFC_TYPE_ID: this.mileInfo[i].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), ASSET_LN_END_DFO_MS: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid}
-                dfoAssets.push(array)
-              }
-            }
-          console.log(dfoAssets)
-          let uptDFO = await updateAsset(dfoAssets)
-          console.log(uptDFO)
-          this.newDfo = uptDFO
-        //   //editAsstObj[0].asset_ln_end_dfo_ms = uptDFO
-        //   //editAsstObj[1].asset_ln_begin_dfo_ms = uptDFO
-        }
-      },
+      //     for(let z in this.rdbdSurf){
+      //       if(this.rdbdSurf[z].ASSET_LN_END_DFO_MS === y){
+      //         let array = {SRFC_TYPE_ID: this.rdbdSurf[z].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: parseFloat(this.rdbdSurf[z].ASSET_LN_BEGIN_DFO_MS), ASSET_LN_END_DFO_MS: parseFloat(this.rdbdSurf[z].ASSET_LN_END_DFO_MS),objectid: this.objectid}
+      //         dfoAssets.push(array)
+      //       }
+      //     }
+      //      for(let i in this.mileInfo){
+      //        if(Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)) === Number(y)){
+      //           console.log(this.mileInfo[i])
+      //           let array = {SRFC_TYPE_ID: this.mileInfo[i].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), ASSET_LN_END_DFO_MS: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid}
+      //           dfoAssets.push(array)
+      //         }
+      //       }
+      //     console.log(dfoAssets)
+      //     let uptDFO = await updateAsset(dfoAssets)
+      //     console.log(uptDFO)
+      //     this.newDfo = uptDFO
+      //   //   //editAsstObj[0].asset_ln_end_dfo_ms = uptDFO
+      //   //   //editAsstObj[1].asset_ln_begin_dfo_ms = uptDFO
+      //   }
+      // },
       getElement(){
         //delete - Does nothing
         if(document.getElementsByTagName('input') && document.getElementById('dfo')){
@@ -386,31 +323,33 @@ export default {
         document.getElementById("stepper").style.width = '0px'
         this.stepperClose = false;
         sketchCompete();
+        
+
       },
       //pushes new blank object row into mileInfo asset form
-      addRoadSurface(){
-        this.mileInfo.push({
-          SRFC_TYPE_ID:'',
-          ASSET_LN_BEGIN_DFO_MS: 0,
-          ASSET_LN_END_DFO_MS:0,
-          EDIT: true
-        })
-      },
+      // addRoadSurface(){
+      //   this.mileInfo.push({
+      //     SRFC_TYPE_ID:'',
+      //     ASSET_LN_BEGIN_DFO_MS: 0,
+      //     ASSET_LN_END_DFO_MS:0,
+      //     EDIT: true
+      //   })
+      // },
       clearTable(){
         // this.roadbedName = undefined
         // this.roadbedDesign = undefined
         // this.roadbedSurface = undefined
         // this.numLane = undefined
       },
-      deleteSurface(index){
-        console.log(index)
-        if(document.getElementById('currentSurf')){
-          console.log(this.mileInfo.splice(index, 1))
-        }
-          // if(document.getElementById('currentSurf')){
-          //   this.rdbdSurf.splice(index, 1) 
-          // }
-      },
+      // deleteSurface(index){
+      //   console.log(index)
+      //   if(document.getElementById('currentSurf')){
+      //     console.log(this.mileInfo.splice(index, 1))
+      //   }
+      //     // if(document.getElementById('currentSurf')){
+      //     //   this.rdbdSurf.splice(index, 1) 
+      //     // }
+      // },
       saveAttri(){
         const rdbdSurface = [];
         for(let i in this.rdbdSurf){
@@ -433,25 +372,16 @@ export default {
           editDt: new Date().getTime()
         }
         console.log(createObj)
-        saveInfo(createObj)
+        console.log(this.graphicObj)
+        this.cancel();
+        // this.graphicObj.attributes.roadbedName = createObj.rdbdName
+        //saveInfo(createObj)
       },
       complete(){
         sketchCompete();
       }
     },
     computed:{ //Used to work with the vue properties without modifying them
-      // rdbdSurf(){
-      //   this.clickCount;
-      //   console.log(this.newDfo)
-      //   let srfc = roadInfo.getSurface
-      //   console.log(srfc)
-      //   return srfc
-      // },
-      // fRdbdSurf(){
-      //   this.clickCountF;
-      //   let Fsrfc = roadInfo.getSurface
-      //   return Fsrfc
-      // },
       numLane:{
         get(){
           return this.$store.state.numLane
@@ -469,6 +399,10 @@ export default {
       roadbedName:{
         get(){
           return this.$store.state.roadbedName
+        },
+        set(name){
+          console.log(name)
+          this.$store.commit('setRoadbedName', name)
         }
       },
       roadbedDesign:{
@@ -485,6 +419,20 @@ export default {
         set(stepClose){
           this.$store.commit('setStepperClose', stepClose)
         }
+      },
+      addRdBoolean:{
+        get(){
+          return this.$store.state.addRd
+        }
+      },
+      executeDfoPts:{
+        get(){
+          console.log(this.$store.state.executeDfoPts)
+          return this.$store.state.executeDfoPts
+        },
+        set(point){
+          this.$store.commit('setExecuteDfoPts', point)
+        }
       }
     }
 }
@@ -494,7 +442,7 @@ export default {
 #stepper{
   position: fixed;
   top: 10%;
-  left: 12.5%;
+  left: 14.5%;
   padding-bottom: 0%;
   font-size: 16px;
 }
@@ -518,5 +466,9 @@ export default {
 }
 .v-autocomplete >>> label{
   font-size: 15px;
+}
+
+.v-autocomplete >>> text{
+  font-size: 10px;
 }
 </style>

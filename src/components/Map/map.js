@@ -286,6 +286,9 @@ export const sketch = new SketchViewModel({
         view: view,
         layer: gLayer,
         updateOnGraphicClick: true,
+        defaultCreateOptions:{
+            mode: 'click'
+        },
         defaultUpdateOptions:{
             tool:"reshape",
             toggleToolOnClick: false,
@@ -333,7 +336,7 @@ export const sketchPoint = new Sketch({
 // });
   //add portal service to map
 watchUtils.whenOnce(view,"ready").then(()=>{
-    // document.getElementById('stepper').style.width = '0px'
+    document.getElementById('stepper').style.width = '0px'
     map.addMany([featLayer,txCounties])
 });
 

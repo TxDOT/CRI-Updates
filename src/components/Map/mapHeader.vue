@@ -1,17 +1,25 @@
 <template>
-    <div id ="mapHeader">
-        <v-toolbar color="#204E70" class="white--text">
+    <div class ="mapHeader" >
+        <v-footer app color="#204E70" class="white--text" style="height:60px; top:0%;">
             <v-toolbar-title class="h1-text">Welcome to DUSA - The County Road Inventory App</v-toolbar-title>
-            <!-- <v-btn-toggle id="editBtns">
-                <v-btn color="red" small>Delete Roads</v-btn>
-                <v-btn color="primary" small @click="addRoad(); snackbar = true" id="addBtn">Add Roads</v-btn>
-                <input id="upldFile" type="file" hidden @change="fileValid()"><v-btn @click="uploadFile()" color="blue-grey" small component="span" variant="contained">Upload Files</v-btn>
-            </v-btn-toggle> -->
-            <v-btn-toggle id="submitExitBtns">
-                <v-btn color="green" small @click="submitCertify=true">Submit & Certify</v-btn>
-                <v-btn color="Black" small @click="ExitDestroyLogIn()">Save & Exit</v-btn>
-            </v-btn-toggle>
-        </v-toolbar>
+                    <div style="left:80%; position: fixed;">
+                        <v-btn-toggle style="position: fixed;">
+                            <v-btn  color="green" small @click="submitCertify=true">Submit & Certify</v-btn>
+                            <v-btn  color="Black" small @click="ExitDestroyLogIn()">Save & Exit</v-btn>
+                        </v-btn-toggle>
+                    </div>
+        </v-footer>
+
+        <!-- <v-toolbar color="#204E70" class="white--text">
+            <v-toolbar-title class="h1-text">Welcome to DUSA - The County Road Inventory App</v-toolbar-title>
+>
+                <v-btn-toggle>
+                    <v-btn color="green" small @click="submitCertify=true">Submit & Certify</v-btn>
+                    <v-btn color="Black" small @click="ExitDestroyLogIn()">Save & Exit</v-btn>
+                </v-btn-toggle>
+            
+            
+        </v-toolbar> -->
         <div class="text-center">
             <v-snackbar style="bottom:50px;" v-model = snackbar timeout=-1>
                 <v-btn dark color="pink" text @click="snackbar = false; cancelEditing()" width=600> Stop Editing </v-btn>
@@ -29,7 +37,7 @@
                             The previous years mileage was <b>{{countyTotal}} miles</b>.<br>The new total mileage is <b>{{countyTots}} miles.</b>
                         </v-card-text>
                     </div>
-                    <div style="position:absolute; left: 10%; bottom: 5%; width=100%">
+                    <div style="position:absolute; left: 10%; bottom: 5%;">
                         <div style="position:relative; left:70%; top:0%">
                             <v-btn elevation="2" color="primary">
                                 Submit & Certify
@@ -92,16 +100,6 @@ export default {
 }    
 </script>
 <style scoped>
-    #mapHeader {
-        position: absolute;
-        left: 0%;
-        width:100%;
-        z-index: 1;
-    }
-    #submitExitBtns {
-        position: absolute;
-        right: 2.5%;
-    }
     .h1-text{
         position: relative;
         left:30%;

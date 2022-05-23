@@ -38,6 +38,7 @@ function queryFeat(qry){
 }
 //Querying asset (nonGeom) tables and pushing values to store
 async function queryFeatureTables(tblqry){
+  console.log(tblqry)
   //let length = parseFloat(geometryEngine.geodesicLength(tblqry.features[0].geometry, "miles")).toFixed(3)
   //let featIndex = tblqry.features[0].geometry.paths[0].length-1
   const query = new Query();
@@ -78,7 +79,7 @@ async function queryFeatureTables(tblqry){
     rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3))
     rdbdSrfArry[i].ASSET_LN_END_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_END_DFO_MS.toFixed(3))
   } 
-  setDataToStore(rdbdSrfArry, rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR, rdbdNameAtt.features[0].attributes.ST_DEFN_NM, rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT)
+  setDataToStore(rdbdSrfArry, rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR, rdbdNameAtt.features[0].attributes.ST_DEFN_NM, rdbdLaneAtt.features[0].attributes.NBR_THRU_LANE_CNT, tblqry.features[0].attributes.OBJECTID)
   //roadInfo.getSurface = rdbdSrfArry //push surface type values to getSurface setter
   // roadInfo.getDesign = rdbdDsgnAtt.features[0].attributes.RDWAY_DSGN_TYPE_DSCR
   // roadInfo.getName = rdbdNameAtt.features[0].attributes.ST_DEFN_NM
@@ -176,6 +177,11 @@ export async function addRoadbed(){
     style: "dash"
   }
   store.commit('setDeltaDis',[Number(returnAddNewRoad[0].toFixed(5)), 'Add'])
+  setDataToStore(sketch.layer.graphics.items.at(-1).attributes.roadbedSurface, 
+                 sketch.layer.graphics.items.at(-1).attributes.roadbedDesign,
+                 sketch.layer.graphics.items.at(-1).attributes.roadbedName,
+                 sketch.layer.graphics.items.at(-1).attributes.numLane,
+                 sketch.layer.graphics.items.at(-1).attributes.objectid)
   
   return returnAddNewRoad[0]
 }
@@ -250,6 +256,7 @@ async function defineGraphic(graphics, clickType){
   }
 
   if (clickType === "click"){
+    document.body.style.cursor = 'context-menu'
     let graphicPromise = new Promise(function(res){
       let newGraphic = new Graphic({
         geometry: {
@@ -280,6 +287,8 @@ async function defineGraphic(graphics, clickType){
         }
       })
       gLayer.graphics.add(newGraphic);
+      console.log(gLayer.graphics)
+      //sketch.update([newGraphic], {tool:'reshape'})
       res(gLayer)
     })
 
@@ -302,6 +311,7 @@ async function defineGraphic(graphics, clickType){
   //   //Hides Reference Layer so it cant create multiple graphics. OBJECTID gets applied to objectidList array
   //   featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_NM = '${roadInfo.getcntyName}'` //add to go first, a new functoin
     //rdbdSrfcGeom.definitionExpression = `gid not in (${objectidList}) and cnty_nm = '${roadInfo.getcntyName}'` TODO - Hide rdbdSrfcGeom (split asset feature service)
+    
   }
 }
 //hides feature roadbeds when converted to graphic
@@ -314,7 +324,7 @@ function hideEditedRoads(graphicL){
   }
   featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_NM = '${store.getters.cntyName}'`
 }
-
+//updateLength() gets new length of selected graphic and sends new length to store
 export function updateLength(){
   try{
     setUpGraphic();
@@ -330,7 +340,7 @@ export function updateLength(){
     console.log('updateLength error', Error)
   }
 }
-
+//setUpGraphic() gets old length of selected graphic and send old length to store
 function setUpGraphic(){
   view.on('click',(event)=>{
     if(sketch.state === 'active'){
@@ -342,6 +352,7 @@ function setUpGraphic(){
         if(result.graphic.layer === sketch.layer && result.graphic.attributes){
           sketch.update([result.graphic], {tool:"reshape"});
           let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(5))
+          console.log(oldLength)
           store.commit('setOldLength',oldLength)
         }
       });
@@ -365,6 +376,8 @@ export async function getGraphic(){
             view.hitTest(event,option)
             .then(function(response){
               if(response.results.length){
+                console.log(response.results[0].graphic.attributes['objectid'])
+                store.commit('setStepperClose', true)
                 // roadInfo.getObjectId = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['objectid'] : null
                 // roadInfo.getName = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['roadbedName'] : null
                 // roadInfo.roadbedSurface = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['roadbedSurface'] : null
@@ -376,7 +389,7 @@ export async function getGraphic(){
                 store.commit('setRoadbedDesign', response.results[0].graphic.attributes['roadbedDesign'])
                 store.commit('setNumLane', response.results[0].graphic.attributes['numLane'])
                 store.commit('setRoadbedSurface', response.results[0].graphic.attributes['roadbedSurface'])
-                resp(1)
+                resp(response.results[0].graphic)
               }
             })
           })
@@ -1007,6 +1020,8 @@ export async function autoDrawAsset(z){
 
 
 }
+
+
 
 // function mDisplay(){
 

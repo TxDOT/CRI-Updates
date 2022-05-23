@@ -1,13 +1,25 @@
 <template>
     <v-container>
         <v-card  id="edit">
-        <v-card-title class="editRdTitle">
+        <v-card-title class="editRdTitle" v-if="edit===true">
             Edit an Existing Road
         </v-card-title>
-            <v-icon color="blue">
+        <v-card-title class="editRdTitle" v-if="edit===false">
+            Add a new Road
+        </v-card-title>
+            <v-icon color="blue" v-if="edit===true">
                 mdi-cursor-default
             </v-icon>
-            Select a road from the map to begin editing
+            <v-icon color="blue" v-if="edit===false">
+                mdi-plus
+            </v-icon>
+            <v-card-text v-if="edit===true">
+                Select a road from the map to begin editing
+            </v-card-text>
+            <v-card-text v-if="edit ===false">
+                Click on the Map to add a new Road
+            </v-card-text>
+            
         </v-card>
     </v-container>
 </template>
@@ -21,7 +33,7 @@ export default {
       }
     },
     watch:{
-        edit:{
+        editStatus:{
             handler: function(){
                 this.edit =  this.editStatus
                 console.log(this.edit)
@@ -32,12 +44,13 @@ export default {
     computed:{
         editStatus:{
             get(){
-                return this.$store.state.editStatus
+                return this.$store.state.editExisting
             },
             set(edit){
-                this.$store.commit('setEditStatus',edit)
+                this.$store.commit('setEditExisting',edit)
             }
-        }
+        },
+
     }
 }
 </script>
@@ -57,9 +70,9 @@ export default {
     }
     #edit{
         position: absolute;
-        top:10%;
-        left:102%;
-        width: 100%;
+        top:121px;
+        left:15%;
+        width: 15%;
         color: #15648C;
     }
 </style>

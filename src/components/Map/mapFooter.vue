@@ -1,17 +1,20 @@
 <template>
-    <v-footer color="grey" app style="height:35px; opacity: .5;" >
-      <v-card color="grey" class="black--text" id="footerCard">
+    <v-footer app style="height:35px; background: rgba(192,192,192,0.5)" >
+      <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
-          <div class="f1-text">County: {{county}}&nbsp; &nbsp; &nbsp; User Name: {{userName}}
-            &nbsp; &nbsp; &nbsp; Previous Total Mileage: {{countyTotal}}&nbsp;&nbsp;&nbsp; 
-            Current Mileage: {{rdbdDeltaDist}}&nbsp;&nbsp;&nbsp; 
-            New Total Miles: {{countyTots}}
+          <div  id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; &nbsp; &nbsp; User Name: <b>{{userName}}</b> 
+            &nbsp; &nbsp; &nbsp;Previous Total Mileage: <b>{{countyTotal}}</b>&nbsp;&nbsp;&nbsp; 
+            Current Mileage: <b>{{Number(rdbdDeltaDist.toFixed(4))}}</b>&nbsp;&nbsp;&nbsp; 
+            New Total Miles: <b>{{Number(countyTots.toFixed(4))}}</b>
+          </div>
+          <div style="position: absolute; font-size: 10px; bottom: 10%;">
+            Build v1.0
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>
         <v-btn style="right: 40%; bottom: 20%">About</v-btn>
         <v-btn id="googleBtn" color="blue" @click="google()">Jump to Google</v-btn> -->
-      </v-card>   
+      <!-- </v-card>    -->
     </v-footer>
 </template>
 
@@ -95,9 +98,9 @@ export default {
     width:100%;
     height:100%;
   }
-  .f1-text{
+  /* .f1-text{
     position: relative;
     top:10%;
-  }
+  } */
 
 </style>

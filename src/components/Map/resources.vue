@@ -1,7 +1,8 @@
 <template>
     <v-card style="top:20%">
+      <v-navigation-drawer>
         <!-- <v-card-title id="mapTools">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resources</v-card-title> -->
-        <v-list>
+        <v-list rounded>
           <v-list-item-group v-model="stepIn">
             <v-list-item v-for="(item,i) in items" :key="i" @click="item.action">
             <v-list-item-icon>
@@ -13,7 +14,8 @@
             </v-list-item>
           </v-list-item-group>
         </v-list>
-      </v-card>
+      </v-navigation-drawer>
+    </v-card>
 </template>
 
 <script>

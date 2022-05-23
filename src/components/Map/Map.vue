@@ -11,7 +11,7 @@
                 colored-border
                 icon="@/assets/favicon-32x32.png"
             >
-     To Begin Editing, Add a New Road or click on an existing Road.
+     Use the left navigation bar to start editing or to find useful information.
     </v-alert>
         </div>
     </div>

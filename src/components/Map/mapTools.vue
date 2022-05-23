@@ -1,7 +1,7 @@
 <template>
     <v-card style="top:10%">
         <!-- <v-card-title id="mapTools">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Map Tools</v-card-title> -->
-        <v-list>
+        <v-list rounded>
           <v-list-item-group v-model="stepIn">
             <v-list-item v-for="(item,i) in items" :key="i" @click="item.action">
             <v-list-item-icon>
@@ -41,7 +41,7 @@ import { jumpToGoogle } from './mapNav'
 </script>
 <style scoped>
 #mapTools{
-  position: relative;
+  position: absolute;
   background: #15648C;
   color:white;
   font-size: 16px;
