@@ -58,7 +58,7 @@ export default {
         color:white;
         font-size: 16px;
         height: 40px;
-        padding-left: 50px;
+        padding-left: 40px;
         padding-top: 1%;
         text-align: justify;
         top: 10%;

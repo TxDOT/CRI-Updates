@@ -33,7 +33,7 @@
                 <v-card-actions>
                     <div style="position:absolute; top:20%; left: 5%" class="black--text mb-3">
                         <v-card-text >
-                            You are about to submit and certify county mileage for {{cntyName}} County.<br>
+                            You are about to submit and certify county mileage for {{countyName}} County.<br>
                             The previous years mileage was <b>{{countyTotal}} miles</b>.<br>The new total mileage is <b>{{countyTots}} miles.</b>
                         </v-card-text>
                     </div>
@@ -85,7 +85,7 @@ export default {
         }
     },
     computed:{
-        cntyName:{
+        countyName:{
             get(){
                 return this.$store.state.cntyName
             }
@@ -102,6 +102,5 @@ export default {
 <style scoped>
     .h1-text{
         position: relative;
-        left:30%;
     }
 </style>

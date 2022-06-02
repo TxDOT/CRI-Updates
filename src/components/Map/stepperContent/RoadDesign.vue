@@ -1,5 +1,5 @@
 <template>
-    <v-card><v-select v-model="roadbedDesign" :items="design" label="Design" outlined filled :disabled="graphic ? disabled : ''"></v-select>
+    <v-card><v-select v-model="roadDesign" :items="design" label="Design" outlined filled :disabled="graphic ? disabled : ''"></v-select>
     </v-card>
 </template>
 
@@ -17,7 +17,7 @@ export default {
     },
   
     computed:{
-      roadbedDesign:{
+      roadDesign:{
         get(){
           return this.$store.state.roadbedDesign
         }

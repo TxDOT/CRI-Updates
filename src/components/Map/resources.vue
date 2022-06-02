@@ -2,8 +2,8 @@
     <v-card style="top:20%">
       <v-navigation-drawer>
         <!-- <v-card-title id="mapTools">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resources</v-card-title> -->
-        <v-list rounded>
-          <v-list-item-group v-model="stepIn">
+        <v-list class="outlineColor" max-width="99%">
+          <v-list-item-group v-model="stepIn" color="#15648C">
             <v-list-item v-for="(item,i) in items" :key="i" @click="item.action">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
@@ -26,7 +26,7 @@
     name: 'aboutHelp',
     data (){
       return {
-        stepIn:1,
+        stepIn:null,
         display:false,
         drawer: true,
         items: [
@@ -54,6 +54,10 @@
 .v-list-item{
   display: flex;
   text-align: left;
+}
+
+.outlineColor .v-list-item-group .v-list-item--active{
+  outline: #15648C solid 2px;
 }
 
 </style>

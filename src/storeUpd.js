@@ -23,9 +23,22 @@ export const store = new Vuex.Store({
         stepperClose: null,
         addRd:false,
         editExisting: null,
-        executeDfoPts: ''
+        executeDfoPts: '',
+        roadInfoUpdate:[],
+        roadGeometry: [],
+        assetCoverage: null,
+
     },
     getters:{
+        getRoadGeom(state){
+            return state.roadGeometry
+        },
+        getAssetCoverage(state){
+            return state.assetCoverage
+        },
+        getroadInfoUpdate(state){
+            return state.roadInfoUpdate
+        },
         getExecuteDfoPts(state){
             return state.executeDfoPts
         },
@@ -65,7 +78,7 @@ export const store = new Vuex.Store({
         getCntyMiles(state){
             return state.cntyMiles
         },
-        cntyName(state){
+        getCntyName(state){
             return state.cntyName
         },
         //  addRoad(state){
@@ -77,7 +90,7 @@ export const store = new Vuex.Store({
         getRoadbedDesign(state){
             return state.roadbedDesign
         } ,
-        roadbedSurface(state){
+        getRoadbedSurface(state){
             return state.roadbedSurface
         },
         getNumLane(state){
@@ -85,6 +98,27 @@ export const store = new Vuex.Store({
         }
     },
     mutations:{
+        setRoadGeom(state, geom){
+            state.roadGeometry = geom
+        },
+        setAssetCoverage(state, assetDfos){
+            const currentLength = state.roadGeometry[0].at(-1)[2] - state.roadGeometry[0].at(0)[2]
+            let endDfos = assetDfos[1];
+            let beginDfos = assetDfos[0];
+            const diffBeginEnd = endDfos - beginDfos
+            
+            console.log(diffBeginEnd, endDfos, beginDfos, Number(currentLength.toFixed(3)))     
+            if(Number(currentLength.toFixed(3)) === diffBeginEnd){
+                state.assetCoverage = true
+            }
+            else{
+                state.assetCoverage = false
+            }
+            //state.assetCoverage = assetDfos
+        },
+        setRoadInfoUpdate(state, roadInfo){
+            state.roadInfoUpdate = roadInfo
+        },
         setExecuteDfoPts(state, point){
             state.executeDfoPts = point
         },
@@ -171,14 +205,4 @@ export const store = new Vuex.Store({
             state.numLane = numLane
         }
     },
-    actions:{
-        roadbedSurfaceAction(context, newDfo){
-            let newArr = []
-            for(let d in newDfo){
-                newArr.push({ASSET_LN_BEGIN_DFO_MS: newDfo[d].AssetBeginDfo, ASSET_LN_END_DFO_MS: newDfo[d].AssetEndDfo, objectid: newDfo[d].objectid, SRFC_TYPE_ID: newDfo[d].srfcType})
-            }
-            
-            context.commit('setRoadbedSurface', newArr)
-        }   
-    }
 })

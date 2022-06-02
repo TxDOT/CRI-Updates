@@ -87,7 +87,7 @@ async function queryFeatureTables(tblqry){
 }
 //Sets Road Data in the data store. 
 function setDataToStore(surface, design, name, lane, objectid){
-  store.commit('setRoadbedSurface', JSON.stringify(surface)) //push surface type values to getSurface setter
+  store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
   store.commit('setRoadbedDesign', design) 
   store.commit('setRoadbedName', name)
   store.commit('setNumLane', lane)
@@ -114,7 +114,7 @@ export async function countyInfo(){
         let newQuery = countyOfficialInfo.queryFeatures(query)
         // query county extent for dynamic home button
         const geomQuery = new Query();
-        geomQuery.where = `CNTY_NM = '${store.state.cntyName}'`;
+        geomQuery.where = `CNTY_NM = '${store.getters.getCntyName}'`;
         geomQuery.outFields = [ "*" ];
         geomQuery.returnGeometry = true;
         let returnGeom = txCounties.queryFeatures(geomQuery);
@@ -176,7 +176,9 @@ export async function addRoadbed(){
     width: 2,
     style: "dash"
   }
+  reapplyM(gLayer.graphics.items.at(-1))
   store.commit('setDeltaDis',[Number(returnAddNewRoad[0].toFixed(5)), 'Add'])
+  store.commit('setRoadGeom', gLayer.graphics.items.at(-1).geometry.paths)
   setDataToStore(sketch.layer.graphics.items.at(-1).attributes.roadbedSurface, 
                  sketch.layer.graphics.items.at(-1).attributes.roadbedDesign,
                  sketch.layer.graphics.items.at(-1).attributes.roadbedName,
@@ -322,7 +324,7 @@ function hideEditedRoads(graphicL){
       objectidList.push(graphicL.graphics.items[id].attributes.objectid)
     }
   }
-  featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_NM = '${store.getters.cntyName}'`
+  featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_NM = '${store.getters.getCntyName}'`
 }
 //updateLength() gets new length of selected graphic and sends new length to store
 export function updateLength(){
@@ -376,7 +378,7 @@ export async function getGraphic(){
             view.hitTest(event,option)
             .then(function(response){
               if(response.results.length){
-                console.log(response.results[0].graphic.attributes['objectid'])
+                console.log(response.results[0].graphic.attributes)
                 store.commit('setStepperClose', true)
                 // roadInfo.getObjectId = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['objectid'] : null
                 // roadInfo.getName = response.results[0].graphic.attributes !== null ? response.results[0].graphic.attributes['roadbedName'] : null
@@ -408,8 +410,8 @@ function reapplyM(arr){
   let applyM = [];
   
   try{
-    let segMil = arr.geometry.paths[0][0][2];
-    applyM.push(arr.geometry.paths[0][0][2])
+    let segMil = arr.geometry.paths[0][0][2] ? arr.geometry.paths[0][0][2] : 0;
+    arr.geometry.paths[0][0][2] ? applyM.push(arr.geometry.paths[0][0][2]) : applyM.push(0);
     for(let i=0; i < arr.geometry.paths[0].length; i++){
       
       let pointA = new Graphic({

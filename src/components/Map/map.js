@@ -2,7 +2,7 @@ import { criConstants } from '../../common/cri_constants';
 //import {getNewLength} from '../Map/editFunc'
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
-import Sketch from "@arcgis/core/widgets/Sketch";
+// import Sketch from "@arcgis/core/widgets/Sketch";
 import SketchViewModel from "@arcgis/core/widgets/Sketch/SketchViewModel";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 //import Graphic from "@arcgis/core/Graphic";
@@ -286,9 +286,6 @@ export const sketch = new SketchViewModel({
         view: view,
         layer: gLayer,
         updateOnGraphicClick: true,
-        defaultCreateOptions:{
-            mode: 'click'
-        },
         defaultUpdateOptions:{
             tool:"reshape",
             toggleToolOnClick: false,
@@ -316,19 +313,31 @@ export const sketch = new SketchViewModel({
 //     }),
 // });
 // newSketch.id = "newSketch"
-export const sketchPoint = new Sketch({
+export const sketchPoint = new SketchViewModel({
     view: view,
-    viewModel: new SketchViewModel({
-        layer: delgLayer,
-        view: view
-    }),
+    layer: delgLayer,
+    defaultCreateOptions:{
+        mode:"click"
+    },
     snappingOptions: {
         enabled: true,
         featureSources: [{ layer: gLayer, enabled: true, featureEnabled: true }],
         distance: 20
     }
-   
 });
+// export const sketchPoint = new Sketch({
+//     view: view,
+//     viewModel: new SketchViewModel({
+//         layer: delgLayer,
+//         view: view
+//     }),
+//     snappingOptions: {
+//         enabled: true,
+//         featureSources: [{ layer: gLayer, enabled: true, featureEnabled: true }],
+//         distance: 20
+//     }
+   
+//});
 
 // view.when(() => { 
 //     console.log('one')

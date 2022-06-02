@@ -2,7 +2,7 @@
     <v-card style="padding-bottom:10%;">
         <v-row no gutters>
             <v-col>
-                <v-text-field v-model="roadbedName" label="Roadbed Name" :rules="emptyValues">
+                <v-text-field v-model="roadName" label="Roadbed Name" :rules="emptyValues" outlined>
                 </v-text-field>
             </v-col>
             <v-col>
@@ -16,7 +16,7 @@
             <v-col cols="auto">
                 <v-tooltip right max-width="200">
                     <template v-slot:activator="{ on, attrs }">
-                        <v-btn small text color="primary" v-bind="attrs" v-on="on" style="position: absolute; right:61%; top: 60%;" @click="prefix = true">
+                        <v-btn small text color="primary" v-bind="attrs" v-on="on" style="position: absolute; right:60%; top: 60%;" @click="prefix = true">
                             <u>Add a Prefix</u><v-icon small>mdi-help-circle</v-icon>
                         </v-btn>
                     </template>
@@ -64,7 +64,7 @@ export default {
       }
     },
     computed:{
-        roadbedName:{
+        roadName:{
             get(){
                 return this.$store.state.roadbedName
             },

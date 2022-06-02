@@ -1,15 +1,15 @@
 <template>
   
     <v-card>
-      <v-navigation-drawer app>
+      <v-navigation-drawer app style="top:59px;">
       <!-- <alert v-if="display === true"/> -->
         <!-- <v-alert v-model="display" color="green" @click="display = false">
           Click on the Map to start Drawing!
         </v-alert> -->
         <v-card-title id="testTitle">What Do You Want To Do?</v-card-title>
-        <v-list rounded>
-          <v-list-item-group v-model="stepIn">
-            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic">
+        <v-list class="outlineColor"> 
+          <v-list-item-group v-model="stepIn" color="#15648C">
+            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple>
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -25,7 +25,7 @@
       </v-card>
 </template>
 <script>
-  import { addRoadbed, modifyRoadbed} from "./Map/editFunc"
+  import { addRoadbed, modifyRoadbed, stopEditing} from "./Map/editFunc"
   import mapTools from "../components/Map/mapTools.vue"
   import aboutHelp from "../components/Map/resources.vue"
   //import alert from './Map/alert.vue'
@@ -35,7 +35,7 @@
     components: {mapTools, aboutHelp},
     data (){
       return {
-        stepIn:1,
+        stepIn:null,
         graphic: false,
         display: false,
         stepDisplay: true,
@@ -55,6 +55,7 @@
             }
           },
           { title: 'Edit Road', icon: 'mdi-pencil', action: async ()=>{
+            stopEditing();
             this.editExistingRd = true;
             document.body.style.cursor = 'pointer'
             // setTimeout(()=>{
@@ -85,13 +86,13 @@
 
       },
       openStepper(){
-        this.stepperClose = true;
+        this.steppClose = true;
         this.editExistingRd = null;
       },
       alertTest(){
         if(this.stepDisplay)
         this.display = this.alertStatus
-      }
+      },
     },
 
         // modifyLine:{
@@ -103,14 +104,14 @@
     //   immediate:true,
     // },
     watch:{
-      stepperClose:{
+      steppClose:{
         handler: function(){
-          if(this.stepperClose === true){
+          if(this.steppClose === true){
             document.getElementById('stepper').style.width = '500px'
           }
-          console.log(this.stepperClose)
-          this.stepDisplay = this.stepperClose
-          this.graphic = this.stepperClose
+          console.log(this.steppClose)
+          this.stepDisplay = this.steppClose
+          this.graphic = this.steppClose
           console.log(this.graphic)
         },
         immediate: true,
@@ -123,7 +124,7 @@
       // }
     },
     computed:{
-      stepperClose:{
+      steppClose:{
         get(){
           return this.$store.state.stepperClose
         },
@@ -185,6 +186,10 @@
 .v-list-item{
   display: flex;
   text-align: left;
+}
+
+.outlineColor .v-list-item-group .v-list-item--active{
+  outline: #15648C solid 2px;
 }
 
 </style>
