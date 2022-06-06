@@ -10,7 +10,7 @@
     class="mb-12; scroller"
     max-width="460"
     min-width="0"
-    
+    height="820"
     >
     <v-stepper-header class="stepHead" v-if="forAdd">Add a New Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="!forAdd">Edit an Existing Road</v-stepper-header>
@@ -57,7 +57,7 @@
       editable
       :complete="e1 > 3"
       step="3"
-      @click="startExecuteDfoPts(); complete();" 
+      @click="startExecuteDfoPts(); complete(); initLoadAsset()" 
       ><!-- Get asset breaks and draw graphic points -->
       Road Surface
     </v-stepper-step>
@@ -120,7 +120,7 @@
       </v-btn>
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
-    <v-btn-toggle>
+    <v-btn-toggle style="top:150px">
       <v-btn small @click="cancel()">Cancel</v-btn>
       <v-btn small color="#15648C" text @click="saveAttri()"><u>Save</u></v-btn>
     </v-btn-toggle>
@@ -133,7 +133,7 @@
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import {removeAsstPoints, sketchCompete} from '../components/Map/editFunc'
+import {removeAsstPoints, sketchCompete, initLoadAssetGraphic} from '../components/Map/editFunc'
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
@@ -233,6 +233,9 @@ export default {
     },
 
     methods:{
+      initLoadAsset(){
+        initLoadAssetGraphic()
+      },
       startExecuteDfoPts(){
         this.exeDfoPts = 'point'
       },
@@ -354,6 +357,7 @@ export default {
       // },
       saveAttri(){
         const rdbdSurface = [];
+        console.log(this.rdbdSurf)
         for(let i in this.rdbdSurf){
           let srfcType = {srfcType: this.rdbdSurf[i].SRFC_TYPE_ID, AssetBeginDfo: this.rdbdSurf[i].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.rdbdSurf[i].ASSET_LN_END_DFO_MS}
           rdbdSurface.push(srfcType)
@@ -392,7 +396,12 @@ export default {
       rdbdSurf:{
         get(){
           console.log(this.$store.state.roadbedSurface)
-          return JSON.parse(this.$store.state.roadbedSurface)
+          if(typeof(this.$store.state.roadbedSurface) === 'string'){
+            return JSON.parse(this.$store.state.roadbedSurface) 
+          }
+          else{
+            return this.$store.state.roadbedSurface
+          }
         },
         set(x){
           this.$store.commit('setRoadbedSurface',JSON.stringify(x))

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     <!-- <v-card height="200px" flat> -->
+        <div class="scroller" style="height:200px;"> 
+            <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
+                <!-- <v-col v-for="(item,index) in rdbdSurf" :key="index" > -->
+                  <v-card v-if="isAssetType=== true" >
+                    <v-card-title class="surfaceTitle">
+                      <v-card-text style="bottom:30px; position:relative; font-size: 15px; text-align: left;">What's the Surface Type?</v-card-text>
+                    </v-card-title>
+                    <v-select v-model="assetType" :items="assetTypeOpt" outlined dense placeholder="Pick a surface Type"></v-select>
+                      <v-btn style="bottom: 10px; padding:0px; left:50px;" depressed plain>
+                        Cancel
+                      </v-btn>
+                      <v-btn style="bottom: 10px; padding:0px; right:1px;" absolute outlined @click="isAssetType = false; isAssetStart = true;">
+                        <u>Continue</u>
+                      </v-btn>
+                  </v-card>
+                  <v-card v-if="isAssetStart === true">
+                  <v-card-title class="surfaceTitle">
+                    <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Surface Start?</v-card-text>
+                  </v-card-title>
+                  <v-btn plain absolute left small @click="atBegin()">
+                    <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The beginning of the Road?
+                  </v-btn>
+                  <v-btn plain absolute left style="top:75px;" small @click="isAssetStartDisable=true">
+                    <v-icon style="padding:0px;">mdi-plus</v-icon>At this mile: 
+                  </v-btn>
+                  <v-text-field v-model="assetStartDfo" :disabled="!isAssetStartDisable" dense absolute outlined label="Enter Mile" style="width:100px; top:38px; left:150px; height:160px;"></v-text-field>
+                  <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('start')">
+                    <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
+                  </v-btn>
+                  <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain>
+                    Cancel
+                  </v-btn>
+                  <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetStart = false; isAssetEnd = true; ">
+                    <u>Continue</u>
+                  </v-btn>
+                </v-card>
+                <v-card v-if="isAssetEnd === true">
+                <v-card-title class="surfaceTitle">
+                  <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Surface End?</v-card-text>
+                </v-card-title>
+                <v-btn plain absolute left small @click="atEnd()">
+                  <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The End of the Road?
+                </v-btn>
+                <v-btn plain absolute left style="top:75px;" small @click="isAssetEndDisable=true">
+                  <v-icon style="padding:0px;">mdi-plus</v-icon>At this mile: 
+                </v-btn>
+                <v-text-field v-model="assetEndDfo" :disabled="!isAssetEndDisable" dense absolute outlined label="Enter Mile" style="width:100px; top:38px; left:150px; height:160px;"></v-text-field>
+                <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('end')">
+                  <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
+                </v-btn>
+                <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain>
+                  Cancel
+                </v-btn>
+                <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetEnd = false; isAssetFinished = true; updateMileInfo(assetEndDfo); updateGraphic();">
+                  <u>Continue</u>
+                </v-btn>
+              </v-card>
+    
+              
+                    <!-- <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID" :disabled="graphic ? disabled : ''"></v-select>
+                        <v-row>
+                            <v-col sm="6">
+                                <v-text-field label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field> 
+                            </v-col>
+                            <v-col sm="6">
+                                <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS" :disabled="graphic ? disabled : ''"></v-text-field>
+                                    <v-btn id="editedfo" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)" :disabled="graphic ? disabled : ''">
+                                        <v-icon color="blue">mdi-pencil</v-icon>
+                                    </v-btn>
+                                    <v-btn id="currentSurf" small @click="deleteSurface(index)" elevation=0 :disabled="graphic ? disabled : ''"><v-icon color="red">mdi-delete</v-icon>
+                                    </v-btn> 
+                            </v-col>
+                        </v-row> -->
+                        <!-- Deletes asset break in the form -->
+                <!-- </v-col> -->
+              <v-card v-if="isAssetFinished=== true" absolute left flat>
+              <assetAlert/>
+              <v-col  v-for="(item,index) in mileInfo" :key="index">
+              <v-row style="border: 1px solid #204E70; height: 70px;" width="800px"> <!-- add for loop to display items; previous button should create an object, which can be displayed below info -->
+                <v-card-text style="position: relative; left:1px; text-align: left;" >This road is <em style="color:white" :style="{backgroundColor:assetColorTable[item.SRFC_TYPE]}">{{item.SRFC_TYPE}}</em> between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
+                  <v-btn plain color="#15648C" style="left:270px; bottom: 43px;" @click="editAsset(index)"><v-icon small>mdi-pencil</v-icon>Edit</v-btn>
+                  <v-btn plain style="left:200px; bottom:73px;" @click="deleteSurface(index)"><v-icon color="red" >mdi-delete</v-icon></v-btn>
+              </v-row>
+              <v-spacer></v-spacer>
+              </v-col>
+              <a @click="isAssetFinished = false; isAssetType = true; addRoadSurface();" style="position: relative; text-align:justify; text-justify: inter-word; right:60px; font-size: small; top: 10px; padding-bottom: 5px;"><u>Click here to add another segment</u> with<br> a different surface type.</a>
+              </v-card>
+              <!-- Adds new asset breaks to form based on mileInfo array (populated by user click addRoadSurface function) -->
+                <!-- <v-card v-for="(item,index) in mileInfo" :key="index" >
+                    <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID"></v-select>
+                        <v-row>
+                            <v-col>
+                                <v-text-field  label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field>
+                            </v-col>
+                            <v-col sm="6">
+                                <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field>
+                                    <v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)">
+                                        <v-icon color="blue">mdi-pencil</v-icon>
+                                    </v-btn>
+                                    <v-btn id="addSurf" small @click="deleteSurface()" elevation=0>
+                                        <v-icon color="red">mdi-delete</v-icon>
+                                    </v-btn>
+                            </v-col>
+                        </v-row>
+                </v-card> -->
+            </div>
+        <!-- </v-card> -->
+</body>
+</html>

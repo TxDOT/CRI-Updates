@@ -8,7 +8,7 @@
             New Total Miles: <b>{{Number(countyTots.toFixed(4))}}</b>
           </div>
           <div style="position: absolute; font-size: 10px; bottom: 10%;">
-            Build v1.0
+            Build v1.1
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>
@@ -42,7 +42,7 @@ export default {
     modifyLength:{
       handler: async function(){
         updateLength();
-        this.modifyLength += this.rdbdDeltaDist
+        // \this.modifyLength += this.rdbdDeltaDist
       },
       immediate: true, 
     },

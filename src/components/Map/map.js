@@ -286,6 +286,9 @@ export const sketch = new SketchViewModel({
         view: view,
         layer: gLayer,
         updateOnGraphicClick: true,
+        defaultCreateOptions:{
+            mode:"click"
+        },
         defaultUpdateOptions:{
             tool:"reshape",
             toggleToolOnClick: false,

@@ -27,9 +27,13 @@ export const store = new Vuex.Store({
         roadInfoUpdate:[],
         roadGeometry: [],
         assetCoverage: null,
+        cntyEndingMiles: 0,
 
     },
     getters:{
+        getCntyEndingMiles(state){
+            state.cntyEndingMiles
+        },
         getRoadGeom(state){
             return state.roadGeometry
         },
@@ -98,17 +102,18 @@ export const store = new Vuex.Store({
         }
     },
     mutations:{
+        setCntyEndingMiles(state, cntyMiles){
+            state.cntyEndingMiles = state.cntyMiles + state.deltaDistance
+            console.log(cntyMiles)
+        },
         setRoadGeom(state, geom){
             state.roadGeometry = geom
         },
         setAssetCoverage(state, assetDfos){
             const currentLength = state.roadGeometry[0].at(-1)[2] - state.roadGeometry[0].at(0)[2]
-            let endDfos = assetDfos[1];
-            let beginDfos = assetDfos[0];
-            const diffBeginEnd = endDfos - beginDfos
             
-            console.log(diffBeginEnd, endDfos, beginDfos, Number(currentLength.toFixed(3)))     
-            if(Number(currentLength.toFixed(3)) === diffBeginEnd){
+            console.log(assetDfos, Number(currentLength.toFixed(3)))   
+            if(Number(currentLength.toFixed(3)) === assetDfos){
                 state.assetCoverage = true
             }
             else{
