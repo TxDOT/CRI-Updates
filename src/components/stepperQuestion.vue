@@ -8,9 +8,9 @@
     vertical
     non-linear
     class="mb-12; scroller"
-    max-width="400"
+    max-width="460"
     min-width="0"
-    
+    height="820"
     >
     <v-stepper-header class="stepHead" v-if="forAdd">Add a New Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="!forAdd">Edit an Existing Road</v-stepper-header>
@@ -29,7 +29,7 @@
       <v-btn
         color="primary"
         @click="e1 = 2"
-        :disabled="!roadbedName">
+        :disabled="!roadName">
         Continue
       </v-btn>
     </v-stepper-content>
@@ -53,10 +53,11 @@
     </v-stepper-content>
 
     <v-stepper-step
+      class="stepStyle"
       editable
       :complete="e1 > 3"
       step="3"
-      @click="startExecuteDfoPts(); complete();" 
+      @click="startExecuteDfoPts(); complete(); initLoadAsset()" 
       ><!-- Get asset breaks and draw graphic points -->
       Road Surface
     </v-stepper-step>
@@ -79,12 +80,12 @@
           </v-col>
           </div>
         </v-card> -->
-         <v-btn
+         <!-- <v-btn
             color="primary"
             @click="complete();"
           >
             Draw Surface Graphic
-        </v-btn>
+        </v-btn> -->
         <v-btn
             color="primary"
            @click="e1 = 4;">
@@ -119,7 +120,7 @@
       </v-btn>
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
-    <v-btn-toggle>
+    <v-btn-toggle style="top:150px">
       <v-btn small @click="cancel()">Cancel</v-btn>
       <v-btn small color="#15648C" text @click="saveAttri()"><u>Save</u></v-btn>
     </v-btn-toggle>
@@ -132,7 +133,7 @@
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import {removeAsstPoints, sketchCompete,getGraphic} from '../components/Map/editFunc'
+import {removeAsstPoints, sketchCompete, initLoadAssetGraphic} from '../components/Map/editFunc'
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
@@ -204,22 +205,21 @@ export default {
 
 
       //Interacting with Graphic layer
-      objectid:{
-        handler: async function(){
-          let countG = await getGraphic()
-          console.log(countG)
-          this.feature = false;
-          this.graphic = true;
-          this.graphicObj = countG
-          //this.numLane = roadInfo.getLan
-          this.stepperClose = true;
-          this.rdbdSurf
-          this.roadbedName
-          this.roadbedDesign
-          this.objectid
-        }, 
-         immediate: true,
-      }, 
+      // objectid:{
+      //   handler: async function(){
+      //     let countG = await getGraphic()
+      //     console.log(countG)
+      //     this.feature = false;
+      //     this.graphic = true;
+      //     this.graphicObj = countG
+      //     //this.numLane = roadInfo.getLan
+      //     this.stepperClose = true;
+      //     this.rdbdSurf
+      //     this.roadbedName
+      //     this.roadbedDesign
+      //   }, 
+      //    immediate: true,
+      // }, 
       newDfo(){
         console.log(this.newDfo)
         
@@ -233,8 +233,11 @@ export default {
     },
 
     methods:{
+      initLoadAsset(){
+        initLoadAssetGraphic()
+      },
       startExecuteDfoPts(){
-        this.executeDfoPts = 'point'
+        this.exeDfoPts = 'point'
       },
       emptyMileArr(){
         if(this.mileInfo.length){
@@ -322,7 +325,8 @@ export default {
       },
       cancel(){
         document.getElementById("stepper").style.width = '0px'
-        this.stepperClose = false;
+        this.steppClose = false;
+        this.e1 = 1;
         sketchCompete();
         
 
@@ -353,6 +357,7 @@ export default {
       // },
       saveAttri(){
         const rdbdSurface = [];
+        console.log(this.rdbdSurf)
         for(let i in this.rdbdSurf){
           let srfcType = {srfcType: this.rdbdSurf[i].SRFC_TYPE_ID, AssetBeginDfo: this.rdbdSurf[i].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.rdbdSurf[i].ASSET_LN_END_DFO_MS}
           rdbdSurface.push(srfcType)
@@ -363,16 +368,16 @@ export default {
           rdbdSurface.push(array)
         }
           
-        let createObj = {
-          objectid: this.objectid,
-          numLanes: this.numLane,
-          rdbdName: this.roadbedName,
-          rdbdDes: this.roadbedDesign,
-          rdbdSurfe: JSON.stringify(rdbdSurface),
-          editNm: 'DPROSACK', //TODO needs to be dynamic
-          editDt: new Date().getTime()
-        }
-        console.log(createObj)
+        // let createObj = {
+        //   objectids: this.objid,
+        //   numLanes: this.numLane,
+        //   rdbdName: this.roadbedName,
+        //   rdbdDes: this.roadbedDesign,
+        //   rdbdSurfe: JSON.stringify(rdbdSurface),
+        //   editNm: 'DPROSACK', //TODO needs to be dynamic
+        //   editDt: new Date().getTime()
+        // }
+        //console.log(createObj)
         console.log(this.graphicObj)
         this.cancel();
         // this.graphicObj.attributes.roadbedName = createObj.rdbdName
@@ -391,13 +396,18 @@ export default {
       rdbdSurf:{
         get(){
           console.log(this.$store.state.roadbedSurface)
-          return JSON.parse(this.$store.state.roadbedSurface)
+          if(typeof(this.$store.state.roadbedSurface) === 'string'){
+            return JSON.parse(this.$store.state.roadbedSurface) 
+          }
+          else{
+            return this.$store.state.roadbedSurface
+          }
         },
         set(x){
           this.$store.commit('setRoadbedSurface',JSON.stringify(x))
         }
       },
-      roadbedName:{
+      roadName:{
         get(){
           return this.$store.state.roadbedName
         },
@@ -406,17 +416,20 @@ export default {
           this.$store.commit('setRoadbedName', name)
         }
       },
-      roadbedDesign:{
+      roadDesign:{
         get(){
           return this.$store.state.roadbedDesign
         }
       },
-      objectid:{
+      objid:{
         get(){
           return this.$store.state.objectid
         }
       },
-      stepperClose:{
+      steppClose:{
+        get(){
+          return this.$store.state.stepperClose
+        },
         set(stepClose){
           this.$store.commit('setStepperClose', stepClose)
         }
@@ -426,7 +439,7 @@ export default {
           return this.$store.state.addRd
         }
       },
-      executeDfoPts:{
+      exeDfoPts:{
         get(){
           console.log(this.$store.state.executeDfoPts)
           return this.$store.state.executeDfoPts
@@ -473,5 +486,10 @@ export default {
 
 .v-autocomplete >>> text{
   font-size: 10px;
+}
+
+.v-stepper__step--active{
+  outline: #204E70 solid 2px;
+  background-color: rgba(32, 78, 112, .3)
 }
 </style>

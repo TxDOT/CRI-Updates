@@ -1,5 +1,5 @@
 <template>
-    <v-card :disabled="graphic ? disabled : ''"><v-select v-model="numLane" :items="lanes" label="Number of Lanes" outlined filled></v-select>
+    <v-card :disabled="graphic ? disabled : ''"><v-select v-model="numberLane" :items="lanes" label="Number of Lanes" outlined filled></v-select>
     </v-card>
 </template>
 
@@ -15,9 +15,9 @@ export default {
       }
     },
     computed:{
-      numLane:{
+      numberLane:{
         get(){
-          return this.$store.state.numLane
+          return this.$store.state.numberLane
         }
       },
     }

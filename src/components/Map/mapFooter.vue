@@ -1,14 +1,14 @@
 <template>
-    <v-footer app style="height:35px; background: rgba(192,192,192,0.5)" >
+    <v-footer app style="left: 243px;width: 100%;height:35px; text-align: center;background: rgba(192,192,192,0.5)" >
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
-          <div  id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; &nbsp; &nbsp; User Name: <b>{{userName}}</b> 
+          <div  id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; &nbsp;&nbsp; User Name: <b>{{userName}}</b> 
             &nbsp; &nbsp; &nbsp;Previous Total Mileage: <b>{{countyTotal}}</b>&nbsp;&nbsp;&nbsp; 
             Current Mileage: <b>{{Number(rdbdDeltaDist.toFixed(4))}}</b>&nbsp;&nbsp;&nbsp; 
             New Total Miles: <b>{{Number(countyTots.toFixed(4))}}</b>
           </div>
           <div style="position: absolute; font-size: 10px; bottom: 10%;">
-            Build v1.0
+            Build v1.1
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>
@@ -42,7 +42,7 @@ export default {
     modifyLength:{
       handler: async function(){
         updateLength();
-        this.modifyLength += this.rdbdDeltaDist
+        // \this.modifyLength += this.rdbdDeltaDist
       },
       immediate: true, 
     },
@@ -95,7 +95,7 @@ export default {
   }
   #footerCard{
     top: 0%;
-    width:100%;
+    width:90%;
     height:100%;
   }
   /* .f1-text{

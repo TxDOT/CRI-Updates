@@ -15,7 +15,7 @@ export default {
     //components: {Login},
     //props: [roadInfo],
     mounted(){
-      //this.$router.push('/login')
+      //this.$router.push({name: 'Login'});
       countyInfo().then(result => {result.response === true ? this.$router.push({ name: 'MileSign', params: { id: result.nbr}}) : this.$router.push('/catchAll(.*)')})
       //roadInfo();
     }
