@@ -20,7 +20,7 @@
             small
             dark
             color="red"
-            @click="dialog=false; logMeIn()"><!-- goToMap() -->
+            @click="dialog=false; goToMap();"><!-- goToMap(); logMeIn() -->
             Review & Edit
             </v-btn>
             </div>
@@ -388,9 +388,9 @@ export default {
           deleteEmail(index){
           this.emailCounter.splice(index, 1)
           },
-          logMeIn(){
-             this.$router.push('/login')
-           },
+          // logMeIn(){
+          //    this.$router.push('/login')
+          //  },
           // validate(){
           //   this.$refs.form.validate()
           // }

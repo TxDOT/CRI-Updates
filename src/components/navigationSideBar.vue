@@ -9,7 +9,7 @@
         <v-card-title id="testTitle">What Do You Want To Do?</v-card-title>
         <v-list class="outlineColor"> 
           <v-list-item-group v-model="stepIn" color="#15648C">
-            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple>
+            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple :style="{}">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>

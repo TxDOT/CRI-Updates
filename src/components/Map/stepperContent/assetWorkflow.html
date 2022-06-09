@@ -15,7 +15,7 @@
                     <v-card-title class="surfaceTitle">
                       <v-card-text style="bottom:30px; position:relative; font-size: 15px; text-align: left;">What's the Surface Type?</v-card-text>
                     </v-card-title>
-                    <v-select v-model="assetType" :items="assetTypeOpt" outlined dense placeholder="Pick a surface Type"></v-select>
+                    <v-select v-model="assetType" :items="assetTypeOpt" outlined dense placeholder="Pick an asset type"></v-select>
                       <v-btn style="bottom: 10px; padding:0px; left:50px;" depressed plain>
                         Cancel
                       </v-btn>
@@ -27,14 +27,14 @@
                   <v-card-title class="surfaceTitle">
                     <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Surface Start?</v-card-text>
                   </v-card-title>
-                  <v-btn plain absolute left small @click="atBegin()">
+                  <v-btn plain absolute left small @click="atBegin(); isAssetStartDisable=false; cancelDfoLocation()">
                     <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The beginning of the Road?
                   </v-btn>
-                  <v-btn plain absolute left style="top:75px;" small @click="isAssetStartDisable=true">
+                  <v-btn plain absolute left style="top:75px;" small @click="isAssetStartDisable=true;cancelDfoLocation()">
                     <v-icon style="padding:0px;">mdi-plus</v-icon>At this mile: 
                   </v-btn>
                   <v-text-field v-model="assetStartDfo" :disabled="!isAssetStartDisable" dense absolute outlined label="Enter Mile" style="width:100px; top:38px; left:150px; height:160px;"></v-text-field>
-                  <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('start')">
+                  <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('start'); isAssetStartDisable=false">
                     <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
                   </v-btn>
                   <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain>
@@ -48,14 +48,14 @@
                 <v-card-title class="surfaceTitle">
                   <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Surface End?</v-card-text>
                 </v-card-title>
-                <v-btn plain absolute left small @click="atEnd()">
+                <v-btn plain absolute left small @click="atEnd(); isAssetEndDisable=false; cancelDfoLocation()">
                   <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The End of the Road?
                 </v-btn>
-                <v-btn plain absolute left style="top:75px;" small @click="isAssetEndDisable=true">
+                <v-btn plain absolute left style="top:75px;" small @click="isAssetEndDisable=true; cancelDfoLocation()">
                   <v-icon style="padding:0px;">mdi-plus</v-icon>At this mile: 
                 </v-btn>
                 <v-text-field v-model="assetEndDfo" :disabled="!isAssetEndDisable" dense absolute outlined label="Enter Mile" style="width:100px; top:38px; left:150px; height:160px;"></v-text-field>
-                <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('end')">
+                <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('end'); isAssetEndDisable=false">
                   <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
                 </v-btn>
                 <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain>
@@ -87,7 +87,7 @@
               <assetAlert/>
               <v-col  v-for="(item,index) in mileInfo" :key="index">
               <v-row style="border: 1px solid #204E70; height: 70px;" width="800px"> <!-- add for loop to display items; previous button should create an object, which can be displayed below info -->
-                <v-card-text style="position: relative; left:1px; text-align: left;" >This road is <em style="color:white" :style="{backgroundColor:assetColorTable[item.SRFC_TYPE]}">{{item.SRFC_TYPE}}</em> between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
+                <v-card-text style="position: relative; left:1px; text-align: left;" >This road is <em style="color:white" :style="{backgroundColor:`${assetColorTable[item.SRFC_TYPE]}`}">{{item.SRFC_TYPE}}</em> between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
                   <v-btn plain color="#15648C" style="left:270px; bottom: 43px;" @click="editAsset(index)"><v-icon small>mdi-pencil</v-icon>Edit</v-btn>
                   <v-btn plain style="left:200px; bottom:73px;" @click="deleteSurface(index)"><v-icon color="red" >mdi-delete</v-icon></v-btn>
               </v-row>

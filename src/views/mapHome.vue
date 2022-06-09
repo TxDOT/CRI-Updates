@@ -7,6 +7,7 @@
     <navSideBar/>
     <stepper v-if="display === true"/>
     <editExistingRd/>
+    <!-- <denyClickFeat/> -->
   </div>
 </template>
 
@@ -17,6 +18,7 @@ import mapFooter from '../components/Map/mapFooter.vue'
 import navSideBar from '../components/navigationSideBar.vue'
 import stepper from '../components/stepperQuestion.vue'
 import editExistingRd from "../components/Map/editExistingRd.vue"
+//import denyClickFeat from '../components/Map/clickOnFeature.vue'
 //import {countyInfo} from '../components/Map/editFunc'
 export default {
     components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd},

@@ -46,6 +46,13 @@ export default {
       },
       immediate: true, 
     },
+    countyTots:{
+      handler: function(){
+        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist)
+        // \this.modifyLength += this.rdbdDeltaDist
+      },
+      immediate: true, 
+    },
     // modifyLine:{
     //   handler: async function(){
     //     let modify = await modifyRoadbed("click")
@@ -77,11 +84,20 @@ export default {
         return this.$store.state.deltaDistance
       }
     },
-    currentMiles: function(){
-      return Number(this.previousTotal) + Number(this.modifyLength)
-    },
+    // currentMiles: function(){
+    //   return 0 + Number(this.rdbdDeltaDist)
+    // },
     countyTots: function(){
       return Number(this.countyTotal) + Number(this.rdbdDeltaDist)
+    },
+    returnCountyTotal:{
+      get(){
+        console.log(this.$store.state.cntyEndingMiles)
+        return this.$store.state.cntyEndingMiles
+      },
+      set(mi){
+        this.$store.commit('setCntyEndingMiles', mi)
+      }
     },
   }
   
