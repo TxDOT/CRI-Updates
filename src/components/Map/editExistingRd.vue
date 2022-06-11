@@ -1,24 +1,57 @@
 <template>
+    <v-container>
         <v-card  id="edit">
-        <v-card-title class="editRdTitle" v-if="edit===true">
-            Edit an Existing Road
-        </v-card-title>
-        <v-card-title class="editRdTitle" v-if="edit===false">
+            <v-card-title class="editRdTitle" v-if="edit===true">
+                Edit an Existing Road
+             </v-card-title>
+        <v-card-title class="editRdTitle" v-if="addR===true">
             Add a new Road
         </v-card-title>
-            <v-icon color="blue" v-if="edit===true">
+        <v-card-title class="editRdTitle" v-if="deleteR===true">
+            Delete a Road
+        </v-card-title>
+    
+
+        <v-card-text v-if="edit===true" class="editRdInfo">
+            <v-icon color="blue" class="editRdIcon">
+                 mdi-plus
+            </v-icon>
+            Select a road from the map to begin editing
+        </v-card-text>
+        <v-card-text v-if="addR === true" class="editRdInfo">
+            <v-icon color="blue" class="editRdIcon">
                 mdi-cursor-default
             </v-icon>
-            <v-icon color="blue" v-if="edit===false">
-                mdi-plus
-            </v-icon>
-            <v-card-text v-if="edit===true">
-                Select a road from the map to begin editing
-            </v-card-text>
-            <v-card-text v-if="edit ===false">
                 Click on the Map to add a new Road
-            </v-card-text>
-        </v-card>
+        </v-card-text>
+        <v-card-text v-if="deleteR === true" class="editRdInfo">
+            <v-icon color="blue" class="editRdIcon" style="transform:rotate(330deg); top:0px">
+                mdi-navigation
+            </v-icon>Select a road to delete it
+        </v-card-text>
+    </v-card>
+    <v-card id="delWarn" v-if="deleteSecond === true">
+        <v-card-title class="editRdTitle">
+            Delete a Road
+        </v-card-title>
+        <v-alert type="orange" height="56" dense outlined style="width:379px; text-align: left;">
+            <v-icon color="orange" style="right:7px;">
+                mdi-information
+            </v-icon>
+            You can discard this edit later if you change your mind.
+         </v-alert>
+        <v-card-text style="text-align: left; bottom:10px; position: relative;">
+            <b>{{roadName}}</b> will be deleted.
+        </v-card-text>
+        <v-btn depressed plain style="left:69px;bottom:16px"> 
+          Cancel
+        </v-btn>
+        <v-btn outlined style="bottom:16px; left:73px;" tile @click="deleteSecond=false"> 
+          <u>Continue</u>
+        </v-btn>
+    </v-card>
+    </v-container>
+       
 </template>
 
 <script>
@@ -26,19 +59,66 @@ export default {
     name: 'editExistingRd',
     data (){
       return {
-        edit:false
+        edit:false,
+        deleteR: false,
+        deleteSecond: false,
+        modifyR: false,
+        addR: false,
+        stepper: false
       }
     },
     watch:{
+        steppClose:{
+            handler: function(){
+                this.stepper =  this.steppClose
+            },
+        immediate:true,
+        },
         editStatus:{
             handler: function(){
                 this.edit =  this.editStatus
-                console.log(this.edit)
+            },
+        immediate:true,
+        },
+        deleteRoad:{
+            handler: function(){
+                this.deleteR =  this.deleteRoad
+            },
+        immediate:true,
+        },
+        modifyRoad:{
+            handler: function(){
+                this.modifyR =  this.modifyRoad
+            },
+        immediate:true,
+        },
+        addRdBoolean:{
+            handler: function(){
+                this.addR =  this.addRdBoolean
+            },
+        immediate:true,
+        },
+        nextDeleteRoadForm:{
+            handler: function(){
+                this.deleteSecond =  this.nextDeleteRoadForm
             },
         immediate:true,
         },
     },
     computed:{
+        roadName:{
+            get(){
+                return this.$store.state.roadbedName
+            }
+        },
+        modifyRoad:{
+            get(){
+                return this.$store.state.modifyRd
+            },
+            set(mod){
+                this.$store.commit('setModifyRd', mod)
+            }
+        },
         editStatus:{
             get(){
                 return this.$store.state.editExisting
@@ -47,7 +127,38 @@ export default {
                 this.$store.commit('setEditExisting',edit)
             }
         },
-
+        deleteRoad:{
+            get(){
+                return this.$store.state.deleteRd
+            },
+            set(del){
+                this.$store.commit('setDeleteRd', del)
+            }
+        },
+        addRdBoolean:{
+            get(){
+                return this.$store.state.addRd
+            },
+            set(bool){
+                this.$store.commit('setAddRd', bool)
+            }
+        },
+        nextDeleteRoadForm:{
+            get(){
+                return this.$store.state.deleteRdSecond
+            },
+            set(secondStep){
+                this.$store.commit('setDeleteRdSecond', secondStep)
+            }
+        },
+        steppClose:{
+            get(){
+                return this.$store.state.stepperClose
+            },
+            set(open){
+                this.$store.commit('setStepperClose', open)
+            }
+        },
     }
 }
 </script>
@@ -65,11 +176,37 @@ export default {
         width: 100%;
         left: 100%;
     }
+    .editRdInfo{
+        position: relative;
+        font-size: 16px;
+        height: 60px;
+        padding-left: 35px;
+        padding-top: 5%;
+        text-align: justify;
+        top: 10%;
+        width: 100%;
+        left: 10px;
+    }
+    .editRdIcon{
+        position: absolute;
+        padding-right: 10px;
+        padding-top: 4%;
+        text-align: justify;
+        right: 240px;
+    }
     #edit{
         position: relative;
-        top:121px;
-        left:295px;
+        top:100px;
+        left:200px;
         width: 15%;
+        color: #15648C;
+    }
+    #delWarn{
+        position: absolute;
+        top:100px;
+        left:260px;
+        width: 20%;
+        height: 20%;
         color: #15648C;
     }
 </style>

@@ -1,6 +1,6 @@
 <template>
 <!-- <v-card height="200px" flat> -->
-  <div class="scroller" style="height:200px;"> 
+  <div class="scroller" style="height:250px;"> 
   <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
   <!-- <v-col v-for="(item,index) in rdbdSurf" :key="index" > -->
     <v-card v-if="isAssetType=== true" >
@@ -70,7 +70,14 @@
         </v-row>
         <v-spacer></v-spacer>
       </v-col>
-      <a @click="isAssetFinished = false; isAssetType = true; addRoadSurface();" style="position: relative; text-align:justify; text-justify: inter-word; right:60px; font-size: small; top: 10px; padding-bottom: 5px;"><u>Click here to add another segment</u> with<br> a different surface type.</a>
+      <a @click="isAssetFinished = false; isAssetType = true; addRoadSurface();" style="position: relative; right:20px; font-size: small; top: 10px; padding-bottom: 5px;"><u>Click here to add another segment</u> with<br> a different surface type.</a>
+  
+      <v-btn depressed plain style="left:3px; top:30px"> 
+        Cancel
+      </v-btn>
+      <v-btn outlined style="top:30px; left:3px;" tile @click="nextStep(5)" color="#15648C"> 
+        <u>Continue</u>
+      </v-btn>
     </v-card>
   </div>
 </template>
@@ -109,12 +116,14 @@ export default {
     }
   },
   methods:{
+    nextStep(x){
+      this.returnStep = x
+    },
     cancelDfoLocation(){
       stopEditingPoint()
     },
     editAsset(index){
       let getCurrentItem = this.mileInfo.at(index)
-        console.log(getCurrentItem)
         this.assetType = getCurrentItem.SRFC_TYPE
         this.assetStartDfo = getCurrentItem.ASSET_LN_BEGIN
         this.assetEndDfo - getCurrentItem.ASSET_LN_END
@@ -125,14 +134,11 @@ export default {
     async getDfoLocation(type){
       let returnSelectedDFO = await getSelectedDFO(this.objid);
       type === 'start' ? this.assetStartDfo = Number(returnSelectedDFO[0].toFixed(3)) : this.assetEndDfo = Number(returnSelectedDFO[0].toFixed(3))
-      console.log(returnSelectedDFO)
     },
 
     atBegin(){
       this.cancelDfoLocation();
-      console.log(this.objid)
       let id = gLayer.graphics.items.filter(x=>x.attributes.objectid === this.objid);
-      console.log(id)
       this.assetStartDfo = Number(id[0].geometry.paths[0][0][2].toFixed(3))
       //this.$set(this.mileInfo[0], 'ASSET_LN_BEGIN_DFO_MS', id[0].geometry.paths[0][0][2])
     },
@@ -163,7 +169,6 @@ export default {
       let diff = beginEndArr.reduce((prevValue, currentValue) => 
         currentValue - prevValue, initValue
       )
-      console.log(diff, beginEndArr)
       this.setAssetCover = Number(diff.toFixed(3))
     },
 
@@ -196,7 +201,6 @@ export default {
     },
 
     deleteSurface(index){
-      console.log(index)
       this.mileInfo.splice(index, 1)
       applyMToAsset(this.mileInfo)
     },
@@ -210,17 +214,14 @@ export default {
         OBJECTID: this.objid
       })
       this.editIndex = -1
-      console.log(this.mileInfo)
     },
   },
 
   watch:{
     objid:{
       handler: async function(){
-        console.log('change', this.objid)
         this.resetItems();
         let countG = await getGraphic()
-        console.log(countG)
         this.feature = false;
         this.graphic = true;
         this.graphicObj = countG
@@ -235,9 +236,7 @@ export default {
         }
 
         if(this.numLanes){
-          console.log(this.numLanes)
           for(let i=0; i < this.numLanes.length; i++){
-            console.log(this.mileInfo)
             this.mileInfo.push({
               SRFC_TYPE: this.numLanes[i].SRFC_TYPE_ID,
               ASSET_LN_BEGIN: this.numLanes[i].ASSET_LN_BEGIN_DFO_MS,
@@ -246,8 +245,6 @@ export default {
               OBJECTID: this.objid
             })
           }
-
-          console.log(this.mileInfo)
           this.isAssetFinished = true
           this.isAssetType = this.isAssetStart = this.isAssetEnd = false
         }
@@ -266,9 +263,16 @@ export default {
     }, 
   },
   computed:{
+    returnStep:{
+      get(){
+        return this.$store.state.stepNumber
+      },
+      set(x){
+        this.$store.commit('setStepNumber', Number(x))
+      }
+    },
     numLanes:{
       get(){
-        console.log(this.$store.state.numLane)
         if(typeof(this.$store.state.numLane) === 'string'){
           return JSON.parse(this.$store.state.numLane) 
         }
@@ -282,7 +286,6 @@ export default {
     },
     objid:{
       get(){
-        console.log(this.$store.state.objectid)
         return this.$store.state.objectid
       }
     },

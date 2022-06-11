@@ -39,4 +39,9 @@ export const criConstants = {
       '5': "#BF94E4",
       '6': "#F0DC82"
     },
+    
+    editTypeColor:{
+      'edit': [0, 0, 255],
+      'delete': [227,38,54]
+    }
 }

@@ -2,13 +2,12 @@
     <v-card style="padding-bottom:10%;">
         <v-row no gutters>
             <v-col>
-                <v-text-field v-model="streetName" label="Roadbed Name" :rules="emptyValues" outlined>
+                <v-text-field v-model="roadName" label="Roadbed Name" :rules="emptyValues" outlined>
                 </v-text-field>
             </v-col>
             <v-col>
-                <v-card-text class="roadName" outlined v-model="roadNameType">
-                    <v-autocomplete :items="roadType" label="Roadbed Type" dense @formchange="roadNameType=''">
-                    </v-autocomplete>
+                <v-card-text class="roadName" outlined>
+                    <v-autocomplete v-model="roadNameType" :items="roadType" label="Roadbed Type" dense @formchange="roadNameType=''"></v-autocomplete>
                 </v-card-text>
             </v-col>
         </v-row>
@@ -16,7 +15,7 @@
             <v-col cols="auto">
                 <v-tooltip right max-width="200">
                     <template v-slot:activator="{ on, attrs }">
-                        <v-btn small text color="primary" v-bind="attrs" v-on="on" style="position: absolute; right:60%; top: 60%;" @click="prefix = true">
+                        <v-btn small text color="primary" v-bind="attrs" v-on="on" style="position: absolute; right: 230px; top: 80px;" @click="prefix = true">
                             <u>Add a Prefix</u><v-icon small>mdi-help-circle</v-icon>
                         </v-btn>
                     </template>
@@ -25,7 +24,7 @@
             </v-col>
             <v-col>
                 <v-card-text v-if="prefix === true" style="padding:0px;" v-model="prefixStreet">
-                    <v-autocomplete :items="prefixSuffixList" style="width:50%; left:50%; bottom:15%; position: absolute;"></v-autocomplete>
+                    <v-autocomplete :items="prefixSuffixList" style="width:38%; right:15px; top: 50px; position: absolute;"></v-autocomplete>
                 </v-card-text>
             </v-col>
         </v-row>
@@ -33,7 +32,7 @@
             <v-col cols="auto">
                 <v-tooltip right max-width="200">
                     <template v-slot:activator="{ on, attrs }">
-                        <v-btn small text color="primary" v-bind="attrs" v-on="on" style="top:77%; right: 61%; position: absolute;" @click="suffix = true">
+                        <v-btn small text color="primary" v-bind="attrs" v-on="on" style="top: 110px; right: 230px; position: absolute;" @click="suffix = true">
                             <u>Add a Suffix</u><v-icon small>mdi-help-circle</v-icon>
                         </v-btn>
                     </template>
@@ -42,16 +41,22 @@
             </v-col>
             <v-col>
                 <v-card-text v-if="suffix === true" style="padding:0px;" v-model="suffixStreet">
-                    <v-autocomplete :items="prefixSuffixList" style="width:50%; left:50%; top:58%; position: absolute;"></v-autocomplete>
+                    <v-autocomplete :items="prefixSuffixList" style="width:38%; right:15px; top: 80px; position: absolute;"></v-autocomplete>
                 </v-card-text>
             </v-col>
         </v-row>
+        <v-btn depressed plain style="left:69px; top:30px"> 
+          Cancel
+        </v-btn>
+        <v-btn outlined style="top:30px; left:73px;" tile @click="nextStep(2); initLoadAsset('design'); updateGraphic();" color="#15648C"> 
+          <u>Continue</u>
+        </v-btn>
     </v-card>
 </template>
 
 <script>
-
-//import { gLayer } from '../map'
+import {initLoadAssetGraphic, sketchCompete} from '../editFunc'
+import { gLayer } from '../map'
 
 export default {
     components: {},
@@ -86,11 +91,22 @@ export default {
     },
     methods:{
         updateGraphic(){
-            this.roadName = this.streetName
+            for(let z=0; z < gLayer.graphics.items.length; z++){
+                if(gLayer.graphics.items[z].attributes.objectid === this.objid){
+                    gLayer.graphics.items[z].attributes.roadbedName = this.roadName
+                }
+            }
+        },
+        initLoadAsset(asset){
+            initLoadAssetGraphic(asset)
+            sketchCompete()
+        },  
+        nextStep(x){
+            this.returnStep = x
         },
         resetItems(){
             this.suffixStreet = null
-            this.roadNameType = ' '
+            this.roadNameType = null
             this.prefix = false
             this.suffix = false
         }
@@ -98,6 +114,7 @@ export default {
     watch:{
         objid:{
           handler: function(){
+            console.log('new ObjectID',this.objid)
               this.streetName = this.roadName
               this.resetItems();    
           }, 
@@ -105,18 +122,24 @@ export default {
         },
     },
     computed:{
+        returnStep:{
+            get(){
+                return this.$store.state.stepNumber
+            },
+            set(x){
+                this.$store.commit('setStepNumber', Number(x))
+            }
+        },
         roadName:{
             get(){
                 return this.$store.state.roadbedName
             },
             set(name){
-                console.log(name)
                 this.$store.commit('setRoadbedName', name)
             }
         },
         objid:{
           get(){
-            console.log(this.$store.state.objectid)
             return this.$store.state.objectid
           }
         },

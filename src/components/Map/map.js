@@ -298,6 +298,10 @@ export const sketch = new SketchViewModel({
             reshapeOptions:{
                 shapeOperation:"none"
             }
+        },
+        snappingOptions:{
+            enabled: true,
+            featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true }, { layer: featLayer, enabled: true, featureEnabled: true }]
         }
 });
 

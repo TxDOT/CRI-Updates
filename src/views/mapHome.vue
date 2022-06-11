@@ -33,7 +33,6 @@ export default {
     watch:{
       editStatus:{
         handler: function(){
-          console.log(this.editStatus)
           this.edit = this.editStatus
         },
         immediate: true,

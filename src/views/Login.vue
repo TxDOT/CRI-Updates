@@ -69,7 +69,6 @@ export default {
         preserveUrlHash: true
       });
       esriId.registerOAuthInfos([this.auth]);
-      console.log(this.auth)
       
       this.loginStatus();
       document.getElementById('loginButton').addEventListener('click',()=>{
@@ -87,8 +86,7 @@ export default {
     methods:{
       logMeIn(){
         esriId.getCredential(this.auth.portalUrl + "/sharing")
-          .then((value)=>{
-            console.log(value)
+          .then(()=>{
             this.goToMap(this.countyName,this.countyNumber)
             esriId.setOAuthRedirectionHandler(function(info){
               console.log(info)
@@ -102,7 +100,6 @@ export default {
       loginStatus(){
         esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
           .then((value) => {
-            console.log(value.userId)
             this.userName = value.userId
             let county = JSON.parse(localStorage.getItem('county'))
             let cntyNumber = county[1]

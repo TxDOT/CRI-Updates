@@ -12,8 +12,8 @@
     min-width="0"
     height="820"
     >
-    <v-stepper-header class="stepHead" v-if="forAdd">Add a New Road</v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="!forAdd">Edit an Existing Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod">Add a New Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forMod">Edit an Existing Road</v-stepper-header>
     <v-stepper-step
       editable
       :complete="e1 > 1"
@@ -26,12 +26,12 @@
     <v-stepper-content step="1">
       <!-- Disabled -- dictates whether fields in the stepper form are editable or not.  -->
       <roadName/>
-      <v-btn
+      <!-- <v-btn
         color="primary"
         @click="e1 = 2"
         :disabled="!roadName">
         Continue
-      </v-btn>
+      </v-btn> -->
     </v-stepper-content>
 
     <v-stepper-step 
@@ -45,11 +45,11 @@
     <v-stepper-content step="2">
       <!-- Ternery statement if disabled property = true and graphic property = true then disable the v-select tag -->
       <roadDesign/>
-      <v-btn
+      <!-- <v-btn
         color="primary"
         @click="e1 = 3">
         Continue
-      </v-btn>
+      </v-btn> -->
     </v-stepper-content>
 
     <v-stepper-step
@@ -86,11 +86,11 @@
           >
             Draw Surface Graphic
         </v-btn> -->
-        <v-btn
+        <!-- <v-btn
             color="primary"
            @click="e1 = 4;">
             Continue
-        </v-btn>
+        </v-btn> -->
     </v-stepper-content>
 
     <v-stepper-step step="4" editable @click="removeAsstPt();complete();initLoadAsset('numLane');">
@@ -98,11 +98,11 @@
     </v-stepper-step>
     <v-stepper-content step="4">
       <numOfLane/>
-      <v-btn
+      <!-- <v-btn
         color="primary"
         @click="e1 = 5">
         Continue
-      </v-btn>
+      </v-btn> -->
     </v-stepper-content>
 
     <v-stepper-step step="5" editable @click="removeAsstPt(); complete();">
@@ -139,7 +139,7 @@ import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
 import numOfLane from './Map/stepperContent/NumberOfLanes.vue'
 import comment from './Map/stepperContent/Comment.vue'
-import { gLayer } from './Map/map'
+//import { gLayer } from './Map/map'
 //import {roadInfo} from '../store'a
 //import Map from '../components/Map/Map.vue'
 
@@ -165,8 +165,8 @@ export default {
         //prefixSuffixList: ['East','North','Northeast','Northwest','Not Applicable','South','Southeast','Southwest','West'],
         beginDFO:null,
         endDFO:null,
-        forAdd: true,
-        forEdit: false,
+        forMod: true,
+        forEdit: true,
         graphicObj: {},
         graphic: false,
         feature: false,
@@ -192,20 +192,33 @@ export default {
       }
     },
     watch:{
+      returnStep:{
+        handler: function(){
+          this.e1 = this.returnStep
+        },
+        immediate: true,
+      },
       nextStep:{
         handler:function(){
           return this.nextStep
         }
       },
-      addRdBoolean:{
+      modifyRoad:{
         handler: function(){
-          this.forAdd = this.addRdBoolean
+          this.forMod = this.modifyRoad
+        },
+        immediate: true,
+      },
+      editExistingRd:{
+        handler: function(){
+          this.forEdit = this.editExistingRd
         },
         immediate: true,
       },
       e1:{
         handler: function(){
           this.returnStep = this.e1
+
         },
         immediate: true,
       },
@@ -355,12 +368,11 @@ export default {
       //     // }
       // },
       saveAttri(){
-        console.log(gLayer)
-        for(let z=0; z < gLayer.graphics.items.length; z++){
-          if(gLayer.graphics.items[z].attributes.objectid === this.objid){
-            gLayer.graphics.items[z].attributes.roadbedName = this.roadName
-          }
-        } 
+        // for(let z=0; z < gLayer.graphics.items.length; z++){
+        //   if(gLayer.graphics.items[z].attributes.objectid === this.objid){
+        //     gLayer.graphics.items[z].attributes.roadbedName = this.roadName
+        //   }
+        // } 
         // const rdbdSurface = [];
         // console.log(this.rdbdSurf)
         // for(let i in this.rdbdSurf){
@@ -414,7 +426,6 @@ export default {
       },
       rdbdSurf:{
         get(){
-          console.log(this.$store.state.roadbedSurface)
           if(typeof(this.$store.state.roadbedSurface) === 'string'){
             return JSON.parse(this.$store.state.roadbedSurface) 
           }
@@ -431,7 +442,6 @@ export default {
           return this.$store.state.roadbedName
         },
         set(name){
-          console.log(name)
           this.$store.commit('setRoadbedName', name)
         }
       },
@@ -453,18 +463,25 @@ export default {
           this.$store.commit('setStepperClose', stepClose)
         }
       },
-      addRdBoolean:{
+      modifyRoad:{
         get(){
-          return this.$store.state.addRd
+          return this.$store.state.modifyRd
         }
       },
       exeDfoPts:{
         get(){
-          console.log(this.$store.state.executeDfoPts)
           return this.$store.state.executeDfoPts
         },
         set(point){
           this.$store.commit('setExecuteDfoPts', point)
+        }
+      },
+      editExistingRd:{
+        get(){
+          return this.$store.state.editExisting
+        },
+        set(edit){
+          this.$store.commit('setEditExisting', edit)
         }
       }
     }
