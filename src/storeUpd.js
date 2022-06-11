@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
@@ -21,17 +20,33 @@ export const store = new Vuex.Store({
         deltaDistance: 0,
         username: '',
         stepperClose: null,
-        addRd:false,
+        addRd:null,
         editExisting: null,
+        deleteRd: null,
+        deleteRdSecond:null,
+        modifyRd: null,
         executeDfoPts: '',
         roadInfoUpdate:[],
         roadGeometry: [],
         assetCoverage: null,
         cntyEndingMiles: 0,
-        stepNumber: 0
+        stepNumber: 1,
+        denyFeatClick: null
 
     },
     getters:{
+        getdenyFeatClick(state){
+            return state.denyFeatClick
+        },
+        getDeleteRdSecond(state){
+            return state.deleteRdSecond
+        },
+        getDeleteRd(state){
+            return state.deleteRd
+        },
+        getModifyRd(state){
+            return state.modifyRd
+        },
         getStepNumber(state){
             return state.stepNumber
         },
@@ -106,6 +121,18 @@ export const store = new Vuex.Store({
         }
     },
     mutations:{
+        setdenyFeatClick(state, deny){
+            state.denyFeatClick = deny
+        },
+        setDeleteRdSecond(state, secondBool){
+            state.deleteRdSecond = secondBool
+        },
+        setDeleteRd(state, delBool){
+            state.deleteRd = delBool
+        },
+        setModifyRd(state, modifyBool){
+            state.modifyRd = modifyBool
+        },
         setStepNumber(state, step){
             state.stepNumber = step
         },
@@ -156,7 +183,6 @@ export const store = new Vuex.Store({
                 if(state.oldLength === 0){
                     return;
                 }
-                console.log(newLen[0], state.oldLength)
                 let delta = newLen[0] - state.oldLength
                 let mileage;
                 if(state.oldLength < newLen[0]){
@@ -165,13 +191,11 @@ export const store = new Vuex.Store({
                 }
                 if (state.oldLength > newLen[0]){
                     let subMiles = -Math.abs(delta)
-                    console.log(subMiles)
                     mileage = subMiles
                 }
                 if(state.oldLength === newLen[0]){
                     mileage = 0
                 }
-                console.log(mileage)
                 state.deltaDistance += mileage
             }
 
