@@ -1,5 +1,6 @@
 
-import {getGraphic, getSelectedDFO, applyMToAsset} from '../editFunc'
+import {getGraphic, getSelectedDFO, applyMToAsset, stopEditingPoint} from '../editFunc'
+import {criConstants} from '../../../common/cri_constants'
 import {gLayer} from '../map'
 import assetAlert from '../stepperContent/assetAlert.vue'
 export default {
@@ -18,7 +19,7 @@ export default {
         isAssetFinished: false,
         isAssetStartDisable: false,
         isAssetEndDisable: false,
-        assetTypeOpt: ['Paved','Brick','Dirt_Natural','Gravel','Concrete'],
+        assetTypeOpt: ['Paved','Brick','Dirt/Natural','Gravel','Concrete'],
         emptyValues:[v => !!v || 'Road Name is required'],
         graphic: true,
         disabled: false,
@@ -26,17 +27,14 @@ export default {
         countG: null,
         objectids:0,
         editIndex: -1,
-        assetColorTable:{
-          Paved: "#FF6700",
-          Brick: "#FF0800",
-          Gravel: "#36454F",
-          Concrete: "#CFCFC4",
-          Dirt_Natural:"#CF71AF"
-        }
+        assetColorTable: criConstants.colorTable
         
       }
     },
     methods:{
+      cancelDfoLocation(){
+        stopEditingPoint()
+      },
       editAsset(index){
         let getCurrentItem = this.mileInfo.at(index)
         console.log(getCurrentItem)
@@ -55,6 +53,7 @@ export default {
       },
 
       atBegin(){
+        this.cancelDfoLocation();
         console.log(this.objid)
         let id = gLayer.graphics.items.filter(x=>x.attributes.objectid === this.objid);
         console.log(id)
@@ -63,6 +62,7 @@ export default {
       },
 
       atEnd(){
+        this.cancelDfoLocation();
         let id = gLayer.graphics.items.filter(x=>x.attributes.objectid === this.objid);
         this.assetEndDfo = Number(id[0].geometry.paths[0].at(-1)[2].toFixed(3))
         //this.$set(this.mileInfo[0], 'ASSET_LN_END_DFO_MS', Number(id[0].geometry.paths[0].at(-1)[2]).toFixed(3))

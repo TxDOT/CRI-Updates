@@ -9,7 +9,7 @@
         <v-card-title id="testTitle">What Do You Want To Do?</v-card-title>
         <v-list class="outlineColor"> 
           <v-list-item-group v-model="stepIn" color="#15648C">
-            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple>
+            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple :style="{}">
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -43,9 +43,11 @@
         items: [
           { title: 'Add Road', icon: 'mdi-plus', action: ()=>{
             this.editExistingRd = false;
+            this.deleteRoad = false
             this.addRoad();
             this.display=true;
             this.addRdBoolean = true
+            this.modifyRoad = false
             
             // setTimeout(()=>{
             //   this.editExistingRd = null;
@@ -57,29 +59,44 @@
           { title: 'Edit Road', icon: 'mdi-pencil', action: async ()=>{
             stopEditing();
             this.editExistingRd = true;
+            this.nextDeleteRoadForm = false
+            this.addRdBoolean = false;
+            this.deleteRoad = false
+            
             document.body.style.cursor = 'pointer'
             // setTimeout(()=>{
             //   this.editExistingRd = null;
             // },5000)
-            await modifyRoadbed('click')
+            await modifyRoadbed('click', 'edit')
+            this.modifyRoad = true
             this.openStepper();
-            this.addRdBoolean = false;
+            
             
           }},
-          { title: 'Delete Road', icon: 'mdi-close-circle'},
+          { title: 'Delete Road', icon: 'mdi-close-circle', action: async ()=>{
+            stopEditing();
+            this.editExistingRd = false
+            this.nextDeleteRoadForm = false
+            this.addRdBoolean = false
+            this.deleteRoad = true
+            
+            document.body.style.cursor = 'pointer'
+            await modifyRoadbed('click', 'delete')
+            this.editExistingRd = null
+            this.deleteRoad = false
+            this.nextDeleteRoadForm = true
+
+          }},
           // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}
         ],
       }
     },
-    mounted(){
-      console.log(this.graphic)
-    },
     methods:{
       async addRoad(){
         addRoadbed()
-          .then((result) => {
-            console.log(result)
+          .then(() => {
             this.openStepper();
+            this.addRdBoolean = false
           })
       },
       editRoad(){
@@ -94,25 +111,14 @@
         this.display = this.alertStatus
       },
     },
-
-        // modifyLine:{
-    //   handler: async function(){
-    //     let modify = await modifyRoadbed("click")
-    //     this.modifyLine += parseFloat(geometryEngine.geodesicLength(modify.features[0].geometry, "miles").toFixed(3))
-    //     console.log(modify.features[0].geometry)
-    //   },
-    //   immediate:true,
-    // },
     watch:{
       steppClose:{
         handler: function(){
           if(this.steppClose === true){
             document.getElementById('stepper').style.width = '500px'
           }
-          console.log(this.steppClose)
           this.stepDisplay = this.steppClose
           this.graphic = this.steppClose
-          console.log(this.graphic)
         },
         immediate: true,
       },
@@ -124,6 +130,30 @@
       // }
     },
     computed:{
+      modifyRoad:{
+        get(){
+          return this.$store.state.modifyRd
+        },
+        set(mod){
+          this.$store.commit('setModifyRd', mod)
+        }
+      },
+      nextDeleteRoadForm:{
+        get(){
+          return this.$store.state.deleteRdSecond
+        },
+        set(secondStep){
+          this.$store.commit('setDeleteRdSecond', secondStep)
+        }
+      },
+      deleteRoad:{
+        get(){
+          return this.$store.state.deleteRd
+        },
+        set(del){
+          this.$store.commit('setDeleteRd', del)
+        }
+      },
       steppClose:{
         get(){
           return this.$store.state.stepperClose
@@ -145,7 +175,6 @@
           return this.$store.state.editExisting
         },
         set(edit){
-          console.log(edit)
           this.$store.commit('setEditExisting', edit)
         }
       }

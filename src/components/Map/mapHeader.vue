@@ -34,7 +34,7 @@
                     <div style="position:absolute; top:20%; left: 5%" class="black--text mb-3">
                         <v-card-text >
                             You are about to submit and certify county mileage for {{countyName}} County.<br>
-                            The previous years mileage was <b>{{countyTotal}} miles</b>.<br>The new total mileage is <b>{{countyTots}} miles.</b>
+                            The previous years mileage was <b>{{countyTotal}} miles</b>.<br>The new total mileage is <b>{{Number(returnCountyTotal.toFixed(3))}} miles.</b>
                         </v-card-text>
                     </div>
                     <div style="position:absolute; left: 10%; bottom: 5%;">
@@ -95,7 +95,12 @@ export default {
                 return this.$store.state.cntyMiles
             }
         },
-
+        returnCountyTotal:{
+            get(){
+                console.log(this.$store.state.cntyEndingMiles)
+                return this.$store.state.cntyEndingMiles
+            },
+        },
     }
 }    
 </script>

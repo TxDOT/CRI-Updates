@@ -7,6 +7,7 @@
     <navSideBar/>
     <stepper v-if="display === true"/>
     <editExistingRd/>
+    <denyClickFeat v-if="denyClick === true"/>
   </div>
 </template>
 
@@ -17,21 +18,28 @@ import mapFooter from '../components/Map/mapFooter.vue'
 import navSideBar from '../components/navigationSideBar.vue'
 import stepper from '../components/stepperQuestion.vue'
 import editExistingRd from "../components/Map/editExistingRd.vue"
+import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
 //import {countyInfo} from '../components/Map/editFunc'
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat},
     props:["id"],
     name: 'MapHome',
     data(){
       return{
         display:true,
-        edit: false
+        edit: false,
+        denyClick: false
       }
     },
     watch:{
+      denyFeature:{
+        handler: function(){
+          this.denyClick = this.denyFeature
+        },
+        immediate: true,
+      },
       editStatus:{
         handler: function(){
-          console.log(this.editStatus)
           this.edit = this.editStatus
         },
         immediate: true,
@@ -42,6 +50,14 @@ export default {
         get(){
           return this.$store.state.editExisting
         },
+      },
+      denyFeature:{
+        get(){
+          return this.$store.state.denyFeatClick
+        },
+        set(deny){
+          this.$store.commit('setdenyFeatClick', deny)
+        }
       }
     }
 }

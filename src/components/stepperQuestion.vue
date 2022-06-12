@@ -12,13 +12,13 @@
     min-width="0"
     height="820"
     >
-    <v-stepper-header class="stepHead" v-if="forAdd">Add a New Road</v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="!forAdd">Edit an Existing Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod">Add a New Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forMod">Edit an Existing Road</v-stepper-header>
     <v-stepper-step
       editable
       :complete="e1 > 1"
       step="1"
-      @click="removeAsstPt()"
+      @click="removeAsstPt();"
       class="font-weight-regular; body-1;">
       Road Name:
     </v-stepper-step>
@@ -26,30 +26,30 @@
     <v-stepper-content step="1">
       <!-- Disabled -- dictates whether fields in the stepper form are editable or not.  -->
       <roadName/>
-      <v-btn
+      <!-- <v-btn
         color="primary"
         @click="e1 = 2"
         :disabled="!roadName">
         Continue
-      </v-btn>
+      </v-btn> -->
     </v-stepper-content>
 
-    <v-stepper-step
+    <v-stepper-step 
       editable
       :complete="e1 > 2"
       step="2"
-      @click="removeAsstPt(); complete();">
+      @click="removeAsstPt(); complete(); initLoadAsset('design');">
       Road Design
     </v-stepper-step>
     
     <v-stepper-content step="2">
       <!-- Ternery statement if disabled property = true and graphic property = true then disable the v-select tag -->
       <roadDesign/>
-      <v-btn
+      <!-- <v-btn
         color="primary"
         @click="e1 = 3">
         Continue
-      </v-btn>
+      </v-btn> -->
     </v-stepper-content>
 
     <v-stepper-step
@@ -57,7 +57,7 @@
       editable
       :complete="e1 > 3"
       step="3"
-      @click="startExecuteDfoPts(); complete(); initLoadAsset()" 
+      @click="startExecuteDfoPts(); complete(); initLoadAsset('surface')" 
       ><!-- Get asset breaks and draw graphic points -->
       Road Surface
     </v-stepper-step>
@@ -86,23 +86,23 @@
           >
             Draw Surface Graphic
         </v-btn> -->
-        <v-btn
+        <!-- <v-btn
             color="primary"
            @click="e1 = 4;">
             Continue
-        </v-btn>
+        </v-btn> -->
     </v-stepper-content>
 
-    <v-stepper-step step="4" editable @click="removeAsstPt();complete();">
+    <v-stepper-step step="4" editable @click="removeAsstPt();complete();initLoadAsset('numLane');">
       Number of Lanes
     </v-stepper-step>
     <v-stepper-content step="4">
       <numOfLane/>
-      <v-btn
+      <!-- <v-btn
         color="primary"
         @click="e1 = 5">
         Continue
-      </v-btn>
+      </v-btn> -->
     </v-stepper-content>
 
     <v-stepper-step step="5" editable @click="removeAsstPt(); complete();">
@@ -139,6 +139,7 @@ import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
 import numOfLane from './Map/stepperContent/NumberOfLanes.vue'
 import comment from './Map/stepperContent/Comment.vue'
+//import { gLayer } from './Map/map'
 //import {roadInfo} from '../store'a
 //import Map from '../components/Map/Map.vue'
 
@@ -164,8 +165,8 @@ export default {
         //prefixSuffixList: ['East','North','Northeast','Northwest','Not Applicable','South','Southeast','Southwest','West'],
         beginDFO:null,
         endDFO:null,
-        forAdd: true,
-        forEdit: false,
+        forMod: true,
+        forEdit: true,
         graphicObj: {},
         graphic: false,
         feature: false,
@@ -191,14 +192,33 @@ export default {
       }
     },
     watch:{
+      returnStep:{
+        handler: function(){
+          this.e1 = this.returnStep
+        },
+        immediate: true,
+      },
       nextStep:{
         handler:function(){
           return this.nextStep
         }
       },
-      addRdBoolean:{
+      modifyRoad:{
         handler: function(){
-          this.forAdd = this.addRdBoolean
+          this.forMod = this.modifyRoad
+        },
+        immediate: true,
+      },
+      editExistingRd:{
+        handler: function(){
+          this.forEdit = this.editExistingRd
+        },
+        immediate: true,
+      },
+      e1:{
+        handler: function(){
+          this.returnStep = this.e1
+
         },
         immediate: true,
       },
@@ -233,8 +253,8 @@ export default {
     },
 
     methods:{
-      initLoadAsset(){
-        initLoadAssetGraphic()
+      initLoadAsset(asset){
+        initLoadAssetGraphic(asset)
       },
       startExecuteDfoPts(){
         this.exeDfoPts = 'point'
@@ -317,19 +337,11 @@ export default {
       //   //   //editAsstObj[1].asset_ln_begin_dfo_ms = uptDFO
       //   }
       // },
-      getElement(){
-        //delete - Does nothing
-        if(document.getElementsByTagName('input') && document.getElementById('dfo')){
-          console.log(document.getElementsByTagName('input'))
-        }
-      },
       cancel(){
         document.getElementById("stepper").style.width = '0px'
         this.steppClose = false;
         this.e1 = 1;
         sketchCompete();
-        
-
       },
       //pushes new blank object row into mileInfo asset form
       // addRoadSurface(){
@@ -356,17 +368,22 @@ export default {
       //     // }
       // },
       saveAttri(){
-        const rdbdSurface = [];
-        console.log(this.rdbdSurf)
-        for(let i in this.rdbdSurf){
-          let srfcType = {srfcType: this.rdbdSurf[i].SRFC_TYPE_ID, AssetBeginDfo: this.rdbdSurf[i].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.rdbdSurf[i].ASSET_LN_END_DFO_MS}
-          rdbdSurface.push(srfcType)
-        }
+        // for(let z=0; z < gLayer.graphics.items.length; z++){
+        //   if(gLayer.graphics.items[z].attributes.objectid === this.objid){
+        //     gLayer.graphics.items[z].attributes.roadbedName = this.roadName
+        //   }
+        // } 
+        // const rdbdSurface = [];
+        // console.log(this.rdbdSurf)
+        // for(let i in this.rdbdSurf){
+        //   let srfcType = {srfcType: this.rdbdSurf[i].SRFC_TYPE_ID, AssetBeginDfo: this.rdbdSurf[i].ASSET_LN_BEGIN_DFO_MS, AssetEndDfo: this.rdbdSurf[i].ASSET_LN_END_DFO_MS}
+        //   rdbdSurface.push(srfcType)
+        // }
           
-        for(let i in this.mileInfo){
-          let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: parseInt(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: parseInt(this.mileInfo[i].ASSET_LN_END_DFO_MS)}
-          rdbdSurface.push(array)
-        }
+        // for(let i in this.mileInfo){
+        //   let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: parseInt(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: parseInt(this.mileInfo[i].ASSET_LN_END_DFO_MS)}
+        //   rdbdSurface.push(array)
+        // }
           
         // let createObj = {
         //   objectids: this.objid,
@@ -378,7 +395,13 @@ export default {
         //   editDt: new Date().getTime()
         // }
         //console.log(createObj)
-        console.log(this.graphicObj)
+        // console.log(this.graphicObj)
+        // for(let z=0; z < gLayer.graphics.items.length; z++){
+        //   if(gLayer.graphics.items[z].attributes.objectid === this.objid){
+        //     gLayer.graphics.items[z].attributes.roadbedSurface = JSON.stringify(this.rdbdSurf)
+        //   }
+        // }
+        //console.log(this.rdbdSurf)
         this.cancel();
         // this.graphicObj.attributes.roadbedName = createObj.rdbdName
         //saveInfo(createObj)
@@ -388,6 +411,14 @@ export default {
       }
     },
     computed:{ //Used to work with the vue properties without modifying them
+      returnStep:{
+        get(){
+          return this.$store.state.stepNumber
+        },
+        set(x){
+          this.$store.commit('setStepNumber', Number(x))
+        }
+      },
       numLane:{
         get(){
           return this.$store.state.numLane
@@ -395,7 +426,6 @@ export default {
       },
       rdbdSurf:{
         get(){
-          console.log(this.$store.state.roadbedSurface)
           if(typeof(this.$store.state.roadbedSurface) === 'string'){
             return JSON.parse(this.$store.state.roadbedSurface) 
           }
@@ -412,7 +442,6 @@ export default {
           return this.$store.state.roadbedName
         },
         set(name){
-          console.log(name)
           this.$store.commit('setRoadbedName', name)
         }
       },
@@ -434,18 +463,25 @@ export default {
           this.$store.commit('setStepperClose', stepClose)
         }
       },
-      addRdBoolean:{
+      modifyRoad:{
         get(){
-          return this.$store.state.addRd
+          return this.$store.state.modifyRd
         }
       },
       exeDfoPts:{
         get(){
-          console.log(this.$store.state.executeDfoPts)
           return this.$store.state.executeDfoPts
         },
         set(point){
           this.$store.commit('setExecuteDfoPts', point)
+        }
+      },
+      editExistingRd:{
+        get(){
+          return this.$store.state.editExisting
+        },
+        set(edit){
+          this.$store.commit('setEditExisting', edit)
         }
       }
     }

@@ -20,7 +20,7 @@
             small
             dark
             color="red"
-            @click="dialog=false; logMeIn()"><!-- goToMap() -->
+            @click="dialog=false; logMeIn();"><!-- goToMap(); logMeIn() -->
             Review & Edit
             </v-btn>
             </div>

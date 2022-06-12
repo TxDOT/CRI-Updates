@@ -1,5 +1,3 @@
-import Graphic from "@arcgis/core/Graphic";
-
 export const criConstants = {
   
     portalUrl: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_SurfType_Geom_view/FeatureServer/0",
@@ -25,26 +23,25 @@ export const criConstants = {
     surface: [{num:10, name:'Paved'}, {num:11, name:'Brick'},{num:12, name:'Dirt/Natural'},{num:13, name:'Gravel'},{num:2, name:'Concrete'}],
     testRoadInfo: [{type:"Paved",bdfo:'0', edfo:'12'},{type:"Brick",bdfo:'12', edfo:'24'}],
 
-    startPoint: new Graphic({
-        geometry: {
-          type: "point",
-          longitude: 0,
-          latitude: 0
-        },
-        symbol:{
-          type: "simple-marker",
-          color: "#8DB600",
-        }
-    }),
-    endPoint: new Graphic({
-        geometry: {
-          type: "point",
-          longitude: 0,
-          latitude: 0
-        },
-        symbol:{
-          type: "simple-marker",
-          color: "#E32636",
-        }
-    })
+    colorTable: {
+      'Paved': "#FF6700",
+      'Brick': "#FF0800",
+      'Dirt/Natural': "#CF71AF",
+      'Gravel': "#36454F",
+      'Concrete': "#CFCFC4",
+      'One Way': "#FFBF00",
+      'Two-way': "#87A96B",
+      'Boulevard': "#89CFF0",
+      '1': "#5D8AA8",
+      '2': "#FBCEB1",
+      '3': "#848482",
+      "4": "#318CE7",
+      '5': "#BF94E4",
+      '6': "#F0DC82"
+    },
+    
+    editTypeColor:{
+      'edit': [0, 0, 255],
+      'delete': [227,38,54]
+    }
 }

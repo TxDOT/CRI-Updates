@@ -8,7 +8,7 @@
             New Total Miles: <b>{{Number(countyTots.toFixed(4))}}</b>
           </div>
           <div style="position: absolute; font-size: 10px; bottom: 10%;">
-            Build v1.1
+            Build v1.2
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>
@@ -46,6 +46,13 @@ export default {
       },
       immediate: true, 
     },
+    countyTots:{
+      handler: function(){
+        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist)
+        // \this.modifyLength += this.rdbdDeltaDist
+      },
+      immediate: true, 
+    },
     // modifyLine:{
     //   handler: async function(){
     //     let modify = await modifyRoadbed("click")
@@ -77,11 +84,20 @@ export default {
         return this.$store.state.deltaDistance
       }
     },
-    currentMiles: function(){
-      return Number(this.previousTotal) + Number(this.modifyLength)
-    },
+    // currentMiles: function(){
+    //   return 0 + Number(this.rdbdDeltaDist)
+    // },
     countyTots: function(){
       return Number(this.countyTotal) + Number(this.rdbdDeltaDist)
+    },
+    returnCountyTotal:{
+      get(){
+        console.log(this.$store.state.cntyEndingMiles)
+        return this.$store.state.cntyEndingMiles
+      },
+      set(mi){
+        this.$store.commit('setCntyEndingMiles', mi)
+      }
     },
   }
   

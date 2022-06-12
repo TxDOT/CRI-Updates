@@ -1,15 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
     state:{
         objectid: 0,
         roadbedName:'',
-        roadbedDesign:'',
+        roadbedDesign: null,
         roadbedSurface: null,
-        numLane:0,
+        numLane: null,
         //addRoad: false,
         cntyName:'',
         cntyNmbr: 0,
@@ -21,18 +20,38 @@ export const store = new Vuex.Store({
         deltaDistance: 0,
         username: '',
         stepperClose: null,
-        addRd:false,
+        addRd:null,
         editExisting: null,
+        deleteRd: null,
+        deleteRdSecond:null,
+        modifyRd: null,
         executeDfoPts: '',
         roadInfoUpdate:[],
         roadGeometry: [],
         assetCoverage: null,
         cntyEndingMiles: 0,
+        stepNumber: 1,
+        denyFeatClick: null
 
     },
     getters:{
+        getdenyFeatClick(state){
+            return state.denyFeatClick
+        },
+        getDeleteRdSecond(state){
+            return state.deleteRdSecond
+        },
+        getDeleteRd(state){
+            return state.deleteRd
+        },
+        getModifyRd(state){
+            return state.modifyRd
+        },
+        getStepNumber(state){
+            return state.stepNumber
+        },
         getCntyEndingMiles(state){
-            state.cntyEndingMiles
+            return state.cntyEndingMiles
         },
         getRoadGeom(state){
             return state.roadGeometry
@@ -102,15 +121,29 @@ export const store = new Vuex.Store({
         }
     },
     mutations:{
+        setdenyFeatClick(state, deny){
+            state.denyFeatClick = deny
+        },
+        setDeleteRdSecond(state, secondBool){
+            state.deleteRdSecond = secondBool
+        },
+        setDeleteRd(state, delBool){
+            state.deleteRd = delBool
+        },
+        setModifyRd(state, modifyBool){
+            state.modifyRd = modifyBool
+        },
+        setStepNumber(state, step){
+            state.stepNumber = step
+        },
         setCntyEndingMiles(state, cntyMiles){
-            state.cntyEndingMiles = state.cntyMiles + state.deltaDistance
-            console.log(cntyMiles)
+            state.cntyEndingMiles = cntyMiles
         },
         setRoadGeom(state, geom){
             state.roadGeometry = geom
         },
         setAssetCoverage(state, assetDfos){
-            const currentLength = state.roadGeometry[0].at(-1)[2] - state.roadGeometry[0].at(0)[2]
+            const currentLength = state.roadGeometry.paths[0].at(-1)[2] - state.roadGeometry.paths[0].at(0)[2]
             
             console.log(assetDfos, Number(currentLength.toFixed(3)))   
             if(Number(currentLength.toFixed(3)) === assetDfos){
@@ -150,7 +183,6 @@ export const store = new Vuex.Store({
                 if(state.oldLength === 0){
                     return;
                 }
-                console.log(newLen[0], state.oldLength)
                 let delta = newLen[0] - state.oldLength
                 let mileage;
                 if(state.oldLength < newLen[0]){
@@ -159,13 +191,11 @@ export const store = new Vuex.Store({
                 }
                 if (state.oldLength > newLen[0]){
                     let subMiles = -Math.abs(delta)
-                    console.log(subMiles)
                     mileage = subMiles
                 }
                 if(state.oldLength === newLen[0]){
                     mileage = 0
                 }
-                console.log(mileage)
                 state.deltaDistance += mileage
             }
 
