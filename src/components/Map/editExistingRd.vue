@@ -31,14 +31,14 @@
         </v-card-text>
     </v-card>
     <v-card id="delWarn" v-if="deleteSecond === true">
-        <v-card-title class="editRdTitle">
+        <v-card-title class="editRdTitle" style="width: 385px">
             Delete a Road
         </v-card-title>
-        <v-alert type="orange" height="56" dense outlined style="width:379px; text-align: left;">
+        <v-alert type="orange" height="60" dense outlined style="width:379px; text-align: left;">
             <v-icon color="orange" style="right:7px;">
                 mdi-information
             </v-icon>
-            You can discard this edit later if you change your mind.
+            You can discard this edit later if you change your mind
          </v-alert>
         <v-card-text style="text-align: left; bottom:10px; position: relative;">
             <b>{{roadName}}</b> will be deleted.
@@ -173,7 +173,7 @@ export default {
         padding-top: 1%;
         text-align: justify;
         top: 10%;
-        width: 100%;
+        width: 300px;
         left: 100%;
     }
     .editRdInfo{
@@ -181,32 +181,33 @@ export default {
         font-size: 16px;
         height: 60px;
         padding-left: 35px;
-        padding-top: 5%;
-        text-align: justify;
-        top: 10%;
-        width: 100%;
-        left: 10px;
+        padding-top: 8px;
+        text-align: left;
+        overflow-wrap: break-word;
+        top: 0px;
+        width: 300px;
+        left: 0px;
     }
     .editRdIcon{
         position: absolute;
         padding-right: 10px;
-        padding-top: 4%;
+        padding-top: 8px;
         text-align: justify;
-        right: 240px;
+        right: 260px;
     }
     #edit{
-        position: relative;
+        position: absolute;
         top:100px;
-        left:200px;
-        width: 15%;
+        left:300px;
+        width: 300px;
         color: #15648C;
     }
     #delWarn{
         position: absolute;
         top:100px;
         left:260px;
-        width: 20%;
-        height: 20%;
+        width: 385px;
+        height: 200px;
         color: #15648C;
     }
 </style>

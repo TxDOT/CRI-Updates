@@ -8,7 +8,7 @@
             New Total Miles: <b>{{Number(countyTots.toFixed(4))}}</b>
           </div>
           <div style="position: absolute; font-size: 10px; bottom: 10%;">
-            Build v1.1
+            Build v1.2
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>

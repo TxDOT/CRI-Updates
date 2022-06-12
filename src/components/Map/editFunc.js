@@ -388,7 +388,8 @@ export async function getGraphic(){
             view.hitTest(event,option)
             .then(function(response){
               if(response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1){
-                return 1;
+                store.commit('setdenyFeatClick', true)
+                return;
               }
               if(response.results.length){
                 store.commit('setStepperClose', true)
@@ -517,7 +518,7 @@ function createAssetGraph(pathArr,y){
     mArr.push(Number(parseFloat(densUpdate[i][2]).toFixed(3))) //mval
   }
 
-  for(let d in y){
+  for(let d=0; d < y.length; d++){
     delete y[d].ASSET_LN_END_DFO_MS
     delete y[d].ASSET_LN_BEGIN_DFO_MS
 
@@ -736,9 +737,18 @@ function getNewDfoDist(objectid, x, y){
   const pointAPointB = geodesicUtils.geodesicDistance(webMercaPointB, webMercaPointA)
   console.log(pointAPointB)
   
-  if(pointAPointB.distance === 0){
-    
-    newDfo = nearVert === objid.paths[0].at(-1) ? objid.paths[0].at(-1)[2] : objid.paths[0].at(0)[2]
+  if(pointAPointB.distance === 0 && index === 0){
+    newDfo = objid.paths[0].at(0)[2]
+    return [newDfo, objid] 
+  }
+
+  if(pointAPointB.distance === 0 && index === objid.paths[0].at(-1)){
+    newDfo = objid.paths[0].at(-1)[2]
+    return [newDfo, objid]
+  }
+
+  else if(pointAPointB.distance === 0){
+    newDfo = objid.paths[0].at(index)[2]
     return [newDfo, objid]
   }
   // if(objid.paths[0].at(0) === nearVert && pointAPointB.distance === 0){
@@ -776,11 +786,34 @@ function getNewDfoDist(objectid, x, y){
   //determine point is left or right of another point; (+) to the right. (-) to the left
   let dist = x - x2
   if(!path.length && dist > 0){
-    path = objid.length === 2 ? objid.paths[0].slice(0, 2) : objid.paths[0].slice(index-1, index+2)
+    if(objid.paths[0].length > 2 && index === 0){
+      path = objid.paths[0].slice(0, 2)
+    }
+    else if(objid.paths[0].length > 2 && index === objid.paths[0].at(-1)){
+      path = objid.paths[0].slice(objid.at(-2), objid.paths[0].at(-1))
+    }
+    else if(objid.paths[0].length === 2){
+      path = objid.paths[0].slice(0, 2)
+    }
+    else{
+      path = objid.paths[0].slice(index-1, index+2)
+    }
     //path = objid.paths[0].slice(index-1, index+2)
   }
   if(!path.length && dist < 0){
-    path = objid.length === 2 ? objid.paths[0].slice(0, 2) : objid.paths[0].slice(index, index+2)
+    if(objid.paths[0].length > 2 && index === 0){
+      path = objid.paths[0].slice(0, 2)
+    }
+    else if(objid.paths[0].length > 2 && index === objid.paths[0].at(-1)){
+      path = objid.paths[0].slice(objid.at(-2), objid.paths[0].at(-1))
+    }
+    else if(objid.paths[0].length === 2){
+      path = objid.paths[0].slice(0, 2)
+    }
+    else{
+      path = objid.paths[0].slice(index-1, index+2)
+    }
+    
     //path = objid.paths[0].slice(index, index+2);
   }
 
@@ -798,8 +831,6 @@ function getNewDfoDist(objectid, x, y){
   //convert GraphicB to Geographic i.e lat/long
 
 
-
- 
   if(dist === 0){
     newDfo = nearVert[2]
     mnbv = index

@@ -114,9 +114,8 @@ export default {
     watch:{
         objid:{
           handler: function(){
-            console.log('new ObjectID',this.objid)
-              this.streetName = this.roadName
-              this.resetItems();    
+            this.streetName = this.roadName
+            this.resetItems();    
           }, 
           immediate: true,
         },
