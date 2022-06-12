@@ -101,14 +101,8 @@ function setDataToStore(surface, design, name, lane, objectid){
 export async function countyInfo(){
   let countyInfoPromise =  new Promise(function(res){
     let queryUrl = window.location.href
-<<<<<<< HEAD
     let crInfo = queryUrl.split('https://txdot.github.io/CRI-Updates/')[1]
     //console.log(crInfo.toString())
-=======
-    let regExUrl = /http(s)?:\/\/(www\.)?[a-zA-Z0-9]{1,256}\.[a-zA-Z]{1,6}\/|http(s)?:\/\/(www\.)?[a-zA-Z0-9:]{1,256}\//
-    console.log(queryUrl.split(regExUrl)[1])
-    let crInfo = queryUrl.split('http://localhost:8080/')[1]
->>>>>>> surfaceType
     for (let j=0; j < cntyNbrNm.length; j++){
       if(cntyNbrNm[j][crInfo]){
         let whereStatement = `County_NBR = '${crInfo}'`
