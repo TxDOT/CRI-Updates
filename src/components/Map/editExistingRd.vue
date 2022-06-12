@@ -34,7 +34,7 @@
         <v-card-title class="editRdTitle" style="width: 385px">
             Delete a Road
         </v-card-title>
-        <v-alert type="orange" height="60" dense outlined style="width:379px; text-align: left;">
+        <v-alert color="orange" height="60" dense outlined style="width:379px; text-align: left;">
             <v-icon color="orange" style="right:7px;">
                 mdi-information
             </v-icon>
