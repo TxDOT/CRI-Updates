@@ -31,10 +31,14 @@ export const store = new Vuex.Store({
         assetCoverage: null,
         cntyEndingMiles: 0,
         stepNumber: 1,
-        denyFeatClick: null
+        denyFeatClick: null,
+        activeLoader: null
 
     },
     getters:{
+        getActiveLoader(state){
+            return state.activeLoader
+        },
         getdenyFeatClick(state){
             return state.denyFeatClick
         },
@@ -121,6 +125,9 @@ export const store = new Vuex.Store({
         }
     },
     mutations:{
+        setActiveLoader(state, loadStatus){
+            state.activeLoader = loadStatus
+        },
         setdenyFeatClick(state, deny){
             state.denyFeatClick = deny
         },

@@ -2,11 +2,11 @@
     <div class ="mapHeader" >
         <v-footer app color="#204E70" class="white--text" style="height:60px; top:0%;">
             <v-toolbar-title class="h1-text">Welcome to DUSA - The County Road Inventory App</v-toolbar-title>
-                    <div style="left:80%; position: fixed;">
-                        <v-btn-toggle style="position: fixed;">
-                            <v-btn  color="green" small @click="submitCertify=true">Submit & Certify</v-btn>
-                            <v-btn  color="Black" small @click="ExitDestroyLogIn()">Save & Exit</v-btn>
-                        </v-btn-toggle>
+                    <div class="text-center" style="left:80%; position: absolute;">
+                        <v-row>
+                            <v-btn tile class="mx-2" small @click="ExitDestroyLogIn()">Save & Exit</v-btn>
+                            <v-btn tile color="green" class="mx-3" small @click="submitCertify=true">Submit & Certify</v-btn>
+                        </v-row>
                     </div>
         </v-footer>
 

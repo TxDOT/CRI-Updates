@@ -2,7 +2,7 @@
     <v-card style="padding-bottom:10%;">
         <v-row no gutters>
             <v-col>
-                <v-text-field v-model="roadName" label="Roadbed Name" :rules="emptyValues" outlined>
+                <v-text-field v-model="roadName" label="Road Name" :rules="emptyValues" outlined dense style="top:15px"> 
                 </v-text-field>
             </v-col>
             <v-col>
@@ -98,8 +98,8 @@ export default {
             }
         },
         initLoadAsset(asset){
-            initLoadAssetGraphic(asset)
             sketchCompete()
+            initLoadAssetGraphic(asset)
         },  
         nextStep(x){
             this.returnStep = x
@@ -112,6 +112,13 @@ export default {
         }
     },
     watch:{
+        roadName:{
+            handler: function(x){
+                if(!x) return;
+                this.roadName = x.toUpperCase()
+            }, 
+          immediate: true,
+        },
         objid:{
           handler: function(){
             this.streetName = this.roadName

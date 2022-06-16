@@ -23,7 +23,7 @@
 
 //import mapFooter from '../Map/mapFooter.vue'
 //import {roadInfo} from '../../store'
-//import { gLayer } from '../Map/map';
+//import { hightlightFeat } from '../Map/map';
 //import Graphic from "@arcgis/core/Graphic";
 // import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 
@@ -107,14 +107,6 @@ export default {
 
 <style scoped>
 
-#viewDiv {
-    position: absolute;
-    top: 0px;
-    right: 0;
-    height: 100%;
-    width: 100%;
-    }
-
 .main{
   position: absolute;
   width: 100%;
@@ -174,4 +166,31 @@ export default {
     top: 0;
     right: 600px;
 } */
+</style>
+<style>
+    .esri-basemap-toggle__container, .esri-basemap-toggle__image {
+        width: 32px;
+        height: 32px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+    }
+    .esri-basemap-toggle__image--secondary {
+        margin-top: 0px;
+        margin-left: 0px;
+    }
+    .esri-basemap-toggle {
+        cursor: pointer;
+        position: relative;
+        overflow: visible;
+        width: 33px;
+        height: 30px;
+        background-color: transparent;
+        box-shadow: none;
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: center;
+        align-items: center;
+    }
 </style>

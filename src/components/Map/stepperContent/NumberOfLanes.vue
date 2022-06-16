@@ -18,7 +18,7 @@
 
     <v-card v-if="isAssetStart === true">
       <v-card-title class="surfaceTitle">
-        <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Surface Start?</v-card-text>
+        <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Start?</v-card-text>
       </v-card-title>
         <v-btn plain absolute left small @click="atBegin(); isAssetStartDisable=false; cancelDfoLocation()">
           <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The beginning of the Road?
@@ -30,7 +30,7 @@
           <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('start'); isAssetStartDisable=false">
             <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
           </v-btn>
-          <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain>
+          <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain @click="isAssetStart = false; isAssetType = true">
             Cancel
           </v-btn>
           <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetStart = false; isAssetEnd = true; ">
@@ -40,7 +40,7 @@
 
     <v-card v-if="isAssetEnd === true">
       <v-card-title class="surfaceTitle">
-        <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Surface End?</v-card-text>
+        <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} End?</v-card-text>
       </v-card-title>
       <v-btn plain absolute left small @click="atEnd(); isAssetEndDisable=false; cancelDfoLocation()">
         <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The End of the Road?
@@ -52,10 +52,10 @@
         <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('end'); isAssetEndDisable=false">
           <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
         </v-btn>
-        <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain>
+        <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain @click="isAssetEnd = false; isAssetStart = true">
           Cancel
         </v-btn>
-        <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetEnd = false; isAssetFinished = true; updateMileInfo(assetEndDfo); updateGraphic();">
+        <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetEnd = false; isAssetFinished = true; updateMileInfo(); updateGraphic();">
           <u>Continue</u>
         </v-btn>
     </v-card>
@@ -126,7 +126,7 @@ export default {
       let getCurrentItem = this.mileInfo.at(index)
         this.assetType = getCurrentItem.SRFC_TYPE
         this.assetStartDfo = getCurrentItem.ASSET_LN_BEGIN
-        this.assetEndDfo - getCurrentItem.ASSET_LN_END
+        this.assetEndDfo = getCurrentItem.ASSET_LN_END
         this.isAssetType = true
         this.isAssetFinished = false
         this.editIndex = index
@@ -221,6 +221,11 @@ export default {
     objid:{
       handler: async function(){
         this.resetItems();
+         if(this.mileInfo.length){
+              console.log('numLanes cleared')
+              this.mileInfo.length = 0
+              this.addRoadSurface()
+            }
         let countG = await getGraphic()
         this.feature = false;
         this.graphic = true;

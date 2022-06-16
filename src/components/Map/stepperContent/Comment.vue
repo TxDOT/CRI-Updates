@@ -2,7 +2,7 @@
     <v-textarea
       name="input-7-1"
       filled
-      label="Place comments in the trash."
+      label="Place comments here."
     ></v-textarea>
 </template>
 

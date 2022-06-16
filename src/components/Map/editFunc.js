@@ -11,6 +11,7 @@ import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
 import {store} from '../../storeUpd'
 
 
+
 //querys the Refernce Layer table return geometry/attributes
 function queryFeat(qry){
   console.log(qry.results[0].graphic.attributes.OBJECTID)
@@ -121,10 +122,11 @@ export async function countyInfo(){
         geomQuery.returnGeometry = true;
         let returnGeom = txCounties.queryFeatures(geomQuery);
         //Dynamically adding County NBR to search definition expression via data store
-        search.sources._items[0].layer.definitionExpression = `CNTY_NBR = ${store.state.cntyNmbr}`
+        search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${store.state.cntyNmbr}`
         let countyExtent = returnGeom;
         countyExtent.then(function(result) {
           viewPoint.targetGeometry = result.features[0].geometry.extent;
+          viewPoint.scale = 500000
           //need to set a buffer on mapview zoom level
           home.viewpoint = viewPoint;
         });
@@ -150,18 +152,20 @@ export async function addRoadbed(){
       if(event.state === "complete"){
       //creating the length of road in miles for user
         lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
-        res([lengthMiles, event.graphic.geometry]);
-        sketch.complete();
+        res([lengthMiles, event.graphic.geometry, 'add']);
+        sketchCompete();
       }
     });
   })
   let returnAddNewRoad = await addNewRoad
+  console.log(returnAddNewRoad[2])
   sketch.layer.graphics.items.at(-1).geometry.hasM = true
   //add reApply M Measures function
   sketch.layer.graphics.items.at(-1).attributes = {
+    editType: criConstants.editTypeColor[`${returnAddNewRoad[2]}`][1],
     gid: 9999,
     objectid: Number(new Date().getTime().toFixed(7)),
-    roadbedName: 'UNKNOWN',
+    roadbedName: null,
     roadbedDesign: JSON.stringify(null),
     roadbedSurface: JSON.stringify(null),
     numLane: JSON.stringify(null),
@@ -171,7 +175,7 @@ export async function addRoadbed(){
   }
   sketch.layer.graphics.items.at(-1).symbol = {
     type: "simple-line",
-    color: [141, 182, 0],
+    color: criConstants.editTypeColor[`${returnAddNewRoad[2]}`][0],
     width: 2,
     style: "dash"
   }
@@ -193,21 +197,27 @@ export async function addRoadbed(){
 //clickType = immediate-click; returns attributes
 //clickType = double-click; creates graphic for editing
 export async function modifyRoadbed(clickType, editType){
-  let promise = new Promise(function(res){
+  let promise = new Promise(function(res, rej){
     view.on(clickType,(event) => {
+      if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
+        rej('cancel')
+      }
       let opts = { include: featLayer }
-      view.hitTest(event, opts).then(function(response){
+      view.hitTest(event, opts)
+      .then(function(response){
         for(let i=0; i < response.results.length; i++){
+          store.commit('setActiveLoader',true)
           if(response.results[i].graphic.geometry !== null && response.results[i].graphic.sourceLayer !== null){
             let test = queryFeat(response)
-            test.then(result=>res(result))
+            test
+              .then(result=>res(result))
           }
         }
       })
     })
   })
-
   let feature = await promise;
+  console.log(feature)
   store.commit('setRoadGeom', feature.features[0].geometry.clone())
   await queryFeatureTables(feature)
   defineGraphic(feature,clickType, editType)
@@ -230,26 +240,31 @@ export async function modifyRoadbed(clickType, editType){
 //   })
 // }
 //highlightes reference layer geometry when mouse moves over
-// export function hightlightFeat(){
-//   view.on('pointer-move', (event) => {
-//     const opts = {include: featLayer}
-//     view.hitTest(event, opts).then(function(response){
-//       if (response.results.length) {
-//         let editFeature = response.results[0].graphic;
-//         view.whenLayerView(editFeature.layer).then(function(layerView){
-//           let highlight = layerView.highlight(editFeature);
-//           view.on('pointer-move', (event) => {
-//             view.hitTest(event, opts).then(function(response){
-//               if(response.results.length === 0){
-//                 highlight.remove()
-//               }
-//             })
-//           })
-//         })
-//       }
-//     })
-//   })
-// }
+export function hightlightFeat(){
+  view.on('pointer-move', (event) => {
+    const opts = {include: gLayer}
+    view.hitTest(event, opts).then(function(response){
+      if(response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1){
+        return;
+      }
+      if (response.results.length) {
+        document.body.style.cursor = 'pointer'
+        let editFeature = response.results[0].graphic;
+        view.whenLayerView(editFeature.layer).then(function(layerView){
+          let highlight = layerView.highlight(editFeature);
+          view.on('pointer-move', (event) => {
+            view.hitTest(event, opts).then(function(response){
+              if(response.results.length === 0){
+                document.body.style.cursor = 'context-menu'
+                highlight.remove()
+              }
+            })
+          })
+        })
+      }
+    })
+  })
+}
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
 async function defineGraphic(graphics, clickType, editType){
@@ -272,6 +287,7 @@ async function defineGraphic(graphics, clickType, editType){
         },
     
         attributes: {
+          editType: criConstants.editTypeColor[`${editType}`][1],
           gid: graphics.features[0].attributes.GID,
           objectid: graphics.features[0].attributes.OBJECTID,
           roadbedName: store.getters.getRoadbedName,
@@ -285,12 +301,16 @@ async function defineGraphic(graphics, clickType, editType){
                   
         symbol: {
           type: "simple-line",
-          color: criConstants.editTypeColor[`${editType}`],
+          color: criConstants.editTypeColor[`${editType}`][0],
           width: 2,
           style: "dash"
         }
       })
       gLayer.graphics.add(newGraphic);
+      newGraphic.attributes.editType === 'EDIT' ? showVerticies(newGraphic) : null
+      let oldLength = Number(geometryEngine.geodesicLength(newGraphic.geometry, "miles").toFixed(5))
+      store.commit('setOldLength',oldLength)
+      // showVerticies(newGraphic)
       //sketch.update([newGraphic], {tool:'reshape'})
       res(gLayer)
     })
@@ -338,10 +358,14 @@ export function updateLength(){
         store.commit('setDeltaDis',[newLengths, 'Edit'])
         store.commit('setRoadGeom', event.graphics[0].geometry.clone())
         reapplyM(event.graphics[0])
+        updateGraphicsLayer(event.graphics[0].attributes.objectid, newLengths)
         // let returnRdSurf = JSON.parse(event.graphics[0].attributes.roadbedSurface)
         // returnRdSurf.forEach(x => x.OBJECTID = event.graphics[0].attributes.objectid)
-        // applyMToAsset(returnRdSurf)
-      }
+        // returnRdSurf.at(-1).ASSET_LN_END_DFO_MS = Number(newLengths.toFixed(3))
+        // store.commit('setRoadbedSurface', JSON.stringify(returnRdSurf))
+        //let getGraphic = gLayer.graphics.items.filter(x => x.objectid = event.graphics[0].attributes.objectid)
+        //getGraphic[0].attributes.roadbedSurface = JSON.stringify(returnRdSurf)
+      } 
     })
   }
   catch(Error){
@@ -376,6 +400,11 @@ export function stopEditing(){
 export function stopEditingPoint(){
   sketchPoint.cancel()
 }
+export function showVerticies(x){
+  sketch.update([x], {tool:'reshape'})
+  //let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(5))
+  //store.commit('setOldLength',oldLength)
+}
 //populates stepper form when graphic is clicked.
 export async function getGraphic(){
   let getGraphPromise = new Promise(function(resp){
@@ -393,6 +422,7 @@ export async function getGraphic(){
                 return;
               }
               if(response.results.length){
+                response.results[0].graphic.attributes['editType'] === 'ADD' ? store.commit('setModifyRd', false) : store.commit('setModifyRd', true)
                 store.commit('setStepperClose', true)
                 store.commit('setObjectid', response.results[0].graphic.attributes['objectid'])
                 store.commit('setRoadbedName', response.results[0].graphic.attributes['roadbedName'])
@@ -602,6 +632,7 @@ export function getCoordsRange(y){
   try{
     if(rdbdAssetPt.length){
       rdbdAssetPt.length = 0
+      rdbdAssetLine.length = 0
     }
     let dens;
     // if(check !== false){
@@ -736,7 +767,6 @@ function getNewDfoDist(objectid, x, y){
   let webMercaPointB = webMercatorUtils.webMercatorToGeographic(pointB.geometry)
   //find distance between clicked point and nearest point
   const pointAPointB = geodesicUtils.geodesicDistance(webMercaPointB, webMercaPointA)
-  console.log(pointAPointB)
   
   if(pointAPointB.distance === 0 && index === 0){
     newDfo = objid.paths[0].at(0)[2]
@@ -828,7 +858,6 @@ function getNewDfoDist(objectid, x, y){
     dir2 = y - y2
   }
   let direction = path[0][0] > path[1][0]
-  console.log(direction, dist)
   //convert GraphicB to Geographic i.e lat/long
 
 
@@ -1073,6 +1102,7 @@ export async function updateAsset(y){
 //Removes graphics points on click
 export function removeAsstPoints(){
   rdbdAssetPt.graphics.removeAll();
+  rdbdAssetLine.removeAll();
   return;
 }
 
@@ -1104,26 +1134,31 @@ export function applyMToAsset(assetArray, type){
   //   console.log(assetInfo)
   // }
 //make a new function for these
-  assetArray.sort((a,b) => a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)
+  // assetArray.sort((a,b) => a.ASSET_LN_BEGIN > b.ASSET_LN_END)
+  // if(assetArray.at(-1).ASSET_LN_END !== Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))){
+  //   assetArray.at(-1).ASSET_LN_END = Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))
+  // }
+  // for(let i=1; i<assetArray.length; i++){
+  //   if(assetArray.at(-1).ASSET_LN_END !== Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))){
 
-  for(let i=1; i<assetArray.length; i++){
-    if(assetArray[i].edit){
-      assetArray[i-1].ASSET_LN_END_DFO_MS = Number(assetArray[i].ASSET_LN_BEGIN_DFO_MS)
-      if(assetArray[i+1]){
-        assetArray[i+1].ASSET_LN_BEGIN_DFO_MS = Number(assetArray[i].ASSET_LN_END_DFO_MS)
-      }
+  //   }
+  //   if(assetArray[i].edit){
+  //     assetArray[i-1].ASSET_LN_END = Number(assetArray[i].ASSET_LN_BEGIN)
+  //     if(assetArray[i+1]){
+  //       assetArray[i+1].ASSET_LN_BEGIN = Number(assetArray[i].ASSET_LN_END)
+  //     }
       
-    }
-    if(assetArray[i-1].edit){
-      assetArray[i].ASSET_LN_BEGIN_DFO_MS = Number(assetArray[i-1].ASSET_LN_END_DFO_MS)
-      if(assetArray[i+1]){
-        assetArray[i+1].ASSET_LN_BEGIN_DFO_MS = Number(assetArray[i].ASSET_LN_END_DFO_MS)
-      }
-    }
-  }
-  if(assetArray.at(-1).ASSET_LN_END_DFO_MS !== Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))){
-    assetArray.at(-1).ASSET_LN_END_DFO_MS = Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))
-  }
+  //   }
+  //   if(assetArray[i-1].edit){
+  //     assetArray[i].ASSET_LN_BEGIN = Number(assetArray[i-1].ASSET_LN_END)
+  //     if(assetArray[i+1]){
+  //       assetArray[i+1].ASSET_LN_BEGIN = Number(assetArray[i].ASSET_LN_END)
+  //     }
+  //   }
+  // }
+  // if(assetArray.at(-1).ASSET_LN_END !== Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))){
+  //   assetArray.at(-1).ASSET_LN_END = Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))
+  // }
 
   if(type!=='click'){
     rdbdAssetPt.removeAll();
@@ -1177,8 +1212,8 @@ function assetCoverageCheck(x){
 
   let beginEndArr = []
 
-  x.forEach(function(x){
-    beginEndArr.push(x.ASSET_LN_BEGIN_DFO_MS + x.ASSET_LN_END_DFO_MS)
+  x.forEach(function(y){
+    beginEndArr.push(y.ASSET_LN_BEGIN_DFO_MS + y.ASSET_LN_END_DFO_MS)
   })
 
   let initValue = 0
@@ -1202,6 +1237,7 @@ export function initLoadAssetGraphic(asset){
     let graphicAsset = assetType[asset]()
     store.commit('setRoadGeom', graphicFilter[0].geometry.clone())
     if(graphicAsset === null){
+      removeAsstPoints();
       return;
     }
     assetCoverageCheck(graphicAsset)
@@ -1228,4 +1264,29 @@ export function initLoadAssetGraphic(asset){
     }
 }
 
-
+function updateGraphicsLayer(oid, length){
+  for(let i=0; i < gLayer.graphics.items.length; i++){
+    let assetArr = ['roadbedDesign', 'roadbedSurface', 'numLane']
+    if(gLayer.graphics.items[i].attributes.objectid === oid){
+      for(let x=0; x < assetArr.length; x++){
+        let asset = JSON.parse(gLayer.graphics.items[i].attributes[assetArr[x]])
+        if(!asset) return;
+        asset.at(-1).ASSET_LN_END_DFO_MS = Number(length.toFixed(3))
+        gLayer.graphics.items[i].attributes[assetArr[x]] = JSON.stringify(asset)
+        
+        let commitToStore = {
+          roadbedDesign: ()=>{
+            return store.commit('setRoadbedDesign', JSON.stringify(asset))
+          },
+          roadbedSurface: ()=>{
+            return store.commit('setRoadbedSurface', JSON.stringify(asset))
+          },
+          numLane: ()=>{
+            return store.commit('setNumLane',JSON.stringify(asset))
+          }
+        }
+        commitToStore[assetArr[x]]()
+      }
+    }
+  }
+}
