@@ -198,12 +198,12 @@ export async function addRoadbed(){
 export async function modifyRoadbed(clickType, editType){
   let promise = new Promise(function(res, rej){
     view.on(clickType,(event) => {
-      if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
-        rej('cancel')
-      }
       let opts = { include: featLayer }
       view.hitTest(event, opts)
       .then(function(response){
+        if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
+          rej('cancel')
+        }
         for(let i=0; i < response.results.length; i++){
           store.commit('setActiveLoader',true)
           if(response.results[i].graphic.geometry !== null && response.results[i].graphic.sourceLayer !== null){
