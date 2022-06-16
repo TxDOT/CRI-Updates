@@ -178,7 +178,7 @@ export async function addRoadbed(){
     width: 2,
     style: "dash"
   }
-
+  showVerticies(sketch.layer.graphics.items.at(-1))
   reapplyM(gLayer.graphics.items.at(-1))
   store.commit('setDeltaDis',[Number(returnAddNewRoad[0].toFixed(5)), 'Add'])
   store.commit('setRoadGeom', gLayer.graphics.items.at(-1).geometry.clone())
@@ -198,14 +198,16 @@ export async function addRoadbed(){
 export async function modifyRoadbed(clickType, editType){
   let promise = new Promise(function(res, rej){
     view.on(clickType,(event) => {
+      if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
+        rej('cancel')
+      }
       let opts = { include: featLayer }
       view.hitTest(event, opts)
       .then(function(response){
-        if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
-          rej('cancel')
-        }
         for(let i=0; i < response.results.length; i++){
-          store.commit('setActiveLoader',true)
+          if(store.getters.getEditExisting === true || store.getters.getDeleteRd === true){
+            store.commit('setActiveLoader',true)
+          }
           if(response.results[i].graphic.geometry !== null && response.results[i].graphic.sourceLayer !== null){
             let test = queryFeat(response)
             test

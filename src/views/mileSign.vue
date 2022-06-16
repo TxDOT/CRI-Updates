@@ -209,7 +209,7 @@
 
 <script>
 import {countyInfo, autoDrawAsset} from '../components/Map/editFunc'
-import {featLayer,txCounties,view} from '../components/Map/map'
+import {featLayer,txCounties,view, viewPoint} from '../components/Map/map'
 import Query from "@arcgis/core/rest/support/Query"
 import {criConstants} from '../common/cri_constants';
 //import {roadInfo} from '../store'
@@ -374,11 +374,9 @@ export default {
             query.where = `CNTY_NM = '${this.county}'`
             query.outFields = [ "*" ]
             query.returnGeometry = true
-            let countyQuery = txCounties.queryFeatures(query)
-            let returnCountyObj = await countyQuery
-            view.goTo({
-              target: returnCountyObj.features[0].geometry
-            })
+            // let countyQuery = txCounties.queryFeatures(query)
+            // let returnCountyObj = await countyQuery
+            view.goTo(viewPoint);
             autoDrawAsset(queryFeat)
           },
           sendCountyName(){
