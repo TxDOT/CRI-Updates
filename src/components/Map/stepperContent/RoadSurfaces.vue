@@ -29,7 +29,7 @@
     <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('start'); isAssetStartDisable=false">
       <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
     </v-btn>
-    <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain>
+    <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain @click="isAssetStart = false; isAssetType = true">
       Cancel
     </v-btn>
     <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetStart = false; isAssetEnd = true; ">
@@ -51,10 +51,10 @@
     <v-btn plain absolute left style="top:120px;" small @click="getDfoLocation('end'); isAssetEndDisable=false">
         <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
     </v-btn>
-    <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain>
+    <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain @click="isAssetEnd = false; isAssetStart = true">
       Cancel
     </v-btn>
-    <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetEnd = false; isAssetFinished = true; updateMileInfo(assetEndDfo); updateGraphic();">
+    <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetEnd = false; isAssetFinished = true; updateMileInfo(); updateGraphic();">
       <u>Continue</u>
     </v-btn>
   </v-card>
@@ -129,7 +129,7 @@ export default {
         let getCurrentItem = this.mileInfo.at(index)
         this.assetType = getCurrentItem.SRFC_TYPE
         this.assetStartDfo = getCurrentItem.ASSET_LN_BEGIN
-        this.assetEndDfo - getCurrentItem.ASSET_LN_END
+        this.assetEndDfo = getCurrentItem.ASSET_LN_END
         this.isAssetType = true
         this.isAssetFinished = false
         this.editIndex = index
@@ -162,7 +162,6 @@ export default {
         // this.rdbdSurf.at(-1).SRFC_TYPE_ID = this.assetType
         // this.rdbdSurf.at(-1).ASSET_LN_BEGIN_DFO_MS = this.assetStartDfo
         // this.rdbdSurf.at(-1).ASSET_LN_END_DFO_MS = this.assetEndDfo
-       
         // beginEndArr.push(this.mileInfo.at(0).ASSET_LN_BEGIN, this.mileInfo.at(-1).ASSET_LN_END)
         this.checkFullCoverage();
         this.executeDFOgraph('point')
@@ -229,6 +228,11 @@ export default {
         objid:{
           handler: async function(){
             this.resetItems();
+             if(this.mileInfo.length){
+              console.log('roadSurface cleared')
+              this.mileInfo.length = 0
+              this.addRoadSurface()
+            }
             let countG = await getGraphic()
             this.feature = false;
             this.graphic = true;

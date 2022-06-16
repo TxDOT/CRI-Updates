@@ -8,6 +8,7 @@
     <stepper v-if="display === true"/>
     <editExistingRd/>
     <denyClickFeat v-if="denyClick === true"/>
+    <v-progress-circular indeterminate color="primary" style="top:400px;" v-if="loading===true"></v-progress-circular>
   </div>
 </template>
 
@@ -19,7 +20,7 @@ import navSideBar from '../components/navigationSideBar.vue'
 import stepper from '../components/stepperQuestion.vue'
 import editExistingRd from "../components/Map/editExistingRd.vue"
 import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
-//import {countyInfo} from '../components/Map/editFunc'
+import {hightlightFeat} from '../components/Map/editFunc'
 export default {
     components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat},
     props:["id"],
@@ -28,8 +29,12 @@ export default {
       return{
         display:true,
         edit: false,
-        denyClick: false
+        denyClick: false,
+        loading: false
       }
+    },
+    mounted(){
+      hightlightFeat()
     },
     watch:{
       denyFeature:{
@@ -43,7 +48,14 @@ export default {
           this.edit = this.editStatus
         },
         immediate: true,
-      }
+      },
+      receiveLoadStatus:{
+        handler: function(){
+          this.loading = this.receiveLoadStatus
+        },
+        immediate: true,
+      },
+
     },
     computed:{
       editStatus:{
@@ -58,6 +70,14 @@ export default {
         set(deny){
           this.$store.commit('setdenyFeatClick', deny)
         }
+      },
+      receiveLoadStatus:{
+        get(){
+          return this.$store.state.activeLoader
+        },
+        set(load){
+          this.$store.commit('setActiveLoader', load)
+        }
       }
     }
 }
@@ -67,8 +87,14 @@ export default {
 #viewDiv {
   position: absolute;
   top: 6%;
-  right: 0%;
+  /* right: 0%; */
+  left:10%;
   height: 94%;
-  width: 100%;
+  width: 90%;
 }
+/* .MapHome{
+  width:100%;
+  height:100%;
+  background-color:rgba(0,0,0,0.65);
+} */
 </style>

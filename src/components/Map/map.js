@@ -54,7 +54,7 @@ export const map = new Map({
 export const view = new MapView({
     container: 'viewDiv',
     map: map,
-    zoom: 9,
+    zoom: 2,
     highlightOptions: {
         color: "orange"
     },
@@ -104,16 +104,16 @@ export const search = new Search({
 // PUSH SOURCES TO SEARCH WIDGET
 search.sources.push({
     layer: new FeatureLayer({
-        url: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/0",
+        url: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_REF_LAYERS_dev/FeatureServer/0",
         //definitionExpression: "CNTY_NBR = 11"//need to set dynamically using vuex store
     }),
-    searchFields: ["RTE_NBR"],
-    displayField: "RTE_NBR",
+    searchFields: ["ST_DEFN_NM"],
+    displayField: "ST_DEFN_NM",
     exactMatch: false,
     autoSelect: true,
     outFields: ["*"],
     name: "County Road",
-    placeholder: "Ex: 7, 240, 243",//need to set dynamically using vuex store
+    placeholder: "Ex: Smith Road",//need to set dynamically using vuex store
     maxResults: 12,
     maxSuggestions: 12,
     suggestionsEnabled: true,
@@ -126,7 +126,6 @@ search.sources.push({
         width: "6px",
     }
 });
-console.log(search);
 // ADD AND POSITION WIDGETS IN THE MAPVIEW
 view.ui.remove("attribution");
 view.ui.empty("top-left");
@@ -143,7 +142,7 @@ view.ui.add([
   }, 
   {
     component: basemapToggle,
-    position: "bottom-right"
+    position: "top-right"
   },
   {
     component: scaleBar,
@@ -287,7 +286,8 @@ export const sketch = new SketchViewModel({
         layer: gLayer,
         updateOnGraphicClick: true,
         defaultCreateOptions:{
-            mode:"click"
+            mode:"click",
+            hasZ: false
         },
         defaultUpdateOptions:{
             tool:"reshape",

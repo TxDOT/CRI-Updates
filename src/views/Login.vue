@@ -37,7 +37,7 @@
 
 <script>
 import {autoDrawAsset} from '../components/Map/editFunc'
-import {txCounties,view, featLayer} from '../components/Map/map'
+import {txCounties,view, featLayer, viewPoint} from '../components/Map/map'
 import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
 import esriId from "@arcgis/core/identity/IdentityManager";
 import Portal from "@arcgis/core/portal/Portal";
@@ -120,11 +120,12 @@ export default {
         query.where = `CNTY_NM = '${name}'`
         query.outFields = [ "*" ]
         query.returnGeometry = true
-        let countyQuery = txCounties.queryFeatures(query)
-        let returnCountyObj = await countyQuery
-        view.goTo({
-          target: returnCountyObj.features[0].geometry
-        })
+        // let countyQuery = txCounties.queryFeatures(query)
+        // let returnCountyObj = await countyQuery
+        // view.goTo({
+        //   target: returnCountyObj.features[0].geometry
+        // })
+        view.goTo(viewPoint);
         autoDrawAsset(queryFeat)
       },
       handleSignedIn() {

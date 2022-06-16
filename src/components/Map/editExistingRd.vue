@@ -29,8 +29,9 @@
                 mdi-navigation
             </v-icon>Select a road to delete it
         </v-card-text>
+        <v-btn v-if="edit===true || addR === true || deleteR === true" plain block color="#E64545" @click="cancelEditAction()">Cancel Action</v-btn>
     </v-card>
-    <v-card id="delWarn" v-if="deleteSecond === true">
+    <v-card id="delWarn" v-if="(deleteSecond === true && this.modifyR === false)">
         <v-card-title class="editRdTitle" style="width: 385px">
             Delete a Road
         </v-card-title>
@@ -55,6 +56,7 @@
 </template>
 
 <script>
+import {stopEditing} from './editFunc'
 export default {
     name: 'editExistingRd',
     data (){
@@ -66,6 +68,25 @@ export default {
         addR: false,
         stepper: false
       }
+    },
+    methods:{
+        cancelEditAction(){
+            if(this.edit === true){
+                document.body.style.cursor = 'context-menu'
+                this.editStatus = false
+            }
+            else if(this.deleteR === true){
+                document.body.style.cursor = 'context-menu'
+                this.deleteRoad = false
+            }
+            else if(this.modifyR === true){
+                this.modifyRoad = false
+            }
+            else if(this.addR === true){
+                stopEditing();
+                this.addRdBoolean = false
+            }
+        }
     },
     watch:{
         steppClose:{
@@ -88,6 +109,7 @@ export default {
         },
         modifyRoad:{
             handler: function(){
+                console.log(this.modifyRoad)
                 this.modifyR =  this.modifyRoad
             },
         immediate:true,

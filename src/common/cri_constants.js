@@ -11,7 +11,7 @@ export const criConstants = {
     geomTypeRd: "polyline",
     geomTypeCounty: "polygon",
     basemap: "topo-vector",
-    zoomLevel: 9,
+    zoomLevel: 2,
     roadSurfaceMouseType: "cursor:crosshair",
 
     fmeurl: 'http://api.fmeserver.com/js/v3/FMEServer.js',
@@ -41,7 +41,8 @@ export const criConstants = {
     },
     
     editTypeColor:{
-      'edit': [0, 0, 255],
-      'delete': [227,38,54]
+      'add':[[141, 182, 0], 'ADD'],
+      'edit': [[0, 0, 255], 'EDIT'],
+      'delete': [[227,38,54], 'DELETE']
     }
 }

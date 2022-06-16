@@ -1,10 +1,23 @@
 <template>
     <div>
-        <v-alert type="success" dismissible v-if="sendAssetCoverage" height="44" dense outlined>
+        <v-alert type="success" v-if="sendAssetCoverage" height="44" dense outlined>
             This asset covers the full length of the road
         </v-alert>
-        <v-alert type="error" dismissible v-if="!sendAssetCoverage" height="50" dense outlined>
+        <v-alert type="error" color="#E64545" v-if="!sendAssetCoverage" height="50" dense outlined>
+        
+          <!-- <v-tooltip top>
+            <template v-slot: activator="{on, attr}">
+              <v-icon v-bind="attrs" v-on="on">mdi-help-circle</v-icon>
+            </template>
+            <span>This is a test</span>
+          </v-tooltip> -->
             The provided assets are either too short or too long for the road.
+            <v-tooltip bottom color="error" left nudge-right="120" nudge-top="50" max-width="130">
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon v-bind="attrs" v-on="on" right style="poistion: absolute; left:95px; bottom: 29px;">mdi-help-circle</v-icon>
+              </template>
+              <span>Check Assest are full length. If you modified the geometry of the road, please review the assets.</span>
+            </v-tooltip>
         </v-alert>
     </div>
    

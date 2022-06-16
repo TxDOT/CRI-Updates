@@ -1,15 +1,14 @@
 <template>
-  
     <v-card>
-      <v-navigation-drawer app style="top:59px;">
+      <v-navigation-drawer app style="top:59px;" disable-resize-watcher>
       <!-- <alert v-if="display === true"/> -->
         <!-- <v-alert v-model="display" color="green" @click="display = false">
           Click on the Map to start Drawing!
         </v-alert> -->
         <v-card-title id="testTitle">What Do You Want To Do?</v-card-title>
         <v-list class="outlineColor"> 
-          <v-list-item-group v-model="stepIn" color="#15648C">
-            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple :style="{}">
+          <v-list-item-group id="tester" v-model="stepIn" color="#15648C" active-class="border">
+            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple>
             <v-list-item-icon>
               <v-icon v-text="item.icon"></v-icon>
             </v-list-item-icon>
@@ -48,6 +47,7 @@
             this.display=true;
             this.addRdBoolean = true
             this.modifyRoad = false
+            //this.graphic = false;
             
             // setTimeout(()=>{
             //   this.editExistingRd = null;
@@ -62,41 +62,54 @@
             this.nextDeleteRoadForm = false
             this.addRdBoolean = false;
             this.deleteRoad = false
-            
-            document.body.style.cursor = 'pointer'
+            this.changePoint();
             // setTimeout(()=>{
             //   this.editExistingRd = null;
             // },5000)
             await modifyRoadbed('click', 'edit')
-            this.modifyRoad = true
-            this.openStepper();
+            document.body.style.cursor = 'context-menu'
+            if(this.editExistingRd === true){
+              this.receiveLoadStatus = false
+              this.modifyRoad = true
+              this.openStepper();
+            }
+
+            //hightlightFeat();
             
             
           }},
           { title: 'Delete Road', icon: 'mdi-close-circle', action: async ()=>{
+            this.modifyRoad = false
             stopEditing();
             this.editExistingRd = false
             this.nextDeleteRoadForm = false
             this.addRdBoolean = false
             this.deleteRoad = true
-            
-            document.body.style.cursor = 'pointer'
+            console.log(this.editExistingRd, this.deleteRoad)
+            this.changePoint();
             await modifyRoadbed('click', 'delete')
-            this.editExistingRd = null
-            this.deleteRoad = false
-            this.nextDeleteRoadForm = true
-
+            document.body.style.cursor = 'context-menu'
+            if(this.deleteRoad === true){
+              this.receiveLoadStatus = false
+              this.editExistingRd = false
+              this.deleteRoad = false
+              this.nextDeleteRoadForm = true
+            }
           }},
           // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}
         ],
       }
     },
     methods:{
+      changePoint(){
+        document.body.style.cursor = 'pointer'
+      },
       async addRoad(){
         addRoadbed()
           .then(() => {
             this.openStepper();
             this.addRdBoolean = false
+            this.graphic = false;
           })
       },
       editRoad(){
@@ -111,7 +124,25 @@
         this.display = this.alertStatus
       },
     },
-    watch:{
+    watch:{ 
+      addRdBoolean:{
+        handler: function(){
+          this.graphic = this.addRdBoolean
+        },
+        immediate: true,
+      },
+      editExistingRd:{
+        handler: function(){
+          this.graphic = this.editExistingRd
+        },
+        immediate: true,
+      },
+      deleteRoad:{
+        handler: function(){
+          this.graphic = this.deleteRoad
+        },
+        immediate: true,
+      },
       steppClose:{
         handler: function(){
           if(this.steppClose === true){
@@ -177,6 +208,14 @@
         set(edit){
           this.$store.commit('setEditExisting', edit)
         }
+      },
+      receiveLoadStatus:{
+        get(){
+          return this.$store.state.activeLoader
+        },
+        set(load){
+          this.$store.commit('setActiveLoader', load)
+        }
       }
     }
   }
@@ -217,8 +256,16 @@
   text-align: left;
 }
 
-.outlineColor .v-list-item-group .v-list-item--active{
-  outline: #15648C solid 2px;
+
+.border{
+  border: #15648C solid 2px;
 }
+
+body.select{
+  cursor: pointer
+}
+/* #navButtons:active{
+  outline: #15648C solid 2px;
+} */
 
 </style>

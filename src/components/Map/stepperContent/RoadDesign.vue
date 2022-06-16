@@ -6,7 +6,7 @@
                 <!-- <v-col v-for="(item,index) in rdbdSurf" :key="index" > -->
                   <v-card v-if="isAssetType=== true" >
                     <v-card-title class="surfaceTitle">
-                      <v-card-text style="bottom:30px; position:relative; font-size: 15px; text-align: left;">What's the Surface Type?</v-card-text>
+                      <v-card-text style="bottom:30px; position:relative; font-size: 15px; text-align: left;">What's the Design Type?</v-card-text>
                     </v-card-title>
                     <v-select v-model="assetType" :items="assetTypeOpt" outlined dense placeholder="Pick an asset type"></v-select>
                       <v-btn style="bottom: 10px; padding:0px; left:50px;" depressed plain>
@@ -18,7 +18,7 @@
                   </v-card>
                   <v-card v-if="isAssetStart === true">
                   <v-card-title class="surfaceTitle">
-                    <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Surface Start?</v-card-text>
+                    <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Start?</v-card-text>
                   </v-card-title>
                   <v-btn plain absolute left small @click="atBegin(); isAssetStartDisable=false; cancelDfoLocation()">
                     <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The beginning of the Road?
@@ -39,7 +39,7 @@
                 </v-card>
                 <v-card v-if="isAssetEnd === true">
                 <v-card-title class="surfaceTitle">
-                  <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} Surface End?</v-card-text>
+                  <v-card-text style="padding: 0%; bottom:13px; position:relative; font-size: 14px; text-align: left;">Where Does the {{assetType}} End?</v-card-text>
                 </v-card-title>
                 <v-btn plain absolute left small @click="atEnd(); isAssetEndDisable=false; cancelDfoLocation()">
                   <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The End of the Road?
@@ -54,7 +54,7 @@
                 <v-btn style="bottom: 50px; left: 40px; padding:0px;" depressed plain>
                   Cancel
                 </v-btn>
-                <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetEnd = false; isAssetFinished = true; updateMileInfo(assetEndDfo); updateGraphic();">
+                <v-btn style="bottom: 50px; padding:0px; right:1px;" absolute outlined @click="isAssetEnd = false; isAssetFinished = true; updateMileInfo(); updateGraphic();">
                   <u>Continue</u>
                 </v-btn>
               </v-card>
@@ -95,24 +95,6 @@
                   <u>Continue</u>
                 </v-btn>
               </v-card>
-              <!-- Adds new asset breaks to form based on mileInfo array (populated by user click addRoadSurface function) -->
-                <!-- <v-card v-for="(item,index) in mileInfo" :key="index" >
-                    <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID"></v-select>
-                        <v-row>
-                            <v-col>
-                                <v-text-field  label='Begin' v-model="item.ASSET_LN_BEGIN_DFO_MS"></v-text-field>
-                            </v-col>
-                            <v-col sm="6">
-                                <v-text-field label='End' v-model="item.ASSET_LN_END_DFO_MS"></v-text-field>
-                                    <v-btn id="editedfo1" icon x-small elevation=0 @click="executeDFOgraph('draw',item.ASSET_LN_END_DFO_MS)">
-                                        <v-icon color="blue">mdi-pencil</v-icon>
-                                    </v-btn>
-                                    <v-btn id="addSurf" small @click="deleteSurface()" elevation=0>
-                                        <v-icon color="red">mdi-delete</v-icon>
-                                    </v-btn>
-                            </v-col>
-                        </v-row>
-                </v-card> -->
             </div>
         <!-- </v-card> -->
 
@@ -126,7 +108,7 @@ import {gLayer} from '../map'
 import assetAlert from '../stepperContent/assetAlert.vue'
 export default {
     components: {assetAlert},
-    name: 'roadSurface',
+    name: 'roadDesign',
     data(){
       return{
         mileInfo:[],
@@ -166,7 +148,7 @@ export default {
         let getCurrentItem = this.mileInfo.at(index)
         this.assetType = getCurrentItem.SRFC_TYPE
         this.assetStartDfo = getCurrentItem.ASSET_LN_BEGIN
-        this.assetEndDfo - getCurrentItem.ASSET_LN_END
+        this.assetEndDfo = getCurrentItem.ASSET_LN_END
         this.isAssetType = true
         this.isAssetFinished = false
         this.editIndex = index
@@ -271,6 +253,12 @@ export default {
         objid:{
           handler: async function(){
             this.resetItems();
+            console.log(this.objid)
+            if(this.mileInfo.length){
+              console.log('roadDesign cleared')
+              this.mileInfo.length = 0
+              this.addRoadSurface()
+            }
             let countG = await getGraphic()
             this.feature = false;
             this.graphic = true;

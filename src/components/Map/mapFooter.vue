@@ -2,13 +2,13 @@
     <v-footer app style="left: 243px;width: 100%;height:35px; text-align: center;background: rgba(192,192,192,0.5)" >
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
-          <div  id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; &nbsp;&nbsp; User Name: <b>{{userName}}</b> 
+          <div  id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; &nbsp;&nbsp; User Name: <b>Tester_TXDOT</b> 
             &nbsp; &nbsp; &nbsp;Previous Total Mileage: <b>{{countyTotal}}</b>&nbsp;&nbsp;&nbsp; 
             Current Mileage: <b>{{Number(rdbdDeltaDist.toFixed(4))}}</b>&nbsp;&nbsp;&nbsp; 
             New Total Miles: <b>{{Number(countyTots.toFixed(4))}}</b>
           </div>
           <div style="position: absolute; font-size: 10px; bottom: 10%;">
-            Build v1.2
+            Build v1.3
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>
@@ -53,6 +53,13 @@ export default {
       },
       immediate: true, 
     },
+    rdbdDeltaDist:{
+      handler: function(){
+        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist)
+        // \this.modifyLength += this.rdbdDeltaDist
+      },
+      immediate: true, 
+    },
     // modifyLine:{
     //   handler: async function(){
     //     let modify = await modifyRoadbed("click")
@@ -75,7 +82,6 @@ export default {
     },
     userName:{
       get(){
-        console.log(this.$store.state.username)
         return this.$store.state.username
       }
     },
@@ -92,7 +98,6 @@ export default {
     },
     returnCountyTotal:{
       get(){
-        console.log(this.$store.state.cntyEndingMiles)
         return this.$store.state.cntyEndingMiles
       },
       set(mi){

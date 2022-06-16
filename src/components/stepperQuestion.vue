@@ -16,9 +16,8 @@
     <v-stepper-header class="stepHead" v-if="forMod">Edit an Existing Road</v-stepper-header>
     <v-stepper-step
       editable
-      :complete="e1 > 1"
       step="1"
-      @click="removeAsstPt();"
+      @click="removeAsstPt(); showGIDVerts()"
       class="font-weight-regular; body-1;">
       Road Name:
     </v-stepper-step>
@@ -36,7 +35,6 @@
 
     <v-stepper-step 
       editable
-      :complete="e1 > 2"
       step="2"
       @click="removeAsstPt(); complete(); initLoadAsset('design');">
       Road Design
@@ -55,7 +53,6 @@
     <v-stepper-step
       class="stepStyle"
       editable
-      :complete="e1 > 3"
       step="3"
       @click="startExecuteDfoPts(); complete(); initLoadAsset('surface')" 
       ><!-- Get asset breaks and draw graphic points -->
@@ -120,7 +117,7 @@
       </v-btn>
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
-    <v-btn-toggle style="top:150px">
+    <v-btn-toggle style="top:100px; left:100px;">
       <v-btn small @click="cancel()">Cancel</v-btn>
       <v-btn small color="#15648C" text @click="saveAttri()"><u>Save</u></v-btn>
     </v-btn-toggle>
@@ -133,13 +130,13 @@
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import {removeAsstPoints, sketchCompete, initLoadAssetGraphic} from '../components/Map/editFunc'
+import {removeAsstPoints, sketchCompete, initLoadAssetGraphic, showVerticies} from '../components/Map/editFunc'
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
 import numOfLane from './Map/stepperContent/NumberOfLanes.vue'
 import comment from './Map/stepperContent/Comment.vue'
-//import { gLayer } from './Map/map'
+import { gLayer } from './Map/map'
 //import {roadInfo} from '../store'a
 //import Map from '../components/Map/Map.vue'
 
@@ -215,6 +212,7 @@ export default {
         },
         immediate: true,
       },
+      
       e1:{
         handler: function(){
           this.returnStep = this.e1
@@ -253,6 +251,11 @@ export default {
     },
 
     methods:{
+      showGIDVerts(){
+        let getGraphic = gLayer.graphics.items.filter(x=> x.attributes.objectid === this.objid)
+        console.log(getGraphic)
+        showVerticies(getGraphic[0])
+      },
       initLoadAsset(asset){
         initLoadAssetGraphic(asset)
       },
@@ -342,6 +345,8 @@ export default {
         this.steppClose = false;
         this.e1 = 1;
         sketchCompete();
+        removeAsstPoints();
+        console.log(gLayer)
       },
       //pushes new blank object row into mileInfo asset form
       // addRoadSurface(){
@@ -483,7 +488,7 @@ export default {
         set(edit){
           this.$store.commit('setEditExisting', edit)
         }
-      }
+      },
     }
 }
 </script>
@@ -527,5 +532,9 @@ export default {
 .v-stepper__step--active{
   outline: #204E70 solid 2px;
   background-color: rgba(32, 78, 112, .3)
+}
+
+.v-list-item--link{
+  outline: none;
 }
 </style>
