@@ -367,7 +367,7 @@ export default {
            async goToMap(){
             //login();
             this.$router.push('/map')
-            let queryFeat = featLayer.definitionExpression =`CNTY_NM = '${this.county}'`
+            let queryFeat = featLayer.definitionExpression =`CNTY_TYPE_NM = '${this.county}'`
             txCounties.definitionExpression=`CNTY_NM='${this.county}'`
             //rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
             const query = new Query();

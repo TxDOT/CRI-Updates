@@ -31,34 +31,44 @@
         </v-card-text>
         <v-btn v-if="edit===true || addR === true || deleteR === true" plain block color="#E64545" @click="cancelEditAction()">Cancel Action</v-btn>
     </v-card>
-    <v-card id="delWarn" v-if="(deleteSecond === true && this.modifyR === false)">
+    <v-card id="delWarn" v-if="deleteSecond === true || deleteClick"> <!-- //&& this.modifyR === false -->
         <v-card-title class="editRdTitle" style="width: 385px">
             Delete a Road
         </v-card-title>
-        <v-alert color="orange" height="60" dense outlined style="width:379px; text-align: left;">
+        <v-alert color="orange" height="60" dense outlined style="width:379px; text-align: left;" v-if="!deleteClick">
             <v-icon color="orange" style="right:7px;">
                 mdi-information
             </v-icon>
             You can discard this edit later if you change your mind
          </v-alert>
-        <v-card-text style="text-align: left; bottom:10px; position: relative;">
-            <b>{{roadName}}</b> will be deleted.
+        <v-card-text style="text-align: left; bottom:10px; position: relative;" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
+            <b>{{roadName[0].streetName}} {{roadName[0].streetType}}</b> will be deleted.
         </v-card-text>
-        <v-btn depressed plain style="left:69px;bottom:16px"> 
+        <!-- <v-btn depressed plain style="left:69px;bottom:16px"> 
           Cancel
+        </v-btn> -->
+        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" plain color="#15648C" :style="deleteClick ? {'top':'66px', 'left':'30px'}:{'bottom':'16px', 'left':'73px'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
+          <u :style="deleteClick ? {'text-decoration': 'none'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
-        <v-btn outlined style="bottom:16px; left:73px;" tile @click="deleteSecond=false"> 
-          <u>Continue</u>
+        <v-btn v-if="deleteClick" dense tile outlined depressed plain style="left:40px;top:66px" color="#15648C" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
+          <u>Discard Edit</u>
         </v-btn>
     </v-card>
+    <sketchAlert v-if="discardEdits"/>
+    <confirmationAlert v-if="deleteConfirm"/>
     </v-container>
+
        
 </template>
 
 <script>
-import {stopEditing} from './editFunc'
+import confirmationAlert from './stepperContent/confirmationAlertsDEL.vue'
+import sketchAlert from '../Map/stepperContent/discardAlert.vue'
+
+import {stopEditing, removeGraphic} from './editFunc'
 export default {
     name: 'editExistingRd',
+    components: {confirmationAlert, sketchAlert},
     data (){
       return {
         edit:false,
@@ -66,10 +76,19 @@ export default {
         deleteSecond: false,
         modifyR: false,
         addR: false,
-        stepper: false
+        stepper: false,
+        deleteConfirm: false,
+        discardEdits: false
       }
     },
     methods:{
+        setDeleteFalse(){
+            this.deleteClick = false
+        },
+        deleteRoadClick(){
+            removeGraphic()
+            this.deleteClick = false
+        },
         cancelEditAction(){
             if(this.edit === true){
                 document.body.style.cursor = 'context-menu'
@@ -89,6 +108,14 @@ export default {
         }
     },
     watch:{
+        discardEdits(del){
+            if(!del) return;
+            setTimeout(()=>{ this.discardEdits = false},3000)
+        },
+        deleteConfirm(del){
+            if(!del) return;
+            setTimeout(()=>{ this.deleteConfirm = false},3000)
+        },
         steppClose:{
             handler: function(){
                 this.stepper =  this.steppClose
@@ -128,9 +155,17 @@ export default {
         },
     },
     computed:{
+        deleteClick:{
+            get(){
+                return this.$store.state.deleteGraphClick
+            },
+            set(x){
+                this.$store.commit('setdeleteGraphClick', x)
+            }
+        },
         roadName:{
             get(){
-                return this.$store.state.roadbedName
+                return JSON.parse(this.$store.state.roadbedName)
             }
         },
         modifyRoad:{

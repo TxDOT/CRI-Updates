@@ -252,9 +252,9 @@ export const rdbdSrfcAsst = new FeatureLayer({
 export const rdbdDsgnAsst = new FeatureLayer({
     url: criConstants.assetLyrRdbDsgn
 })
-export const rdbdNameAsst = new FeatureLayer({
-    url: criConstants.assetLyrRdbName
-})
+// export const rdbdNameAsst = new FeatureLayer({
+//     url: criConstants.assetLyrRdbName
+// })
 export const rdbdLaneAsst = new FeatureLayer({
     url: criConstants.assetLyrRdbLane
 })

@@ -1,5 +1,5 @@
 <template>
-    <v-card style="top:20%">
+    <v-card :style="imageHeight">
       <v-navigation-drawer>
         <!-- <v-card-title id="mapTools">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resources</v-card-title> -->
         <v-list class="outlineColor" max-width="99%">
@@ -37,6 +37,19 @@
         ],
       }
     },
+    computed:{
+      imageHeight(){
+        let resize = {
+          xs: () => {return 'top:20%'},
+          sm: () => {return 'top:20%'},
+          md: () => {return 'top:20%'},
+          lg: () => {return 'top:16%'},
+          xl: () => {return 'top:20%'}
+        }
+        console.log(this.$vuetify['breakpoint'].name, resize[`${this.$vuetify['breakpoint'].name}`]())
+        return resize[`${this.$vuetify['breakpoint'].name}`]()
+      },
+    }
      
   }
 </script>

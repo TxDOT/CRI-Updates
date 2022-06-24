@@ -14,7 +14,7 @@
             The provided assets are either too short or too long for the road.
             <v-tooltip bottom color="error" left nudge-right="120" nudge-top="50" max-width="130">
               <template v-slot:activator="{ on, attrs }">
-                <v-icon v-bind="attrs" v-on="on" right style="poistion: absolute; left:95px; bottom: 29px;">mdi-help-circle</v-icon>
+                <v-icon v-bind="attrs" v-on="on" right style="poistion: absolute; left:132px; bottom: 31px;">mdi-help-circle</v-icon>
               </template>
               <span>Check Assest are full length. If you modified the geometry of the road, please review the assets.</span>
             </v-tooltip>

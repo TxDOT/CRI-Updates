@@ -1,6 +1,6 @@
 <template>
     <v-card>
-      <v-navigation-drawer app style="top:59px;" disable-resize-watcher>
+      <v-navigation-drawer app style="top:59px;">
       <!-- <alert v-if="display === true"/> -->
         <!-- <v-alert v-model="display" color="green" @click="display = false">
           Click on the Map to start Drawing!
@@ -62,12 +62,10 @@
             this.nextDeleteRoadForm = false
             this.addRdBoolean = false;
             this.deleteRoad = false
-            this.changePoint();
             // setTimeout(()=>{
             //   this.editExistingRd = null;
             // },5000)
             await modifyRoadbed('click', 'edit')
-            document.body.style.cursor = 'context-menu'
             if(this.editExistingRd === true){
               this.receiveLoadStatus = false
               this.modifyRoad = true
@@ -85,10 +83,8 @@
             this.nextDeleteRoadForm = false
             this.addRdBoolean = false
             this.deleteRoad = true
-            console.log(this.editExistingRd, this.deleteRoad)
-            this.changePoint();
+  
             await modifyRoadbed('click', 'delete')
-            document.body.style.cursor = 'context-menu'
             if(this.deleteRoad === true){
               this.receiveLoadStatus = false
               this.editExistingRd = false
@@ -101,9 +97,6 @@
       }
     },
     methods:{
-      changePoint(){
-        document.body.style.cursor = 'pointer'
-      },
       async addRoad(){
         addRoadbed()
           .then(() => {

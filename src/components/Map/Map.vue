@@ -1,19 +1,6 @@
 <template>
     <div id="viewDiv" class="main">
         <!-- <div id="step"><stepper/></div> -->
-        <div id="welcomeAlert">
-            <v-alert 
-                v-model="alert"
-                dismissible
-                color="blue"
-                border="left"
-                elevation="5"
-                colored-border
-                icon="@/assets/favicon-32x32.png"
-            >
-     Use the left navigation bar to start editing or to find useful information.
-    </v-alert>
-        </div>
     </div>
 </template>
 
@@ -152,11 +139,6 @@ export default {
     height: 0;
     top: 0;
     left: 0;
-}
-#welcomeAlert{
-    position:absolute;
-    top:0%;
-    left:30%
 }
 
 /* .footer{
