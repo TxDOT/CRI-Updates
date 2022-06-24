@@ -1,16 +1,15 @@
 <template>
+<v-container>
   <div id="stepper">
-    <!-- <v-stepper-header class="stepHead" v-if="forAdd">Add a New Road</v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forEdit">Edit an Existing Road</v-stepper-header> -->
     <v-stepper
     style="margin-bottom:unset;"
     v-model="e1"
     vertical
     non-linear
     class="mb-12; scroller"
-    max-width="460"
+    max-width="486"
     min-width="0"
-    height="820"
+    :height="imageHeight"
     >
     <v-stepper-header class="stepHead" v-if="!forMod">Add a New Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forMod">Edit an Existing Road</v-stepper-header>
@@ -19,131 +18,105 @@
       step="1"
       @click="removeAsstPt(); showGIDVerts()"
       class="font-weight-regular; body-1;">
-      Road Name:
+      Edit Shape
     </v-stepper-step>
 
     <v-stepper-content step="1">
+      <editVerts/>
       <!-- Disabled -- dictates whether fields in the stepper form are editable or not.  -->
-      <roadName/>
-      <!-- <v-btn
-        color="primary"
-        @click="e1 = 2"
-        :disabled="!roadName">
-        Continue
-      </v-btn> -->
     </v-stepper-content>
 
     <v-stepper-step 
       editable
       step="2"
-      @click="removeAsstPt(); complete(); initLoadAsset('design');">
-      Road Design
+      @click="removeAsstPt(); complete();">
+      Road Name
     </v-stepper-step>
     
     <v-stepper-content step="2">
       <!-- Ternery statement if disabled property = true and graphic property = true then disable the v-select tag -->
-      <roadDesign/>
-      <!-- <v-btn
-        color="primary"
-        @click="e1 = 3">
-        Continue
-      </v-btn> -->
+      <roadName/>
     </v-stepper-content>
 
     <v-stepper-step
       class="stepStyle"
       editable
       step="3"
-      @click="startExecuteDfoPts(); complete(); initLoadAsset('surface')" 
+      @click="startExecuteDfoPts(); complete();initLoadAsset('design');" 
       ><!-- Get asset breaks and draw graphic points -->
-      Road Surface
+      Road Design
     </v-stepper-step>
     <v-stepper-content step="3">
         <!-- If graphic is clicked (true), it presents this form -->
-      <roadSurface/>
-        <!-- Form disabled on single click of reference layer in map (read only)  -->
-        <!-- <v-card  v-if='graphic===false'>
-          <div class="scroller">
-          <v-col v-for="(item,index) in fRdbdSurf" :key="index">
-            <v-select :items="surface" label="Road Surface" outlined v-model="item.SRFC_TYPE_ID" disabled></v-select> 
-              <v-row>
-                <v-col sm="6">
-                 <v-text-field label='A' v-model="item.ASSET_LN_BEGIN_DFO_MS" disabled></v-text-field>
-                </v-col>
-                <v-col sm="6">
-                 <v-text-field label='B' v-model="item.ASSET_LN_END_DFO_MS" disabled></v-text-field>
-                </v-col>
-              </v-row>
-          </v-col>
-          </div>
-        </v-card> -->
-         <!-- <v-btn
-            color="primary"
-            @click="complete();"
-          >
-            Draw Surface Graphic
-        </v-btn> -->
-        <!-- <v-btn
-            color="primary"
-           @click="e1 = 4;">
-            Continue
-        </v-btn> -->
+      <roadDesign/>
     </v-stepper-content>
 
-    <v-stepper-step step="4" editable @click="removeAsstPt();complete();initLoadAsset('numLane');">
-      Number of Lanes
+    <v-stepper-step step="4" editable @click="removeAsstPt();complete();initLoadAsset('surface')">
+      Road Surface
     </v-stepper-step>
     <v-stepper-content step="4">
-      <numOfLane/>
-      <!-- <v-btn
-        color="primary"
-        @click="e1 = 5">
-        Continue
-      </v-btn> -->
+      <roadSurface/>
+
     </v-stepper-content>
 
-    <v-stepper-step step="5" editable @click="removeAsstPt(); complete();">
-      Comments
+    <v-stepper-step step="5" editable @click="removeAsstPt(); complete();initLoadAsset('numLane')">
+      Number of Lanes
     </v-stepper-step>
     <v-stepper-content step="5">
       <!-- Send Asset/geometry edits to editFunc.js function -->
-      <comment/>
-      <v-btn
-        color="primary" @click="saveAttri()" :disabled="graphic ? disabled : ''">
-        Save Edits
-      </v-btn>
-      <v-btn @click="cancel()" text :disabled="graphic ? disabled : ''">
-        Close Form
-      </v-btn>
+      <numOfLane/>
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
-    <v-btn-toggle style="top:100px; left:100px;">
-      <v-btn small @click="cancel()">Cancel</v-btn>
-      <v-btn small color="#15648C" text @click="saveAttri()"><u>Save</u></v-btn>
-    </v-btn-toggle>
-
+    <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
+      <v-btn-toggle style="top:35px; left:200px; position: relative;">
+        <v-btn small @click="cancel()">Cancel</v-btn>
+        <v-btn small color="#15648C" text @click="saveAttri(); successAlert=true;"><u>Save</u></v-btn>
+      </v-btn-toggle>
+      <v-btn small color ="#E64545" text outlined style="top:35px; right: 200px; position: relative;" @click="discardAlertQuest = true" >Discard Sketch</v-btn>
+    <!-- </div> -->
+    <!-- card used to display discard alert information -->
+    <!-- <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
+        <v-card-title class="confirmationTitle">Are you sure you want to discard this item?</v-card-title>
+        
+        <v-btn tile outlined color="#15648C" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
+        <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
+    </v-card> -->
   </v-stepper>
-
   </div>
-  
+  <!-- alert used to confirm that the sketch has been removed -->
+  <sketchAlert v-if="discardAlert"/>
+    <!-- <v-alert v-if="discardAlert" type="warning" prominent border="left" style="height: 80px; top: 30px; width:550px; left: 30%;">
+      Sketch has been removed.
+    </v-alert> -->
+    <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
+      <v-card-title class="confirmationTitle">Are you sure you want to discard this item?</v-card-title>
+        
+      <v-btn tile outlined color="#15648C" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
+      <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
+    </v-card>
+  <confirmAlertSuccess v-if="successAlert"/>
+  </v-container>
+
 </template>
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import {removeAsstPoints, sketchCompete, initLoadAssetGraphic, showVerticies} from '../components/Map/editFunc'
+import {removeAsstPoints, sketchCompete, initLoadAssetGraphic, showVerticies, removeGraphic} from '../components/Map/editFunc'
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
 import numOfLane from './Map/stepperContent/NumberOfLanes.vue'
-import comment from './Map/stepperContent/Comment.vue'
+import editVerts from './Map/stepperContent/EditVerts.vue'
 import { gLayer } from './Map/map'
+import confirmAlertSuccess from '../components/Map/stepperContent/confirmAlertsSUCCESS.vue'
+import sketchAlert from '../components/Map/stepperContent/discardAlert.vue'
 //import {roadInfo} from '../store'a
 //import Map from '../components/Map/Map.vue'
 
 
 export default {
     name:"stepper",
-    components:{roadName,roadDesign, roadSurface, numOfLane, comment},
+    components:{roadName,roadDesign, roadSurface, numOfLane, editVerts, confirmAlertSuccess, sketchAlert},
     props:{
       received: Boolean
     },
@@ -173,6 +146,10 @@ export default {
         edfo: true,
         assetLnInfo: null,
         disabled: false,
+        successAlert: false,
+        discardAlertQuest: false,
+        discardAlert: false,
+
         //objectid: 0,
         // newDfo:0,
         //working on form validation
@@ -188,7 +165,20 @@ export default {
         }
       }
     },
+    mounted(){
+ 
+    console.log(this.$vuetify.breakpoint);
+  
+    },
     watch:{
+      discardAlert(bool){
+        if(!bool) return
+        setTimeout(()=>{this.discardAlert = false}, 3000)
+      },
+      successAlert(bool){
+        if(!bool) return
+        setTimeout(()=>{this.successAlert = false}, 3000)
+      },
       returnStep:{
         handler: function(){
           this.e1 = this.returnStep
@@ -251,6 +241,9 @@ export default {
     },
 
     methods:{
+      delGraphic(){
+        removeGraphic();
+      },
       showGIDVerts(){
         let getGraphic = gLayer.graphics.items.filter(x=> x.attributes.objectid === this.objid)
         console.log(getGraphic)
@@ -416,6 +409,28 @@ export default {
       }
     },
     computed:{ //Used to work with the vue properties without modifying them
+      deleteSketch:{
+        get(){
+          return this.$store.state.delSketch
+        },
+        set(sketch){
+          this.$store.commit('setDelSketch', sketch)
+        }
+      },
+      imageHeight(){
+        let resize = {
+          xs: () => {return '220px'},
+          sm: () => {return '400px'},
+          md: () => {return '500px'},
+          lg: () => {return '655px'},
+          xl: () => {return '820px'}
+        }
+        console.log(this.$vuetify['breakpoint'].name, resize[`${this.$vuetify['breakpoint'].name}`]())
+        return resize[`${this.$vuetify['breakpoint'].name}`]()
+       
+        // console.log(this.$vuetify['breakpoint'].name)
+        // return '800px'
+      },
       returnStep:{
         get(){
           return this.$store.state.stepNumber
@@ -444,10 +459,10 @@ export default {
       },
       roadName:{
         get(){
-          return this.$store.state.roadbedName
+          return JSON.parse(this.$store.state.roadbedName)
         },
         set(name){
-          this.$store.commit('setRoadbedName', name)
+          this.$store.commit('setRoadbedName',JSON.stringify(name))
         }
       },
       roadDesign:{
@@ -509,6 +524,11 @@ export default {
   scrollbar-color: grey;
   scrollbar-width: thin;
 }
+
+::-webkit-scrollbar {
+  width: 5px;
+  background: lightgray;
+}
 .stepHead{
   padding-top:1%;
   padding-left:25%;
@@ -536,5 +556,23 @@ export default {
 
 .v-list-item--link{
   outline: none;
+}
+
+#discardSketch{
+    width: 360px;
+    left: 750px;
+    top: 400px;
+}
+.confirmationTitle{
+    background: #15648C;
+    color:white;
+    font-size: 16px;
+    height: 40px;
+    padding-left: 25px;
+    padding-top: 1%;
+    text-align: justify;
+    top: 10%;
+    width: 100%;
+    left: 100%;
 }
 </style>

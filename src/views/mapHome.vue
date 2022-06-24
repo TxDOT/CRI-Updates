@@ -20,7 +20,9 @@ import navSideBar from '../components/navigationSideBar.vue'
 import stepper from '../components/stepperQuestion.vue'
 import editExistingRd from "../components/Map/editExistingRd.vue"
 import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
+
 import {hightlightFeat} from '../components/Map/editFunc'
+
 export default {
     components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat},
     props:["id"],
@@ -30,11 +32,12 @@ export default {
         display:true,
         edit: false,
         denyClick: false,
-        loading: false
+        loading: false,
+        success: true,
       }
     },
     mounted(){
-      hightlightFeat()
+      hightlightFeat()      
     },
     watch:{
       denyFeature:{
@@ -55,9 +58,30 @@ export default {
         },
         immediate: true,
       },
-
+      // steppClose:{
+      //   handler: function(){
+      //     console.log(this.steppClose)
+      //     this.success = this.steppClose
+      //     console.log(this.success)
+      //   },
+      //   immediate: true,
+      // },
+      // success(bool){
+      //   if(bool) return
+      //   setTimeout(()=>{
+      //     this.success = true
+      //   },3000)
+      // }
     },
     computed:{
+      deleteClick:{
+        get(){
+          return this.$store.state.deleteGraphClick
+        },
+        set(x){
+          this.$store.commit('setdeleteGraphClick', x)
+        }
+      },
       editStatus:{
         get(){
           return this.$store.state.editExisting
@@ -78,7 +102,15 @@ export default {
         set(load){
           this.$store.commit('setActiveLoader', load)
         }
-      }
+      },
+      steppClose:{
+        get(){
+          return this.$store.state.stepperClose
+        },
+        set(open){
+          this.$store.commit('setStepperClose', open)
+        }
+      },
     }
 }
 </script>

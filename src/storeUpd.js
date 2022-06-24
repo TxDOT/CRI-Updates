@@ -5,7 +5,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state:{
         objectid: 0,
-        roadbedName:'',
+        roadbedName: null,
         roadbedDesign: null,
         roadbedSurface: null,
         numLane: null,
@@ -24,7 +24,9 @@ export const store = new Vuex.Store({
         editExisting: null,
         deleteRd: null,
         deleteRdSecond:null,
-        modifyRd: null,
+        deleteGraphClick: null,
+        delSketch: null,
+        modifyRd: false,
         executeDfoPts: '',
         roadInfoUpdate:[],
         roadGeometry: [],
@@ -36,6 +38,12 @@ export const store = new Vuex.Store({
 
     },
     getters:{
+        getDelSketch(state){
+            return state.delSketch
+        },
+        getdeleteGraphClick(state){
+            return state.deleteGraphClick;
+        },
         getActiveLoader(state){
             return state.activeLoader
         },
@@ -87,9 +95,6 @@ export const store = new Vuex.Store({
         getDeltaDistance(state){
             return state.deltaDistance
         },
-        getNewTotalLength(){
-
-        },
         getUpdateDfo(state){
             return state.updateDfo
         },
@@ -125,6 +130,12 @@ export const store = new Vuex.Store({
         }
     },
     mutations:{
+        setDelSketch(state, sketch){
+            state.delSketch = sketch
+        },
+        setdeleteGraphClick(state, delClick){
+            state.deleteGraphClick = delClick
+        },
         setActiveLoader(state, loadStatus){
             state.activeLoader = loadStatus
         },

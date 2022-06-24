@@ -1,5 +1,5 @@
 <template>
-    <v-footer app style="left: 243px;width: 100%;height:35px; text-align: center;background: rgba(192,192,192,0.5)" >
+    <v-footer app style="left: 243px;width: 100%;height:35px; text-align: center;background: rgba(192,192,192,1)" >
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
           <div  id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; &nbsp;&nbsp; User Name: <b>Tester_TXDOT</b> 
@@ -8,7 +8,7 @@
             Updated Mileage: <b>{{Number(countyTots.toFixed(4))}}</b>
           </div>
           <div style="position: absolute; font-size: 10px; bottom: 10%;">
-            Build v1.3
+            Build v1.4
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>
