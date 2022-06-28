@@ -27,7 +27,7 @@
         <v-btn tile class="mileButton" absolute left small @click="isAssetStartDisable=true; cancelDfoLocation()" color="#15648C" text active-class="border" style="top: 80px; width: 130px;" retain-focus-on-click>
           <v-icon style="padding:0px;">mdi-plus</v-icon>At this mile: 
         </v-btn>
-        <v-text-field @click="isAssetStartDisable=true;" :solo="isAssetStartDisable ? false: true" :flat="isAssetStartDisable ? false: true" class="enterMile" v-model="assetStartDfo" :disabled="!isAssetStartDisable" dense absolute :outlined="isAssetStartDisable" :label="isAssetStartDisable ? 'Enter Mile' : ''" :style="[isAssetStartDisable ? {'position': 'relative', 'top':'42px', 'left':'140px'} : {'position': 'relative', 'top':'42px', 'left':'140px'}]"></v-text-field>
+        <v-text-field @click="isAssetStartDisable=true;" :solo="isAssetStartDisable ? false: true" :flat="isAssetStartDisable ? false: true" class="enterMile" v-model="assetStartDfo" dense absolute :outlined="isAssetStartDisable" :label="isAssetStartDisable ? 'Enter Mile' : ''" :style="[isAssetStartDisable ? {'position': 'relative', 'top':'42px', 'left':'140px'} : {'position': 'relative', 'top':'42px', 'left':'140px'}]"></v-text-field>
         <v-col style="position:absolute; right: 80px; top:95px; font-size: 13px;">OR</v-col>
           <v-btn tile class="chooseMapBtn" absolute left small @click="getDfoLocation('start'); isAssetStartDisable=false" color="#15648C" text active-class="border" style="top:130px" retain-focus-on-click>
             <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
@@ -51,7 +51,7 @@
       <v-btn class="mileButton" absolute left small @click="isAssetEndDisable=true; cancelDfoLocation()" color="#15648C" text active-class="border" style="top: 80px; width: 130px;" retain-focus-on-click>
         <v-icon style="padding:0px;">mdi-plus</v-icon>At this mile: 
       </v-btn>
-      <v-text-field  @click="isAssetEndDisable=true;" :solo="isAssetEndDisable ? false: true" :flat="isAssetEndDisable ? false: true" class="enterMile" v-model="assetEndDfo" :disabled="!isAssetEndDisable" dense absolute :outlined="isAssetEndDisable" :label="isAssetEndDisable ? 'Enter Mile' : ''" :style="[isAssetEndDisable ? {'position': 'relative', 'top':'42px', 'left':'140px'} : {'position': 'relative', 'top':'42px', 'left':'140px'}]"></v-text-field>
+      <v-text-field  @click="isAssetEndDisable=true;" :solo="isAssetEndDisable ? false: true" :flat="isAssetEndDisable ? false: true" class="enterMile" v-model="assetEndDfo" dense absolute :outlined="isAssetEndDisable" :label="isAssetEndDisable ? 'Enter Mile' : ''" :style="[isAssetEndDisable ? {'position': 'relative', 'top':'42px', 'left':'140px'} : {'position': 'relative', 'top':'42px', 'left':'140px'}]"></v-text-field>
         <v-col style="position:absolute; right: 80px; top:95px; font-size: 13px;">OR</v-col>
         <v-btn class="chooseMapBtn" absolute left small @click="getDfoLocation('end'); isAssetEndDisable=false" color="#15648C" text active-class="border" style="top:130px" retain-focus-on-click>
           <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map

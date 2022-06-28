@@ -499,6 +499,10 @@ export async function getGraphic(){
                 }
                 else if(response.results[0].graphic.attributes['editType'] === 'DELETE'){
                   store.commit('setObjectid', response.results[0].graphic.attributes['objectid'])
+                  store.commit('setRoadbedName', response.results[0].graphic.attributes['roadbedName'])
+                  store.commit('setRoadbedDesign', response.results[0].graphic.attributes['roadbedDesign'])
+                  store.commit('setNumLane', response.results[0].graphic.attributes['numLane'])
+                  store.commit('setRoadbedSurface', response.results[0].graphic.attributes['roadbedSurface'])
                   store.commit('setdeleteGraphClick', true)
                 }
               }
