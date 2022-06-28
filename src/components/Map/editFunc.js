@@ -174,7 +174,11 @@ export async function addRoadbed(){
       ASSET_LN_BEGIN_DFO_MS: 0,
       ASSET_LN_END_DFO_MS: Number(returnAddNewRoad[0].toFixed(3))
     }]),
-    roadbedSurface: JSON.stringify(null),
+    roadbedSurface: JSON.stringify([{
+      SRFC_TYPE_ID: "Paved",
+      ASSET_LN_BEGIN_DFO_MS: 0,
+      ASSET_LN_END_DFO_MS: Number(returnAddNewRoad[0].toFixed(3))
+    }]),
     numLane: JSON.stringify([{
       SRFC_TYPE_ID: "2",
       ASSET_LN_BEGIN_DFO_MS: 0,
@@ -311,7 +315,7 @@ async function defineGraphic(graphics, clickType, editType){
           numLane: store.getters.getNumLane,
           isCreatedAssets: true,
           createDt: new Date().getTime(),
-          createNm: "DPROSACK" //replace with user login info. TODO
+          createNm: store.getters.getUserName //replace with user login info. TODO
         },
                   
         symbol: {
@@ -326,6 +330,7 @@ async function defineGraphic(graphics, clickType, editType){
       let oldLength = Number(geometryEngine.geodesicLength(newGraphic.geometry, "miles").toFixed(5))
       store.commit('setOldLength',oldLength)
       store.commit('setModifyRd', true)
+      newGraphic.attributes.editType === 'DELETE' ? store.commit('setDeltaDis',[oldLength, 'Delete']) : null
       // showVerticies(newGraphic)
       //sketch.update([newGraphic], {tool:'reshape'})
       res(gLayer)
@@ -417,7 +422,7 @@ function setUpGraphic(){
         return;
       }
       response.results.forEach((result)=>{
-        if(result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'ADD'){
+        if(result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT'){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
             sketch.update([result.graphic], {tool:"reshape"});
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(5))
@@ -435,26 +440,30 @@ function setUpGraphic(){
 export function stopEditing(){
   sketch.cancel()
 }
+//stop editing sketch Point 
 export function stopEditingPoint(){
   sketchPoint.cancel()
 }
+//show verticies along line
 export function showVerticies(x){
   sketch.update([x], {tool:'reshape'})
-  //let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(5))
-  //store.commit('setOldLength',oldLength)
 }
+//Delete a road from inside the stepper
 export function delRoad(){
   let graphicDel = gLayer.graphics.items.filter((x)=>{
     return x.attributes.objectid === store.getters.getObjectid
   })
   graphicDel[0].attributes.editType = 'DELETE'
+  let length = Number(geometryEngine.geodesicLength(graphicDel[0].geometry, "miles").toFixed(5))
+  store.commit('setDeltaDis',[length, 'Delete'])
   let symbol = graphicDel[0].symbol.clone()
   symbol.color = criConstants.editTypeColor['delete'][0]
   graphicDel[0].symbol = symbol
 }
-
+//Delete a sketch i.e the graphic, from inside the stepper
 export function removeGraphic(){
   stopEditing();
+  console.log(store.getters.getObjectid)
   let graphicR = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
   console.log(graphicR)
   gLayer.remove(graphicR[0])
@@ -488,7 +497,7 @@ export async function getGraphic(){
                   resp(response.results[0].graphic)
                 }
                 else if(response.results[0].graphic.attributes['editType'] === 'DELETE'){
-                  
+                  store.commit('setObjectid', response.results[0].graphic.attributes['objectid'])
                   store.commit('setdeleteGraphClick', true)
                 }
               }

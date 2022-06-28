@@ -35,22 +35,22 @@
         <v-card-title class="editRdTitle" style="width: 385px">
             Delete a Road
         </v-card-title>
-        <v-alert color="orange" height="60" dense outlined style="width:379px; text-align: left;" v-if="!deleteClick">
-            <v-icon color="orange" style="right:7px;">
+        <v-card-text style="text-align: left; top:5px; position: relative; flex-wrap: wrap;" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
+            <b>{{roadName[0].streetName}} {{roadName[0].streetType}}</b> will be deleted.
+        </v-card-text>
+        <v-alert color="orange" height="35" dense outlined style="width:100%; text-align: left; font-size: 13.3px;" v-if="!deleteClick" >
+            <v-icon color="orange" style="right:5px; bottom: 4px;">
                 mdi-information
             </v-icon>
             You can discard this edit later if you change your mind
          </v-alert>
-        <v-card-text style="text-align: left; bottom:10px; position: relative;" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
-            <b>{{roadName[0].streetName}} {{roadName[0].streetType}}</b> will be deleted.
-        </v-card-text>
-        <!-- <v-btn depressed plain style="left:69px;bottom:16px"> 
+        <v-btn v-if="!deleteClick" depressed plain style="left:69px;top:10px" @click="deleteRoadClick(); deleteSecond=false"> 
           Cancel
-        </v-btn> -->
-        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" plain color="#15648C" :style="deleteClick ? {'top':'66px', 'left':'30px'}:{'bottom':'16px', 'left':'73px'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
+        </v-btn>
+        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" plain color="#15648C" :style="deleteClick ? {'top':'66px', 'left':'0px'}:{'top':'10px', 'left':'73px'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
           <u :style="deleteClick ? {'text-decoration': 'none'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
-        <v-btn v-if="deleteClick" dense tile outlined depressed plain style="left:40px;top:66px" color="#15648C" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
+        <v-btn v-if="deleteClick" dense tile outlined depressed plain style="left:00px;top:66px" color="#15648C" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
           <u>Discard Edit</u>
         </v-btn>
     </v-card>

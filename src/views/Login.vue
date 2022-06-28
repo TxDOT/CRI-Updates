@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import {autoDrawAsset} from '../components/Map/editFunc'
+//import {autoDrawAsset} from '../components/Map/editFunc'
 import {txCounties,view, featLayer, viewPoint} from '../components/Map/map'
 import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
 import esriId from "@arcgis/core/identity/IdentityManager";
@@ -113,20 +113,21 @@ export default {
       async goToMap(name, nbr){
         this.$router.push('/map')
         console.log(nbr)
-        let queryFeat = featLayer.definitionExpression =`CNTY_NM = '${name}'`
+        featLayer.definitionExpression =`CNTY_TYPE_NM = '${name}'`
         txCounties.definitionExpression=`CNTY_NM='${name}'`
         //rdbdSrfcGeom.definitionExpression=`CNTY_NM='${name}'`
         const query = new Query();
         query.where = `CNTY_NM = '${name}'`
         query.outFields = [ "*" ]
         query.returnGeometry = true
-        // let countyQuery = txCounties.queryFeatures(query)
-        // let returnCountyObj = await countyQuery
-        // view.goTo({
-        //   target: returnCountyObj.features[0].geometry
-        // })
-        view.goTo(viewPoint);
-        autoDrawAsset(queryFeat)
+        let countyQuery = txCounties.queryFeatures(query)
+        let returnCountyObj = await countyQuery
+        view.goTo({
+          target: returnCountyObj.features[0].geometry
+        })
+        console.log(viewPoint)
+        //view.goTo(viewPoint);
+        //autoDrawAsset(queryFeat)
       },
       handleSignedIn() {
         const portal = new Portal();

@@ -39,15 +39,15 @@
     </v-stepper-content>
 
     <v-stepper-step
-      class="stepStyle"
       editable
       step="3"
-      @click="startExecuteDfoPts(); complete();initLoadAsset('design');" 
+      @click="startExecuteDfoPts(); complete();initLoadAsset('design');"
+      height="10"
       ><!-- Get asset breaks and draw graphic points -->
       Road Design
     </v-stepper-step>
-    <v-stepper-content step="3">
-        <!-- If graphic is clicked (true), it presents this form -->
+     <v-stepper-content step="3">
+         <!-- If graphic is clicked (true), it presents this form -->
       <roadDesign/>
     </v-stepper-content>
 
@@ -164,11 +164,6 @@ export default {
           }
         }
       }
-    },
-    mounted(){
- 
-    console.log(this.$vuetify.breakpoint);
-  
     },
     watch:{
       discardAlert(bool){
@@ -425,7 +420,7 @@ export default {
           lg: () => {return '655px'},
           xl: () => {return '820px'}
         }
-        console.log(this.$vuetify['breakpoint'].name, resize[`${this.$vuetify['breakpoint'].name}`]())
+        console.log(this.$vuetify['breakpoint'])
         return resize[`${this.$vuetify['breakpoint'].name}`]()
        
         // console.log(this.$vuetify['breakpoint'].name)
@@ -508,6 +503,9 @@ export default {
 }
 </script>
 <style scoped>
+.stepStyle{
+  width:50%;
+}
 
 #stepper{
   position: fixed;

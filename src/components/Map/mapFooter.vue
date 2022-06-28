@@ -3,12 +3,12 @@
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
           <div  id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; &nbsp;&nbsp; User Name: <b>Tester_TXDOT</b> 
-            &nbsp; &nbsp; &nbsp;Starting Mileage: <b>{{countyTotal}}</b>&nbsp;&nbsp;&nbsp; 
-            Mileage Change: <b>{{Number(rdbdDeltaDist.toFixed(4))}}</b>&nbsp;&nbsp;&nbsp; 
-            Updated Mileage: <b>{{Number(countyTots.toFixed(4))}}</b>
+            &nbsp; &nbsp; &nbsp;Starting Mileage: <b style="color:blue">{{countyTotal}}</b>&nbsp;&nbsp;&nbsp; 
+            Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'green'} : {'color': 'red'}, rdbdDeltaDist ===0? {'color':'black'} : null]">{{Number(rdbdDeltaDist.toFixed(4))}}</b>&nbsp;&nbsp;&nbsp; 
+            Updated Mileage: <b style="color:black">{{Number(countyTots.toFixed(4))}}</b>
           </div>
           <div style="position: absolute; font-size: 10px; bottom: 10%;">
-            Build v1.4
+            Build v1.4.1
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>

@@ -197,6 +197,9 @@ export const store = new Vuex.Store({
             if(newLen[1] === "Add"){
                 state.deltaDistance += newLen[0]
             }
+            else if(newLen[1] === 'Delete'){
+                state.deltaDistance -= newLen[0]
+            }
             else{
                 if(state.oldLength === 0){
                     return;
