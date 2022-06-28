@@ -6,7 +6,7 @@
             <!-- </v-col> -->
     
             <span>
-                <v-text-field @click="error=true" persistent-placeholder dense outlined id="input1" :rules="emptyValues" label="Road Name" v-model="streetName" style="font-size: 15px; left: 87px; bottom: 16px; width: 100px; position: relative;"></v-text-field>
+                <v-text-field persistent-placeholder dense outlined id="input1" :rules="emptyValues" label="Road Name" v-model="streetName" style="font-size: 15px; left: 87px; bottom: 16px; width: 100px; position: relative;"></v-text-field>
             </span>
                 
             <v-card-text>
@@ -20,7 +20,7 @@
             <v-select persistent-placeholder :value="suffixStreet" dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" style="width:83px; left: 307px; bottom: 246px; position: relative;"></v-select>   
         <!-- </v-row> -->
 
-        <v-btn outlined style="bottom:210px; left:103px;" tile @click="nextStep(3); initLoadAsset('design'); updateGraphic(); error = null" color="#15648C" :disabled="error"> 
+        <v-btn outlined style="bottom:210px; left:103px;" tile @click="nextStep(3); initLoadAsset('design'); updateGraphic(); error = null" color="#15648C" :disabled="streetName.length < 1"> 
           <u>Continue</u>
         </v-btn>
     </v-card>
@@ -55,7 +55,7 @@ export default {
                    'VILLE','VISTA','WALKS','WALL','WAY','WAYS','WELL','WELLS'],
         streetName: ' ',
         roadNameType: ' ',
-        prefixSuffixList: ['', 'E','N','NE','NW','N/A','S','SE','SW','W'],
+        prefixSuffixList: ['', 'E','N','NE','NW','S','SE','SW','W'],
         prefix: false,
         suffix: false,
         prefixStreet: ' ',
@@ -120,8 +120,8 @@ export default {
                         console.log(this.roadName)
                         this.streetName = this.roadName[i].streetName
                         this.roadNameType = this.roadName[i].streetType
-                        this.prefixStreet = criConstants.suffixPrefix[`${this.roadName[i].prefix}`]
-                        this.suffixStreet = criConstants.suffixPrefix[`${this.roadName[i].suffix}`]
+                        this.prefixStreet = this.roadName[i].prefix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].prefix}`] : ''
+                        this.suffixStreet = this.roadName[i].suffix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].suffix}`] : ''
                         this.prefixStreet ? this.prefix = true : this.prefix = false
                         this.suffixStreet ? this.suffix = true : this.suffix = false
                     }

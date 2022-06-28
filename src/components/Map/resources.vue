@@ -1,6 +1,5 @@
 <template>
     <v-card :style="imageHeight">
-      <v-navigation-drawer>
         <!-- <v-card-title id="mapTools">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resources</v-card-title> -->
         <v-list class="outlineColor" max-width="99%">
           <v-list-item-group v-model="stepIn" color="#15648C">
@@ -14,7 +13,6 @@
             </v-list-item>
           </v-list-item-group>
         </v-list>
-      </v-navigation-drawer>
     </v-card>
 </template>
 
@@ -30,7 +28,7 @@
         display:false,
         drawer: true,
         items: [
-          { title: 'Advanced', icon: 'mdi-cog',action: ()=>{}},
+          { title: 'Advanced', icon: 'mdi-cog'},
           { title: 'Criteria', icon: 'mdi-clipboard-text'},
           { title: 'Help & Training', icon: 'mdi-help-circle'},
           // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}

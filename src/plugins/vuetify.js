@@ -12,13 +12,23 @@ export default new Vuetify({
     icons: {
         iconfont: 'mdi', // default - only for display purposes
       },
-    breakpoint:{
-      thresholds:{
-        xs: 0,
-        sm:600,
-        md:900,
-        lg:1500,
-        xl:1536
-      }
-    }
+    // breakpoint:{
+    //   thresholds:{
+    //     xs: 0,
+    //     sm:600,
+    //     md:960,
+    //     lg:1264,
+    //     xl:2224
+    //   }
+    // }
     })
+
+
+
+    // thresholds:{
+    //   xs: 0,
+    //   sm:600,
+    //   md:960,
+    //   lg:1500,
+    //   xl:1800
+    // }

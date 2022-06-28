@@ -90,6 +90,7 @@
               this.editExistingRd = false
               this.deleteRoad = false
               this.nextDeleteRoadForm = true
+              this.stepIn = null
             }
           }},
           // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}
@@ -140,6 +141,9 @@
         handler: function(){
           if(this.steppClose === true){
             document.getElementById('stepper').style.width = '500px'
+          }
+          else if(this.steppClose == false){
+            this.stepIn = null
           }
           this.stepDisplay = this.steppClose
           this.graphic = this.steppClose
@@ -253,6 +257,7 @@
 .border{
   border: #15648C solid 2px;
 }
+
 
 body.select{
   cursor: pointer
