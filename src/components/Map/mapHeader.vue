@@ -1,14 +1,16 @@
 <template>
-    <div class ="mapHeader" >
-        <v-footer app color="#204E70" class="white--text" style="height:60px; top:0%;">
-            <v-toolbar-title class="h1-text">Welcome to DUSA - The County Road Inventory App</v-toolbar-title>
-                    <div class="text-center" style="left:80%; position: absolute;">
+    <div class ="mapHeader flex" >
+        <v-app-bar app color="#204E70" class="white--text" style="height:60px; top:0%; width:100%;" clipped-left>
+            <img style="height: 50px; max-width: 100%; bottom: 20%; position: relative;" src="../../assets/TxDOT-logo.png">
+            <!-- <span style="position: relative; top:50%; right: 20.7%; font-size: 14px;"><i>Connecting you with Texas</i></span> -->
+            <v-app-bar-title class="h1-text" style="left: 1%; top:6%; position: relative; width: 100%"><i>County Road Inventory Map</i></v-app-bar-title>
+                    <div class="flex" style="left:78%; position: absolute;">
                         <v-row>
                             <v-btn tile class="mx-2" small @click="ExitDestroyLogIn()">Save & Exit</v-btn>
                             <v-btn tile color="green" class="mx-3" small @click="submitCertify=true">Submit & Certify</v-btn>
                         </v-row>
                     </div>
-        </v-footer>
+        </v-app-bar>
 
         <!-- <v-toolbar color="#204E70" class="white--text">
             <v-toolbar-title class="h1-text">Welcome to DUSA - The County Road Inventory App</v-toolbar-title>

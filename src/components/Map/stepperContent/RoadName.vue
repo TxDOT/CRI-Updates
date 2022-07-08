@@ -20,7 +20,7 @@
             <v-select persistent-placeholder :value="suffixStreet" dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" style="width:83px; left: 307px; bottom: 246px; position: relative;"></v-select>   
         <!-- </v-row> -->
 
-        <v-btn outlined style="bottom:210px; left:103px;" tile @click="nextStep(3); initLoadAsset('design'); updateGraphic(); error = null" color="#15648C" :disabled="streetName.length < 1"> 
+        <v-btn outlined style="bottom:210px; left:103px;" tile @click="nextStep(3); initLoadAsset('surface'); updateGraphic(); error = null" color="#15648C" :disabled="streetName.length < 1"> 
           <u>Continue</u>
         </v-btn>
     </v-card>
@@ -46,7 +46,7 @@ export default {
                    'GREEN','GREENS','GROVE','GROVES','HARBOR','HARBORS','HAVEN','HEIGHTS','HIGHWAY','HILL','HILLS','HOLLOW','INLET',
                    'ISLAND','ISLANDS','ISLE','JUNCTION','JUNCTIONS','KEY','KEYS','KNOLL','KNOLLS','LAKE','LAKES','LAND','LANDING',
                    'LANE','LIGHT','LIGHTS','LOAF','LOCK','LOCKS','LODGE','LOOP','MALL','MANOR','MANORS','MEADOW','MEADOWS','MEWS',
-                   'MILL','MILLS','MISSION','MOTORWAY','MOUNT','MOUNTAIN','MOUNTAINS','NECK','NOT APPLICABLE','ORCHARD','OTHER','OVAL',
+                   'MILL','MILLS','MISSION','MOTORWAY','MOUNT','MOUNTAIN','MOUNTAINS','NECK','ORCHARD','OTHER','OVAL',
                    'OVERPASS','PARKS','PARKWAYS','PASS','PASSAGE','PATH','PIKE','PINE','PINES','PLACE','PLAIN','PLAINS','PLAZA','POINT',
                    'POINTS','PORT','PORTS','PRAIRIE','RADIAL','RAMP','RANCH','RAPID','RAPIDS','REST','RIDGE','RIDGES','RIVER',"ROAD",'ROADS',
                    'ROUTE','ROW','RUE','RUN','SHOAL','SHOALS','SHORE','SHORES','SKYWAY','SPRING','SPRINGS','SPURS','SQUARE','SQUARES',
@@ -119,7 +119,7 @@ export default {
                     for(let i=0; i < this.roadName.length; i++){
                         console.log(this.roadName)
                         this.streetName = this.roadName[i].streetName
-                        this.roadNameType = this.roadName[i].streetType
+                        this.roadNameType = this.roadName[i].streetType !== 'NOT APPLICABLE' ? this.roadName[i].streetType : ''
                         this.prefixStreet = this.roadName[i].prefix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].prefix}`] : ''
                         this.suffixStreet = this.roadName[i].suffix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].suffix}`] : ''
                         this.prefixStreet ? this.prefix = true : this.prefix = false

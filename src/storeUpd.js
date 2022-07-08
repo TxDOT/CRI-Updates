@@ -30,14 +30,22 @@ export const store = new Vuex.Store({
         executeDfoPts: '',
         roadInfoUpdate:[],
         roadGeometry: [],
-        assetCoverage: null,
+        assetCoverage: 0,
         cntyEndingMiles: 0,
         stepNumber: 1,
         denyFeatClick: null,
-        activeLoader: null
+        activeLoader: null,
+        dfoReturn: 0,
+        isDfoReturn: false
 
     },
     getters:{
+        getIsDfoReturn(state){
+            return state.isDfoReturn
+        },
+        getDfoReturn(state){
+            return state.dfoReturn
+        },
         getDelSketch(state){
             return state.delSketch
         },
@@ -129,7 +137,14 @@ export const store = new Vuex.Store({
             return state.numLane
         }
     },
-    mutations:{
+    mutations:
+    {
+        setIsDfoReturn(state, boolDfoReturn){
+            state.isDfoReturn = boolDfoReturn
+        },
+        setDfoReturn(state, returnDFO){
+            state.dfoReturn = returnDFO
+        },
         setDelSketch(state, sketch){
             state.delSketch = sketch
         },
@@ -161,16 +176,52 @@ export const store = new Vuex.Store({
             state.roadGeometry = geom
         },
         setAssetCoverage(state, assetDfos){
-            const currentLength = state.roadGeometry.paths[0].at(-1)[2] - state.roadGeometry.paths[0].at(0)[2]
+            let sumArr = []
+            assetDfos.forEach(function(x){
+                sumArr.push(x[0]+x[1])
+            })
+            let initValue = 0
+            let diff = sumArr.reduce((prevValue, currentValue) => 
+                currentValue - prevValue, initValue
+            )
             
-            console.log(assetDfos, Number(currentLength.toFixed(3)))   
-            if(Number(currentLength.toFixed(3)) === assetDfos){
-                state.assetCoverage = true
+            const currentLength = state.roadGeometry.paths[0].at(-1)[2] - state.roadGeometry.paths[0].at(0)[2]
+            if(Number(currentLength.toFixed(3)) === Number(diff.toFixed(3))){
+                state.assetCoverage = [true, null]
+                return;
             }
             else{
-                state.assetCoverage = false
+                try{
+                    if(assetDfos.length > 1){
+                        for(let i =0; i < assetDfos.length; i++){
+                            if(assetDfos[i+1][1] === undefined){
+                                return;
+                            }
+                            else if((assetDfos[i][1] > assetDfos[i+1][0])){
+                                state.assetCoverage = [false, 'overlap', assetDfos[i][1], assetDfos[i+1][0]]
+                            }
+                            else if((assetDfos[i][1] < assetDfos[i+1][0])){
+                                state.assetCoverage = [false, 'gap', assetDfos[i][1], assetDfos[i+1][0]]
+                            }
+                        }
+                        return;
+                    }
+                    else if(assetDfos[0][1] > Number(currentLength.toFixed(3))){
+                        state.assetCoverage = [false, 'long', assetDfos[0][1], Number(currentLength.toFixed(3))]
+                        return;
+                    }
+                    else if(assetDfos[0][1] < Number(currentLength.toFixed(3))){
+                        state.assetCoverage = [false, 'short', assetDfos[0][1], Number(currentLength.toFixed(3))]
+                        return;
+                    }
+                }
+                catch{
+                    console.log('no more assets to review')
+                }
+
+                
             }
-            //state.assetCoverage = assetDfos
+            // state.assetCoverage = assetDfos
         },
         setRoadInfoUpdate(state, roadInfo){
             state.roadInfoUpdate = roadInfo
@@ -194,6 +245,7 @@ export const store = new Vuex.Store({
             state.username = userName
         },
         setDeltaDis(state, newLen){
+            console.log(newLen)
             if(newLen[1] === "Add"){
                 state.deltaDistance += newLen[0]
             }

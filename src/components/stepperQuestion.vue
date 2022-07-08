@@ -14,11 +14,11 @@
     <v-stepper-header class="stepHead" v-if="!forMod">Add a New Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forMod">Edit an Existing Road</v-stepper-header>
     <v-stepper-step
-      editable
+      :editable="setAssetCover[0]"
       step="1"
       @click="removeAsstPt(); showGIDVerts()"
       class="font-weight-regular; body-1;">
-      Edit Shape
+      Edit Shape - 5.234 Miles
     </v-stepper-step>
 
     <v-stepper-content step="1">
@@ -27,10 +27,10 @@
     </v-stepper-content>
 
     <v-stepper-step 
-      editable
+      :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"
       step="2"
       @click="removeAsstPt(); complete();">
-      Road Name
+      Road Name - DAVID LANE
     </v-stepper-step>
     
     <v-stepper-content step="2">
@@ -38,29 +38,27 @@
       <roadName/>
     </v-stepper-content>
 
-    <v-stepper-step
-      editable
-      step="3"
-      @click="startExecuteDfoPts(); complete();initLoadAsset('design');"
-      height="10"
-      ><!-- Get asset breaks and draw graphic points -->
-      Road Design
+    <v-stepper-step step="3" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" @click="removeAsstPt();complete();initLoadAsset('surface')" >
+      Road Surface - PAVED
     </v-stepper-step>
-     <v-stepper-content step="3">
+    <v-stepper-content step="3" >
+      <roadSurface/>
+    </v-stepper-content>
+
+    <v-stepper-step
+      :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"
+      step="4"
+      @click="startExecuteDfoPts(); complete();initLoadAsset('design');"
+      ><!-- Get asset breaks and draw graphic points -->
+      Road Design - TWO-WAY
+    </v-stepper-step>
+     <v-stepper-content step="4">
          <!-- If graphic is clicked (true), it presents this form -->
       <roadDesign/>
     </v-stepper-content>
 
-    <v-stepper-step step="4" editable @click="removeAsstPt();complete();initLoadAsset('surface')">
-      Road Surface
-    </v-stepper-step>
-    <v-stepper-content step="4">
-      <roadSurface/>
-
-    </v-stepper-content>
-
-    <v-stepper-step step="5" editable @click="removeAsstPt(); complete();initLoadAsset('numLane')">
-      Number of Lanes
+    <v-stepper-step step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" @click="removeAsstPt(); complete();initLoadAsset('numLane')">
+      Number of Lanes - *MULTIPLE*
     </v-stepper-step>
     <v-stepper-content step="5">
       <!-- Send Asset/geometry edits to editFunc.js function -->
@@ -69,10 +67,10 @@
     <!-- <Map @nm="bool"/> -->
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
       <v-btn-toggle style="top:35px; left:200px; position: relative;">
-        <v-btn small @click="cancel()">Cancel</v-btn>
-        <v-btn small color="#15648C" text @click="saveAttri(); successAlert=true;"><u>Save</u></v-btn>
+        <v-btn :disabled="!setAssetCover[0]" small @click="cancel()">Cancel</v-btn>
+        <v-btn :disabled="!setAssetCover[0]" small color="#15648C" text @click="saveAttri(); successAlert=true;"><u>Save</u></v-btn>
       </v-btn-toggle>
-      <v-btn small color ="#E64545" text outlined style="top:35px; right: 200px; position: relative;" @click="discardAlertQuest = true" >Discard Sketch</v-btn>
+      <v-btn small color ="#E64545" text outlined style="top:35px; right: 200px; position: relative;" @click="discardAlertQuest = true">Discard Sketch</v-btn>
     <!-- </div> -->
     <!-- card used to display discard alert information -->
     <!-- <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
@@ -101,7 +99,7 @@
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import {removeAsstPoints, sketchCompete, initLoadAssetGraphic, showVerticies, removeGraphic} from '../components/Map/editFunc'
+import {removeAsstPoints, stopEditingPoint, sketchCompete,initLoadAssetGraphic, showVerticies, removeGraphic} from '../components/Map/editFunc'
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
@@ -329,11 +327,13 @@ export default {
       //   }
       // },
       cancel(){
+        stopEditingPoint();
+        sketchCompete();
         document.getElementById("stepper").style.width = '0px'
         this.steppClose = false;
         this.e1 = 1;
-        sketchCompete();
         removeAsstPoints();
+        this.getDfoBool = false;
         console.log(gLayer)
       },
       //pushes new blank object row into mileInfo asset form
@@ -395,15 +395,33 @@ export default {
         //   }
         // }
         //console.log(this.rdbdSurf)
+       
         this.cancel();
         // this.graphicObj.attributes.roadbedName = createObj.rdbdName
         //saveInfo(createObj)
       },
       complete(){
+        stopEditingPoint();
         sketchCompete();
       }
     },
-    computed:{ //Used to work with the vue properties without modifying them
+    computed:{
+      setAssetCover:{
+        get(){
+          return this.$store.state.assetCoverage
+        },
+        set(x){
+          this.$store.commit('setAssetCoverage', x)
+        }
+      },
+      getDfoBool:{
+        get(){
+          return this.$store.state.isDfoReturn
+        },
+        set(bool){
+          this.$store.commit('setIsDfoReturn', bool)
+        }
+      }, //Used to work with the vue properties without modifying them
       deleteSketch:{
         get(){
           return this.$store.state.delSketch
@@ -417,7 +435,7 @@ export default {
           xs: () => {return '220px'},
           sm: () => {return '400px'},
           md: () => {return '500px'},
-          lg: () => {return '655px'},
+          lg: () => {return '800px'},
           xl: () => {return '820px'}
         }
         console.log(this.$vuetify['breakpoint'])
@@ -509,7 +527,7 @@ export default {
 
 #stepper{
   position: fixed;
-  top: 65px;
+  top: 77px;
   left: 260px;
   padding-bottom: 0%;
   font-size: 16px;

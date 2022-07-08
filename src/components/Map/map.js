@@ -1,5 +1,5 @@
 import { criConstants } from '../../common/cri_constants';
-//import {getNewLength} from '../Map/editFunc'
+//import {hightlightFeat} from '../Map/editFunc
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 // import Sketch from "@arcgis/core/widgets/Sketch";
@@ -282,28 +282,31 @@ export const countyOfficialInfo = new FeatureLayer({
 // });
 
 export const sketch = new SketchViewModel({
-        view: view,
-        layer: gLayer,
-        updateOnGraphicClick: true,
-        defaultCreateOptions:{
-            mode:"click",
-            hasZ: false
-        },
-        defaultUpdateOptions:{
-            tool:"reshape",
-            toggleToolOnClick: false,
-            enableRotation: false,
-            enableScaling: false,
-            multipleSelectionEnabled: false,
-            reshapeOptions:{
-                shapeOperation:"none"
-            }
-        },
-        snappingOptions:{
-            enabled: true,
-            featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true }, { layer: featLayer, enabled: true, featureEnabled: true }]
+    view: view,
+    layer: gLayer,
+    updateOnGraphicClick: true,
+    defaultCreateOptions:{
+        mode:"click",
+        hasZ: false
+    },
+    defaultUpdateOptions:{
+        tool:"reshape",
+        toggleToolOnClick: false,
+        enableRotation: false,
+        enableScaling: false,
+        multipleSelectionEnabled: false,
+        reshapeOptions:{
+            shapeOperation:"none"
         }
+    },
+    snappingOptions:{
+        distance: 0,
+        enabled: true,
+        featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true}, { layer: featLayer, enabled: true, featureEnabled: true }],
+        selfEnabled: true
+    }
 });
+
 
 // export const newSketch = new Sketch({
 //     view: view,

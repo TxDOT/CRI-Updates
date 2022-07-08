@@ -41,6 +41,7 @@
         edit: false,
         items: [
           { title: 'Add Road', icon: 'mdi-plus', action: ()=>{
+            this.getDfoBool = true
             this.editExistingRd = false;
             this.deleteRoad = false
             this.addRoad();
@@ -121,6 +122,9 @@
     watch:{ 
       addRdBoolean:{
         handler: function(){
+          if(this.addRdBoolean === false){
+            this.stepIn = null
+          }
           this.graphic = this.addRdBoolean
         },
         immediate: true,
@@ -158,6 +162,14 @@
       // }
     },
     computed:{
+      getDfoBool:{
+        get(){
+          return this.$store.state.isDfoReturn
+        },
+        set(bool){
+          this.$store.commit('setIsDfoReturn', bool)
+        }
+      },
       modifyRoad:{
         get(){
           return this.$store.state.modifyRd

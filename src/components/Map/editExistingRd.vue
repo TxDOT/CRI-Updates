@@ -91,17 +91,21 @@ export default {
         },
         cancelEditAction(){
             if(this.edit === true){
+                this.getDfoBool = false
                 document.body.style.cursor = 'context-menu'
                 this.editStatus = false
             }
             else if(this.deleteR === true){
+                this.getDfoBool = false
                 document.body.style.cursor = 'context-menu'
                 this.deleteRoad = false
             }
             else if(this.modifyR === true){
+                this.getDfoBool = false
                 this.modifyRoad = false
             }
             else if(this.addR === true){
+                this.getDfoBool = false
                 stopEditing();
                 this.addRdBoolean = false
             }
@@ -155,6 +159,14 @@ export default {
         },
     },
     computed:{
+        getDfoBool:{
+            get(){
+                return this.$store.state.isDfoReturn
+            },
+            set(bool){
+                this.$store.commit('setIsDfoReturn', bool)
+            }
+        },
         deleteClick:{
             get(){
                 return this.$store.state.deleteGraphClick

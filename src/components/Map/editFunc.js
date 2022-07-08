@@ -8,6 +8,7 @@ import Graphic from "@arcgis/core/Graphic";
 import Query from "@arcgis/core/rest/support/Query";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils"
 import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
+//import TextSymbol from "@arcgis/core/symbols/TextSymbol";
 import {store} from '../../storeUpd'
 
 
@@ -152,7 +153,13 @@ export async function addRoadbed(){
     sketch.create("polyline",{mode:"click", hasZ: false})
     sketch.on('create', (event) => {
       let lengthMiles;
+      if(event.state === "active"){
+        mouseHoverDfoDisplay('addRoad');
+        let seglengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
+        store.commit('setDfoReturn', seglengthMiles)
+      }
       if(event.state === "complete"){
+        store.commit('setIsDfoReturn', false)
       //creating the length of road in miles for user
         lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
         res([lengthMiles, event.graphic.geometry, 'add']);
@@ -259,28 +266,42 @@ export async function modifyRoadbed(clickType, editType){
 // }
 //highlightes reference layer geometry when mouse moves over
 export function hightlightFeat(){
-    view.on('pointer-move', (event) => {
-      const opts = {include: [gLayer, featLayer]}
-      view.hitTest(event, opts).then(function(response){
-        if(response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1){
-          return;
+  let highlight;
+  if(highlight){
+    highlight.remove()
+    highlight = null
+  }
+  view.when()
+    .then(()=>{
+      view.on('pointer-move', (event)=>{
+        // let testXY = webMercatorUtils.webMercatorToGeographic(view.toMap({x: event.x, y: event.y}))
+        // let testerXY = webMercatorUtils.geographicToWebMercator({x:testXY.x, y:testXY.y})
+        // if(store.getters.getObjectid){
+        //   console.log(getNewDfoDist(store.getters.getObjectid, testerXY.x, testerXY.y))
+        // }
+        
+        const opts = {
+          include: [gLayer, featLayer]
         }
-        if (response.results.length) {
-          console.log('hello')
-          document.body.style.cursor = 'pointer'
-          let editFeature = response.results[0].graphic;
-          view.whenLayerView(editFeature.layer).then(function(layerView){
-            let highlight = layerView.highlight(editFeature);
-            view.on('pointer-move', (event) => {
-              view.hitTest(event, opts).then(function(response){
-                if(response.results.length === 0){
-                  document.body.style.cursor = 'context-menu'
-                  highlight.remove()
-                }
-              })
+        view.hitTest(event, opts).then((response)=>{
+          if(response.results.length){
+            view.whenLayerView(response.results[0].graphic.layer).then(function(layerView){
+              document.body.style.cursor = 'pointer'
+              if(highlight){
+                highlight.remove()
+              }
+              highlight = layerView.highlight(response.results[0].graphic)
             })
-          })
-        }
+          }
+          else{
+            if(highlight){
+              highlight.remove()
+              highlight = null
+            }
+            document.body.style.cursor = 'context-menu'
+            return;
+          }
+        })
       })
     })
 }
@@ -293,6 +314,7 @@ async function defineGraphic(graphics, clickType, editType){
   }
 
   if (clickType === "click"){
+    let oldLength = Number(geometryEngine.geodesicLength(graphics.features[0].geometry, "miles").toFixed(5))
     document.body.style.cursor = 'context-menu'
     let graphicPromise = new Promise(function(res){
       let newGraphic = new Graphic({
@@ -313,6 +335,7 @@ async function defineGraphic(graphics, clickType, editType){
           roadbedDesign: store.getters.getRoadbedDesign,
           roadbedSurface: store.getters.getRoadbedSurface,
           numLane: store.getters.getNumLane,
+          originalLength: oldLength,
           isCreatedAssets: true,
           createDt: new Date().getTime(),
           createNm: store.getters.getUserName //replace with user login info. TODO
@@ -327,7 +350,7 @@ async function defineGraphic(graphics, clickType, editType){
       })
       gLayer.graphics.add(newGraphic);
       newGraphic.attributes.editType === 'EDIT' ? showVerticies(newGraphic) : null
-      let oldLength = Number(geometryEngine.geodesicLength(newGraphic.geometry, "miles").toFixed(5))
+      
       store.commit('setOldLength',oldLength)
       store.commit('setModifyRd', true)
       newGraphic.attributes.editType === 'DELETE' ? store.commit('setDeltaDis',[oldLength, 'Delete']) : null
@@ -418,7 +441,7 @@ function setUpGraphic(){
     }
     let opts = [gLayer]
     view.hitTest(event,opts).then((response)=>{
-      if(response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1){
+      if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
         return;
       }
       response.results.forEach((result)=>{
@@ -460,7 +483,7 @@ export function delRoad(){
   symbol.color = criConstants.editTypeColor['delete'][0]
   graphicDel[0].symbol = symbol
 }
-//Delete a sketch i.e the graphic, from inside the stepper
+//Delete a sketch i.e the graphic
 export function removeGraphic(){
   stopEditing();
   console.log(store.getters.getObjectid)
@@ -468,46 +491,61 @@ export function removeGraphic(){
   console.log(graphicR)
   gLayer.remove(graphicR[0])
   hideEditedRoads(null,true)
+  let length = Number(geometryEngine.geodesicLength(graphicR[0].geometry, "miles").toFixed(5))
+  console.log(length)
+  if(graphicR[0].attributes.editType === 'ADD'){
+    store.commit('setDeltaDis',[length, 'Delete'])
+  }
+  else if(graphicR[0].attributes.editType === 'DELETE'){
+    store.commit('setDeltaDis',[length, 'Add'])
+  }
+  else if(graphicR[0].attributes.editType === 'EDIT'){
+    let diffAdded = graphicR[0].attributes.originalLength - length
+    console.log(diffAdded)
+  }
 }
 //populates stepper form when graphic is clicked.
 export async function getGraphic(){
   let getGraphPromise = new Promise(function(resp){
-      view.on("click", function(event){
-        let option = {include: [gLayer]}
-        if (sketch.state === "active") {
-          return;
-        }
-          view.when(function(){
-            //get response from graphics and set getters in store.js
-            view.hitTest(event,option)
-            .then(function(response){
-              if(response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1){
-                store.commit('setdenyFeatClick', true)
-                return;
+    view.on("click", function(event){
+      let option = {include: [gLayer]}
+      if (sketch.state === "active") {
+        return;
+      }
+      view.when(function(){
+        //get response from graphics and set getters in store.js
+        view.hitTest(event,option)
+          .then(function(response){
+            if((response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
+              return;
+            }
+            else if(response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1){
+              store.commit('setdenyFeatClick', true)
+              return;
+            }
+            if(response.results.length){
+              if(response.results[0].graphic.attributes['editType'] === 'ADD' || response.results[0].graphic.attributes['editType'] === 'EDIT'){
+                response.results[0].graphic.attributes['editType'] === 'ADD' ? store.commit('setModifyRd', false) : store.commit('setModifyRd', true)
+                store.commit('setStepperClose', true)
+                setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
+                              response.results[0].graphic.attributes['roadbedDesign'],
+                              response.results[0].graphic.attributes['roadbedName'],
+                              response.results[0].graphic.attributes['numLane'],
+                              response.results[0].graphic.attributes['objectid'])
+                resp(response.results[0].graphic)
               }
-              if(response.results.length){
-                if(response.results[0].graphic.attributes['editType'] === 'ADD' || response.results[0].graphic.attributes['editType'] === 'EDIT'){
-                  response.results[0].graphic.attributes['editType'] === 'ADD' ? store.commit('setModifyRd', false) : store.commit('setModifyRd', true)
-                  store.commit('setStepperClose', true)
-                  store.commit('setObjectid', response.results[0].graphic.attributes['objectid'])
-                  store.commit('setRoadbedName', response.results[0].graphic.attributes['roadbedName'])
-                  store.commit('setRoadbedDesign', response.results[0].graphic.attributes['roadbedDesign'])
-                  store.commit('setNumLane', response.results[0].graphic.attributes['numLane'])
-                  store.commit('setRoadbedSurface', response.results[0].graphic.attributes['roadbedSurface'])
-                  resp(response.results[0].graphic)
-                }
-                else if(response.results[0].graphic.attributes['editType'] === 'DELETE'){
-                  store.commit('setObjectid', response.results[0].graphic.attributes['objectid'])
-                  store.commit('setRoadbedName', response.results[0].graphic.attributes['roadbedName'])
-                  store.commit('setRoadbedDesign', response.results[0].graphic.attributes['roadbedDesign'])
-                  store.commit('setNumLane', response.results[0].graphic.attributes['numLane'])
-                  store.commit('setRoadbedSurface', response.results[0].graphic.attributes['roadbedSurface'])
-                  store.commit('setdeleteGraphClick', true)
-                }
+              else if(response.results[0].graphic.attributes['editType'] === 'DELETE'){
+                setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
+                              response.results[0].graphic.attributes['roadbedDesign'],
+                              response.results[0].graphic.attributes['roadbedName'],
+                              response.results[0].graphic.attributes['numLane'],
+                              response.results[0].graphic.attributes['objectid'])
+                store.commit('setdeleteGraphClick', true)
               }
-            })
+            }
           })
-      });
+        })
+    });
   });
   let returnGetGraph = await getGraphPromise;
   return returnGetGraph
@@ -690,7 +728,7 @@ export function addAssetBreakPts(y, type)
     // console.log(m)
     for(let x=0; x<a.length; x++){
       if(!a[x].attributes.edit){
-        let returnDFO = getNewDfoDist(a[x].attributes.objectid, a[x].geometry.x, a[x].geometry.y)
+        let returnDFO = getNewDfoDist(a[x].attributes.objectid, a[x].geometry.x, a[x].geometry.y, false)
         updatedGeom = returnDFO[1]
       }
       else{
@@ -766,6 +804,22 @@ export function getCoordsRange(y){
           type: "simple-marker",
           color: criConstants.colorTable[`${assetType}`]
         }
+        const txtSymbol = {
+          type: "text",
+          color: "black",
+          haloColor: "white",
+          haloSize: 1,
+          xoffset: 3,
+          yoffset:10,
+          font: {
+            family: "Arial",
+            style: "normal",
+            size: 12,
+            weight: "normal"
+          },
+          labelPlacement:"above-center",
+          text: `${y[d].ASSET_LN_END}`
+        }
 
         let assetPoint = new Graphic({
           geometry: {
@@ -784,9 +838,31 @@ export function getCoordsRange(y){
             eDfo: y[d].ASSET_LN_END
           },
           symbol: assetSym
-        })  
+        })
 
-        rdbdAssetPt.graphics.add(assetPoint)
+        let assetPointClone = new Graphic({
+          geometry: {
+            type: "point",
+            hasM: true,
+            longitude: pointDFO.x,
+            latitude: pointDFO.y,
+            spatialReference: {
+              wkid: 3857
+            }
+          },
+          attributes: {
+            objectid: y[d].OBJECTID,
+            assetTyp: assetType,
+            bDfo: y[d].ASSET_LN_BEGIN,
+            eDfo: y[d].ASSET_LN_END
+          },
+          symbol: txtSymbol
+        })
+
+        
+
+        rdbdAssetPt.graphics.addMany([assetPointClone,assetPoint])
+        
       }
     addAssetBreakPts(y)
   }
@@ -799,8 +875,8 @@ export function getCoordsRange(y){
   return;
 }
 //Getting new M-Value for new asset Point
-function getNewDfoDist(objectid, x, y){
-  console.log(objectid)
+function getNewDfoDist(objectid, x, y, slide){
+  objectid
   let objid = store.getters.getRoadGeom;
   let newDfo;
   let mnbv;
@@ -970,10 +1046,14 @@ function getNewDfoDist(objectid, x, y){
   //   console.log('Points Match')
   //   return;
   // }
-  objid.insertPoint(0,mnbv, [x, y, Number(newDfo.toFixed(3))])
-  store.commit('setRoadGeom', objid)
+  if(slide === false){
+    objid.insertPoint(0,mnbv, [x, y, Number(newDfo.toFixed(3))])
+    store.commit('setRoadGeom', objid)
+    
+    return [newDfo, objid];
+  }
   
-  return [newDfo, objid];
+  return newDfo;
   ///path[0][2] may be in correct, may need to be path[1][2]
 
 //   let objid ={};
@@ -1243,7 +1323,6 @@ export function applyMToAsset(assetArray, type){
 
 export function sketchCompete(){
   sketch.complete()
-  return;
 }
 
 export async function autoDrawAsset(z){
@@ -1273,11 +1352,12 @@ export async function getSelectedDFO(oid){
     })
   })
   let returnClickedPt= await clickedPt
+  console.log(returnClickedPt)
   if(!returnClickedPt.graphic){
     sketchPoint.cancel();
     return;
   }
-  let newDfo = getNewDfoDist(oid, returnClickedPt.graphic.geometry.x, returnClickedPt.graphic.geometry.y)
+  let newDfo = getNewDfoDist(oid, returnClickedPt.graphic.geometry.x, returnClickedPt.graphic.geometry.y, false)
   
   return [newDfo[0], returnClickedPt.graphic.geometry.x, returnClickedPt.graphic.geometry.y]
 }
@@ -1287,15 +1367,15 @@ function assetCoverageCheck(x){
   let beginEndArr = []
 
   x.forEach(function(y){
-    beginEndArr.push(y.ASSET_LN_BEGIN_DFO_MS + y.ASSET_LN_END_DFO_MS)
+    beginEndArr.push([y.ASSET_LN_BEGIN_DFO_MS, y.ASSET_LN_END_DFO_MS])
   })
 
-  let initValue = 0
-  let diff = beginEndArr.reduce((prevValue, currentValue) => 
-    currentValue - prevValue, initValue
-  )
+  // let initValue = 0
+  // let diff = beginEndArr.reduce((prevValue, currentValue) => 
+  //   currentValue - prevValue, initValue
+  // )
 
-  store.commit('setAssetCoverage', Number(diff.toFixed(3)))
+  store.commit('setAssetCoverage', beginEndArr)
   //this.setAssetCover = Number(diff.toFixed(3))
 }
 
@@ -1364,3 +1444,51 @@ function updateGraphicsLayer(oid, length){
     }
   }
 }
+
+export async function mouseHoverDfoDisplay(type){
+  let pickRoute = {
+    dfo: (event) =>{
+      try{
+        let opts = {include:[gLayer]}
+        view.hitTest(event,opts).then((response)=>{
+          if(response.results.length){
+            // store.commit('setIsDfoReturn', true)
+            let mousePixXY = webMercatorUtils.webMercatorToGeographic(view.toMap({x: event.x, y: event.y}))
+            let mouseWebNerXY = webMercatorUtils.geographicToWebMercator({x:mousePixXY.x, y:mousePixXY.y})
+            if(store.getters.getObjectid === response.results[0].graphic.attributes['objectid']){
+              let returnDFO = getNewDfoDist(store.getters.getObjectid, mouseWebNerXY.x, mouseWebNerXY.y, true)
+              let dfoHover = document.getElementById('dfoBox')
+              if(dfoHover){
+                dfoHover.style.left = `${event.x + 100}px`
+                dfoHover.style.top = `${event.y +100}px`
+                store.commit('setDfoReturn', returnDFO)
+              }
+              else{
+                return;
+              }
+            }
+          }
+          else{
+            // store.commit('setIsDfoReturn', false)
+          }
+        })
+      }
+      catch{
+       return;
+      }
+    },
+    addRoad: (event)=>{
+      try{
+        let dfoHover = document.getElementById('dfoBox')
+        dfoHover.style.left = `${event.x}px`
+        dfoHover.style.top = `${event.y}px`
+      }
+      catch{
+        return;
+      }
+    }
+  }
+
+  view.on('pointer-move', pickRoute[`${type}`])
+}
+
