@@ -77,7 +77,7 @@
     <v-flex v-for="(item, i) in selectionEnd" :key="i">
       <v-select label="Select an option" v-model="assetEndDfo" :items="item.types" @input="selectAssetDFO" ></v-select>
     </v-flex>
-    <v-btn class="cancelButton" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetStart = isAssetFullLen = false; isAssetFinished = true; cancelDfoLocation()">
+    <v-btn class="cancelButton" tile absolute outlined @click="cancelDfoLocation()">
       Cancel
     </v-btn>
     <v-btn class="continueButton" depressed plain tile @click="isAssetEnd = isAssetFinished = isAssetType = isAssetFullLen = false; isAssetStart = true; cancelDfoLocation()">
@@ -109,8 +109,8 @@
           <v-card-text style="position: relative; left:1px; text-align: left;" >This road is <em style="color:white" :style="{backgroundColor:`${assetColorTable[item.SRFC_TYPE]}`}">{{item.SRFC_TYPE}}</em> between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
           <v-btn plain color="#15648C" style="left:270px; bottom: 63px;" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
           <small style="color:#15648C; left:222px; bottom:33px; position: relative;">EDIT</small>
-          <v-btn plain style="left:230px; bottom:63px;" @click="deleteSurface(index)"><v-icon color="red" >mdi-delete</v-icon></v-btn>
-          <small style="color:red; left:175px; bottom:33px; position: relative;">DELETE</small>
+          <v-btn plain style="left:230px; bottom:63px;" @click="deleteSurface(index);updateGraphic();cancelDfoLocation()" :disabled="mileInfo.length === 1"><v-icon color="red">mdi-delete</v-icon></v-btn>
+          <small style="color:red; left:175px; bottom:33px; position: relative;" :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">DELETE</small>
         </v-row>
         <v-spacer></v-spacer>
       </v-col>
@@ -119,7 +119,7 @@
     <!-- <v-btn depressed plain class="nextAssetBtns" @click="isAssetEnd = false; isAssetStart = true; isAssetFinished=false; isAssetType = false; nextStep(2)"> 
       Cancel
     </v-btn> -->
-    <v-btn outlined class="nextAssetBtns" tile @click="nextStep(4); initLoadAsset('numLane')" color="#15648C"> 
+    <v-btn outlined class="nextAssetBtns" tile @click="nextStep(4); initLoadAsset('design')" color="#15648C" :disabled="!setAssetCover[0]"> 
       <u>Continue</u>
     </v-btn>
   </v-card>
@@ -141,7 +141,7 @@ export default {
         assetType: null,
         assetNull: null,
         assetStartDfo: null,
-        assetEndDfo: null,
+        assetEndDfo: 0,
         assetFinished: [],
         isAssetType: true,
         isAssetFullLen: false,
@@ -177,7 +177,7 @@ export default {
         countG: null,
         objectids:0,
         editIndex: -1,
-        assetColorTable: criConstants.colorTable
+        assetColorTable: criConstants.colorTable,
         
       }
     },
@@ -185,6 +185,7 @@ export default {
       returnDFO(){
         this.getDfoBool = true;
         mouseHoverDfoDisplay('dfo')
+        console.log('dfo')
       },
       selectAssetDFO(text){
         let type = {
@@ -212,8 +213,9 @@ export default {
           },
           'Choose the ending point on the map': async ()=>{
             this.isAssetStartDisable=false;
-            this.returnDFO() 
+            this.returnDFO()
             await this.getDfoLocation('end')
+            console.log('did I wait?')
             this.isAssetEnd = this.isAssetStart = this.isAssetType = this.isAssetFullLen = false;
             this.updateMileInfo();
             this.updateGraphic();
@@ -250,9 +252,15 @@ export default {
         
       },
       async getDfoLocation(type){
-        let returnSelectedDFO = await getSelectedDFO(this.objid);
-        if(!returnSelectedDFO) return;
-        type === 'start' ? this.assetStartDfo = Number(returnSelectedDFO[0].toFixed(3)) : this.assetEndDfo = Number(returnSelectedDFO[0].toFixed(3))
+        try{
+          let returnSelectedDFO = await getSelectedDFO(this.objid);
+          if(!returnSelectedDFO) return;
+          type === 'start' ? this.assetStartDfo = Number(returnSelectedDFO[0].toFixed(3)) : this.assetEndDfo = Number(returnSelectedDFO[0].toFixed(3))
+        }
+        catch{
+          console.log("canceled")
+        }
+       
       },
 
       atBegin(){
@@ -279,7 +287,7 @@ export default {
         // this.rdbdSurf.at(-1).ASSET_LN_END_DFO_MS = this.assetEndDfo
         // beginEndArr.push(this.mileInfo.at(0).ASSET_LN_BEGIN, this.mileInfo.at(-1).ASSET_LN_END)
         this.checkFullCoverage();
-        this.executeDFOgraph('point')
+        this.executeDFOgraph('point', 'click')
       },
 
       checkFullCoverage(){
@@ -323,12 +331,14 @@ export default {
         this.editIndex = -1
       },
 
-      async executeDFOgraph(){
+      executeDFOgraph(){
         this.newDfo = applyMToAsset(this.mileInfo)
       },
 
       deleteSurface(index){
         this.mileInfo.splice(index, 1)
+        this.checkFullCoverage()
+        console.log(this.mileInfo)
         applyMToAsset(this.mileInfo)
       },
       
@@ -420,6 +430,7 @@ export default {
         rdbdSurf:{
             get(){
                 if(typeof(this.$store.state.roadbedSurface) === 'string'){
+                  console.log('loading Surface')
                   return JSON.parse(this.$store.state.roadbedSurface) 
                 }
                 else{

@@ -59,6 +59,7 @@
           },
           { title: 'Edit Road', icon: 'mdi-pencil', action: async ()=>{
             stopEditing();
+            this.stepIn = true
             this.editExistingRd = true;
             this.nextDeleteRoadForm = false
             this.addRdBoolean = false;
@@ -79,6 +80,7 @@
           }},
           { title: 'Delete Road', icon: 'mdi-close-circle', action: async ()=>{
             this.modifyRoad = false
+            this.stepIn = true
             stopEditing();
             this.editExistingRd = false
             this.nextDeleteRoadForm = false
@@ -106,6 +108,7 @@
             this.addRdBoolean = false
             this.graphic = false;
           })
+          
       },
       editRoad(){
 
@@ -131,12 +134,18 @@
       },
       editExistingRd:{
         handler: function(){
+          if(this.editExistingRd === false){
+            this.stepIn = null
+          }
           this.graphic = this.editExistingRd
         },
         immediate: true,
       },
       deleteRoad:{
         handler: function(){
+          if(this.deleteRoad === false){
+            this.stepIn = null
+          }
           this.graphic = this.deleteRoad
         },
         immediate: true,
@@ -146,11 +155,13 @@
           if(this.steppClose === true){
             document.getElementById('stepper').style.width = '500px'
           }
-          else if(this.steppClose == false){
-            this.stepIn = null
+          if(this.steppClose === false){
+            console.log(this.steppClose)
+            
           }
           this.stepDisplay = this.steppClose
           this.graphic = this.steppClose
+          this.stepIn = null
         },
         immediate: true,
       },
@@ -234,7 +245,7 @@
 
 #testTitle{
   position: relative;
-  background: #15648C;
+  background: #204E70;
   color:white;
   font-size: 17px;
   height: 60px;

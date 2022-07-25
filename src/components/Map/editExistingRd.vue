@@ -4,12 +4,12 @@
             <v-card-title class="editRdTitle" v-if="edit===true">
                 Edit an Existing Road
              </v-card-title>
-        <v-card-title class="editRdTitle" v-if="addR===true">
-            Add a new Road
-        </v-card-title>
-        <v-card-title class="editRdTitle" v-if="deleteR===true">
-            Delete a Road
-        </v-card-title>
+            <v-card-title class="editRdTitle" v-if="addR===true">
+                Add a new Road
+            </v-card-title>
+            <v-card-title class="editRdTitle" v-if="deleteR===true">
+                Delete a Road
+            </v-card-title>
     
 
         <v-card-text v-if="edit===true" class="editRdInfo">

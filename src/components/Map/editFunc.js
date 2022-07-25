@@ -1,7 +1,8 @@
 //import const from map.js
-import {search, sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, txCounties, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst, editsLayer, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
+import { search, sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, txCounties, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst, rdbdAssetPt, rdbdAssetLine, editsLayer} from '../Map/map' //importing from ESRI API via map.js
 import {cntyNbrNm} from '../../common/txCnt' //importing county name/nbr table via txCnt.js
 import { criConstants } from '../../common/cri_constants';
+import {initGraphicCheck, queryEditsLayer} from '../Map/crud'
 //import esri js classes via ESM
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
@@ -12,11 +13,10 @@ import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
 import {store} from '../../storeUpd'
 
 
-
 //querys the Refernce Layer table return geometry/attributes
 function queryFeat(qry){
   let queryFeat = featLayer.queryFeatures({
-    objectIds: [qry.results[0].graphic.attributes.OBJECTID],
+    objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : [qry.attributes.OBJECTID],
     outFields: ["*"],
     returnGeometry: true,
     returnM: true,
@@ -105,9 +105,10 @@ function setDataToStore(surface, design, name, lane, objectid){
 export async function countyInfo(){
   let countyInfoPromise =  new Promise(function(res){
     let queryUrl = window.location.href
-    let regExUrl = /http(s)?:\/\/(www\.)?[a-zA-Z0-9]{1,256}\.[a-zA-Z]{1,6}\/|http(s)?:\/\/(www\.)?[a-zA-Z0-9:]{1,256}\//
-    console.log(queryUrl.split(regExUrl)[1])
-    let crInfo = queryUrl.split('http://localhost:8080/')[1]
+    let regExUrl = /\/(?:.(?!\/))+$/
+    console.log(queryUrl.match(regExUrl)[0].split('/'))
+    //let crInfo = queryUrl.split('http://localhost:8080/')[1]
+    let crInfo = queryUrl.match(regExUrl)[0].split('/')[1]
     for (let j=0; j < cntyNbrNm.length; j++){
       if(cntyNbrNm[j][crInfo]){
         let whereStatement = `County_NBR = '${crInfo}'`
@@ -153,11 +154,14 @@ export async function addRoadbed(){
     sketch.create("polyline",{mode:"click", hasZ: false})
     sketch.on('create', (event) => {
       let lengthMiles;
-      if(event.state === "active"){
+      if(event.state === "start"){
         mouseHoverDfoDisplay('addRoad');
+      }
+      else if(event.state === "active"){
         let seglengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
         store.commit('setDfoReturn', seglengthMiles)
       }
+
       if(event.state === "complete"){
         store.commit('setIsDfoReturn', false)
       //creating the length of road in miles for user
@@ -168,11 +172,10 @@ export async function addRoadbed(){
     });
   })
   let returnAddNewRoad = await addNewRoad
-  console.log(returnAddNewRoad[2])
   sketch.layer.graphics.items.at(-1).geometry.hasM = true
   //add reApply M Measures function
   sketch.layer.graphics.items.at(-1).attributes = {
-    editType: criConstants.editTypeColor[`${returnAddNewRoad[2]}`][1],
+    editType: criConstants.editType[`${returnAddNewRoad[2]}`][1],
     gid: 9999,
     objectid: Number(new Date().getTime().toFixed(7)),
     roadbedName: JSON.stringify(null),
@@ -191,18 +194,20 @@ export async function addRoadbed(){
       ASSET_LN_BEGIN_DFO_MS: 0,
       ASSET_LN_END_DFO_MS: Number(returnAddNewRoad[0].toFixed(3))
     }]),
+    originalLength: Number(returnAddNewRoad[0].toFixed(3)),
     createDt: new Date().getTime(),
     createNm: store.getters.getUserName,
     isCreatedAssets: false,
   }
   sketch.layer.graphics.items.at(-1).symbol = {
     type: "simple-line",
-    color: criConstants.editTypeColor[`${returnAddNewRoad[2]}`][0],
+    color: criConstants.editType[`${returnAddNewRoad[2]}`][0],
     width: 2,
     style: "dash"
   }
   showVerticies(sketch.layer.graphics.items.at(-1))
   reapplyM(gLayer.graphics.items.at(-1))
+  store.commit('setOldLength',Number(returnAddNewRoad[0].toFixed(3)))
   store.commit('setDeltaDis',[Number(returnAddNewRoad[0].toFixed(5)), 'Add'])
   store.commit('setRoadGeom', gLayer.graphics.items.at(-1).geometry.clone())
   store.commit('setModifyRd', false)
@@ -242,7 +247,6 @@ export async function modifyRoadbed(clickType, editType){
     })
   })
   let feature = await promise;
-  console.log(feature)
   store.commit('setRoadGeom', feature.features[0].geometry.clone())
   await queryFeatureTables(feature)
   defineGraphic(feature,clickType, editType)
@@ -281,7 +285,7 @@ export function hightlightFeat(){
         // }
         
         const opts = {
-          include: [gLayer, featLayer]
+          include: [gLayer, featLayer, editsLayer]
         }
         view.hitTest(event, opts).then((response)=>{
           if(response.results.length){
@@ -308,19 +312,19 @@ export function hightlightFeat(){
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
 async function defineGraphic(graphics, clickType, editType){
-  let exist = gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.features[0].attributes.OBJECTID)
+  let exist = graphics.features ? gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.features[0].attributes.OBJECTID) : gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.attributes.OBJECTID)
   if(exist.length){
     return;
   }
 
   if (clickType === "click"){
-    let oldLength = Number(geometryEngine.geodesicLength(graphics.features[0].geometry, "miles").toFixed(5))
+    let oldLength = graphics.features ? Number(geometryEngine.geodesicLength(graphics.features[0].geometry, "miles").toFixed(3)) :  Number(geometryEngine.geodesicLength(graphics.geometry, "miles").toFixed(3))
     document.body.style.cursor = 'context-menu'
     let graphicPromise = new Promise(function(res){
       let newGraphic = new Graphic({
         geometry: {
           type: "polyline",
-          paths: graphics.features[0].geometry.paths[0],
+          paths: graphics.features ? graphics.features[0].geometry.paths[0] : graphics.geometry.paths[0],
           hasM: true,
           spatialReference: {
             wkid: 3857
@@ -328,13 +332,13 @@ async function defineGraphic(graphics, clickType, editType){
         },
     
         attributes: {
-          editType: criConstants.editTypeColor[`${editType}`][1],
-          gid: graphics.features[0].attributes.GID,
-          objectid: graphics.features[0].attributes.OBJECTID,
-          roadbedName: store.getters.getRoadbedName,
-          roadbedDesign: store.getters.getRoadbedDesign,
-          roadbedSurface: store.getters.getRoadbedSurface,
-          numLane: store.getters.getNumLane,
+          editType: graphics.features ? criConstants.editType[`${editType}`][1] : criConstants.editType[`${graphics.attributes.EDIT_TYPE_ID}`][1], 
+          gid: graphics.features ? graphics.features[0].attributes.GID : graphics.attributes.GID,
+          objectid: graphics.features ? graphics.features[0].attributes.OBJECTID : graphics.attributes.OBJECTID,
+          roadbedName: graphics.features ? store.getters.getRoadbedName : graphics.attributes.ASSET_ST_DEFN_NM,
+          roadbedDesign: graphics.features ? store.getters.getRoadbedDesign : graphics.attributes.ASSET_RDWAY_DSGN_TYPE_DSCR,
+          roadbedSurface: graphics.features ? store.getters.getRoadbedSurface : graphics.attributes.ASSET_SRFC_TYPE_DSCR,
+          numLane: graphics.features ? store.getters.getNumLane : graphics.attributes.ASSET_NBR_THRU_LANE_CNT,
           originalLength: oldLength,
           isCreatedAssets: true,
           createDt: new Date().getTime(),
@@ -343,13 +347,13 @@ async function defineGraphic(graphics, clickType, editType){
                   
         symbol: {
           type: "simple-line",
-          color: criConstants.editTypeColor[`${editType}`][0],
+          color: graphics.features ? criConstants.editType[`${editType}`][0] : criConstants.editType[`${graphics.attributes.EDIT_TYPE_ID}`][0],
           width: 2,
           style: "dash"
         }
       })
       gLayer.graphics.add(newGraphic);
-      newGraphic.attributes.editType === 'EDIT' ? showVerticies(newGraphic) : null
+      ///newGraphic.attributes.editType === 'EDIT' ? showVerticies(newGraphic) : null
       
       store.commit('setOldLength',oldLength)
       store.commit('setModifyRd', true)
@@ -383,8 +387,13 @@ async function defineGraphic(graphics, clickType, editType){
 }
 
 //hides feature roadbeds when converted to graphic
-function hideEditedRoads(graphicL, update){
+
+async function hideEditedRoads(graphicL, update){
   let objectidList = [];
+  //let objectidEdits = [];
+
+  //let roadsEdited = await reloadEdits()
+  //console.log(roadsEdited)
   if(update === true){
     if(objectidList.length){
       objectidList.length = 0
@@ -396,17 +405,27 @@ function hideEditedRoads(graphicL, update){
       else{
         objectidList.push(x.attributes.objectid)
       }
-      console.log(x.attributes.objectid)
     })
     objectidList.length === 0 ? featLayer.definitionExpression = `CNTY_TYPE_NM = '${store.getters.getCntyName}'` : featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
     return;
   }
   
-  for(let id in graphicL.graphics.items){
-    if(graphicL.graphics.items[id].attributes !== null){
-      objectidList.push(graphicL.graphics.items[id].attributes.objectid)
+  let items = !graphicL.graphics ? graphicL.features : graphicL.graphics.items 
+  
+  for(let id in items){
+    if(items[id].attributes !== null){
+      let objectid = items[id].attributes.objectid || items[id].attributes.OBJECTID
+      objectidList.push(objectid)
     }
   }
+  // for(let id in roadsEdited.features){
+  //   if(roadsEdited.features[id].attributes !== null){
+  //     let objectid = roadsEdited.features[id].attributes.objectid || roadsEdited.features[id].attributes.OBJECTID
+  //     objectidList.push(objectid)
+  //     objectidEdits.push(objectid)
+  //   }
+  // }
+ // editsLayer.definitionExpression = `OBJECTID not in (${objectidEdits}) and CNTY_TYPE_NBR = '${store.getters.getCntyNmbr}'`
   featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
 }
 //updateLength() gets new length of selected graphic and sends new length to store
@@ -414,12 +433,29 @@ export function updateLength(){
   try{
     setUpGraphic();
     sketch.on('update', (event)=>{
+      if(event.state === 'active' && event.toolEventInfo.type === 'reshape-stop'){
+        console.log(sketch['_operationHandle'])
+        sketch['_operationHandle'].history.redo.length ?  store.commit('setIsRedoDisable', false) : store.commit('setIsRedoDisable', true)
+        sketch['_operationHandle'].history.undo.length ?  store.commit('setIsUndoDisable', false) : store.commit('setIsUndoDisable', true)
+      }
+  
       if(event.state === 'complete'){
-        let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(5))
-        store.commit('setDeltaDis',[newLengths, 'Edit'])
-        store.commit('setRoadGeom', event.graphics[0].geometry.clone())
-        reapplyM(event.graphics[0])
-        updateGraphicsLayer(event.graphics[0].attributes.objectid, newLengths)
+        let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
+        if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){
+         //store.commit('setDeltaDis',[newLengths, 'Add'])
+        }
+        else{
+          if(sketch['_operationHandle'] === null){
+            store.commit('setIsRedoDisable', true)
+            store.commit('setIsUndoDisable', true) 
+
+          }
+          store.commit('setDeltaDis',[newLengths, 'Modify'])
+          store.commit('setRoadGeom', event.graphics[0].geometry.clone())
+          reapplyM(event.graphics[0])
+          updateGraphicsLayer(event.graphics[0].attributes.objectid, newLengths)
+        }
+
         // let returnRdSurf = JSON.parse(event.graphics[0].attributes.roadbedSurface)
         // returnRdSurf.forEach(x => x.OBJECTID = event.graphics[0].attributes.objectid)
         // returnRdSurf.at(-1).ASSET_LN_END_DFO_MS = Number(newLengths.toFixed(3))
@@ -428,6 +464,7 @@ export function updateLength(){
         //getGraphic[0].attributes.roadbedSurface = JSON.stringify(returnRdSurf)
       } 
     })
+    return;
   }
   catch(Error){
     console.log('updateLength error', Error)
@@ -440,6 +477,7 @@ function setUpGraphic(){
       return;
     }
     let opts = [gLayer]
+    store.commit('setIsDfoReturn', false)
     view.hitTest(event,opts).then((response)=>{
       if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
         return;
@@ -448,7 +486,8 @@ function setUpGraphic(){
         if(result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT'){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
             sketch.update([result.graphic], {tool:"reshape"});
-            let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(5))
+            let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
+            console.log(oldLength)
             store.commit('setOldLength',oldLength)
           }
         }
@@ -469,6 +508,7 @@ export function stopEditingPoint(){
 }
 //show verticies along line
 export function showVerticies(x){
+  console.log(x)
   sketch.update([x], {tool:'reshape'})
 }
 //Delete a road from inside the stepper
@@ -480,28 +520,27 @@ export function delRoad(){
   let length = Number(geometryEngine.geodesicLength(graphicDel[0].geometry, "miles").toFixed(5))
   store.commit('setDeltaDis',[length, 'Delete'])
   let symbol = graphicDel[0].symbol.clone()
-  symbol.color = criConstants.editTypeColor['delete'][0]
+  symbol.color = criConstants.editType['delete'][0]
   graphicDel[0].symbol = symbol
 }
 //Delete a sketch i.e the graphic
 export function removeGraphic(){
   stopEditing();
-  console.log(store.getters.getObjectid)
   let graphicR = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
-  console.log(graphicR)
+  initGraphicCheck(graphicR[0], true)
   gLayer.remove(graphicR[0])
   hideEditedRoads(null,true)
   let length = Number(geometryEngine.geodesicLength(graphicR[0].geometry, "miles").toFixed(5))
-  console.log(length)
   if(graphicR[0].attributes.editType === 'ADD'){
+    console.log('add being deleted')
     store.commit('setDeltaDis',[length, 'Delete'])
   }
   else if(graphicR[0].attributes.editType === 'DELETE'){
     store.commit('setDeltaDis',[length, 'Add'])
   }
   else if(graphicR[0].attributes.editType === 'EDIT'){
-    let diffAdded = graphicR[0].attributes.originalLength - length
-    console.log(diffAdded)
+    let diffAdded = Math.abs(graphicR[0].attributes.originalLength - length)
+    store.commit('setDeltaDis',[diffAdded, 'Edit'])
   }
 }
 //populates stepper form when graphic is clicked.
@@ -594,51 +633,51 @@ function reapplyM(arr){
   return;
 } //TODO
 //push asset/geometry to edits feature layer
-export function saveInfo(id){
-  //get graphic layer and match by objectid
-  const graphic = gLayer.graphics.items
-  let geomPath;
-  let createdate;
-  let createName;
-  let gid;
-  for(let x in graphic){
-    if(graphic[x].attributes.OBJECTID === id.objectid){
-      geomPath = graphic[x].geometry
-      createdate = graphic[x].attributes.createDt
-      createName = graphic[x].attributes.createNm
-      gid = graphic[x].attributes.gid
-    }
-  }
-  //create new graphic and push new asset to edits feature layer
-  const editGraphic = new Graphic({
-    geometry: geomPath,
-    attributes: {
-      objectid: id.objectid,
-      gid: gid,
-      begin_dfo: 1, //TODO
-      end_dfo: 1, //TODO
-      seg_len:4, //TODO
-      county: store.getters.getcntyNmbr,
-      edit_type:'update',
-      create_nm: createName,
-      create_dt: createdate,
-      edit_nm: id.editNm,
-      edit_dt: id.editDt,
-      submit: 0,
-      cnty_nbr: store.getters.getcntyNmbr,
-      srfc_type_id:id.rdbdSurfe,
-      st_defn_nm: id.rdbdName,
-      rdway_dsgn_type_dscr: id.rdbdDes,
-      nbr_thru_lane_cnt: id.numLanes,
-    }
-  });
+// export function saveInfo(id){
+//   //get graphic layer and match by objectid
+//   const graphic = gLayer.graphics.items
+//   let geomPath;
+//   let createdate;
+//   let createName;
+//   let gid;
+//   for(let x in graphic){
+//     if(graphic[x].attributes.OBJECTID === id.objectid){
+//       geomPath = graphic[x].geometry
+//       createdate = graphic[x].attributes.createDt
+//       createName = graphic[x].attributes.createNm
+//       gid = graphic[x].attributes.gid
+//     }
+//   }
+//   //create new graphic and push new asset to edits feature layer
+//   const editGraphic = new Graphic({
+//     geometry: geomPath,
+//     attributes: {
+//       objectid: id.objectid,
+//       gid: gid,
+//       begin_dfo: 1, //TODO
+//       end_dfo: 1, //TODO
+//       seg_len:4, //TODO
+//       county: store.getters.getcntyNmbr,
+//       edit_type:'update',
+//       create_nm: createName,
+//       create_dt: createdate,
+//       edit_nm: id.editNm,
+//       edit_dt: id.editDt,
+//       submit: 0,
+//       cnty_nbr: store.getters.getcntyNmbr,
+//       srfc_type_id:id.rdbdSurfe,
+//       st_defn_nm: id.rdbdName,
+//       rdway_dsgn_type_dscr: id.rdbdDes,
+//       nbr_thru_lane_cnt: id.numLanes,
+//     }
+//   });
   
-  editsLayer.applyEdits({
-    addFeatures: [editGraphic]
-    //updateFeatures - TODO
-    //deleteFeatures - TODO
-  });
-}
+//   editsLayer.applyEdits({
+//     addFeatures: [editGraphic]
+//     //updateFeatures - TODO
+//     //deleteFeatures - TODO
+//   });
+// }
 //*************************************************************************************************/
 //Drawing the new Asset Graphics on the route
 function createAssetGraph(pathArr,y){
@@ -746,15 +785,16 @@ export function getCoordsRange(y){
       rdbdAssetPt.length = 0
       rdbdAssetLine.length = 0
     }
-    let dens;
+    let dens = store.getters.getRoadGeom;
     // if(check !== false){
       
       //get graphic layer geometry; matching on objectid 
-      for(let id in gLayer.graphics.items){
-        if(gLayer.graphics.items[id].attributes.objectid === y[0].OBJECTID){
-          dens = gLayer.graphics.items[id].geometry
-        } 
-      }
+      // for(let id in gLayer.graphics.items){
+      //   if(gLayer.graphics.items[id].attributes.objectid === y[0].OBJECTID){
+      //     dens = gLayer.graphics.items[id].geometry
+      //   } 
+      // }
+      
       //get geometry x,y,m
       let densUpdate = dens.paths[0];
     
@@ -793,9 +833,8 @@ export function getCoordsRange(y){
         })
         let a = webMercatorUtils.webMercatorToGeographic(pointA.geometry)
         let b = webMercatorUtils.webMercatorToGeographic(pointB.geometry)
-            
         const findAzmith = geodesicUtils.geodesicDistance(a, b)
-        const pointDFO = geodesicUtils.pointFromDistance(a, radius,findAzmith.azimuth)
+        const pointDFO = Number(geom[1][2].toFixed(3)) === y[d].ASSET_LN_END ? {x:b.x, y:b.y} : geodesicUtils.pointFromDistance(a, radius,findAzmith.azimuth)
         webMercatorUtils.geographicToWebMercator(pointDFO)
   
         let assetType = y[d].SRFC_TYPE
@@ -869,11 +908,34 @@ export function getCoordsRange(y){
   catch(error){
     console.log(error)
     alert('You have selected a value that is greater than the length of road')
-    return;
+    return error;
   }
  
   return;
 }
+
+function clickedOnLine(x, x2, x1){
+  if(x2 > x1){
+    if(x < x2 && x > x1){
+      console.log('1')
+      return true
+    }
+    console.log('2')
+    return false
+  
+   //return false
+  }
+  else{
+    if( x > x2 && x < x1){
+      console.log('3')
+      return true
+    }
+    console.log('4')
+    return false
+  }
+  
+}
+
 //Getting new M-Value for new asset Point
 function getNewDfoDist(objectid, x, y, slide){
   objectid
@@ -902,6 +964,8 @@ function getNewDfoDist(objectid, x, y, slide){
   let index = geometryEngine.nearestVertex(objid, pointA.geometry).vertexIndex
   let nearVert = objid.paths[0].at(index)
   let path;
+  let behindFront; 
+  
  
   //determine the direction of the line 
   let x2 = nearVert[0]
@@ -914,23 +978,27 @@ function getNewDfoDist(objectid, x, y, slide){
       latitude: y2
     }
   })
+
   let webMercaPointB = webMercatorUtils.webMercatorToGeographic(pointB.geometry)
   //find distance between clicked point and nearest point
   const pointAPointB = geodesicUtils.geodesicDistance(webMercaPointB, webMercaPointA)
   
-  if(pointAPointB.distance === 0 && index === 0){
+  if(Number(pointAPointB.distance.toFixed(3)) <= 1 && index === 0){
     newDfo = objid.paths[0].at(0)[2]
-    return [newDfo, objid] 
+    let returnVal = slide ? newDfo : [newDfo, objid]
+    return  returnVal
   }
 
-  if(pointAPointB.distance === 0 && index === objid.paths[0].at(-1)){
+  if(Number(pointAPointB.distance.toFixed(3)) <= 1 && index === objid.paths[0].at(-1)){
     newDfo = objid.paths[0].at(-1)[2]
-    return [newDfo, objid]
+    let returnVal = slide ? newDfo : [newDfo, objid]
+    return  returnVal
   }
 
-  else if(pointAPointB.distance === 0){
+  else if(Number(pointAPointB.distance.toFixed(3)) <= 1){
     newDfo = objid.paths[0].at(index)[2]
-    return [newDfo, objid]
+    let returnVal = slide ? newDfo : [newDfo, objid]
+    return  returnVal
   }
   // if(objid.paths[0].at(0) === nearVert && pointAPointB.distance === 0){
   //   newDfo = objid.paths[0].at(0)[2]
@@ -940,13 +1008,15 @@ function getNewDfoDist(objectid, x, y, slide){
   if(objid.paths[0].length === 2 && objid.paths[0].at(-1) === nearVert){
     newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
     objid.insertPoint(0,1, [x, y, Number(newDfo.toFixed(3))])
-    return [newDfo, objid];
+    let returnVal = slide ? newDfo : [newDfo, objid]
+    return  returnVal
   }
 
   if(objid.paths[0].length === 2 && objid.paths[0].at(0) === nearVert){
     newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
     objid.insertPoint(0,1, [x, y, Number(newDfo.toFixed(3))])
-    return [newDfo, objid];
+    let returnVal = slide ? newDfo : [newDfo, objid]
+    return  returnVal
   }
   else{
     path = objid.paths[0].slice(index-2, index)
@@ -1003,41 +1073,47 @@ function getNewDfoDist(objectid, x, y, slide){
   // if(path[0][0] > x && path[1][0] < x){
   //   path = objid.paths[0].slice(index-1, index+2)
   // }
-  let dir2;
-  if(dist === 0 ){
-    dir2 = y - y2
+  // let dir2;
+  // if(dist === 0 ){
+  //   dir2 = y - y2
+  // }
+  //let direction = path[0][0] > path[1][0]
+  try{
+    behindFront = clickedOnLine(x, objid.paths[0].at(index)[0], objid.paths[0].at(index-1)[0]) ? 'behind' : 'front'
+    console.log(behindFront)
   }
-  let direction = path[0][0] > path[1][0]
+  catch{
+    console.log('finished')
+  }
+
+
+  //let direction = (y-y2) > 0 ? true : false //front : behind
   //convert GraphicB to Geographic i.e lat/long
 
-
-  if(dist === 0){
-    newDfo = nearVert[2]
-    mnbv = index
-  }
-  if(dist < 0 && !direction){
+  if(behindFront === 'behind'){
     newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
     mnbv = index
   }
-  else if (dist > 0 && !direction){
+  else if (behindFront === 'front'){
     newDfo = Math.abs(nearVert[2] + (pointAPointB.distance/1609.344))
     mnbv = index+1
   }
-  else if (dist < 0 && direction){
-    newDfo = Math.abs(nearVert[2] + (pointAPointB.distance/1609.344))
-    mnbv = index+1
-  }
-  else if (dist > 0 && direction){
-    newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
-    mnbv = index
-  }
+  // else if (dist < 0 && direction){
+  //   newDfo = Math.abs(nearVert[2] + (pointAPointB.distance/1609.344))
+  //   mnbv = index+1
+  // }
+  // else if (dist > 0 && direction){
+  //   newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
+  //   mnbv = index
+  // }
   
-  if(dist === 0 && dir2 < 0){
-    newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
-  }
-  else if(dist === 0 && dir2 > 0){
-    newDfo = Math.abs(nearVert[2] + (pointAPointB.distance/1609.344))
-  }
+  // if(dist === 0 && dir2 < 0){
+  //   newDfo = Math.abs(nearVert[2] - (pointAPointB.distance/1609.344))
+  // }
+  // else if(dist === 0 && dir2 > 0){
+  //   newDfo = Math.abs(nearVert[2] + (pointAPointB.distance/1609.344))
+  // }
+
 
   if(!newDfo){
     return;
@@ -1316,6 +1392,7 @@ export function applyMToAsset(assetArray, type){
 
   if(type!=='click'){
     rdbdAssetPt.removeAll();
+    rdbdAssetLine.removeAll();
     getCoordsRange(assetArray)
   }
   return assetArray
@@ -1325,24 +1402,6 @@ export function sketchCompete(){
   sketch.complete()
 }
 
-export async function autoDrawAsset(z){
-  //1) need all geometries
-  //2) need asset breaks
-  //3) draw new assets
-  const query = new Query();
-  query.where = z
-  query.outFields = [ "*" ]
-  query.returnGeometry = true
-  query.returnM = true
-  await featLayer.queryFeatures(query)
-
-  // for(i in featQuery.features){
-  //   let gid = featQuery.features[i].attributes.GID
-    
-
-  // }
-
-}
 export async function getSelectedDFO(oid){
   let clickedPt = new Promise(function(res){
     sketchPoint.create("point",{mode: "click"})
@@ -1352,11 +1411,28 @@ export async function getSelectedDFO(oid){
     })
   })
   let returnClickedPt= await clickedPt
-  console.log(returnClickedPt)
   if(!returnClickedPt.graphic){
     sketchPoint.cancel();
     return;
   }
+  
+  // let pointB = new Graphic({
+  //   geometry:{
+  //     type: "point",
+  //     longitude: returnClickedPt.graphic.geometry.x,
+  //     latitude: returnClickedPt.graphic.geometry.y
+  //   }
+  // })
+  // let isPointInterLine = geometryEngine.intersects(pointB.geometry, store.getters.getRoadGeom)
+  // console.log(isPointInterLine)
+  // let newDfo;
+  // if(isPointInterLine === false){
+  //   let nearestCoord = geometryEngine.nearestCoordinate(store.getters.getRoadGeom, pointB.geometry)
+  //   newDfo = getNewDfoDist(oid, nearestCoord.coordinate.x, nearestCoord.coordinate.y, false)
+  // }
+  // else{
+  //   newDfo = getNewDfoDist(oid, returnClickedPt.graphic.geometry.x, returnClickedPt.graphic.geometry.y, false)
+  // }
   let newDfo = getNewDfoDist(oid, returnClickedPt.graphic.geometry.x, returnClickedPt.graphic.geometry.y, false)
   
   return [newDfo[0], returnClickedPt.graphic.geometry.x, returnClickedPt.graphic.geometry.y]
@@ -1423,6 +1499,7 @@ function updateGraphicsLayer(oid, length){
     let assetArr = ['roadbedDesign', 'roadbedSurface', 'numLane']
     if(gLayer.graphics.items[i].attributes.objectid === oid){
       for(let x=0; x < assetArr.length; x++){
+
         let asset = JSON.parse(gLayer.graphics.items[i].attributes[assetArr[x]])
         if(!asset) return;
         asset.at(-1).ASSET_LN_END_DFO_MS = Number(length.toFixed(3))
@@ -1445,31 +1522,33 @@ function updateGraphicsLayer(oid, length){
   }
 }
 
-export async function mouseHoverDfoDisplay(type){
+export function mouseHoverDfoDisplay(type){
   let pickRoute = {
     dfo: (event) =>{
       try{
         let opts = {include:[gLayer]}
         view.hitTest(event,opts).then((response)=>{
           if(response.results.length){
-            // store.commit('setIsDfoReturn', true)
             let mousePixXY = webMercatorUtils.webMercatorToGeographic(view.toMap({x: event.x, y: event.y}))
+            webMercatorUtils.webMercatorToGeographic(view.toMap({x: event.x, y: event.y}))
             let mouseWebNerXY = webMercatorUtils.geographicToWebMercator({x:mousePixXY.x, y:mousePixXY.y})
             if(store.getters.getObjectid === response.results[0].graphic.attributes['objectid']){
+              store.commit('setIsDfoReturn', true)
               let returnDFO = getNewDfoDist(store.getters.getObjectid, mouseWebNerXY.x, mouseWebNerXY.y, true)
               let dfoHover = document.getElementById('dfoBox')
               if(dfoHover){
-                dfoHover.style.left = `${event.x + 100}px`
-                dfoHover.style.top = `${event.y +100}px`
+                dfoHover.style.left = `${event.x}px`
+                dfoHover.style.top = `${event.y}px`
                 store.commit('setDfoReturn', returnDFO)
               }
               else{
+                store.commit('setIsDfoReturn', false)
                 return;
               }
             }
           }
           else{
-            // store.commit('setIsDfoReturn', false)
+           return;
           }
         })
       }
@@ -1478,17 +1557,80 @@ export async function mouseHoverDfoDisplay(type){
       }
     },
     addRoad: (event)=>{
+
       try{
         let dfoHover = document.getElementById('dfoBox')
         dfoHover.style.left = `${event.x}px`
         dfoHover.style.top = `${event.y}px`
       }
       catch{
-        return;
+        return 0;
       }
     }
   }
 
   view.on('pointer-move', pickRoute[`${type}`])
 }
+
+export async function reloadEdits(){
+  //while user is logging in, query edits service and display currents from count
+  let currentEditRoads = queryEditsLayer();
+  
+  let createGraphics = await currentEditRoads
+  //first add all Adds together
+  //second query and and compare Ref layer length against add route length and apply to total length
+  //finally subtract delete roads from total length 
+  let mileSetUp = 0;
+  createGraphics.features.forEach((x)=>{
+    let length = geomToMiles(x.geometry,true,3)
+
+    // format RoadName to be repopulated in Graphics
+    let rdNameSplit = x.attributes.ASSET_ST_DEFN_NM.split(" ")
+    x.attributes.ASSET_ST_DEFN_NM = [{
+      streetName: rdNameSplit[1], 
+      prefix: rdNameSplit[0], 
+      suffix: rdNameSplit[2],
+      streetType: rdNameSplit[3]
+    }]
+    //reset Edit TYPE_ID to add/edit/delete so that criConstants.editType can be used in defineGraphic func
+    if(x.attributes.EDIT_TYPE_ID === 1){
+      mileSetUp += length
+      x.attributes.EDIT_TYPE_ID = 'add'
+    }
+    else if(x.attributes.EDIT_TYPE_ID === 5){
+      let returnRoad = queryFeat(x)
+      returnRoad.then((oldLen)=>{
+        let oldLength = geomToMiles(oldLen.features[0].geometry,true,3)
+        let diff = oldLength - length
+        mileSetUp += diff
+      })
+      x.attributes.EDIT_TYPE_ID = 'edit'
+    }
+    else if(x.attributes.EDIT_TYPE_ID === 4){
+      mileSetUp -= length
+      x.attributes.EDIT_TYPE_ID = 'delete'
+    }
+    //console.log(x.attributes.ASSET_SRFC_TYPE_DSCR, x.attributes.ASSET_RDWAY_DSGN_TYPE_DSCR, x.attributes.ASSET_ST_DEFN_NM, x.attributes.ASSET_NBR_THRU_LANE_CNT, x.attributes.OBJECTID)
+    //setDataToStore(JSON.stringify(rdSurf), x.attributes.ASSET_RDWAY_DSGN_TYPE_DSCR, x.attributes.ASSET_ST_DEFN_NM, x.attributes.ASSET_NBR_THRU_LANE_CNT, x.attributes.OBJECTID)
+    
+    defineGraphic(x, 'click')
+  })
+  store.commit('setDeltaDis',[mileSetUp, 'Add'])
+  return currentEditRoads
+  // currentEditRoads.then((roads)=>{
+  //   hideEditedRoads(roads)
+  // })
+}
+
+
+//convert geometry to miles
+export function geomToMiles(geometry, isNum, precision){
+  if(isNum){
+    return Number(geometryEngine.geodesicLength(geometry, "miles").toFixed(precision))
+  }
+  else{
+    return geometryEngine.geodesicLength(geometry, "miles")
+  }
+}
+
 

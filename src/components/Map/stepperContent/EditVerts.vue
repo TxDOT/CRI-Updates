@@ -26,6 +26,7 @@ export default {
         nextStep(x){
             this.returnStep = x
             stopEditing();
+            this.getDfoBool = false
         },
         deleteRoad(){
             delRoad();
@@ -68,7 +69,15 @@ export default {
             set(mod){
                 this.$store.commit('setModifyRd', mod)
             }
-        },    
+        },
+        getDfoBool:{
+            get(){
+                return this.$store.state.isDfoReturn
+            },
+            set(bool){
+                this.$store.commit('setIsDfoReturn', bool)
+            }
+        },
     }
 }
 </script>

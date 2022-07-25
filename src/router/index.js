@@ -4,6 +4,8 @@ import MapHome from '../views/mapHome.vue'
 import errorPage from '../views/errorPage.vue'
 import MileSign from '../views/mileSign.vue'
 import Login from '../views/Login.vue'
+import Loading from '../views/loadingPage.vue'
+import PickCounty from '../views/pickCounty.vue'
 Vue.use(VueRouter)
 
 const routes = [
@@ -24,6 +26,18 @@ const routes = [
     path:'/login',
     name:'Login',
     component: Login,
+    props:true
+  },
+  {
+    path:'/load',
+    name:'Loading',
+    component: Loading,
+    props:true
+  },
+  {
+    path:'/pickCounty',
+    name:'PickCounty',
+    component: PickCounty,
     props:true
   },
   {

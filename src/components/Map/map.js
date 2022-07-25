@@ -25,6 +25,7 @@ export const gLayer = new GraphicsLayer();
 export const delgLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
+export const testGraphic = new GraphicsLayer();
 
 const txdotVectorTiles = new VectorTileLayer({
     url: "https://tiles.arcgis.com/tiles/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Vector_Tile_Basemap/VectorTileServer",
@@ -48,7 +49,7 @@ const imgBasemap = new Basemap({
 
 export const map = new Map({
     basemap: vTBasemap,
-    layers: [rdbdAssetLine,rdbdAssetPt,gLayer]
+    layers: [rdbdAssetLine,rdbdAssetPt,gLayer, testGraphic]
 });
 
 export const view = new MapView({
@@ -300,10 +301,9 @@ export const sketch = new SketchViewModel({
         }
     },
     snappingOptions:{
-        distance: 0,
         enabled: true,
         featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true}, { layer: featLayer, enabled: true, featureEnabled: true }],
-        selfEnabled: true
+        selfEnabled: false
     }
 });
 
@@ -331,8 +331,7 @@ export const sketchPoint = new SketchViewModel({
     },
     snappingOptions: {
         enabled: true,
-        featureSources: [{ layer: gLayer, enabled: true, featureEnabled: true }],
-        distance: 20
+        featureSources: [{ layer: gLayer, enabled: true, featureEnabled: true },{ layer: rdbdAssetPt, enabled: true, featureEnabled: true }]
     }
 });
 // export const sketchPoint = new Sketch({

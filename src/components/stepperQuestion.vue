@@ -16,7 +16,6 @@
     <v-stepper-step
       :editable="setAssetCover[0]"
       step="1"
-      @click="removeAsstPt(); showGIDVerts()"
       class="font-weight-regular; body-1;">
       Edit Shape - 5.234 Miles
     </v-stepper-step>
@@ -27,9 +26,9 @@
     </v-stepper-content>
 
     <v-stepper-step 
-      :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"
+      :editable="setAssetCover[0] === true || setAssetCover[0] === undefined ? true: setAssetCover[0]"
       step="2"
-      @click="removeAsstPt(); complete();">
+      >
       Road Name - DAVID LANE
     </v-stepper-step>
     
@@ -38,7 +37,7 @@
       <roadName/>
     </v-stepper-content>
 
-    <v-stepper-step step="3" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" @click="removeAsstPt();complete();initLoadAsset('surface')" >
+    <v-stepper-step step="3" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt();complete();initLoadAsset('surface')}} : {}" >
       Road Surface - PAVED
     </v-stepper-step>
     <v-stepper-content step="3" >
@@ -48,7 +47,7 @@
     <v-stepper-step
       :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"
       step="4"
-      @click="startExecuteDfoPts(); complete();initLoadAsset('design');"
+      v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('design')}} : {}"
       ><!-- Get asset breaks and draw graphic points -->
       Road Design - TWO-WAY
     </v-stepper-step>
@@ -57,7 +56,7 @@
       <roadDesign/>
     </v-stepper-content>
 
-    <v-stepper-step step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" @click="removeAsstPt(); complete();initLoadAsset('numLane')">
+    <v-stepper-step step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('numLane')}} : {}">
       Number of Lanes - *MULTIPLE*
     </v-stepper-step>
     <v-stepper-content step="5">
@@ -66,11 +65,11 @@
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
-      <v-btn-toggle style="top:35px; left:200px; position: relative;">
+      <v-btn-toggle tile style="top: 45rem; left:18rem; position: absolute;">
         <v-btn :disabled="!setAssetCover[0]" small @click="cancel()">Cancel</v-btn>
-        <v-btn :disabled="!setAssetCover[0]" small color="#15648C" text @click="saveAttri(); successAlert=true;"><u>Save</u></v-btn>
+        <v-btn :disabled="!setAssetCover[0]" small color="#15648C" text @click="saveAttri();"><u>Save</u></v-btn>
       </v-btn-toggle>
-      <v-btn small color ="#E64545" text outlined style="top:35px; right: 200px; position: relative;" @click="discardAlertQuest = true">Discard Sketch</v-btn>
+      <v-btn small tile color ="#E64545" text outlined style="top:45rem; right:18rem; position: absolute;" @click="discardAlertQuest = true">Discard Sketch</v-btn>
     <!-- </div> -->
     <!-- card used to display discard alert information -->
     <!-- <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
@@ -93,6 +92,7 @@
       <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card>
   <confirmAlertSuccess v-if="successAlert"/>
+  <finalCheck v-if="finalCheck === true"/>
   </v-container>
 
 </template>
@@ -100,6 +100,7 @@
 <script>
 //import { criConstants } from '../common/cri_constants';
 import {removeAsstPoints, stopEditingPoint, sketchCompete,initLoadAssetGraphic, showVerticies, removeGraphic} from '../components/Map/editFunc'
+import {initGraphicCheck} from '../components/Map/crud'
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
@@ -108,13 +109,14 @@ import editVerts from './Map/stepperContent/EditVerts.vue'
 import { gLayer } from './Map/map'
 import confirmAlertSuccess from '../components/Map/stepperContent/confirmAlertsSUCCESS.vue'
 import sketchAlert from '../components/Map/stepperContent/discardAlert.vue'
+import finalCheck from '../components/Map/stepperContent/saveAssetCheck.vue'
 //import {roadInfo} from '../store'a
 //import Map from '../components/Map/Map.vue'
 
 
 export default {
     name:"stepper",
-    components:{roadName,roadDesign, roadSurface, numOfLane, editVerts, confirmAlertSuccess, sketchAlert},
+    components:{roadName,roadDesign, roadSurface, numOfLane, editVerts, confirmAlertSuccess, sketchAlert, finalCheck},
     props:{
       received: Boolean
     },
@@ -234,6 +236,7 @@ export default {
     },
 
     methods:{
+      
       delGraphic(){
         removeGraphic();
       },
@@ -334,7 +337,7 @@ export default {
         this.e1 = 1;
         removeAsstPoints();
         this.getDfoBool = false;
-        console.log(gLayer)
+        console.log(gLayer, this.getDfoBool)
       },
       //pushes new blank object row into mileInfo asset form
       // addRoadSurface(){
@@ -361,6 +364,14 @@ export default {
       //     // }
       // },
       saveAttri(){
+        let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
+        console.log(editGraphic.attributes.roadbedName)
+        if(editGraphic.attributes.roadbedName === 'null' || JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
+          this.finalCheck = true
+          return;
+        }
+        this.successAlert=true;
+        initGraphicCheck(editGraphic, false)
         // for(let z=0; z < gLayer.graphics.items.length; z++){
         //   if(gLayer.graphics.items[z].attributes.objectid === this.objid){
         //     gLayer.graphics.items[z].attributes.roadbedName = this.roadName
@@ -408,6 +419,7 @@ export default {
     computed:{
       setAssetCover:{
         get(){
+          console.log(this.$store.state.assetCoverage)
           return this.$store.state.assetCoverage
         },
         set(x){
@@ -435,7 +447,7 @@ export default {
           xs: () => {return '220px'},
           sm: () => {return '400px'},
           md: () => {return '500px'},
-          lg: () => {return '800px'},
+          lg: () => {return '620px'},
           xl: () => {return '820px'}
         }
         console.log(this.$vuetify['breakpoint'])
@@ -517,6 +529,14 @@ export default {
           this.$store.commit('setEditExisting', edit)
         }
       },
+      finalCheck:{
+        get(){
+          return this.$store.state.isFinalCheck
+        },
+        set(bool){
+          this.$store.commit('setIsFinalCheck', bool)
+        }
+      }
     }
 }
 </script>

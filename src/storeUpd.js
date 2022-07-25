@@ -30,16 +30,30 @@ export const store = new Vuex.Store({
         executeDfoPts: '',
         roadInfoUpdate:[],
         roadGeometry: [],
-        assetCoverage: 0,
+        assetCoverage: [true,null],
         cntyEndingMiles: 0,
         stepNumber: 1,
         denyFeatClick: null,
         activeLoader: null,
         dfoReturn: 0,
-        isDfoReturn: false
+        isDfoReturn: false,
+        isFinalCheck: false,
+        isLoggedOut: false,
+        isUndoDisable: true,
+        isRedoDisable: true
+
 
     },
     getters:{
+        getIsUndoDisable(state){
+            return state.isUndoDisable
+        },
+        getIsLoggedOut(state){
+            return state.isLoggedOut
+        },
+        getIsFinalCheck(state){
+            return state.isFinalCheck
+        },
         getIsDfoReturn(state){
             return state.isDfoReturn
         },
@@ -139,6 +153,18 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsUndoDisable(state, boolIsUndo){
+            state.isUndoDisable = boolIsUndo
+        },
+        setIsRedoDisable(state, boolIsRedo){
+            state.isRedoDisable = boolIsRedo
+        },
+        setIsLoggedOut(state, boolLoggedOut){
+            state.isLoggedOut = boolLoggedOut
+        },
+        setIsFinalCheck(state,finalCheckBool){
+            state.isFinalCheck = finalCheckBool
+        },
         setIsDfoReturn(state, boolDfoReturn){
             state.isDfoReturn = boolDfoReturn
         },
@@ -176,6 +202,7 @@ export const store = new Vuex.Store({
             state.roadGeometry = geom
         },
         setAssetCoverage(state, assetDfos){
+            console.log(assetDfos)
             let sumArr = []
             assetDfos.forEach(function(x){
                 sumArr.push(x[0]+x[1])
@@ -203,14 +230,18 @@ export const store = new Vuex.Store({
                             else if((assetDfos[i][1] < assetDfos[i+1][0])){
                                 state.assetCoverage = [false, 'gap', assetDfos[i][1], assetDfos[i+1][0]]
                             }
+                            else{
+                                state.assetCoverage = [false, 'short', assetDfos[0][1], Number(currentLength.toFixed(3))]
+                            }
                         }
                         return;
                     }
-                    else if(assetDfos[0][1] > Number(currentLength.toFixed(3))){
-                        state.assetCoverage = [false, 'long', assetDfos[0][1], Number(currentLength.toFixed(3))]
-                        return;
-                    }
-                    else if(assetDfos[0][1] < Number(currentLength.toFixed(3))){
+                    // else if(assetDfos[0][1] === Number(currentLength.toFixed(3))){
+                    //     console.log(assetDfos[0][1] === Number(currentLength.toFixed(3)))
+                    //     state.assetCoverage = [false, 'long', assetDfos[0][1], Number(currentLength.toFixed(3))]
+                    //     return;
+                    // }
+                    else if((assetDfos[0][1] < Number(currentLength.toFixed(3)))){
                         state.assetCoverage = [false, 'short', assetDfos[0][1], Number(currentLength.toFixed(3))]
                         return;
                     }
@@ -245,14 +276,26 @@ export const store = new Vuex.Store({
             state.username = userName
         },
         setDeltaDis(state, newLen){
-            console.log(newLen)
+            console.log(newLen, state.deltaDistance)
             if(newLen[1] === "Add"){
+                console.log(newLen, state.deltaDistance)
                 state.deltaDistance += newLen[0]
+                console.log(state.deltaDistance)
+                return;
             }
-            else if(newLen[1] === 'Delete'){
+            else if(newLen[1] === "Delete"){
+                console.log(state.deltaDistance)
                 state.deltaDistance -= newLen[0]
+                console.log(state.deltaDistance)
+                return;
+            }
+            else if(newLen[1] === "Edit"){
+                state.deltaDistance -= newLen[0]
+                return;
             }
             else{
+                console.log('is this starting??', state.oldLength, newLen[0])
+
                 if(state.oldLength === 0){
                     return;
                 }
@@ -270,8 +313,8 @@ export const store = new Vuex.Store({
                     mileage = 0
                 }
                 state.deltaDistance += mileage
+                return;
             }
-
         },
         setOldLength(state, oldLen){
             state.oldLength = oldLen
@@ -288,8 +331,9 @@ export const store = new Vuex.Store({
         setCount(state, count){
             state.count = count
         },
-        setCntyNmbr(state, cntyNmbr){
-            state.cntyNmbr = cntyNmbr
+        setCntyNmbr(state, ctyNmbr){
+            console.log(ctyNmbr)
+            state.cntyNmbr = ctyNmbr
         },
         setCntyMiles(state, cntyMiles){
             state.cntyMiles = cntyMiles

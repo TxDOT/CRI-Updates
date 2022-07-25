@@ -1,7 +1,7 @@
 <template>
     <div id="dfoBox">
         <v-card outlined height="55" tile style="border-color: #15648C;">
-            <v-card-text>Miles: {{Number(returnDFOValue.toFixed(3))}}</v-card-text>
+            <v-card-text>Miles: {{dfo.toFixed(3)}}</v-card-text>
         </v-card>
     </div>
 </template>
@@ -14,14 +14,16 @@ export default{
             dfo: 0
         }
     },
-    // watch:{
-    //     returnDFOValue:{
-    //         handler: function(){
-
-    //         },
-    //         immediate: true
-    //     }
-    // },
+    watch:{
+        returnDFOValue:{
+            handler: function(){
+                if(this.returnDFOValue){
+                    this.dfo = Number(this.returnDFOValue)
+                }
+            },
+            immediate: true
+        }
+    },
     computed:{
         returnDFOValue:{
             get(){

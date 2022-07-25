@@ -9,7 +9,7 @@
     <editExistingRd/>
     <denyClickFeat v-if="denyClick === true"/>
     <v-progress-circular indeterminate color="primary" style="top:400px;" v-if="loading===true"></v-progress-circular>
-    <dfoBox v-if="getDfoBool"/>
+    <dfoBox v-if="isDfoRead===true"/>
   </div>
 </template>
 
@@ -35,7 +35,16 @@ export default {
         denyClick: false,
         loading: false,
         success: true,
+        isDfoRead: false,
       }
+    },
+    beforeRouteLeave(to, from, next){
+      if(this.setLogOut){
+        next()
+        return;
+      }
+      console.log(to, from)
+      next(false)
     },
     mounted(){
       hightlightFeat()      
@@ -56,6 +65,12 @@ export default {
       receiveLoadStatus:{
         handler: function(){
           this.loading = this.receiveLoadStatus
+        },
+        immediate: true,
+      },
+      getDfoBool:{
+        handler: function(){
+          this.isDfoRead = this.getDfoBool
         },
         immediate: true,
       },
@@ -118,6 +133,15 @@ export default {
         },
         set(open){
           this.$store.commit('setStepperClose', open)
+        }
+      },
+      setLogOut:{
+        get(){
+          console.log(this.$store.state.isLoggedOut)
+          return this.$store.state.isLoggedOut
+        },
+        set(bool){
+          this.$store.commit('setIsLoggedOut', bool)
         }
       },
     }

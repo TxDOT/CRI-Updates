@@ -118,8 +118,8 @@
           <v-card-text style="position: relative; left:1px; text-align: left;" >This road is <em style="color:white" :style="{backgroundColor:`${assetColorTable[item.SRFC_TYPE]}`}">{{item.SRFC_TYPE}}</em> between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
           <v-btn plain color="#15648C" style="left:270px; bottom: 63px;" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
           <small style="color:#15648C; left:222px; bottom:33px; position: relative;">EDIT</small>
-          <v-btn plain style="left:230px; bottom:63px;" @click="deleteSurface(index)"><v-icon color="red" >mdi-delete</v-icon></v-btn>
-          <small style="color:red; left:175px; bottom:33px; position: relative;">DELETE</small>
+          <v-btn plain style="left:230px; bottom:63px;" @click="deleteSurface(index); updateMileInfo();updateGraphic();cancelDfoLocation();" :disabled="mileInfo.length === 1"><v-icon color="red" >mdi-delete</v-icon></v-btn>
+          <small style="color:red; left:175px; bottom:33px; position: relative;" :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">DELETE</small>
         </v-row>
         <v-spacer></v-spacer>
       </v-col>
@@ -127,7 +127,7 @@
       <!-- <v-btn depressed plain class="nextAssetBtns" @click="isAssetEnd = false; isAssetStart = false; isAssetFinished=true; isAssetType = false; nextStep(1)"> 
         Cancel
       </v-btn> -->
-      <v-btn outlined class="nextAssetBtns" tile @click="nextStep(5); initLoadAsset('surface'); cancelDfoLocation()" color="#15648C" :disabled="!setAssetCover[0]"> 
+      <v-btn outlined class="nextAssetBtns" tile @click="nextStep(5); initLoadAsset('numLane'); cancelDfoLocation()" color="#15648C" :disabled="!setAssetCover[0]"> 
         <u>Continue</u>
       </v-btn>
     </v-card>
@@ -136,7 +136,7 @@
 
 <script>
 
-import {mouseHoverDfoDisplay,getGraphic, getSelectedDFO, applyMToAsset, stopEditingPoint, initLoadAssetGraphic} from '../editFunc'
+import {mouseHoverDfoDisplay, getSelectedDFO, applyMToAsset, stopEditingPoint, initLoadAssetGraphic} from '../editFunc'
 import {criConstants} from '../../../common/cri_constants'
 import {gLayer} from '../map'
 import assetAlert from '../stepperContent/assetAlert.vue'
@@ -379,12 +379,12 @@ export default {
             this.mileInfo.length = 0
             this.addRoadSurface()
           }
-          let countG = await getGraphic()
-            this.feature = false;
-            this.graphic = true;
-            this.graphicObj = countG
+          //let countG = await getGraphic()
+          //this.feature = false;
+          //this.graphic = true;
+          //this.graphicObj = countG
             //this.numLane = roadInfo.getLan
-            this.stepperClose = true;
+          //this.stepperClose = true;
             //this.rdbdSurf
         }, 
         immediate: true,

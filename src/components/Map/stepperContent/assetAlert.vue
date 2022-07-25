@@ -11,7 +11,8 @@
             </template>
             <span>This is a test</span>
           </v-tooltip> -->
-            <p style="text-align: left;" v-if="shortLong === 'short' || shortLong==='long'">The provided assets is {{shortLong}}, Asset ends at {{dfoValue}}, but ending mile for road is {{lineEndValue}}.</p>
+            <p style="text-align: left;" v-if="shortLong === 'short'">The provided assets is {{shortLong}}, Asset ends at {{dfoValue}}, but ending mile for road is {{lineEndValue}}.</p>
+            <p style="text-align: left;" v-if="shortLong==='long'">You have an asset covering a portion of your road to the end <u>{{dfoValue}}</u>, but you're missing additional assets.</p>
             <p style="text-align: left;" v-if="shortLong === 'gap' || shortLong === 'overlap'"> An {{shortLong}} has been detected. Refer to asset with ending value of <u>{{dfoValue}}</u></p>
             <v-tooltip bottom color="error" left nudge-right="120" nudge-top="50" max-width="130">
               <template v-slot:activator="{ on, attrs }">
