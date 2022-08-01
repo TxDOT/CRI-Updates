@@ -1,9 +1,9 @@
 <template>
     <div>
-        <v-alert type="success" v-if="sendAssetCoverage" height="44" dense outlined>
+        <v-alert type="success" v-if="isAssetCoverage" height="44" dense outlined>
             This asset covers the full length of the road
         </v-alert>
-        <v-alert type="error" color="#E64545" v-if="!sendAssetCoverage" height="50" dense outlined>
+        <v-alert type="error" color="#E64545" v-if="!isAssetCoverage" height="50" dense outlined>
         
           <!-- <v-tooltip top>
             <template v-slot: activator="{on, attr}">
@@ -11,10 +11,12 @@
             </template>
             <span>This is a test</span>
           </v-tooltip> -->
-            The provided assets are either too short or too long for the road.
+            <p style="text-align: left;" v-if="shortLong === 'short'">The provided assets is {{shortLong}}, Asset ends at {{dfoValue}}, but ending mile for road is {{lineEndValue}}.</p>
+            <p style="text-align: left;" v-if="shortLong==='long'">You have an asset covering a portion of your road to the end <u>{{dfoValue}}</u>, but you're missing additional assets.</p>
+            <p style="text-align: left;" v-if="shortLong === 'gap' || shortLong === 'overlap'"> An {{shortLong}} has been detected. Refer to asset with ending value of <u>{{dfoValue}}</u></p>
             <v-tooltip bottom color="error" left nudge-right="120" nudge-top="50" max-width="130">
               <template v-slot:activator="{ on, attrs }">
-                <v-icon v-bind="attrs" v-on="on" right style="poistion: absolute; left:132px; bottom: 31px;">mdi-help-circle</v-icon>
+                <v-icon v-bind="attrs" v-on="on" right style="poistion: absolute; left:158px; bottom: 65px;">mdi-help-circle</v-icon>
               </template>
               <span>Check Assest are full length. If you modified the geometry of the road, please review the assets.</span>
             </v-tooltip>
@@ -29,13 +31,32 @@ export default {
     name: 'assetAlert',
     data(){
       return{
-
+        isAssetCoverage: null,
+        shortLong: '',
+        gapOverlap: '',
+        dfoValue: 0,
+        lineEndValue: 0
       }
+    },
+    methods:{
+      reset(){
+        this.isAssetCoverage = false,
+        this.shortLong = '',
+        this.gapOverlap = '',
+        this.dfoValue = 0,
+        this.lineEndValue = 0
+      },
     },
     watch:{
       sendAssetCoverage:{
         handler: function(){
-            console.log(this.sendAssetCoverage)
+          if(this.sendAssetCoverage){
+          this.reset();
+          this.isAssetCoverage = this.sendAssetCoverage[0]
+          this.shortLong = this.sendAssetCoverage[1]
+          this.dfoValue = this.sendAssetCoverage[2]
+          this.lineEndValue = this.sendAssetCoverage[3]  
+          }
         },
         immediate: true,
       },
@@ -43,7 +64,12 @@ export default {
     computed:{
         sendAssetCoverage:{
           get(){
-            return this.$store.state.assetCoverage
+            let a;
+            if(this.$store.state.assetCoverage){
+              a = this.$store.state.assetCoverage
+            }
+            return a;
+           
           },
           set(assetDfos){
             this.$store.commit('setAssetCoverage',assetDfos)

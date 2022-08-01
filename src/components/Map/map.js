@@ -1,5 +1,5 @@
 import { criConstants } from '../../common/cri_constants';
-//import {getNewLength} from '../Map/editFunc'
+//import {hightlightFeat} from '../Map/editFunc
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 // import Sketch from "@arcgis/core/widgets/Sketch";
@@ -16,7 +16,7 @@ import Viewpoint from "@arcgis/core/Viewpoint";
 import Home from "@arcgis/core/widgets/Home";
 import Zoom from "@arcgis/core/widgets/Zoom";
 import ScaleBar from "@arcgis/core/widgets/ScaleBar";
-//import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
+import CoordinateVM from "@arcgis/core/widgets/CoordinateConversion/CoordinateConversionViewModel";
 import Search from "@arcgis/core/widgets/Search";
 //import {store} from '../../storeUpd'
 // import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
@@ -85,10 +85,9 @@ const scaleBar = new ScaleBar({
     view: view
 });
 
-// const ccWidget = new CoordinateConversion({
-//     view: view
-// });
-
+export const ccWidget = new CoordinateVM({
+    view: view
+});
 // SEARCH WIDGET
 export const search = new Search({
     // UNCOMMENT TO CONSTRUCT SEARCH IN NAVBAR
@@ -282,28 +281,30 @@ export const countyOfficialInfo = new FeatureLayer({
 // });
 
 export const sketch = new SketchViewModel({
-        view: view,
-        layer: gLayer,
-        updateOnGraphicClick: true,
-        defaultCreateOptions:{
-            mode:"click",
-            hasZ: false
-        },
-        defaultUpdateOptions:{
-            tool:"reshape",
-            toggleToolOnClick: false,
-            enableRotation: false,
-            enableScaling: false,
-            multipleSelectionEnabled: false,
-            reshapeOptions:{
-                shapeOperation:"none"
-            }
-        },
-        snappingOptions:{
-            enabled: true,
-            featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true }, { layer: featLayer, enabled: true, featureEnabled: true }]
+    view: view,
+    layer: gLayer,
+    updateOnGraphicClick: true,
+    defaultCreateOptions:{
+        mode:"click",
+        hasZ: false
+    },
+    defaultUpdateOptions:{
+        tool:"reshape",
+        toggleToolOnClick: false,
+        enableRotation: false,
+        enableScaling: false,
+        multipleSelectionEnabled: false,
+        reshapeOptions:{
+            shapeOperation:"none"
         }
+    },
+    snappingOptions:{
+        enabled: true,
+        featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true}, { layer: featLayer, enabled: true, featureEnabled: true }],
+        selfEnabled: false
+    }
 });
+
 
 // export const newSketch = new Sketch({
 //     view: view,
@@ -328,8 +329,7 @@ export const sketchPoint = new SketchViewModel({
     },
     snappingOptions: {
         enabled: true,
-        featureSources: [{ layer: gLayer, enabled: true, featureEnabled: true }],
-        distance: 20
+        featureSources: [{ layer: gLayer, enabled: true, featureEnabled: true },{ layer: rdbdAssetPt, enabled: true, featureEnabled: true }]
     }
 });
 // export const sketchPoint = new Sketch({

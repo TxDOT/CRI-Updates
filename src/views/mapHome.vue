@@ -9,6 +9,7 @@
     <editExistingRd/>
     <denyClickFeat v-if="denyClick === true"/>
     <v-progress-circular indeterminate color="primary" style="top:400px;" v-if="loading===true"></v-progress-circular>
+    <dfoBox v-if="isDfoRead===true"/>
   </div>
 </template>
 
@@ -20,11 +21,12 @@ import navSideBar from '../components/navigationSideBar.vue'
 import stepper from '../components/stepperQuestion.vue'
 import editExistingRd from "../components/Map/editExistingRd.vue"
 import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
-
+import dfoBox from '../components/Map/stepperContent/dfoBoxMap.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
 
+
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox},
     props:["id"],
     name: 'MapHome',
     data(){
@@ -34,10 +36,19 @@ export default {
         denyClick: false,
         loading: false,
         success: true,
+        isDfoRead: false,
       }
     },
+    beforeRouteLeave(to, from, next){
+      if(this.setLogOut){
+        next()
+        return;
+      }
+      console.log(to, from)
+      next(false)
+    },
     mounted(){
-      hightlightFeat()      
+      hightlightFeat('pointer-move')
     },
     watch:{
       denyFeature:{
@@ -58,6 +69,12 @@ export default {
         },
         immediate: true,
       },
+      getDfoBool:{
+        handler: function(){
+          this.isDfoRead = this.getDfoBool
+        },
+        immediate: true,
+      },
       // steppClose:{
       //   handler: function(){
       //     console.log(this.steppClose)
@@ -74,6 +91,14 @@ export default {
       // }
     },
     computed:{
+      getDfoBool:{
+        get(){
+          return this.$store.state.isDfoReturn
+        },
+        set(bool){
+          this.$store.commit('setIsDfoReturn', bool)
+        }
+      },
       deleteClick:{
         get(){
           return this.$store.state.deleteGraphClick
@@ -111,6 +136,15 @@ export default {
           this.$store.commit('setStepperClose', open)
         }
       },
+      setLogOut:{
+        get(){
+          console.log(this.$store.state.isLoggedOut)
+          return this.$store.state.isLoggedOut
+        },
+        set(bool){
+          this.$store.commit('setIsLoggedOut', bool)
+        }
+      },
     }
 }
 </script>
@@ -123,6 +157,13 @@ export default {
   left:10%;
   height: 94%;
   width: 90%;
+}
+#dfoBox{
+  position: absolute;
+  bottom: 10%;
+  left: 25%;
+  z-index: 3;
+  height: 15px;
 }
 /* .MapHome{
   width:100%;

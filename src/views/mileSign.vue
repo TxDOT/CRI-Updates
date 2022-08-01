@@ -20,7 +20,7 @@
             small
             dark
             color="red"
-            @click="dialog=false; goToMap();"><!-- goToMap(); logMeIn() -->
+            @click="dialog=false; logMeIn();"><!-- goToMap(); logMeIn() -->
             Review & Edit
             </v-btn>
             </div>
@@ -208,7 +208,7 @@
 </template>
 
 <script>
-import {countyInfo, autoDrawAsset} from '../components/Map/editFunc'
+import {countyInfo} from '../components/Map/editFunc'
 import {featLayer,txCounties,view, viewPoint} from '../components/Map/map'
 import Query from "@arcgis/core/rest/support/Query"
 import {criConstants} from '../common/cri_constants';
@@ -367,7 +367,7 @@ export default {
            async goToMap(){
             //login();
             this.$router.push('/map')
-            let queryFeat = featLayer.definitionExpression =`CNTY_TYPE_NM = '${this.county}'`
+            featLayer.definitionExpression =`CNTY_TYPE_NM = '${this.county}'`
             txCounties.definitionExpression=`CNTY_NM='${this.county}'`
             //rdbdSrfcGeom.definitionExpression=`CNTY_NM='${this.county}'`
             const query = new Query();
@@ -377,7 +377,6 @@ export default {
             // let countyQuery = txCounties.queryFeatures(query)
             // let returnCountyObj = await countyQuery
             view.goTo(viewPoint);
-            autoDrawAsset(queryFeat)
           },
           sendCountyName(){
             this.sendData = parseInt(this.currentMiles)

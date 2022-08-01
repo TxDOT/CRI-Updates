@@ -15,8 +15,15 @@ export default {
     //components: {Login},
     //props: [roadInfo],
     mounted(){
-      //this.$router.push({name: 'Login'});
-      countyInfo().then(result => {result.response === true ? this.$router.push({ name: 'MileSign', params: { id: result.nbr}}) : this.$router.push('/catchAll(.*)')})
+      //this.$router.push({name: 'Login'});{result.response === true ? this.$router.push({ name: 'MileSign', params: { id: result.nbr}}) : this.$router.push('/catchAll(.*)')}
+      countyInfo().then((result) =>{
+        if(result.response === true){
+          this.$router.push({name:'MileSign', params:{id: result.nbr}})
+        }
+        else{
+          this.$router.push({name:'Login'})
+        }
+      })
       //roadInfo();
     }
 }
@@ -24,7 +31,7 @@ export default {
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

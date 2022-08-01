@@ -27,17 +27,44 @@ export const store = new Vuex.Store({
         deleteGraphClick: null,
         delSketch: null,
         modifyRd: false,
+        infoRd: false,
         executeDfoPts: '',
         roadInfoUpdate:[],
         roadGeometry: [],
-        assetCoverage: null,
+        featureGeometry: [],
+        assetCoverage: [true,null],
         cntyEndingMiles: 0,
         stepNumber: 1,
         denyFeatClick: null,
-        activeLoader: null
+        activeLoader: null,
+        dfoReturn: 0,
+        isDfoReturn: false,
+        isFinalCheck: false,
+        isLoggedOut: false,
+        isUndoDisable: true,
+        isRedoDisable: true,
+        isClearEditBtn: false
 
     },
     getters:{
+        getIsClearEditBtn(state){
+            return state.isClearEditBtn
+        },
+        getIsUndoDisable(state){
+            return state.isUndoDisable
+        },
+        getIsLoggedOut(state){
+            return state.isLoggedOut
+        },
+        getIsFinalCheck(state){
+            return state.isFinalCheck
+        },
+        getIsDfoReturn(state){
+            return state.isDfoReturn
+        },
+        getDfoReturn(state){
+            return state.dfoReturn
+        },
         getDelSketch(state){
             return state.delSketch
         },
@@ -59,6 +86,9 @@ export const store = new Vuex.Store({
         getModifyRd(state){
             return state.modifyRd
         },
+        getInfoRd(state){
+            return state.infoRd
+        },
         getStepNumber(state){
             return state.stepNumber
         },
@@ -67,6 +97,9 @@ export const store = new Vuex.Store({
         },
         getRoadGeom(state){
             return state.roadGeometry
+        },
+        getFeatureGeom(state){
+            return state.featureGeometry
         },
         getAssetCoverage(state){
             return state.assetCoverage
@@ -129,7 +162,29 @@ export const store = new Vuex.Store({
             return state.numLane
         }
     },
-    mutations:{
+    mutations:
+    {
+        setIsClearEditBtn(state, boolClearBtn){
+            state.isClearEditBtn = boolClearBtn
+        },
+        setIsUndoDisable(state, boolIsUndo){
+            state.isUndoDisable = boolIsUndo
+        },
+        setIsRedoDisable(state, boolIsRedo){
+            state.isRedoDisable = boolIsRedo
+        },
+        setIsLoggedOut(state, boolLoggedOut){
+            state.isLoggedOut = boolLoggedOut
+        },
+        setIsFinalCheck(state,finalCheckBool){
+            state.isFinalCheck = finalCheckBool
+        },
+        setIsDfoReturn(state, boolDfoReturn){
+            state.isDfoReturn = boolDfoReturn
+        },
+        setDfoReturn(state, returnDFO){
+            state.dfoReturn = returnDFO
+        },
         setDelSketch(state, sketch){
             state.delSketch = sketch
         },
@@ -151,6 +206,9 @@ export const store = new Vuex.Store({
         setModifyRd(state, modifyBool){
             state.modifyRd = modifyBool
         },
+        setInfoRd(state, infoBool){
+            state.infoRd = infoBool
+        },
         setStepNumber(state, step){
             state.stepNumber = step
         },
@@ -160,17 +218,62 @@ export const store = new Vuex.Store({
         setRoadGeom(state, geom){
             state.roadGeometry = geom
         },
+        setFeatureGeom(state, geom){
+            console.log(geom)
+            state.featureGeometry = geom
+        },
         setAssetCoverage(state, assetDfos){
-            const currentLength = state.roadGeometry.paths[0].at(-1)[2] - state.roadGeometry.paths[0].at(0)[2]
+            console.log(assetDfos)
+            let sumArr = []
+            assetDfos.forEach(function(x){
+                sumArr.push(x[0]+x[1])
+            })
+            let initValue = 0
+            let diff = sumArr.reduce((prevValue, currentValue) => 
+                currentValue - prevValue, initValue
+            )
             
-            console.log(assetDfos, Number(currentLength.toFixed(3)))   
-            if(Number(currentLength.toFixed(3)) === assetDfos){
-                state.assetCoverage = true
+            const currentLength = state.roadGeometry.paths[0].at(-1)[2] - state.roadGeometry.paths[0].at(0)[2]
+            if(Number(currentLength.toFixed(3)) === Number(diff.toFixed(3))){
+                state.assetCoverage = [true, null]
+                return;
             }
             else{
-                state.assetCoverage = false
+                try{
+                    if(assetDfos.length > 1){
+                        for(let i =0; i < assetDfos.length; i++){
+                            if(assetDfos[i+1][1] === undefined){
+                                return;
+                            }
+                            else if((assetDfos[i][1] > assetDfos[i+1][0])){
+                                state.assetCoverage = [false, 'overlap', assetDfos[i][1], assetDfos[i+1][0]]
+                            }
+                            else if((assetDfos[i][1] < assetDfos[i+1][0])){
+                                state.assetCoverage = [false, 'gap', assetDfos[i][1], assetDfos[i+1][0]]
+                            }
+                            else{
+                                state.assetCoverage = [false, 'short', assetDfos[0][1], Number(currentLength.toFixed(3))]
+                            }
+                        }
+                        return;
+                    }
+                    // else if(assetDfos[0][1] === Number(currentLength.toFixed(3))){
+                    //     console.log(assetDfos[0][1] === Number(currentLength.toFixed(3)))
+                    //     state.assetCoverage = [false, 'long', assetDfos[0][1], Number(currentLength.toFixed(3))]
+                    //     return;
+                    // }
+                    else if((assetDfos[0][1] < Number(currentLength.toFixed(3)))){
+                        state.assetCoverage = [false, 'short', assetDfos[0][1], Number(currentLength.toFixed(3))]
+                        return;
+                    }
+                }
+                catch{
+                    console.log('no more assets to review')
+                }
+
+                
             }
-            //state.assetCoverage = assetDfos
+            // state.assetCoverage = assetDfos
         },
         setRoadInfoUpdate(state, roadInfo){
             state.roadInfoUpdate = roadInfo
@@ -194,13 +297,26 @@ export const store = new Vuex.Store({
             state.username = userName
         },
         setDeltaDis(state, newLen){
+            console.log(newLen, state.deltaDistance)
             if(newLen[1] === "Add"){
+                console.log(newLen, state.deltaDistance)
                 state.deltaDistance += newLen[0]
+                console.log(state.deltaDistance)
+                return;
             }
-            else if(newLen[1] === 'Delete'){
+            else if(newLen[1] === "Delete"){
+                console.log(state.deltaDistance)
                 state.deltaDistance -= newLen[0]
+                console.log(state.deltaDistance)
+                return;
+            }
+            else if(newLen[1] === "Edit"){
+                state.deltaDistance -= newLen[0]
+                return;
             }
             else{
+                console.log('is this starting??', state.oldLength, newLen[0])
+
                 if(state.oldLength === 0){
                     return;
                 }
@@ -218,8 +334,8 @@ export const store = new Vuex.Store({
                     mileage = 0
                 }
                 state.deltaDistance += mileage
+                return;
             }
-
         },
         setOldLength(state, oldLen){
             state.oldLength = oldLen
@@ -236,8 +352,9 @@ export const store = new Vuex.Store({
         setCount(state, count){
             state.count = count
         },
-        setCntyNmbr(state, cntyNmbr){
-            state.cntyNmbr = cntyNmbr
+        setCntyNmbr(state, ctyNmbr){
+            console.log(ctyNmbr)
+            state.cntyNmbr = ctyNmbr
         },
         setCntyMiles(state, cntyMiles){
             state.cntyMiles = cntyMiles

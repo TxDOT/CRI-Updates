@@ -10,17 +10,17 @@
             </span>
                 
             <v-card-text>
-                <v-autocomplete persistent-placeholder dense outlined v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;"></v-autocomplete>
+                <v-autocomplete persistent-placeholder dense outlined v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;" @change="updateGraphic()"></v-autocomplete>
             </v-card-text>
                 
-            <v-select persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width: 83px; left: 0%; bottom:180px; position: relative"></v-select>
+            <v-select persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width: 83px; left: 0%; bottom:180px; position: relative" @change="updateGraphic()"></v-select>
             <!-- <v-autocomplete persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width:3-1%; left:0px; top:66px; position: absolute"></v-autocomplete> -->
 
 
-            <v-select persistent-placeholder :value="suffixStreet" dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" style="width:83px; left: 307px; bottom: 246px; position: relative;"></v-select>   
+            <v-select persistent-placeholder dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" item-value="dir" style="width:83px; left: 307px; bottom: 246px; position: relative;" @change="updateGraphic()"></v-select>   
         <!-- </v-row> -->
 
-        <v-btn outlined style="bottom:210px; left:103px;" tile @click="nextStep(3); initLoadAsset('design'); updateGraphic(); error = null" color="#15648C" :disabled="streetName.length < 1"> 
+        <v-btn outlined style="bottom:210px; left:103px;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#15648C" :disabled="streetName.length < 1"> 
           <u>Continue</u>
         </v-btn>
     </v-card>
@@ -46,7 +46,7 @@ export default {
                    'GREEN','GREENS','GROVE','GROVES','HARBOR','HARBORS','HAVEN','HEIGHTS','HIGHWAY','HILL','HILLS','HOLLOW','INLET',
                    'ISLAND','ISLANDS','ISLE','JUNCTION','JUNCTIONS','KEY','KEYS','KNOLL','KNOLLS','LAKE','LAKES','LAND','LANDING',
                    'LANE','LIGHT','LIGHTS','LOAF','LOCK','LOCKS','LODGE','LOOP','MALL','MANOR','MANORS','MEADOW','MEADOWS','MEWS',
-                   'MILL','MILLS','MISSION','MOTORWAY','MOUNT','MOUNTAIN','MOUNTAINS','NECK','NOT APPLICABLE','ORCHARD','OTHER','OVAL',
+                   'MILL','MILLS','MISSION','MOTORWAY','MOUNT','MOUNTAIN','MOUNTAINS','NECK','ORCHARD','OTHER','OVAL',
                    'OVERPASS','PARKS','PARKWAYS','PASS','PASSAGE','PATH','PIKE','PINE','PINES','PLACE','PLAIN','PLAINS','PLAZA','POINT',
                    'POINTS','PORT','PORTS','PRAIRIE','RADIAL','RAMP','RANCH','RAPID','RAPIDS','REST','RIDGE','RIDGES','RIVER',"ROAD",'ROADS',
                    'ROUTE','ROW','RUE','RUN','SHOAL','SHOALS','SHORE','SHORES','SKYWAY','SPRING','SPRINGS','SPURS','SQUARE','SQUARES',
@@ -58,10 +58,11 @@ export default {
         prefixSuffixList: ['', 'E','N','NE','NW','S','SE','SW','W'],
         prefix: false,
         suffix: false,
-        prefixStreet: ' ',
-        suffixStreet: ' ',
+        prefixStreet: '',
+        suffixStreet: '',
         emptyValues:[v => !!v || '',
-                     v => !!v || this.updateError()]
+                     v => !!v || this.updateError()],
+        timeout: ''
       }
     },
     methods:{
@@ -75,10 +76,11 @@ export default {
                     suffix: this.suffixStreet,
                     streetType: this.roadNameType
             }]
-
+            console.log(updateG)
             for(let z=0; z < gLayer.graphics.items.length; z++){
                 if(gLayer.graphics.items[z].attributes.objectid === this.objid){
                     gLayer.graphics.items[z].attributes.roadbedName = JSON.stringify(updateG)
+                    console.log(JSON.parse(gLayer.graphics.items[z].attributes.roadbedName))
                 }
             }
         },
@@ -101,10 +103,18 @@ export default {
     watch:{
         streetName:{
             handler: function(){
-            this.streetName.length > 1
-            this.error = false   
-          }, 
-          immediate: true,
+                if(this.streetName.length > 1){
+                    this.error = false
+                    console.log(this.streetName)
+                    clearTimeout(this.timeout)
+
+                    this.timeout = setTimeout(()=>{
+                        this.updateGraphic()
+                        console.log('Road Name updated')
+                    },1000)
+                }
+            },
+            immediate: true,
         },
         objid:{
           handler: function(){
@@ -119,9 +129,9 @@ export default {
                     for(let i=0; i < this.roadName.length; i++){
                         console.log(this.roadName)
                         this.streetName = this.roadName[i].streetName
-                        this.roadNameType = this.roadName[i].streetType
-                        this.prefixStreet = this.roadName[i].prefix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].prefix}`] : ''
-                        this.suffixStreet = this.roadName[i].suffix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].suffix}`] : ''
+                        this.roadNameType = this.roadName[i].streetType !== 'NOT APPLICABLE' ? this.roadName[i].streetType : ''              
+                        this.prefixStreet = this.roadName[i].prefix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].prefix}`] || this.roadName[i].prefix : ''
+                        this.suffixStreet = this.roadName[i].suffix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].suffix}`] || this.roadName[i].suffix : ''
                         this.prefixStreet ? this.prefix = true : this.prefix = false
                         this.suffixStreet ? this.suffix = true : this.suffix = false
                     }
@@ -160,6 +170,7 @@ export default {
                   return JSON.parse(this.$store.state.roadbedName) 
                 }
                 else{
+                  console.log(this.$store.state.roadbedName)
                   return this.$store.state.roadbedName
                 }
             },

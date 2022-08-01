@@ -1,27 +1,27 @@
 <template>
-    <v-card>
-      <v-navigation-drawer app style="top:59px;">
-      <!-- <alert v-if="display === true"/> -->
-        <!-- <v-alert v-model="display" color="green" @click="display = false">
-          Click on the Map to start Drawing!
-        </v-alert> -->
+    <v-container>
+      <v-navigation-drawer app disable-resize-watcher style="top:59px;">
+        <!-- <alert v-if="display === true"/> -->
+          <!-- <v-alert v-model="display" color="green" @click="display = false">
+            Click on the Map to start Drawing!
+          </v-alert> -->
         <v-card-title id="testTitle">What Do You Want To Do?</v-card-title>
-        <v-list class="outlineColor"> 
-          <v-list-item-group id="tester" v-model="stepIn" color="#15648C" active-class="border">
-            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple>
-            <v-list-item-icon>
-              <v-icon v-text="item.icon"></v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title v-text="item.title"></v-list-item-title>
-            </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-        <mapTools/>
-      <aboutHelp/>
+          <v-list class="outlineColor"> 
+            <v-list-item-group id="tester" v-model="clearEditBtn" color="#15648C" active-class="border">
+              <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple>
+                <v-list-item-icon>
+                  <v-icon v-text="item.icon"></v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.title"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+          <mapTools/>
+          <aboutHelp/>
       </v-navigation-drawer>
-      </v-card>
+    </v-container>
 </template>
 <script>
   import { addRoadbed, modifyRoadbed, stopEditing} from "./Map/editFunc"
@@ -34,15 +34,17 @@
     components: {mapTools, aboutHelp},
     data (){
       return {
-        stepIn:null,
         graphic: false,
         display: false,
         stepDisplay: true,
         edit: false,
         items: [
           { title: 'Add Road', icon: 'mdi-plus', action: ()=>{
+            this.infoRoad = false
+            this.getDfoBool = true
             this.editExistingRd = false;
             this.deleteRoad = false
+            this.clearEditBtn = true
             this.addRoad();
             this.display=true;
             this.addRdBoolean = true
@@ -58,6 +60,7 @@
           },
           { title: 'Edit Road', icon: 'mdi-pencil', action: async ()=>{
             stopEditing();
+            this.clearEditBtn = true
             this.editExistingRd = true;
             this.nextDeleteRoadForm = false
             this.addRdBoolean = false;
@@ -67,6 +70,7 @@
             // },5000)
             await modifyRoadbed('click', 'edit')
             if(this.editExistingRd === true){
+              this.infoRoad = false
               this.receiveLoadStatus = false
               this.modifyRoad = true
               this.openStepper();
@@ -77,7 +81,9 @@
             
           }},
           { title: 'Delete Road', icon: 'mdi-close-circle', action: async ()=>{
+            this.infoRoad = false
             this.modifyRoad = false
+            this.clearEditBtn = true
             stopEditing();
             this.editExistingRd = false
             this.nextDeleteRoadForm = false
@@ -86,11 +92,11 @@
   
             await modifyRoadbed('click', 'delete')
             if(this.deleteRoad === true){
+              this.clearEditBtn = false
               this.receiveLoadStatus = false
               this.editExistingRd = false
               this.deleteRoad = false
               this.nextDeleteRoadForm = true
-              this.stepIn = null
             }
           }},
           // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}
@@ -141,9 +147,11 @@
         handler: function(){
           if(this.steppClose === true){
             document.getElementById('stepper').style.width = '500px'
-          }
-          else if(this.steppClose == false){
-            this.stepIn = null
+          } 
+          if(this.steppClose === false){
+            console.log(this.steppClose)
+            this.clearEditBtn = false
+            
           }
           this.stepDisplay = this.steppClose
           this.graphic = this.steppClose
@@ -158,6 +166,14 @@
       // }
     },
     computed:{
+      getDfoBool:{
+        get(){
+          return this.$store.state.isDfoReturn
+        },
+        set(bool){
+          this.$store.commit('setIsDfoReturn', bool)
+        }
+      },
       modifyRoad:{
         get(){
           return this.$store.state.modifyRd
@@ -213,16 +229,32 @@
         set(load){
           this.$store.commit('setActiveLoader', load)
         }
-      }
+      },
+      clearEditBtn:{
+        get(){
+          return this.$store.state.isClearEditBtn
+        },
+        set(isBool){
+          this.$store.commit('setIsClearEditBtn', isBool)
+        }
+      },
+      infoRoad:{
+        get(){
+          return this.$store.state.infoRd
+        },
+        set(info){
+          console.log(info)
+          this.$store.commit('setInfoRd', info)
+        }
+      },
     }
   }
 </script>
 
 <style scoped>
-
 #testTitle{
   position: relative;
-  background: #15648C;
+  background: #204E70;
   color:white;
   font-size: 17px;
   height: 60px;
@@ -232,13 +264,13 @@
   z-index:1;
 }
 #nav{
-    flex: auto;
-    position: absolute;
-    top:6.6%;
-    height:90%;
-    width:12%;
-    background: white;
-    padding:0px;
+  flex: auto;
+  position: absolute;
+  top:6.6%;
+  height:90%;
+  width:12%;
+  background: white;
+  padding:0px;
 }
 .container{
   padding: 0px;

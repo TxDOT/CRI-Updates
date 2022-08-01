@@ -11,14 +11,22 @@
     min-width="0"
     :height="imageHeight"
     >
-    <v-stepper-header class="stepHead" v-if="!forMod">Add a New Road</v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forMod">Edit an Existing Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a New Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit an Existing Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
     <v-stepper-step
-      editable
+      :editable="setAssetCover[0]"
       step="1"
-      @click="removeAsstPt(); showGIDVerts()"
-      class="font-weight-regular; body-1;">
-      Edit Shape
+      @click="showGIDVerts()"
+      class="font-weight-regular; body-1;" v-if="forInfo">
+      Edit Length: <strong>{{fetchLength}} Miles</strong>
+    </v-stepper-step>
+    <v-stepper-step
+      :editable="setAssetCover[0]"
+      step="1"
+      @click="showGIDVerts()"
+      class="font-weight-regular; body-1;" v-else>
+      Edit Shape: <strong>{{fetchLength}} Miles</strong>
     </v-stepper-step>
 
     <v-stepper-content step="1">
@@ -27,10 +35,11 @@
     </v-stepper-content>
 
     <v-stepper-step 
-      editable
+      :editable="setAssetCover[0] === true || setAssetCover[0] === undefined ? true: setAssetCover[0]"
       step="2"
-      @click="removeAsstPt(); complete();">
-      Road Name
+      @click="complete()"
+      >
+      Road Name: <strong>{{fetchRoadName}}</strong>
     </v-stepper-step>
     
     <v-stepper-content step="2">
@@ -38,29 +47,27 @@
       <roadName/>
     </v-stepper-content>
 
-    <v-stepper-step
-      editable
-      step="3"
-      @click="startExecuteDfoPts(); complete();initLoadAsset('design');"
-      height="10"
-      ><!-- Get asset breaks and draw graphic points -->
-      Road Design
+    <v-stepper-step step="3" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt();complete();initLoadAsset('surface')}} : {}" >
+      Road Surface: <strong>{{fetchRoadSurface}}</strong>
     </v-stepper-step>
-     <v-stepper-content step="3">
+    <v-stepper-content step="3" >
+      <roadSurface/>
+    </v-stepper-content>
+
+    <v-stepper-step
+      :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"
+      step="4"
+      v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('design')}} : {}"
+      ><!-- Get asset breaks and draw graphic points -->
+      Road Design: <strong>{{fetchRoadDesign}}</strong>
+    </v-stepper-step>
+     <v-stepper-content step="4">
          <!-- If graphic is clicked (true), it presents this form -->
       <roadDesign/>
     </v-stepper-content>
 
-    <v-stepper-step step="4" editable @click="removeAsstPt();complete();initLoadAsset('surface')">
-      Road Surface
-    </v-stepper-step>
-    <v-stepper-content step="4">
-      <roadSurface/>
-
-    </v-stepper-content>
-
-    <v-stepper-step step="5" editable @click="removeAsstPt(); complete();initLoadAsset('numLane')">
-      Number of Lanes
+    <v-stepper-step step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('numLane')}} : {}">
+      Number of Lanes: <strong>{{fetchNumLanes}}</strong>
     </v-stepper-step>
     <v-stepper-content step="5">
       <!-- Send Asset/geometry edits to editFunc.js function -->
@@ -68,11 +75,12 @@
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
-      <v-btn-toggle style="top:35px; left:200px; position: relative;">
-        <v-btn small @click="cancel()">Cancel</v-btn>
-        <v-btn small color="#15648C" text @click="saveAttri(); successAlert=true;"><u>Save</u></v-btn>
+      <v-btn-toggle v-if="!forInfo" tile borderless style="top: 45rem; left:18rem; position: absolute;">
+        <v-btn depressed plain :disabled="!setAssetCover[0]" small @click="cancel()">Cancel</v-btn>
+        <v-btn v-if="!forInfo" depressed plain :disabled="!setAssetCover[0]" small color="#15648C" text @click="saveAttri();"><u>Save</u></v-btn>
       </v-btn-toggle>
-      <v-btn small color ="#E64545" text outlined style="top:35px; right: 200px; position: relative;" @click="discardAlertQuest = true" >Discard Sketch</v-btn>
+      <v-btn v-if="!forInfo" plain small tile color ="#E64545" text outlined style="top:45rem; right:20rem; position: absolute;" @click="discardAlertQuest = true">Discard Sketch</v-btn>
+      <v-btn v-else style="top: 45rem; position: absolute;" depressed plain block :disabled="!setAssetCover[0]" @click="cancel()">Cancel</v-btn>
     <!-- </div> -->
     <!-- card used to display discard alert information -->
     <!-- <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
@@ -81,7 +89,17 @@
         <v-btn tile outlined color="#15648C" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
         <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card> -->
+    <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1.5rem; top: 40.5rem">Add An Optional Comment</a>
+      <v-dialog v-model="dialog">
+        <v-card>
+          <v-card-title class="surfaceTitle">
+            <v-card-text style="bottom:28px; position: relative; font-size: 15px; text-align: left;">Comments</v-card-text>
+          </v-card-title>
+          <v-textarea v-model="comment" style="padding-left:10px; padding-right: 10px;"></v-textarea>
+        </v-card>
+      </v-dialog>
   </v-stepper>
+  
   </div>
   <!-- alert used to confirm that the sketch has been removed -->
   <sketchAlert v-if="discardAlert"/>
@@ -95,13 +113,15 @@
       <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card>
   <confirmAlertSuccess v-if="successAlert"/>
-  </v-container>
+  <finalCheck v-if="finalCheck === true"/>
 
+  </v-container>
 </template>
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import {removeAsstPoints, sketchCompete, initLoadAssetGraphic, showVerticies, removeGraphic} from '../components/Map/editFunc'
+import {geomToMiles,removeAsstPoints, stopEditingPoint, sketchCompete,initLoadAssetGraphic, showVerticies, removeGraphic, saveToEditsLayer} from '../components/Map/editFunc'
+//import {initGraphicCheck} from '../components/Map/crud'
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
@@ -110,13 +130,14 @@ import editVerts from './Map/stepperContent/EditVerts.vue'
 import { gLayer } from './Map/map'
 import confirmAlertSuccess from '../components/Map/stepperContent/confirmAlertsSUCCESS.vue'
 import sketchAlert from '../components/Map/stepperContent/discardAlert.vue'
+import finalCheck from '../components/Map/stepperContent/saveAssetCheck.vue'
 //import {roadInfo} from '../store'a
 //import Map from '../components/Map/Map.vue'
 
 
 export default {
     name:"stepper",
-    components:{roadName,roadDesign, roadSurface, numOfLane, editVerts, confirmAlertSuccess, sketchAlert},
+    components:{roadName,roadDesign, roadSurface, numOfLane, editVerts, confirmAlertSuccess, sketchAlert, finalCheck},
     props:{
       received: Boolean
     },
@@ -135,11 +156,12 @@ export default {
         //prefixSuffixList: ['East','North','Northeast','Northwest','Not Applicable','South','Southeast','Southwest','West'],
         beginDFO:null,
         endDFO:null,
-        forMod: true,
+        forMod: false,
         forEdit: true,
         graphicObj: {},
         graphic: false,
         feature: false,
+        forInfo: false,
         clickCountF:0,
         cursor: false,
         bdfo: false,
@@ -149,7 +171,13 @@ export default {
         successAlert: false,
         discardAlertQuest: false,
         discardAlert: false,
-
+        dialog: false,
+        comment:'',
+        fetchLength:0,
+        fetchRoadName: null,
+        fetchRoadSurface: null,
+        fetchRoadDesign: null,
+        fetchNumLanes: null,
         //objectid: 0,
         // newDfo:0,
         //working on form validation
@@ -191,6 +219,12 @@ export default {
         },
         immediate: true,
       },
+      infoRoad:{
+        handler: function(){
+          this.forInfo = this.infoRoad
+        },
+        immediate: true,
+      },
       editExistingRd:{
         handler: function(){
           this.forEdit = this.editExistingRd
@@ -205,24 +239,67 @@ export default {
         },
         immediate: true,
       },
+      roadGeometry: {
+        handler: function(){
+          console.log(this.roadGeometry)
+          if(this.roadGeometry.length === 0) return
+          // let miles = Number(geometryEngine.geodesicLength(this.roadGeometry, "miles").toFixed(5))
+          let miles = geomToMiles(this.roadGeometry, true, 3)
+          console.log(miles)
+          // let miles = this.roadGeometry
+          this.fetchLength = `${miles}`
+        },
+        immediate: true
+      },
+      roadName: {
+        handler: function(){
+          if(!this.roadName){
+            this.fetchRoadName = 'NAME HAS NOT BEEN DEFINED'
+          }
+          
+          if (this.roadName.length){
+            let prfx = reformatName(this.roadName[0].prefix);
+            let name = reformatName(this.roadName[0].streetName);
+            let sfx =  reformatName(this.roadName[0].suffix);
+            let type = reformatName(this.roadName[0].streetType);
+          
+            this.fetchRoadName = `${prfx} ${name} ${sfx} ${type}`
+          }
+          function reformatName (attr){
+              if (attr === "NOT APPLICABLE" || attr === "OTHER" || attr === null) {
+                return '';
+              }
+              return attr;
+            }
+        },
+      immediate: true
+      },
+      rdbdSurf: {
+        handler: function(){
+          if(!this.rdbdSurf) return
+          let surf = this.rdbdSurf[0].SRFC_TYPE_ID
+          this.fetchRoadSurface = this.rdbdSurf.length > 1 ? "MULTIPLE" : `${surf}`
+        },
+        immediate: true
+      },
+      roadDesign: {
+        handler: function(){
+          if(!this.roadDesign) return
+          let dsgn = this.roadDesign[0].SRFC_TYPE_ID
+          console.log(this.roadDesign)
+          this.fetchRoadDesign = this.roadDesign.length > 1 ? "MULTIPLE" : `${dsgn}`
+        },
+        immediate: true
+      },
+      numLane: {
+        handler: function(){
+          if(!this.numLane) return
+          let lanes = this.numLane[0].SRFC_TYPE_ID
+          this.fetchNumLanes = this.numLane.length > 1 ? "MULTIPLE" : `${lanes}`
+        },
+        immediate: true
+      },
 
-
-      //Interacting with Graphic layer
-      // objectid:{
-      //   handler: async function(){
-      //     let countG = await getGraphic()
-      //     console.log(countG)
-      //     this.feature = false;
-      //     this.graphic = true;
-      //     this.graphicObj = countG
-      //     //this.numLane = roadInfo.getLan
-      //     this.stepperClose = true;
-      //     this.rdbdSurf
-      //     this.roadbedName
-      //     this.roadbedDesign
-      //   }, 
-      //    immediate: true,
-      // }, 
       newDfo(){
         console.log(this.newDfo)
         
@@ -236,6 +313,7 @@ export default {
     },
 
     methods:{
+      
       delGraphic(){
         removeGraphic();
       },
@@ -258,83 +336,15 @@ export default {
       removeAsstPt(){
         removeAsstPoints();
       },
-      // async executeDFOgraph(x,y){
-      //   console.log(x,y)
-      //   // console.log(this.rdbdSurf)
-      //   sketchCompete();
-      //   const dfoAssets = [];
-      //   // if(dfoAssets.length){
-      //   //   dfoAssets.length = 0
-      //   // }
-      //   // console.log(dfoAssets)
-      //   if(x==='point'){
-      //     console.log(this.rdbdSurf)
-      //     for(let b in this.rdbdSurf){
-      //       let srfcType = {SRFC_TYPE_ID: this.rdbdSurf[b].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS, ASSET_LN_END_DFO_MS: this.rdbdSurf[b].ASSET_LN_END_DFO_MS, objectid: this.objectid, edit: false}
-      //       dfoAssets.push(srfcType)
-      //     }
-      //     for(let i in this.mileInfo){
-      //       console.log(this.mileInfo[i])
-      //       let array = {SRFC_TYPE_ID: this.mileInfo[i].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS, ASSET_LN_END_DFO_MS: this.mileInfo[i].ASSET_LN_END_DFO_MS,objectid: this.objectid, edit: this.mileInfo[i].EDIT}
-      //       dfoAssets.push(array)
-      //     }
-      //     this.newDfo = applyMToAsset(dfoAssets)
-      //     //addAssetBreakPts(dfoAssets)
-      //   }
-      //   // if(x==='point' && this.feature===false){
-      //   //   for(let b in this.rdbdSurf){
-      //   //     console.log(this.fRdbdSurf[b])
-      //   //     let srfcType = {srfcType: this.rdbdSurf[b].SRFC_TYPE_ID, AssetBeginDfo: Number(this.rdbdSurf[b].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: Number(this.rdbdSurf[b].ASSET_LN_END_DFO_MS), objectid: this.objectid}
-      //   //     dfoAssets.push(srfcType)
-      //   //   }
-      //   //   for(let i in this.mileInfo){
-      //   //     console.log(this.mileInfo[i])
-      //   //     let array = {srfcType: this.mileInfo[i].SRFC_TYPE_ID, AssetBeginDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), AssetEndDfo: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid, edit: this.mileInfo[i].EDIT}
-      //   //     dfoAssets.push(array)
-      //   //   }
-      //   //   console.log(dfoAssets)
-      //   //   //console.log(applyMToAsset(dfoAssets))
-      //   //   this.newDfo = applyMToAsset(dfoAssets)
-      //   // }
-      //   // else if(x==='line'){
-      //   //   for(let z in this.rdbdSurf){
-      //   //     console.log(this.rdbdSurf[z])
-      //   //     let array = {srfcType: this.rdbdSurf[z].SRFC_TYPE_ID, AssetBeginDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_BEGIN_DFO_MS), AssetEndDfo: parseFloat(this.rdbdSurf[z].ASSET_LN_END_DFO_MS),objectid: this.objectid}
-      //   //     dfoAssets.push(array)
-      //   //   }
-      //   //   addAssetBreakPts(dfoAssets)
-      //   // }
-      //   else if(x==='draw'){
-      //     console.log(y)
-          
-      //     for(let z in this.rdbdSurf){
-      //       if(this.rdbdSurf[z].ASSET_LN_END_DFO_MS === y){
-      //         let array = {SRFC_TYPE_ID: this.rdbdSurf[z].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: parseFloat(this.rdbdSurf[z].ASSET_LN_BEGIN_DFO_MS), ASSET_LN_END_DFO_MS: parseFloat(this.rdbdSurf[z].ASSET_LN_END_DFO_MS),objectid: this.objectid}
-      //         dfoAssets.push(array)
-      //       }
-      //     }
-      //      for(let i in this.mileInfo){
-      //        if(Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)) === Number(y)){
-      //           console.log(this.mileInfo[i])
-      //           let array = {SRFC_TYPE_ID: this.mileInfo[i].SRFC_TYPE_ID, ASSET_LN_BEGIN_DFO_MS: Number(parseFloat(this.mileInfo[i].ASSET_LN_BEGIN_DFO_MS)), ASSET_LN_END_DFO_MS: Number(parseFloat(this.mileInfo[i].ASSET_LN_END_DFO_MS)),objectid: this.objectid}
-      //           dfoAssets.push(array)
-      //         }
-      //       }
-      //     console.log(dfoAssets)
-      //     let uptDFO = await updateAsset(dfoAssets)
-      //     console.log(uptDFO)
-      //     this.newDfo = uptDFO
-      //   //   //editAsstObj[0].asset_ln_end_dfo_ms = uptDFO
-      //   //   //editAsstObj[1].asset_ln_begin_dfo_ms = uptDFO
-      //   }
-      // },
       cancel(){
+        stopEditingPoint();
+        sketchCompete();
         document.getElementById("stepper").style.width = '0px'
         this.steppClose = false;
         this.e1 = 1;
-        sketchCompete();
         removeAsstPoints();
-        console.log(gLayer)
+        this.getDfoBool = false;
+        console.log(gLayer, this.getDfoBool)
       },
       //pushes new blank object row into mileInfo asset form
       // addRoadSurface(){
@@ -361,6 +371,15 @@ export default {
       //     // }
       // },
       saveAttri(){
+        let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
+        editGraphic.attributes.comment = this.comment
+        console.log(editGraphic)
+        if(editGraphic.attributes.roadbedName === 'null' || JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
+          this.finalCheck = true
+          return;
+        }
+        this.successAlert=true;
+        saveToEditsLayer()
         // for(let z=0; z < gLayer.graphics.items.length; z++){
         //   if(gLayer.graphics.items[z].attributes.objectid === this.objid){
         //     gLayer.graphics.items[z].attributes.roadbedName = this.roadName
@@ -395,15 +414,42 @@ export default {
         //   }
         // }
         //console.log(this.rdbdSurf)
+       
         this.cancel();
         // this.graphicObj.attributes.roadbedName = createObj.rdbdName
         //saveInfo(createObj)
       },
       complete(){
+        stopEditingPoint();
         sketchCompete();
       }
     },
-    computed:{ //Used to work with the vue properties without modifying them
+    computed:{
+      setAssetCover:{
+        get(){
+          console.log(this.$store.state.assetCoverage)
+          return this.$store.state.assetCoverage
+        },
+        set(x){
+          this.$store.commit('setAssetCoverage', x)
+        }
+      },
+      roadGeometry: {
+        get(){
+          return this.$store.state.roadGeometry
+        },
+        set(geom){
+          this.$store.commit('setRoadGeom', geom)
+        }
+      },
+      getDfoBool:{
+        get(){
+          return this.$store.state.isDfoReturn
+        },
+        set(bool){
+          this.$store.commit('setIsDfoReturn', bool)
+        }
+      }, //Used to work with the vue properties without modifying them
       deleteSketch:{
         get(){
           return this.$store.state.delSketch
@@ -416,9 +462,9 @@ export default {
         let resize = {
           xs: () => {return '220px'},
           sm: () => {return '400px'},
-          md: () => {return '500px'},
-          lg: () => {return '655px'},
-          xl: () => {return '820px'}
+          md: () => {return '80vh'},
+          lg: () => {return '83vh'},
+          xl: () => {return '83vh'}
         }
         console.log(this.$vuetify['breakpoint'])
         return resize[`${this.$vuetify['breakpoint'].name}`]()
@@ -436,7 +482,7 @@ export default {
       },
       numLane:{
         get(){
-          return this.$store.state.numLane
+          return JSON.parse(this.$store.state.numLane)
         }
       },
       rdbdSurf:{
@@ -462,7 +508,7 @@ export default {
       },
       roadDesign:{
         get(){
-          return this.$store.state.roadbedDesign
+          return JSON.parse(this.$store.state.roadbedDesign)
         }
       },
       objid:{
@@ -483,6 +529,14 @@ export default {
           return this.$store.state.modifyRd
         }
       },
+      infoRoad:{
+        get(){
+          return this.$store.state.infoRd
+        },
+        set(info){
+          this.$store.commit('setInfoRd', info)
+        }
+      },
       exeDfoPts:{
         get(){
           return this.$store.state.executeDfoPts
@@ -499,6 +553,14 @@ export default {
           this.$store.commit('setEditExisting', edit)
         }
       },
+      finalCheck:{
+        get(){
+          return this.$store.state.isFinalCheck
+        },
+        set(bool){
+          this.$store.commit('setIsFinalCheck', bool)
+        }
+      }
     }
 }
 </script>
@@ -509,8 +571,8 @@ export default {
 
 #stepper{
   position: fixed;
-  top: 65px;
-  left: 260px;
+  top: 5rem;
+  left: 16.5rem;
   padding-bottom: 0%;
   font-size: 16px;
   width:0%;
@@ -562,15 +624,22 @@ export default {
     top: 400px;
 }
 .confirmationTitle{
-    background: #15648C;
-    color:white;
-    font-size: 16px;
-    height: 40px;
-    padding-left: 25px;
-    padding-top: 1%;
-    text-align: justify;
-    top: 10%;
-    width: 100%;
-    left: 100%;
+  background: #15648C;
+  color:white;
+  font-size: 16px;
+  height: 40px;
+  padding-left: 25px;
+  padding-top: 1%;
+  text-align: justify;
+  top: 10%;
+  width: 100%;
+  left: 100%;
+}
+.surfaceTitle{
+  background-color: #204E70;
+  color: white;
+  height:30px;
+  width: 100%;
+  font-size: 25px; 
 }
 </style>

@@ -2,7 +2,7 @@ export const criConstants = {
   
     portalUrl: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_SurfType_Geom_view/FeatureServer/0",
     refernceLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS_dev/FeatureServer/0', //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/0",
-    editsLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS_dev/FeatureServer',//"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Edits_view/FeatureServer/0",
+    editsLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS_dev/FeatureServer/0',//"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Edits_view/FeatureServer/0",
     assetLyrRdbSrf: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS_dev/FeatureServer/3',//"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/1",
     assetLyrRdbDsgn: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS_dev/FeatureServer/2',//"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/2",
     //assetLyrRdbName: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/3",
@@ -13,7 +13,9 @@ export const criConstants = {
     basemap: "topo-vector",
     zoomLevel: 2,
     roadSurfaceMouseType: "cursor:crosshair",
-
+    postAddFeat: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_EDITS_dev/FeatureServer/0/addFeatures?f=json',
+    postUpdateFeat:'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_EDITS_dev/FeatureServer/0/updateFeatures?f=json',
+    postDeleteFeat:'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_EDITS_dev/FeatureServer/0/addFeatures?f=json',
     fmeurl: 'http://api.fmeserver.com/js/v3/FMEServer.js',
     webhookUrl: "https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_DUSA2Email.fmw?params=",
     headerName: "Authorization",
@@ -41,9 +43,9 @@ export const criConstants = {
       '6': "#F0DC82"
     },
     
-    editTypeColor:{
-      'add':[[141, 182, 0], 'ADD'],
-      'edit': [[0, 0, 255], 'EDIT'],
-      'delete': [[227,38,54], 'DELETE']
+    editType:{
+      'add':[[141, 182, 0], 'ADD', 1],
+      'edit': [[0, 0, 255], 'EDIT', 5],
+      'delete': [[227,38,54], 'DELETE', 4]
     }
 }

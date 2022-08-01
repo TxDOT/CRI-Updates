@@ -1,14 +1,13 @@
 <template>
-    <v-footer app style="left: 243px;width: 100%;height:35px; text-align: center;background: rgba(192,192,192,1)" >
+    <v-footer app style="left: 233px; width: 100%; height:3.5vh; text-align: center;background: rgba(192,192,192,1)" >
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
-          <div  id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; &nbsp;&nbsp; User Name: <b>Tester_TXDOT</b> 
-            &nbsp; &nbsp; &nbsp;Starting Mileage: <b style="color:blue">{{countyTotal}}</b>&nbsp;&nbsp;&nbsp; 
-            Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'green'} : {'color': 'red'}, rdbdDeltaDist ===0? {'color':'black'} : null]">{{Number(rdbdDeltaDist.toFixed(4))}}</b>&nbsp;&nbsp;&nbsp; 
+          v1.4.2
+          <div id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; | User Name: <b>{{userName}}</b>
+            <div style="position:absolute; left:5%; top: .1vh; font-size: .7vw;">{{x}}, {{y}}</div>
+            | &nbsp;Starting Mileage: <b style="color:blue">{{countyTotal}}</b>| &nbsp; 
+            Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'green'} : {'color': 'red'}, Number(rdbdDeltaDist.toFixed(3)) ===0? {'color':'black'} : null]">{{Number(rdbdDeltaDist.toFixed(3))}}</b>&nbsp;&nbsp;&nbsp; 
             Updated Mileage: <b style="color:black">{{Number(countyTots.toFixed(4))}}</b>
-          </div>
-          <div style="position: absolute; font-size: 10px; bottom: 10%;">
-            Build v1.4.1
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>
@@ -20,7 +19,10 @@
 
 <script>
 import {updateLength} from '../Map/editFunc'
-import {jumpToGoogle} from '../Map/mapNav';
+import {jumpToGoogle} from '../Map/mapNav'
+import { ccWidget } from './map'
+
+import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
 // import {roadInfo} from '../../store'
 // import{addRoad} from '../Map/Map.vue'
 //import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
@@ -30,8 +32,19 @@ export default {
     return {
       previousTotal: 0,
       modifyLength: 0,
-      modifyLine: 0
+      modifyLine: 0,
+      x:0,
+      y:0
     }
+  },
+  mounted(){
+    ccWidget.watch('currentLocation', (before,after)=>{
+      if(before && after){
+        let latLong = webMercatorUtils.xyToLngLat(after.x, after.y)
+        this.x = Number(latLong[0].toFixed(6))
+        this.y = Number(latLong[1].toFixed(6))
+      }
+    })
   },
   methods: {
     google() {
@@ -48,14 +61,15 @@ export default {
     },
     countyTots:{
       handler: function(){
-        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist)
+        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist.toFixed(3))
         // \this.modifyLength += this.rdbdDeltaDist
       },
       immediate: true, 
     },
     rdbdDeltaDist:{
       handler: function(){
-        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist)
+        console.log(Number(this.countyTotal), Number(this.rdbdDeltaDist))
+        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist.toFixed(3))
         // \this.modifyLength += this.rdbdDeltaDist
       },
       immediate: true, 
@@ -110,15 +124,24 @@ export default {
 </script>
 
 <style scoped>
+
   #googleBtn {
     bottom: 20px;
     left: 600px;
   }
   #footerCard{
-    top: 0%;
+    position: relative;
+    top: .1vw;
     width:90%;
     height:100%;
+    left: 5%;
+    font-size: .8vw;
   }
+  /* @media screen and (max-width: 1444px){
+    #footerCard {
+      font-size: 1vw;
+    }
+  }  */
   /* .f1-text{
     position: relative;
     top:10%;
