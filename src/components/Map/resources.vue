@@ -1,5 +1,5 @@
 <template>
-    <v-card :style="imageHeight">
+    <v-card style="top:8vh">
         <!-- <v-card-title id="mapTools">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resources</v-card-title> -->
         <v-list class="outlineColor" max-width="99%">
           <v-list-item-group v-model="stepIn" color="#15648C">
@@ -29,25 +29,15 @@
         drawer: true,
         items: [
           { title: 'Advanced', icon: 'mdi-cog'},
-          { title: 'Criteria', icon: 'mdi-clipboard-text'},
+          { title: 'Criteria', icon: 'mdi-clipboard-text', action: (()=>{
+              window.open('https://www.txdot.gov/apps/statewide_mapping/dusa/resources/COUNTY_ROAD_CRITERIA.pdf', '_blank')
+            })
+          },
           { title: 'Help & Training', icon: 'mdi-help-circle'},
           // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}
         ],
       }
     },
-    computed:{
-      imageHeight(){
-        let resize = {
-          xs: () => {return 'top:20%'},
-          sm: () => {return 'top:20%'},
-          md: () => {return 'top:20%'},
-          lg: () => {return 'top:16%'},
-          xl: () => {return 'top:20%'}
-        }
-        console.log(this.$vuetify['breakpoint'].name, resize[`${this.$vuetify['breakpoint'].name}`]())
-        return resize[`${this.$vuetify['breakpoint'].name}`]()
-      },
-    }
      
   }
 </script>

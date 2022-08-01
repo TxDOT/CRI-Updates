@@ -15,45 +15,41 @@ export function queryEditsLayer(){
 //if not already in editsLayer then it will be added; else it will be updated
 export function initGraphicCheck(editId, isRemove){
     let returnQuery = queryEditsLayer();
-    console.log(editId,typeof editId.attributes.roadbedNameJSON === 'string')
-    let rdName = JSON.parse(editId.attributes.roadbedName)
-    console.log(rdName)
-    if(rdName === null) return;
-
+    console.log(editId)
     //create and map to new graphic available assets about road
     let lineObj = new Graphic({
         attributes:
         {
-        OBJECTID: store.getters.getObjectid,
-        OBJECTID_1: null,
-        EDIT_ID: null,
-        TASK_ID: null,
-        EDIT_TYPE_ID: criConstants.editType[`${editId.attributes.editType}`.toLowerCase()][2],
-        EDIT_STATUS_ID: null,
-        GID: editId.attributes.GID,
-        RDWAY_STAT_TYPE_ID: null,
-        RTE_DEFN_LN_NM: null,
-        RTE_ID: null,	
-        RTE_DEF_TYPE_ID:null,	
-        RTE_PRFX_TYPE_ID: 1,	
-        RDBD_TYPE_ID: 5,	
-        RTE_NBR: null,	
-        RTE_SFX_TYPE_ID: null,	
-        CRDNL_DRCT_TYPE_ID:null,	
-        CNTY_TYPE_NBR: store.getters.getCntyNmbr,	
-        RTE_DEFN_LN_BEGIN_DFO_MS: editId.geometry.paths[0][0][2],	
-        RTE_DEFN_LN_END_DFO_MS: editId.geometry.paths[0].at(-1)[2],	
-        RTE_DEFN_LN_MS:null,	
-        ASSET_ST_DEFN_NM: `${rdName[0].prefix} ${rdName[0].streetName} ${rdName[0].suffix} ${rdName[0].streetType}`,	
-        ASSET_SRFC_TYPE_DSCR: editId.attributes.roadbedSurface,	
-        ASSET_NBR_THRU_LANE_CNT: editId.attributes.numLane,	
-        ASSET_RDWAY_DSGN_TYPE_DSCR: editId.attributes.roadbedDesign,	
-        RTE_DEFN_LN_CREATE_USER_NM: store.getters.getUserName,	
-        RTE_DEFN_LN_CREATE_DT: editId.attributes.createDt,
-        RTE_DEFN_LN_EDIT_USER_NM: null,	
-        RTE_DEFN_LN_EDIT_DT: null,	
-        PREV_TASK_ID: null,	
-        EDIT_NOTES: null
+            OBJECTID: store.getters.getObjectid,
+            OBJECTID_1: null,
+            EDIT_ID: null,
+            TASK_ID: null,
+            EDIT_TYPE_ID: criConstants.editType[`${editId.attributes.editType}`.toLowerCase()][2],
+            EDIT_STATUS_ID: null,
+            GID: editId.attributes.GID,
+            RDWAY_STAT_TYPE_ID: null,
+            RTE_DEFN_LN_NM: null,
+            RTE_ID: null,	
+            RTE_DEF_TYPE_ID:null,	
+            RTE_PRFX_TYPE_ID: 1,	
+            RDBD_TYPE_ID: 5,	
+            RTE_NBR: null,	
+            RTE_SFX_TYPE_ID: null,	
+            CRDNL_DRCT_TYPE_ID:null,	
+            CNTY_TYPE_NBR: store.getters.getCntyNmbr,	
+            RTE_DEFN_LN_BEGIN_DFO_MS: editId.geometry.paths[0][0][2],	
+            RTE_DEFN_LN_END_DFO_MS: editId.geometry.paths[0].at(-1)[2],	
+            RTE_DEFN_LN_MS:null,	
+            ASSET_ST_DEFN_NM: editId.attributes.roadbedName,	
+            ASSET_SRFC_TYPE_DSCR: editId.attributes.roadbedSurface,	
+            ASSET_NBR_THRU_LANE_CNT: editId.attributes.numLane,	
+            ASSET_RDWAY_DSGN_TYPE_DSCR: editId.attributes.roadbedDesign,	
+            RTE_DEFN_LN_CREATE_USER_NM: store.getters.getUserName,	
+            RTE_DEFN_LN_CREATE_DT: editId.attributes.createDt,
+            RTE_DEFN_LN_EDIT_USER_NM: null,	
+            RTE_DEFN_LN_EDIT_DT: null,	
+            PREV_TASK_ID: null,	
+            EDIT_NOTES: editId.attributes.comment
         },
         geometry: editId.geometry
     })

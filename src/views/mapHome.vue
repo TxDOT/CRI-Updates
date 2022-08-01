@@ -24,6 +24,7 @@ import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
 import dfoBox from '../components/Map/stepperContent/dfoBoxMap.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
 
+
 export default {
     components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox},
     props:["id"],
@@ -47,7 +48,7 @@ export default {
       next(false)
     },
     mounted(){
-      hightlightFeat()      
+      hightlightFeat('pointer-move')
     },
     watch:{
       denyFeature:{

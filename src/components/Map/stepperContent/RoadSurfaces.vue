@@ -363,10 +363,9 @@ export default {
             this.mileInfo.length = 0
             this.addRoadSurface()
           }
-          let countG = await getGraphic()
+          getGraphic()
           this.feature = false;
           this.graphic = true;
-          this.graphicObj = countG
           //this.numLane = roadInfo.getLan
           this.stepperClose = true;
           //this.rdbdSurf

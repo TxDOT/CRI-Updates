@@ -27,9 +27,11 @@ export const store = new Vuex.Store({
         deleteGraphClick: null,
         delSketch: null,
         modifyRd: false,
+        infoRd: false,
         executeDfoPts: '',
         roadInfoUpdate:[],
         roadGeometry: [],
+        featureGeometry: [],
         assetCoverage: [true,null],
         cntyEndingMiles: 0,
         stepNumber: 1,
@@ -40,11 +42,14 @@ export const store = new Vuex.Store({
         isFinalCheck: false,
         isLoggedOut: false,
         isUndoDisable: true,
-        isRedoDisable: true
-
+        isRedoDisable: true,
+        isClearEditBtn: false
 
     },
     getters:{
+        getIsClearEditBtn(state){
+            return state.isClearEditBtn
+        },
         getIsUndoDisable(state){
             return state.isUndoDisable
         },
@@ -81,6 +86,9 @@ export const store = new Vuex.Store({
         getModifyRd(state){
             return state.modifyRd
         },
+        getInfoRd(state){
+            return state.infoRd
+        },
         getStepNumber(state){
             return state.stepNumber
         },
@@ -89,6 +97,9 @@ export const store = new Vuex.Store({
         },
         getRoadGeom(state){
             return state.roadGeometry
+        },
+        getFeatureGeom(state){
+            return state.featureGeometry
         },
         getAssetCoverage(state){
             return state.assetCoverage
@@ -153,6 +164,9 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsClearEditBtn(state, boolClearBtn){
+            state.isClearEditBtn = boolClearBtn
+        },
         setIsUndoDisable(state, boolIsUndo){
             state.isUndoDisable = boolIsUndo
         },
@@ -192,6 +206,9 @@ export const store = new Vuex.Store({
         setModifyRd(state, modifyBool){
             state.modifyRd = modifyBool
         },
+        setInfoRd(state, infoBool){
+            state.infoRd = infoBool
+        },
         setStepNumber(state, step){
             state.stepNumber = step
         },
@@ -200,6 +217,10 @@ export const store = new Vuex.Store({
         },
         setRoadGeom(state, geom){
             state.roadGeometry = geom
+        },
+        setFeatureGeom(state, geom){
+            console.log(geom)
+            state.featureGeometry = geom
         },
         setAssetCoverage(state, assetDfos){
             console.log(assetDfos)

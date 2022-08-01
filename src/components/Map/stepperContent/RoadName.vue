@@ -129,9 +129,9 @@ export default {
                     for(let i=0; i < this.roadName.length; i++){
                         console.log(this.roadName)
                         this.streetName = this.roadName[i].streetName
-                        this.roadNameType = this.roadName[i].streetType !== 'NOT APPLICABLE' ? this.roadName[i].streetType : ''
-                        this.prefixStreet = this.roadName[i].prefix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].prefix}`] : ''
-                        this.suffixStreet = this.roadName[i].suffix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].suffix}`] : ''
+                        this.roadNameType = this.roadName[i].streetType !== 'NOT APPLICABLE' ? this.roadName[i].streetType : ''              
+                        this.prefixStreet = this.roadName[i].prefix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].prefix}`] || this.roadName[i].prefix : ''
+                        this.suffixStreet = this.roadName[i].suffix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].suffix}`] || this.roadName[i].suffix : ''
                         this.prefixStreet ? this.prefix = true : this.prefix = false
                         this.suffixStreet ? this.suffix = true : this.suffix = false
                     }

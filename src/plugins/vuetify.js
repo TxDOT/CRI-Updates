@@ -18,7 +18,7 @@ export default new Vuetify({
         sm:600,
         md:960,
         lg:1264,
-        xl:1904
+        xl:1845
       }
     }
     })

@@ -29,7 +29,7 @@
                 mdi-navigation
             </v-icon>Select a road to delete it
         </v-card-text>
-        <v-btn v-if="edit===true || addR === true || deleteR === true" plain block color="#E64545" @click="cancelEditAction()">Cancel Action</v-btn>
+        <v-btn v-if="edit===true || addR === true || deleteR === true" plain block color="#E64545" @click="cancelEditAction(); clearEditBtn=false">Cancel Action</v-btn>
     </v-card>
     <v-card id="delWarn" v-if="deleteSecond === true || deleteClick"> <!-- //&& this.modifyR === false -->
         <v-card-title class="editRdTitle" style="width: 385px">
@@ -64,8 +64,7 @@
 <script>
 import confirmationAlert from './stepperContent/confirmationAlertsDEL.vue'
 import sketchAlert from '../Map/stepperContent/discardAlert.vue'
-
-import {stopEditing, removeGraphic} from './editFunc'
+import {stopEditing, removeGraphic, saveToEditsLayer} from './editFunc'
 export default {
     name: 'editExistingRd',
     components: {confirmationAlert, sketchAlert},
@@ -84,6 +83,7 @@ export default {
     methods:{
         setDeleteFalse(){
             this.deleteClick = false
+            saveToEditsLayer()
         },
         deleteRoadClick(){
             removeGraphic()
@@ -228,6 +228,14 @@ export default {
                 this.$store.commit('setStepperClose', open)
             }
         },
+        clearEditBtn:{
+            get(){
+                return this.$store.state.isClearEditBtn
+            },
+            set(isBool){
+                this.$store.commit('setIsClearEditBtn', isBool)
+            }
+        }
     }
 }
 </script>

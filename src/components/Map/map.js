@@ -16,7 +16,7 @@ import Viewpoint from "@arcgis/core/Viewpoint";
 import Home from "@arcgis/core/widgets/Home";
 import Zoom from "@arcgis/core/widgets/Zoom";
 import ScaleBar from "@arcgis/core/widgets/ScaleBar";
-//import CoordinateConversion from "@arcgis/core/widgets/CoordinateConversion";
+import CoordinateVM from "@arcgis/core/widgets/CoordinateConversion/CoordinateConversionViewModel";
 import Search from "@arcgis/core/widgets/Search";
 //import {store} from '../../storeUpd'
 // import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
@@ -25,7 +25,6 @@ export const gLayer = new GraphicsLayer();
 export const delgLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
-export const testGraphic = new GraphicsLayer();
 
 const txdotVectorTiles = new VectorTileLayer({
     url: "https://tiles.arcgis.com/tiles/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Vector_Tile_Basemap/VectorTileServer",
@@ -49,7 +48,7 @@ const imgBasemap = new Basemap({
 
 export const map = new Map({
     basemap: vTBasemap,
-    layers: [rdbdAssetLine,rdbdAssetPt,gLayer, testGraphic]
+    layers: [rdbdAssetLine,rdbdAssetPt,gLayer]
 });
 
 export const view = new MapView({
@@ -86,10 +85,9 @@ const scaleBar = new ScaleBar({
     view: view
 });
 
-// const ccWidget = new CoordinateConversion({
-//     view: view
-// });
-
+export const ccWidget = new CoordinateVM({
+    view: view
+});
 // SEARCH WIDGET
 export const search = new Search({
     // UNCOMMENT TO CONSTRUCT SEARCH IN NAVBAR
