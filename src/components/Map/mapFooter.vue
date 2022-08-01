@@ -2,10 +2,10 @@
     <v-footer app style="left: 233px; width: 100%; height:3.5vh; text-align: center;background: rgba(192,192,192,1)" >
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
-          
+          v1.4.2
           <div id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; | User Name: <b>{{userName}}</b>
             <div style="position:absolute; left:5%; top: .1vh; font-size: .7vw;">{{x}}, {{y}}</div>
-            &nbsp; &nbsp; &nbsp;Starting Mileage: <b style="color:blue">{{countyTotal}}</b>&nbsp;&nbsp;&nbsp; 
+            | &nbsp;Starting Mileage: <b style="color:blue">{{countyTotal}}</b>| &nbsp; 
             Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'green'} : {'color': 'red'}, Number(rdbdDeltaDist.toFixed(3)) ===0? {'color':'black'} : null]">{{Number(rdbdDeltaDist.toFixed(3))}}</b>&nbsp;&nbsp;&nbsp; 
             Updated Mileage: <b style="color:black">{{Number(countyTots.toFixed(4))}}</b>
           </div>
