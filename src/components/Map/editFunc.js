@@ -15,7 +15,7 @@ import {store} from '../../storeUpd'
 
 //querys the Refernce Layer table return geometry/attributes
 function queryFeat(qry){
-  console.log(qry.results[0].graphic.attributes.OBJECTID)
+  console.log('1')
   let queryFeat = featLayer.queryFeatures({
     objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : [qry.attributes.OBJECTID],
     outFields: ["*"],
