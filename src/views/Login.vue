@@ -220,7 +220,7 @@ export default {
       },
       async getUserName(username){
         let county;
-        let getCounty = username.split('_')[1]
+        //let getCounty = username.split('_')[1]
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
           if(username.toLowerCase().includes(cntyNbrNm[0][x].replace(/\s/,'').toLowerCase())){
             console.log(cntyNbrNm[0][x])
