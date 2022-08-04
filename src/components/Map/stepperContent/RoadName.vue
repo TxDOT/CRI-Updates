@@ -6,21 +6,21 @@
             <!-- </v-col> -->
     
             <span>
-                <v-text-field persistent-placeholder dense outlined id="input1" :rules="emptyValues" label="Road Name" v-model="streetName" style="font-size: 15px; left: 87px; bottom: 16px; width: 100px; position: relative;"></v-text-field>
+                <v-text-field :disabled="infoRoad" persistent-placeholder dense outlined id="input1" :rules="emptyValues" label="Road Name" v-model="streetName" style="font-size: 15px; left: 87px; bottom: 16px; width: 100px; position: relative;"></v-text-field>
             </span>
                 
             <v-card-text>
-                <v-autocomplete persistent-placeholder dense outlined v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;" @change="updateGraphic()"></v-autocomplete>
+                <v-autocomplete :disabled="infoRoad" persistent-placeholder dense outlined v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;" @change="updateGraphic()"></v-autocomplete>
             </v-card-text>
                 
-            <v-select persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width: 83px; left: 0%; bottom:180px; position: relative" @change="updateGraphic()"></v-select>
+            <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width: 83px; left: 0%; bottom:180px; position: relative" @change="updateGraphic()"></v-select>
             <!-- <v-autocomplete persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width:3-1%; left:0px; top:66px; position: absolute"></v-autocomplete> -->
 
 
-            <v-select persistent-placeholder dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" item-value="dir" style="width:83px; left: 307px; bottom: 246px; position: relative;" @change="updateGraphic()"></v-select>   
+            <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" item-value="dir" style="width:83px; left: 307px; bottom: 246px; position: relative;" @change="updateGraphic()"></v-select>   
         <!-- </v-row> -->
 
-        <v-btn outlined style="bottom:210px; left:103px;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#15648C" :disabled="streetName.length < 1"> 
+        <v-btn v-if="!infoRoad" outlined style="bottom:210px; left:103px;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#15648C" :disabled="streetName.length < 1"> 
           <u>Continue</u>
         </v-btn>
     </v-card>
@@ -81,6 +81,7 @@ export default {
                 if(gLayer.graphics.items[z].attributes.objectid === this.objid){
                     gLayer.graphics.items[z].attributes.roadbedName = JSON.stringify(updateG)
                     console.log(JSON.parse(gLayer.graphics.items[z].attributes.roadbedName))
+                    this.roadName = JSON.parse(gLayer.graphics.items[z].attributes.roadbedName)
                 }
             }
         },
@@ -183,6 +184,14 @@ export default {
             return this.$store.state.objectid
           }
         },
+        infoRoad:{
+            get(){
+                return this.$store.state.infoRd
+            },
+            set(info){
+                this.$store.commit('setInfoRd', info)
+            }
+      },
     }
 }
 </script>

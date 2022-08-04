@@ -1,6 +1,6 @@
 <template>
     <v-container>
-        <v-card  id="edit">
+        <v-card id="edit">
             <v-card-title class="editRdTitle" v-if="edit===true">
                 Edit an Existing Road
              </v-card-title>
@@ -242,7 +242,7 @@ export default {
 
 <style scoped>
     .editRdTitle{
-        background: #15648C;
+        background: #204E70;
         color:white;
         font-size: 16px;
         height: 40px;
@@ -250,7 +250,7 @@ export default {
         padding-top: 1%;
         text-align: justify;
         top: 10%;
-        width: 300px;
+        width: 25.3vw;
         left: 100%;
     }
     .editRdInfo{
@@ -260,24 +260,24 @@ export default {
         padding-left: 35px;
         padding-top: 8px;
         text-align: left;
-        overflow-wrap: break-word;
         top: 0px;
-        width: 300px;
+        width: 100%;
         left: 0px;
     }
     .editRdIcon{
         position: absolute;
-        padding-right: 10px;
-        padding-top: 8px;
+        padding-right: .7vw;
+        padding-top: .1vh;
         text-align: justify;
-        right: 260px;
+        right: 23vw;
     }
     #edit{
         position: absolute;
-        top:100px;
-        left:300px;
-        width: 300px;
-        color: #15648C;
+        top: 8.5vh;
+        left: 13.8vw;
+        width: 25.3vw;
+        color: #204E70;
+        border-radius: 0px;
     }
     #delWarn{
         position: absolute;
@@ -285,6 +285,7 @@ export default {
         left:260px;
         width: 385px;
         height: 200px;
-        color: #15648C;
+        color: #204E70;
+        border-radius: 0px;
     }
 </style>

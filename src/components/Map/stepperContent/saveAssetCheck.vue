@@ -9,7 +9,7 @@
             <v-card-text style="text-align:left; padding-top: 10px;">
                 Whoa, champ! Slow Down! This road is going to feel bad without a name.
             </v-card-text>
-            <v-btn @click="setFinalCheck()" style="poistion:relative;" plain outlined color="#204E70"><u>close</u></v-btn>
+            <v-btn tile @click="setFinalCheck()" style="poistion:relative;" outlined color="#14375A"><u>close</u></v-btn>
         </v-card>
 </template>
 
@@ -49,5 +49,6 @@ export default {
     width: 300px;
     left: 50%;
     height: 150px;
+    border-radius: 0px;
 }
 </style>

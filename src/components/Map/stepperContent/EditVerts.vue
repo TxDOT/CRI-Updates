@@ -1,7 +1,7 @@
 <template>
     <v-card>
         <v-card-text>Click and drag vertices to edit the shape of the road.</v-card-text>
-        <v-btn outlined small style="top:0px; left:70px; border:black 1px solid" tile @click="deleteRoad()" color="#15648C" v-if="this.modifyRoad"> 
+        <v-btn outlined small style="top:0px; left:70px; border:black 1px solid" tile @click="deleteRoad()" color="#15648C" v-if="!info"> 
           <u><v-icon color="black" medium style="right:5px">mdi-trash-can</v-icon>Delete Road</u>
         </v-btn>
         <v-btn outlined small style="top:0px; left:73px; border:black 1px solid" tile @click="nextStep(2);" color="#15648C" v-on="!info ? {'click' : () =>{nextStep(2)}} : {'click' : () =>{beginEdit()}}"> 

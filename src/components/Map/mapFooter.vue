@@ -1,13 +1,9 @@
 <template>
-    <v-footer app style="left: 233px; width: 100%; height:3.5vh; text-align: center;background: rgba(192,192,192,1)" >
+    <v-footer app style="left: 233px; width: 100%; height:3.5vh; text-align: center;background: #4D4D4D" >
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
-          v1.4.2
-          <div id="footerCard" class="f1-text">County: <b>{{county}}</b>&nbsp; | User Name: <b>{{userName}}</b>
-            <div style="position:absolute; left:5%; top: .1vh; font-size: .7vw;">{{x}}, {{y}}</div>
-            | &nbsp;Starting Mileage: <b style="color:blue">{{countyTotal}}</b>| &nbsp; 
-            Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'green'} : {'color': 'red'}, Number(rdbdDeltaDist.toFixed(3)) ===0? {'color':'black'} : null]">{{Number(rdbdDeltaDist.toFixed(3))}}</b>&nbsp;&nbsp;&nbsp; 
-            Updated Mileage: <b style="color:black">{{Number(countyTots.toFixed(4))}}</b>
+          <div id="footerCard" class="f1-text" style="color:white"><div style="position:absolute; right:6%; bottom: .05vh; font-size: .7vw;">{{x}}, {{y}}</div>
+            County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(rdbdDeltaDist.toFixed(3)) ===0? {'color':'white'} : null]">{{Number(rdbdDeltaDist.toFixed(3))}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(4))}}</b>
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>
@@ -131,10 +127,11 @@ export default {
   }
   #footerCard{
     position: relative;
-    top: .1vw;
+    bottom: .1vh;
     width:90%;
     height:100%;
-    left: 5%;
+    right: 3%;
+    text-align: center;
     font-size: .8vw;
   }
   /* @media screen and (max-width: 1444px){

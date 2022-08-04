@@ -6,7 +6,7 @@
     v-model="e1"
     vertical
     non-linear
-    class="mb-12; scroller"
+    class="mb-12;"
     max-width="486"
     min-width="0"
     :height="imageHeight"
@@ -17,6 +17,7 @@
     <v-stepper-step
       :editable="setAssetCover[0]"
       step="1"
+      color="#204E70"
       @click="showGIDVerts()"
       class="font-weight-regular; body-1;" v-if="forInfo">
       Edit Length: <strong>{{fetchLength}} Miles</strong>
@@ -25,6 +26,7 @@
       :editable="setAssetCover[0]"
       step="1"
       @click="showGIDVerts()"
+      color="#204E70"
       class="font-weight-regular; body-1;" v-else>
       Edit Shape: <strong>{{fetchLength}} Miles</strong>
     </v-stepper-step>
@@ -37,9 +39,10 @@
     <v-stepper-step 
       :editable="setAssetCover[0] === true || setAssetCover[0] === undefined ? true: setAssetCover[0]"
       step="2"
+      color="#204E70"
       @click="complete()"
       >
-      Road Name: <strong>{{fetchRoadName}}</strong>
+      Road Name: <strong>{{fetchRoadName.toUpperCase()}}</strong>
     </v-stepper-step>
     
     <v-stepper-content step="2">
@@ -47,7 +50,7 @@
       <roadName/>
     </v-stepper-content>
 
-    <v-stepper-step step="3" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt();complete();initLoadAsset('surface')}} : {}" >
+    <v-stepper-step step="3" color="#204E70" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt();complete();initLoadAsset('surface')}} : {}" >
       Road Surface: <strong>{{fetchRoadSurface}}</strong>
     </v-stepper-step>
     <v-stepper-content step="3" >
@@ -55,6 +58,7 @@
     </v-stepper-content>
 
     <v-stepper-step
+      color="#204E70"
       :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"
       step="4"
       v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('design')}} : {}"
@@ -66,7 +70,7 @@
       <roadDesign/>
     </v-stepper-content>
 
-    <v-stepper-step step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('numLane')}} : {}">
+    <v-stepper-step color="#204E70" step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('numLane')}} : {}">
       Number of Lanes: <strong>{{fetchNumLanes}}</strong>
     </v-stepper-step>
     <v-stepper-content step="5">
@@ -75,11 +79,11 @@
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
-      <v-btn-toggle v-if="!forInfo" tile borderless style="top: 45rem; left:18rem; position: absolute;">
+      <v-btn-toggle v-if="!forInfo" tile borderless style="bottom: 2vh; right:1vw; position: absolute; z-index: 1;">
         <v-btn depressed plain :disabled="!setAssetCover[0]" small @click="cancel()">Cancel</v-btn>
         <v-btn v-if="!forInfo" depressed plain :disabled="!setAssetCover[0]" small color="#15648C" text @click="saveAttri();"><u>Save</u></v-btn>
       </v-btn-toggle>
-      <v-btn v-if="!forInfo" plain small tile color ="#E64545" text outlined style="top:45rem; right:20rem; position: absolute;" @click="discardAlertQuest = true">Discard Sketch</v-btn>
+      <v-btn v-if="!forInfo" plain small tile color ="#E64545" text outlined style="bottom:2vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Sketch</v-btn>
       <v-btn v-else style="top: 45rem; position: absolute;" depressed plain block :disabled="!setAssetCover[0]" @click="cancel()">Cancel</v-btn>
     <!-- </div> -->
     <!-- card used to display discard alert information -->
@@ -89,13 +93,15 @@
         <v-btn tile outlined color="#15648C" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
         <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card> -->
-    <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1.5rem; top: 40.5rem">Add An Optional Comment</a>
-      <v-dialog v-model="dialog">
-        <v-card>
+    <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1vw; bottom: 13vh; z-index:1">Add An Optional Comment</a>
+    <v-textarea v-if="!forInfo" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%;" height="10" disabled solo no-resize flat dense v-model="comment">'{{comment}}'</v-textarea>
+      <v-dialog v-model="dialog" persistent>
+        <v-card style="width:30%; left: 30%; height: 70%">
           <v-card-title class="surfaceTitle">
             <v-card-text style="bottom:28px; position: relative; font-size: 15px; text-align: left;">Comments</v-card-text>
           </v-card-title>
-          <v-textarea v-model="comment" style="padding-left:10px; padding-right: 10px;"></v-textarea>
+          <v-textarea v-model="comment" style="padding-left:10px; padding-right: 10px;padding-bottom: 5%;"></v-textarea>
+          <v-btn outlined tile color="#15648C" @click="dialog=false" style="position: absolute; right:2%; bottom: 2%;"><u>Save</u></v-btn>
         </v-card>
       </v-dialog>
   </v-stepper>
@@ -109,8 +115,8 @@
     <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
       <v-card-title class="confirmationTitle">Are you sure you want to discard this item?</v-card-title>
         
-      <v-btn tile outlined color="#15648C" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
-      <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
+      <v-btn style="position: absolute; right:3vw;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
+      <v-btn style="position: relative; right:6vw;" depressed tile text color="#14375A" @click="discardAlertQuest = false">NO</v-btn>
     </v-card>
   <confirmAlertSuccess v-if="successAlert"/>
   <finalCheck v-if="finalCheck === true"/>
@@ -576,6 +582,8 @@ export default {
   padding-bottom: 0%;
   font-size: 16px;
   width:0%;
+  border-radius: 0px;
+  overflow-y: hidden;
 }
 .scroller {
   width: auto;
@@ -590,12 +598,14 @@ export default {
   background: lightgray;
 }
 .stepHead{
-  padding-top:1%;
-  padding-left:25%;
-  background: #15648C;
+  padding-top:0.5%;
+  padding-left:3%;
+  background: #204E70;
   color: white;
   font-size: 20px;
-  height: 35px;;
+  height: 35px;
+  text-align: left;
+  border-radius: 0px;
   }
 
 .v-stepper--vertical{
@@ -613,7 +623,9 @@ export default {
   outline: #204E70 solid 2px;
   background-color: rgba(32, 78, 112, .3)
 }
-
+.v-stepper__step{
+  height: 15px;
+}
 .v-list-item--link{
   outline: none;
 }
@@ -622,9 +634,10 @@ export default {
     width: 360px;
     left: 750px;
     top: 400px;
+    border-radius: 0px;
 }
 .confirmationTitle{
-  background: #15648C;
+  background: #14375A;
   color:white;
   font-size: 16px;
   height: 40px;
@@ -636,10 +649,16 @@ export default {
   left: 100%;
 }
 .surfaceTitle{
-  background-color: #204E70;
+  background-color: #14375A;
   color: white;
   height:30px;
   width: 100%;
   font-size: 25px; 
+}
+
+</style>
+<style>
+.v-dialog{
+  box-shadow: none;
 }
 </style>
