@@ -2,8 +2,8 @@
     <v-card id="discardSketch" v-if="deleteAlert">
         <v-card-title class="confirmationTitle">Are you sure you want to discard this item?</v-card-title>
         
-        <v-btn tile outlined color="#15648C" @click="deleteRoad()"><u>YES</u></v-btn>
-        <v-btn tile outlined color="#15648C" @click="setDeleteFalse()"><u>NO</u></v-btn>
+        <v-btn tile outlined color="#14375A" @click="deleteRoad()"><u>YES</u></v-btn>
+        <v-btn tile outlined color="#14375A" @click="setDeleteFalse()"><u>NO</u></v-btn>
     </v-card>
     <!-- <v-card style="top: 330px; left: 730px; width: 330px;border: black solid 2px;">
         <v-card-title class="confirmationTitle">Road Deleted</v-card-title>
@@ -47,7 +47,7 @@ export default {
 </script>
 <style scoped>
 .confirmationTitle{
-    background: #15648C;
+    background: #14375A;
     color:white;
     font-size: 16px;
     height: 40px;
@@ -57,10 +57,12 @@ export default {
     top: 10%;
     width: 100%;
     left: 100%;
+    border-radius: 0px;
 }
 #discardSketch{
     width: 430px;
     left: 725px;
     top: 380px;
+    border-radius: 0px;
 }
 </style>

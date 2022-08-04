@@ -487,11 +487,12 @@ function setUpGraphic(){
         return;
       }
       response.results.forEach((result)=>{
-        if(result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT'){
+        if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && store.getters.getInfoRd === false){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
             sketch.update([result.graphic], {tool:"reshape"});
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
             console.log(oldLength)
+            store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
           }
         }
@@ -547,10 +548,13 @@ export function removeGraphic(){
     store.commit('setDeltaDis',[diffAdded, 'Edit'])
   }
 }
+//set data for popup display
 export async function popUpData(res){
   console.log('popup')
   let info = queryFeat(res)
+  store.commit('setActiveLoader',true)
   info.then(async (x)=>{
+    store.commit('setActiveLoader',false)
     console.log(x)
     await queryFeatureTables(x)
     hightlightFeat('click')
@@ -578,13 +582,12 @@ export async function getGraphic(){
             if((response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
               return;
             }
-            else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && store.getters.getInfoRd === true && response.results[0].graphic.attributes['editType'] && store.getters.getStepperClose === true)){
+            else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1 && store.getters.getInfoRd === false) || (response.results.length && store.getters.getInfoRd === true && response.results[0].graphic.attributes['editType'] && store.getters.getStepperClose === true)){
               store.commit('setdenyFeatClick', true)
               return;
             }
             if(response.results.length){
               if(!response.results[0].graphic.attributes['editType']){
-                console.log(1)
                 popUpData(response)
                 return;
               }
@@ -1015,12 +1018,16 @@ function getNewDfoDist(objectid, x, y, slide){
     return  returnVal
   }
   else{
+    let endx = objid.paths[0].at(index+1) ? objid.paths[0].at(index+1)[0] : objid.paths[0].at(-1)[0]
+    let endy = objid.paths[0].at(index+1) ? objid.paths[0].at(index+1)[1] : objid.paths[0].at(-1)[1]
+    let startx = objid.paths[0].at(index-1) ? objid.paths[0].at(index-1)[0] : objid.paths[0].at(0)[0]
+    let starty = objid.paths[0].at(index-1) ? objid.paths[0].at(index-1)[1] : objid.paths[0].at(0)[1]
 
     let pointMinusPolyline = {
       type: 'polyline',
       paths:[
         [nearVert[0], nearVert[1]],
-        [objid.paths[0].at(index-1)[0],objid.paths[0].at(index-1)[1]]
+        [startx, starty]
       ],
       spatialReference: {
         wkid: 3857
@@ -1031,7 +1038,7 @@ function getNewDfoDist(objectid, x, y, slide){
       type: 'polyline',
       paths:[
         [nearVert[0], nearVert[1]],
-        [objid.paths[0].at(index+1)[0],objid.paths[0].at(index+1)[1]]
+        [endx,endy]
       ],
       spatialReference: {
         wkid: 3857

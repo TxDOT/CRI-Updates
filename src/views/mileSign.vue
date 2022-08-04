@@ -46,40 +46,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog
-      v-model="disagree"
-      persistent
-      max-width="500">
-      <v-card v-model="disagree" height="300">
-         <v-img><img style="position:relative; top:0%;" src="@/assets/favicon-32x32.png"></v-img>
-        <v-card-actions>
-          <div style="position:absolute; top:10%; left: 0%" v-if="certify===false">
-          <v-alert color="red lighten-2" border="top" dark v-html="statusMessageFalse" class="black--text mb-3" >
-          </v-alert>
-          </div>
-          <div style="position:absolute; top:10%; left: 0%" v-if="certify===true">
-          <v-alert color="green" border="top" dark v-html="statusMessageTrue" class="black--text mb-3" >
-          </v-alert>
-          </div>
-          <div style="position:absolute; top:20%; left: 5%" class="black--text mb-3">
-            <v-card-text v-html="disagreeTxt">
-            </v-card-text>
-          </div>
-          <div style="position:absolute; left: 10%; bottom: 5%; width=100%">
-            <div style="position:relative; left:200%; top:0%">
-              <v-btn elevation="2" @click="disagree = false; goToMap()" color="primary">
-                Login
-              </v-btn>
-            </div>
-            <div style="position:relative; right:50%; bottom:10%">
-              <v-btn x-small elevation="0" outlined color="primary" onclick="window.location.href='https://www.dot.state.tx.us/apps-cg/contact_us/form/dusa-form.htm'" >
-                Sign-Up
-              </v-btn>
-            </div>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+  
     <v-row justify="center"> 
     <v-dialog v-model="agree" persistent max-width="600px">
       <v-card>

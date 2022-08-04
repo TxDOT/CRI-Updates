@@ -1,9 +1,9 @@
 <template>
     <div>
-        <v-alert type="success" v-if="isAssetCoverage" height="44" dense outlined>
+        <v-alert type="success" v-if="isAssetCoverage" height="44" dense outlined style="text-align: left; border-radius: 0px;">
             This asset covers the full length of the road
         </v-alert>
-        <v-alert type="error" color="#E64545" v-if="!isAssetCoverage" height="50" dense outlined>
+        <v-alert type="error" color="#E64545" v-if="!isAssetCoverage" height="50" dense outlined style="border-radius: 0px;">
         
           <!-- <v-tooltip top>
             <template v-slot: activator="{on, attr}">
@@ -11,14 +11,14 @@
             </template>
             <span>This is a test</span>
           </v-tooltip> -->
-            <p style="text-align: left;" v-if="shortLong === 'short'">The provided assets is {{shortLong}}, Asset ends at {{dfoValue}}, but ending mile for road is {{lineEndValue}}.</p>
-            <p style="text-align: left;" v-if="shortLong==='long'">You have an asset covering a portion of your road to the end <u>{{dfoValue}}</u>, but you're missing additional assets.</p>
-            <p style="text-align: left;" v-if="shortLong === 'gap' || shortLong === 'overlap'"> An {{shortLong}} has been detected. Refer to asset with ending value of <u>{{dfoValue}}</u></p>
+            <p class="assetAlert" v-if="shortLong === 'short'">The provided assets is {{shortLong}}, Asset ends at {{dfoValue}}, but ending mile for road is {{lineEndValue}}.</p>
+            <p class="assetAlert" v-if="shortLong==='long'">You have an asset covering a portion of your road to the end <u>{{dfoValue}}</u>, but you're missing additional assets.</p>
+            <p class="assetAlert" v-if="shortLong === 'gap' || shortLong === 'overlap'"> An {{shortLong}} has been detected. Refer to asset with ending value of <u>{{dfoValue}}</u></p>
             <v-tooltip bottom color="error" left nudge-right="120" nudge-top="50" max-width="130">
               <template v-slot:activator="{ on, attrs }">
-                <v-icon v-bind="attrs" v-on="on" right style="poistion: absolute; left:158px; bottom: 65px;">mdi-help-circle</v-icon>
+                <v-icon v-bind="attrs" v-on="on" right style="position: absolute; left:91%; bottom: 30%;">mdi-help-circle</v-icon>
               </template>
-              <span>Check Assest are full length. If you modified the geometry of the road, please review the assets.</span>
+              <span>Assets must cover the full length of the route, and must not have gaps or overlaps.</span>
             </v-tooltip>
         </v-alert>
     </div>
@@ -84,5 +84,10 @@ export default {
 @import '~vuetify/src/components/VAlert/_variables.scss';
 $alert-font-size: 13px;
 @import "~vuetify/src/components/VAlert/VAlert.sass";
+
+.assetAlert{
+  border-radius: 0px;
+  text-align: left;
+}
 
 </style>

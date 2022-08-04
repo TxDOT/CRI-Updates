@@ -36,6 +36,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+
 }
 
 #nav {
@@ -54,5 +55,4 @@ export default {
 .esri-view .esri-view-surface--inset-outline:focus::after{
   outline: none !important;
 }
-
 </style>

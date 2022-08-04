@@ -1,19 +1,18 @@
 <template>
-    <v-card style="top:8vh">
-        <!-- <v-card-title id="mapTools">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resources</v-card-title> -->
-        <v-list class="outlineColor" max-width="99%">
-          <v-list-item-group v-model="stepIn" color="#15648C">
-            <v-list-item v-for="(item,i) in items" :key="i" @click="item.action">
-            <v-list-item-icon>
-              <v-icon v-text="item.icon"></v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title v-text="item.title"></v-list-item-title>
-            </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-    </v-card>
+  <v-container>
+    <v-list class="outlineColor" style="position: absolute; bottom: 3vh; width: 98%">
+      <v-list-item-group v-model="clearEditBtn" color="#15648C">
+        <v-list-item v-for="(item,i) in items" :key="i" @click="item.action">
+          <v-list-item-icon>
+            <v-icon v-text="item.icon"></v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title v-text="item.title"></v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-item-group>
+    </v-list>
+  </v-container>
 </template>
 
 <script>
@@ -24,34 +23,52 @@
     name: 'aboutHelp',
     data (){
       return {
-        stepIn:null,
         display:false,
         drawer: true,
         items: [
-          { title: 'Advanced', icon: 'mdi-cog'},
-          { title: 'Criteria', icon: 'mdi-clipboard-text', action: (()=>{
+          { title: 'Advanced', icon: 'mdi-cog',action: ()=>{
+              this.clearEditBtn = true
+              console.log('Advanced')
+              setTimeout(()=>{
+                this.clearEditBtn = false
+              },1000)
+            }},
+          { title: 'Criteria', icon: 'mdi-clipboard-text', action: ()=>{
               window.open('https://www.txdot.gov/apps/statewide_mapping/dusa/resources/COUNTY_ROAD_CRITERIA.pdf', '_blank')
-            })
+            }
           },
-          { title: 'Help & Training', icon: 'mdi-help-circle'},
-          // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}
+          { title: 'Help & Training', icon: 'mdi-help-circle', action: ()=>{
+              console.log('help and training')
+            }
+          },
+          { title: 'About', icon: 'mdi-home', action: ()=>{
+              this.aboutClick = true
+            }
+          }
         ],
       }
     },
-     
+    computed:{
+      aboutClick:{
+        get(){
+          return this.$store.state.isAbout
+        },
+        set(bool){
+          this.$store.commit('setIsAbout', bool)
+        }
+      },
+      clearEditBtn:{
+        get(){
+          return this.$store.state.isClearAboutHelpTools
+        },
+        set(isBool){
+          this.$store.commit('setIsAboutHelpTools', isBool)
+        }
+      },
+    }
   }
 </script>
 <style scoped>
-#mapTools{
-    position: relative;
-    background: #15648C;
-    color:white;
-    font-size: 16px;
-    width: 100%;
-    height: 40px;
-    padding: 0px;
-    text-align: center;
-}
 .v-list-item{
   display: flex;
   text-align: left;

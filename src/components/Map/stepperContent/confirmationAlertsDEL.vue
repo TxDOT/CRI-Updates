@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-alert type="warning" prominent border="left" style="height: 80px; top: 24px; width:550px; left: 30%;">
+        <v-alert type="warning" prominent border="left" dense style="top: 24px; width:550px; left: 40%; text-align: left; border-radius: 0px;">
             {{roadName[0].streetName}} {{roadName[0].streetType}} has been marked as deleted
         </v-alert>
     </div>

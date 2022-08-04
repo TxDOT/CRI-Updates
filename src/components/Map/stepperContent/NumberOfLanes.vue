@@ -1,9 +1,9 @@
 <template>
 <!-- <v-card height="200px" flat> -->
-  <div class="scroller" style="height:230px"> 
+  <div class="scroller" style="min-height: 0vh; display:flex; flex-direction: column; height:30vh"> 
   <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
   <!-- <v-col v-for="(item,index) in rdbdSurf" :key="index" > -->
-    <v-card v-if="isAssetType=== true" >
+    <v-card class="card" v-if="isAssetType=== true">
         <v-card-title class="surfaceTitle">
           <v-card-text style="bottom:30px; position:relative; font-size: 15px; text-align: left;">What's the Number of Lanes?</v-card-text>
         </v-card-title>
@@ -21,11 +21,11 @@
         </v-btn> -->
     </v-card>
 
-    <v-card v-if="isAssetFullLen === true" height="80">
+    <v-card class="card" v-if="isAssetFullLen === true" height="80">
       <v-card-title class="surfaceTitle">
-        <v-card-text style="bottom:27px; position:relative; font-size: 15px; text-align: left;">Is the {{assetType}} full length?</v-card-text>
+        <v-card-text style="bottom:27px; position:relative; font-size: 15px; text-align: left;">Is the {{assetType}} lanes full length?</v-card-text>
       </v-card-title>
-        <v-btn style="bottom: 0px; padding:0px; right:120px;" depressed plain @click= "isAssetType = isAssetStart = isAssetEnd = isAssetFullLen = false; isAssetFinished = true;">
+        <v-btn style="bottom: 0px; padding:0px; right:120px;" depressed plain @click= "isAssetFinished = isAssetStart = isAssetEnd = isAssetFullLen = false; isAssetType= true;">
           Back
         </v-btn>
         <v-btn style="bottom: 0px; padding:0px; right:20px;" depressed plain @click= "isAssetType = isAssetStart = isAssetEnd = isAssetFullLen = false; isAssetFinished = true;">
@@ -39,9 +39,9 @@
         </v-btn>
     </v-card>
 
-    <v-card v-if="isAssetStart === true">
+    <v-card class="card" v-if="isAssetStart === true">
       <v-card-title class="surfaceTitle">
-        <v-card-text class="cardText">Where Does the {{assetType}} Start?</v-card-text>
+        <v-card-text class="cardText">Where Does the {{assetType}} lanes Start?</v-card-text>
       </v-card-title>
       <v-flex v-for="(item, i) in selectionBegin" :key="i">
         <v-select label="Select an option" v-model="assetStartDfo" :items="item.types" @input="selectAssetDFO"></v-select>
@@ -72,9 +72,9 @@
           </v-btn> -->
     </v-card>
 
-    <v-card v-if="isAssetEnd === true">
+    <v-card class="card" v-if="isAssetEnd === true">
       <v-card-title class="surfaceTitle" style="border: #E64545 2px solid">
-        <v-card-text class="cardText">Where Does the {{assetType}} End?</v-card-text>
+        <v-card-text class="cardText">Where Does the {{assetType}} lanes End?</v-card-text>
       </v-card-title>
       <v-flex v-for="(item, i) in selectionEnd" :key="i">
         <v-select label="Select an option" v-model="assetEndDfo" :items="item.types" @input="selectAssetDFO" ></v-select>
@@ -105,24 +105,24 @@
         </v-btn> -->
     </v-card>
     
-    <v-card v-if="isAssetFinished=== true" absolute left flat :height="newHeight">
+    <v-card v-if="isAssetFinished=== true" absolute left flat>
       <assetAlert/>
-      <v-col  v-for="(item,index) in mileInfo" :key="index">
+      <v-col v-for="(item,index) in mileInfo" :key="index">
         <v-row style="border: 1px solid #204E70; height: 70px;" width="800px"> <!-- add for loop to display items; previous button should create an object, which can be displayed below info -->
-          <v-card-text style="position: relative; left:1px; text-align: left;" >This road is <em style="color:white" :style="{backgroundColor:`${assetColorTable[item.SRFC_TYPE]}`}">{{item.SRFC_TYPE}}</em> between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
-          <v-btn plain color="#15648C" style="left:270px; bottom: 63px;" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
-          <small style="color:#15648C; left:222px; bottom:33px; position: relative;">EDIT</small>
-          <v-btn plain style="left:230px; bottom:63px;" @click="deleteSurface(index);updateMileInfo();updateGraphic();cancelDfoLocation();" :disabled="mileInfo.length === 1"><v-icon color="red" >mdi-delete</v-icon></v-btn>
-          <small style="color:red; left:175px; bottom:33px; position: relative;" :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">DELETE</small>
+          <v-card-text style="position: relative; left:1px; text-align: left;" >This road is <em style="color:white" :style="{backgroundColor:`${assetColorTable[item.SRFC_TYPE]}`}">{{item.SRFC_TYPE}}</em> lanes between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
+          <v-btn v-if="!infoRoad" plain color="#15648C" style="left:270px; bottom: 63px;" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
+          <small v-if="!infoRoad" style="color:#15648C; left:222px; bottom:33px; position: relative;">EDIT</small>
+          <v-btn v-if="!infoRoad" plain style="left:230px; bottom:63px;" @click="deleteSurface(index);updateMileInfo();updateGraphic();cancelDfoLocation();" :disabled="mileInfo.length === 1"><v-icon color="red" >mdi-delete</v-icon></v-btn>
+          <small v-if="!infoRoad" style="color:red; left:175px; bottom:33px; position: relative;" :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">DELETE</small>
         </v-row>
         <v-spacer></v-spacer>
       </v-col>
-      <a @click="isAssetFinished = isAssetFullLen = false; isAssetType = true; addRoadSurface();" style="position: relative; right:27px; font-size: small; top: 10px; padding-bottom: 5px; color:#15648C"><u><v-icon color="#15648C">mdi-plus-thick</v-icon>Add another segment</u></a>
+      <a v-if="!infoRoad" @click="isAssetFinished = isAssetFullLen = false; isAssetType = true; addRoadSurface();" style="position: absolute; left:0%; font-size: small; top: 110%; padding-bottom: 5px; color:#15648C"><v-icon color="#15648C">mdi-plus-thick</v-icon><u>Add another segment</u></a>
   
       <!-- <v-btn depressed plain class="nextAssetBtns" @click="isAssetEnd = false; isAssetStart = true; isAssetFinished=false; isAssetType = false; nextStep(3)"> 
         Cancel
       </v-btn> -->
-      <v-btn outlined class="nextAssetBtns" tile @click="nextStep(5); cancelDfoLocation()" color="#15648C" :disabled="!setAssetCover[0]"> 
+      <v-btn v-if="!infoRoad" outlined class="nextAssetBtns" tile @click="nextStep(5); cancelDfoLocation()" color="#15648C" :disabled="!setAssetCover[0]"> 
         <u>Continue</u>
       </v-btn>
     </v-card>
@@ -437,11 +437,22 @@ export default {
         this.$store.commit('setAssetCoverage', x)
       }
     },
+    infoRoad:{
+      get(){
+        return this.$store.state.infoRd
+      },
+      set(info){
+        this.$store.commit('setInfoRd', info)
+      }
+    },
   }
 }
 </script>
 
 <style scoped>
+.card{
+  border-radius: 0px;
+}
 .surfaceTitle{
   background-color: #204E70;
   color: white;
@@ -478,9 +489,9 @@ export default {
   text-align: left;
 }
 .nextAssetBtns{
-  position: relative;
-  left:30px;
-  top: 10px;
+  position: absolute;
+  right:0%;
+  top: 106%;
   width: 100px;
 }
 .mileButton{

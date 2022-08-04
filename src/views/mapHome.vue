@@ -10,6 +10,7 @@
     <denyClickFeat v-if="denyClick === true"/>
     <v-progress-circular indeterminate color="primary" style="top:400px;" v-if="loading===true"></v-progress-circular>
     <dfoBox v-if="isDfoRead===true"/>
+    <about v-if="aboutClick === true"/>
   </div>
 </template>
 
@@ -22,11 +23,11 @@ import stepper from '../components/stepperQuestion.vue'
 import editExistingRd from "../components/Map/editExistingRd.vue"
 import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
 import dfoBox from '../components/Map/stepperContent/dfoBoxMap.vue'
+import about from '../components/Map/aboutApp.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
 
-
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about},
     props:["id"],
     name: 'MapHome',
     data(){
@@ -145,6 +146,14 @@ export default {
           this.$store.commit('setIsLoggedOut', bool)
         }
       },
+      aboutClick:{
+        get(){
+          return this.$store.state.isAbout
+        },
+        set(bool){
+          this.$store.commit('setIsAbout', bool)
+        }
+      }
     }
 }
 </script>

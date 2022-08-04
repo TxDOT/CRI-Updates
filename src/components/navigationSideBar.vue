@@ -1,12 +1,12 @@
 <template>
-    <v-container>
-      <v-navigation-drawer app disable-resize-watcher style="top:59px;">
+    <v-container style="height:100%">
+      <v-navigation-drawer app disable-resize-watcher style="top:59px; height:100%;">
         <!-- <alert v-if="display === true"/> -->
           <!-- <v-alert v-model="display" color="green" @click="display = false">
             Click on the Map to start Drawing!
           </v-alert> -->
-        <v-card-title id="testTitle">What Do You Want To Do?</v-card-title>
-          <v-list class="outlineColor"> 
+        <v-card-title id="testTitle"><v-card-text style="position:relative; bottom:22px; font-size: .8vw;">What Do You Want To Do?</v-card-text></v-card-title>
+          <v-list style="position: absolute; top: 4.5vh; width: 100%"> 
             <v-list-item-group id="tester" v-model="clearEditBtn" color="#15648C" active-class="border">
               <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple>
                 <v-list-item-icon>
@@ -256,12 +256,11 @@
   position: relative;
   background: #204E70;
   color:white;
-  font-size: 17px;
-  height: 60px;
-  padding-left: 10px;
-  padding-top: 5%;
-  text-align: center;
-  z-index:1;
+  height: 5%;
+  width: 100%;
+  padding-left: 0px;
+  padding-bottom: 5%;
+  text-align: left;
 }
 #nav{
   flex: auto;
@@ -275,27 +274,19 @@
 .container{
   padding: 0px;
 }
-
 .v-sheet.v-card:not(.v-sheet--outlined){
   box-shadow: unset;
 }
-
 .v-list-item{
   display: flex;
   text-align: left;
 }
-
-
 .border{
   border: #15648C solid 2px;
 }
-
-
 body.select{
   cursor: pointer
 }
-/* #navButtons:active{
-  outline: #15648C solid 2px;
-} */
+
 
 </style>

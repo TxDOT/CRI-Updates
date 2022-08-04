@@ -4,11 +4,9 @@
             <img style="height: 50px; max-width: 100%; bottom: 20%; position: relative;" src="../../assets/TxDOT-logo.png">
             <!-- <span style="position: relative; top:50%; right: 20.7%; font-size: 14px;"><i>Connecting you with Texas</i></span> -->
             <v-app-bar-title class="h1-text" style="left: 1%; top:6%; position: relative; width: 100%"><i>County Road Inventory Map</i></v-app-bar-title>
-                    <div class="flex" style="left:78%; position: absolute;">
-                        <v-row>
-                            <v-btn tile class="mx-2" small @click="ExitDestroyLogIn()">Save & Exit</v-btn>
-                            <v-btn tile color="green" class="mx-3" small @click="submitCertify=true">Submit & Certify</v-btn>
-                        </v-row>
+                    <div class="flex" style="left:77vw; position: absolute;">
+                        <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()"><u>Save & Exit</u></v-btn>
+                        <v-btn height="3vh" tile style="color:white; background-color: green; border: 1px solid white" class="mx-3" small @click="submitCertify=true">Submit & Certify</v-btn>
                     </div>
         </v-app-bar>
 
@@ -83,7 +81,6 @@ export default {
                     this.$router.push('/login')
                 })
                 .catch(()=>{
-
                     this.$router.push('/login')
                 })
         }

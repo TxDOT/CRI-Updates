@@ -2,33 +2,30 @@
     <v-dialog
       v-model="disagree"
       persistent
-      max-width="500">
-      <v-card v-model="disagree" height="300">
-         <v-img><img style="position:relative; top:0%;" src="@/assets/favicon-32x32.png"></v-img>
+      max-width="500"
+      >
+      <v-card v-model="disagree" height="250" style="border-radius:0px">
         <v-card-actions>
-          <div style="position:absolute; top:10%; left: 0%; width:100%" v-if="certify===false">
-            <v-alert color="#14375A" border="top" dark v-html="statusMessageFalse"></v-alert>
+          <div style="position:absolute; top:0%; left: 0%; width:100%;" v-if="certify===false">
+            <v-alert color="#14375A" border="top" dark v-html="statusMessageFalse" style="border-radius: 0px; text-align: left;"></v-alert>
           </div>
           <div style="position:absolute; top:10%; left: 0%" v-if="certify===true">
           <v-alert color="green" border="top" dark v-html="statusMessageTrue" class="black--text mb-3" >
           </v-alert>
           </div>
-          <div style="position:absolute; top:20%; left: 5%" class="black--text mb-3">
-            <v-card-text style="color:#15648C" v-html="disagreeTxt">
+          <div style="position:absolute; top:15%; left: 5%; text-align: left;" class="black--text mb-3">
+            <v-card-text style="color:#15648C;" v-html="disagreeTxt">
             </v-card-text>
           </div>
-          <div style="position:absolute; left: 10%; bottom: 5%; width=100%">
-            <div style="position:relative; left:200%; top:0%">
-              <v-btn id="loginButton" elevation="2" @click="disagree = false; logMeIn();" color="primary"> <!-- goToMap() -->
+            <div style="position:absolute ; right:4%; bottom:10%">
+              <v-btn id="loginButton" outlined tile @click="disagree = false; logMeIn();" color="#14375A"> <!-- goToMap() -->
                 Login
               </v-btn>
             </div>
-            <div style="position:relative; right:50%; bottom:10%">
-              <v-btn x-small elevation="0" outlined color="primary" onclick="window.location.href='https://www.dot.state.tx.us/apps-cg/contact_us/form/dusa-form.htm'" >
+              <v-btn style="position:absolute; left:4%; bottom:13%" depressed text tile color="black" x-small onclick="window.location.href='https://www.dot.state.tx.us/apps-cg/contact_us/form/dusa-form.htm'" >
                 Sign-Up
               </v-btn>
-            </div>
-          </div>
+         
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -60,36 +57,7 @@ export default {
         county:'',
         auth: {},
         cntyNme:'',
-        cntyNames: ['Anderson', 'Andrews', 'Angelina', 'Aransas', 'Archer', 'Armstrong', 'Atascosa', 'Austin', 'Bailey', 'Bandera',
-                    'Bastrop', 'Baylor', 'Bee', 'Bell', 'Bexar', 'Blanco', 'Borden', 'Bosque', 'Bowie', 'Brazoria',
-                    'Brazos', 'Brewster', 'Briscoe', 'Brooks', 'Brown', 'Burleson', 'Burnet', 'Caldwell', 'Calhoun', 'Callahan', 
-                    'Cameron', 'Camp', 'Carson', 'Cass', 'Castro', 'Chambers', 'Cherokee', 'Childress', 'Clay', 'Cochran', 
-                    'Coke', 'Coleman', 'Collin', 'Collingsworth', 'Colorado', 'Comal', 'Comanche', 'Concho', 'Cooke', 'Coryell', 
-                    'Cottle', 'Crane', 'Crockett', 'Crosby', 'Culberson', 'Dallam', 'Dallas', 'Dawson', 'De Witt', 'Deaf Smith', 
-                    'Delta', 'Denton', 'Dickens', 'Dimmit', 'Donley', 'Duval', 'Eastland', 'Ector', 'Edwards', 'El Paso', 
-                    'Ellis', 'Erath', 'Falls', 'Fannin', 'Fayette', 'Fisher', 'Floyd', 'Foard', 'Fort Bend', 'Franklin', 
-                    'Freestone', 'Frio', 'Gaines', 'Galveston', 'Garza', 'Gillespie', 'Glasscock', 'Goliad', 'Gonzales', 'Gray', 
-                    'Grayson', 'Gregg', 'Grimes', 'Guadalupe', 'Hale', 'Hall', 'Hamilton', 'Hansford', 'Hardeman', 'Hardin',
-                    'Harris', 'Harrison', 'Hartley', 'Haskell', 'Hays', 'Hemphill', 'Henderson', 'Hidalgo', 'Hill',
-                    'Hockley', 'Hood', 'Hopkins', 'Houston', 'Howard', 'Hudspeth', 'Hunt', 'Hutchinson', 'Irion', 
-                    'Jack', 'Jackson', 'Jasper', 'Jeff Davis', 'Jefferson', 'Jim Hogg', 'Jim Wells', 'Johnson', 'Jones',
-                    'Karnes', 'Kaufman', 'Kendall', 'Kenedy', 'Kent', 'Kerr', 'Kimble', 'King', 'Kinney', 'Kleberg',
-                    'Knox', 'La Salle', 'Lamar', 'Lamb', 'Lampasas', 'Lavaca', 'Lee', 'Leon', 'Liberty', 
-                    'Limestone', 'Lipscomb', 'Live Oak', 'Llano', 'Loving', 'Lubbock', 'Lynn', 'Madison', 'Marion',
-                    'Martin', 'Mason', 'Matagorda', 'Maverick', 'McCulloch', 'McLennan', 'McMullen', 'Medina',
-                    'Menard', 'Midland', 'Milam', 'Mills', 'Mitchell', 'Montague', 'Montgomery', 'Moore', 'Morris', 
-                    'Motley', 'Nacogdoches', 'Navarro', 'Newton', 'Nolan', 'Nueces', 'Ochiltree', 'Oldham', 'Orange',
-                    'Palo Pinto', 'Panola', 'Parker', 'Parmer', 'Pecos', 'Polk', 'Potter', 'Presidio', 'Rains', 
-                    'Randall', 'Reagan', 'Real', 'Red River', 'Reeves', 'Refugio', 'Roberts', 'Robertson', 'Rockwall',
-                    'Runnels', 'Rusk', 'Sabine', 'San Augustine', 'San Jacinto', 'San Patricio', 'San Saba', 'Schleicher', 
-                    'Scurry', 'Shackelford', 'Shelby', 'Sherman', 'Smith', 'Somervell', 'Starr', 'Stephens', 
-                    'Sterling', 'Stonewall', 'Sutton', 'Tarrant', 'Taylor', 'Terrell', 'Terry', 'Throckmorton', 
-                    'Titus', 'Tom Green', 'Travis', 'Trinity', 'Tyler', 'Upshur', 'Upton', 'Uvalde', 'Val Verde', 
-                    'Van Zandt', 'Victoria', 'Walker', 'Waller', 'Ward', 'Washington', 'Webb', 'Wharton', 'Wheeler', 
-                    'Wichita', 'Wilbarger', 'Willacy', 'Williamson', 'Wilson', 'Winkler', 'Wise', 'Wood', 'Yoakum', 
-                    'Young', 'Zapata', 'Zavala', 'Swisher'],
-          pickCounty: '',
-          loginToMap: false
+        loginToMap: false
         }
     },
     beforeRouteLeave(to, from, next){
@@ -129,7 +97,7 @@ export default {
       const todayDate = new Date();
       this.certiAlert = `<p>By clicking submit, you are certifying the mileage for your county and completing the process for ${todayDate.getFullYear()-1}.<br> Edits made in ${todayDate.getFullYear()} after certifying are allowed, but will need to be recertified by the county judge prior to <DATE> in order to be accepted.`
       todayDate.toDateString()
-      this.statusMessageFalse =`Welcome To TxDOTs County Road Inventory App`
+      this.statusMessageFalse =`The TxDOT County Road Inventory Map`
       // this.statusMessageTrue =`As of today, ${todayDate.toDateString().substring(4,15)}, ${this.countyName} County mileage has been certified`
     },
     methods:{
@@ -142,7 +110,7 @@ export default {
                 console.log(value)
                 this.loginToMap = true
                 this.userName = value.userId
-                let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(value.userId)
+                let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName('CRI.Test2_SANAUGUSTINE')
                 let cntyNumber = county[1]
                 let cntyName = county[0]
                 this.countyName = cntyName
@@ -164,7 +132,8 @@ export default {
 
       async loginButton(){
         let buttonPromise = new Promise(function(res){
-          if(document.getElementById('loginButton').baseURI === 'http://localhost:8080/login'){
+          let regExUrl = /\/(?:.(?!\/))+$/
+          if(document.getElementById('loginButton').baseURI === `${regExUrl}/login`){
             document.getElementById('loginButton').addEventListener('click',()=>{
               this.logMeIn();
               res(true)
@@ -187,7 +156,7 @@ export default {
             console.log(value)
             this.login
             this.userName = value.userId
-            let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(value.userId)//value.userId
+            let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName('CRI.Test2_SANAUGUSTINE')//value.userId
             let cntyNumber = county[1]
             let cntyName = county[0]
             this.countyName = cntyName
@@ -250,9 +219,16 @@ export default {
         });
       },
       async getUserName(username){
-        let getCounty = username.split('_')[1]
-        let getCountyNbr = Object.keys(cntyNbrNm[0]).find(x => cntyNbrNm[0][x] === getCounty)
-        console.log(getCountyNbr)
+        let county;
+        //let getCounty = username.split('_')[1]
+        let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
+          if(username.toLowerCase().includes(cntyNbrNm[0][x].replace(/\s/,'').toLowerCase())){
+            console.log(cntyNbrNm[0][x])
+            county = cntyNbrNm[0][x]
+            return cntyNbrNm[0]
+          }
+        })
+
         if(getCountyNbr){
           let whereStatement = `County_NBR = '${getCountyNbr}'`
           const query = new Query();
@@ -261,8 +237,8 @@ export default {
           let queryResult = await countyOfficialInfo.queryFeatures(query)
           this.countyNumber = getCountyNbr
           console.log(queryResult, queryResult.features[0].attributes['Total_Mileage'], getCountyNbr)
-          localStorage.setItem('county',JSON.stringify([getCounty,getCountyNbr,queryResult.features[0].attributes['Total_Mileage']]))
-          return [getCounty, Number(getCountyNbr), queryResult.features[0].attributes['Total_Mileage']]
+          localStorage.setItem('county',JSON.stringify([county,getCountyNbr,queryResult.features[0].attributes['Total_Mileage']]))
+          return [county, Number(getCountyNbr), queryResult.features[0].attributes['Total_Mileage']]
         }
         else{
           this.$router.push('/pickCounty')
@@ -310,3 +286,8 @@ export default {
     
 }
 </script>
+<style>
+.v-dialog {
+  border-radius: 0px;
+}
+</style>

@@ -43,12 +43,23 @@ export const store = new Vuex.Store({
         isLoggedOut: false,
         isUndoDisable: true,
         isRedoDisable: true,
-        isClearEditBtn: false
-
+        isClearEditBtn: false,
+        isClearMapTools: false,
+        isClearAboutHelpTools: false,
+        isAbout: false
     },
     getters:{
+        getIsAbout(state){
+            return state.isAbout
+        },
         getIsClearEditBtn(state){
             return state.isClearEditBtn
+        },
+        getIsClearMapTools(state){
+            return state.isClearMapTools
+        },
+        getIsAboutHelpTools(state){
+            return state.isClearAboutHelpTools
         },
         getIsUndoDisable(state){
             return state.isUndoDisable
@@ -164,8 +175,38 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsAbout(state, boolAbout){
+            state.isAbout = boolAbout
+        },
         setIsClearEditBtn(state, boolClearBtn){
+            if(boolClearBtn){
+                state.isClearEditBtn = boolClearBtn
+                state.isClearMapTools = false
+                state.isClearAboutHelpTools = false
+                return;
+            }
             state.isClearEditBtn = boolClearBtn
+            return;
+        },
+        setIsClearMapTools(state, boolClearMapToolBtn){
+            if(boolClearMapToolBtn){
+                state.isClearMapTools = boolClearMapToolBtn
+                state.isClearEditBtn = false
+                state.isClearAboutHelpTools = false
+                return;
+            }
+            state.isClearMapTools = boolClearMapToolBtn
+            return;
+        },
+        setIsAboutHelpTools(state, boolClearResourceBtn){
+            if(boolClearResourceBtn){
+                state.isClearAboutHelpTools = boolClearResourceBtn
+                state.isClearEditBtn = false
+                state.isClearMapTools = false
+                return;
+            }
+            state.isClearAboutHelpTools = boolClearResourceBtn
+            return;
         },
         setIsUndoDisable(state, boolIsUndo){
             state.isUndoDisable = boolIsUndo

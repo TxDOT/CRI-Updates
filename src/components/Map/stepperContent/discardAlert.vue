@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-alert type="warning" prominent border="left" style="height: 80px; top: 30px; width:350px; left: 40%;">
+        <v-alert type="warning" prominent border="left" dense style="position:absolute; top: 6vh; width:17vw; left: 40%; text-align: left; border-radius: 0px;">
             Sketch has been removed.
         </v-alert>
     </div>
