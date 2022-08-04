@@ -553,11 +553,11 @@ export async function popUpData(res){
   let info = queryFeat(res)
   store.commit('setActiveLoader',true)
   info.then(async (x)=>{
-    store.commit('setActiveLoader',false)
     console.log(x)
     await queryFeatureTables(x)
     hightlightFeat('click')
     store.commit('setStepperClose', true)
+    store.commit('setActiveLoader',false)
     store.commit('setFeatureGeom', x)
     store.commit('setRoadGeom', x.features[0].geometry.clone())
     store.commit('setInfoRd', true)
