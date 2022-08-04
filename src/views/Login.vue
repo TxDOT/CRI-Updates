@@ -110,7 +110,7 @@ export default {
                 console.log(value)
                 this.loginToMap = true
                 this.userName = value.userId
-                let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName('CRI.Test2_SANAUGUSTINE')
+                let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(value.userId)
                 let cntyNumber = county[1]
                 let cntyName = county[0]
                 this.countyName = cntyName
@@ -156,7 +156,7 @@ export default {
             console.log(value)
             this.login
             this.userName = value.userId
-            let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName('CRI.Test2_SANAUGUSTINE')//value.userId
+            let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(value.userId)//value.userId
             let cntyNumber = county[1]
             let cntyName = county[0]
             this.countyName = cntyName
