@@ -88,7 +88,7 @@ async function queryFeatureTables(tblqry){
   let roadNameObj = {streetName:tblqry.features[0].attributes.ST_DEFN_NM, 
                      prefix: tblqry.features[0].attributes.ST_PRFX_TYPE_DSCR ? tblqry.features[0].attributes.ST_PRFX_TYPE_DSCR.toUpperCase() : null, 
                      suffix: tblqry.features[0].attributes.ST_SFX_TYPE_DSCR ? tblqry.features[0].attributes.ST_SFX_TYPE_DSCR.toUpperCase() : null,
-                     streetType: tblqry.features[0].attributes.ST_TYPE_DSCR
+                     streetType: tblqry.features[0].attributes.ST_TYPE_DSCR,
                     }
 
   setDataToStore(JSON.stringify(rdbdSrfArry), JSON.stringify(rdbdDsgnArry), JSON.stringify([roadNameObj]), JSON.stringify(rdbdNumLnArry), tblqry.features[0].attributes.OBJECTID)
@@ -579,13 +579,14 @@ export async function getGraphic(){
         view.hitTest(event,option)
           .then(async function(response){
             if((response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
+              console.log('delete === true')
               return;
             }
             else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1 && store.getters.getInfoRd === false) || (response.results.length && store.getters.getInfoRd === true && response.results[0].graphic.attributes['editType'] && store.getters.getStepperClose === true)){
               store.commit('setdenyFeatClick', true)
               return;
             }
-            if(response.results.length){
+            else if(response.results.length){
               if(!response.results[0].graphic.attributes['editType']){
                 popUpData(response)
                 return;

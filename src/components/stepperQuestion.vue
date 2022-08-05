@@ -2,7 +2,7 @@
 <v-container>
   <div id="stepper">
     <v-stepper
-    style="margin-bottom:unset;"
+    style="margin-bottom:unset; border-radius: 0px;"
     v-model="e1"
     vertical
     non-linear
@@ -11,25 +11,25 @@
     min-width="0"
     :height="imageHeight"
     >
-    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a New Road</v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit an Existing Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
     <v-stepper-step
       :editable="setAssetCover[0]"
       step="1"
       color="#204E70"
       @click="showGIDVerts()"
-      class="font-weight-regular; body-1;" v-if="forInfo">
-      Edit Length: <strong>{{fetchLength}} Miles</strong>
+      class="font-weight-regular; body-1;">
+      Length: <strong>{{fetchLength}} Miles</strong>
     </v-stepper-step>
-    <v-stepper-step
+    <!-- <v-stepper-step
       :editable="setAssetCover[0]"
       step="1"
       @click="showGIDVerts()"
       color="#204E70"
       class="font-weight-regular; body-1;" v-else>
-      Edit Shape: <strong>{{fetchLength}} Miles</strong>
-    </v-stepper-step>
+      Length: <strong>{{fetchLength}} Miles</strong>
+    </v-stepper-step> -->
 
     <v-stepper-content step="1">
       <editVerts/>
@@ -79,12 +79,12 @@
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
-      <v-btn-toggle v-if="!forInfo" tile borderless style="bottom: 2vh; right:1vw; position: absolute; z-index: 1;">
-        <v-btn depressed plain :disabled="!setAssetCover[0]" small @click="cancel()">Cancel</v-btn>
-        <v-btn v-if="!forInfo" depressed plain :disabled="!setAssetCover[0]" small color="#15648C" text @click="saveAttri();"><u>Save</u></v-btn>
-      </v-btn-toggle>
-      <v-btn v-if="!forInfo" plain small tile color ="#E64545" text outlined style="bottom:2vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Sketch</v-btn>
-      <v-btn v-else style="top: 45rem; position: absolute;" depressed plain block :disabled="!setAssetCover[0]" @click="cancel()">Cancel</v-btn>
+      
+      <v-btn v-if="!forInfo" depressed style="border:none; bottom: 2vh; right:5vw; position: absolute" tile text color="#204E70" :disabled="!setAssetCover[0]" small @click="cancel();">Cancel</v-btn>
+      <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 2vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0]" small color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
+      
+      <v-btn v-if="!forInfo" depressed small tile color ="#E64545" text style="bottom:2vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
+      <v-btn v-else style="bottom: 2vh; position: absolute; right: 1vw; border:black 1px solid;" tile outlined text color="#15648C" @click="cancel()"><u>Cancel</u></v-btn>
     <!-- </div> -->
     <!-- card used to display discard alert information -->
     <!-- <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
@@ -96,7 +96,7 @@
     <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1vw; bottom: 13vh; z-index:1">Add An Optional Comment</a>
     <v-textarea v-if="!forInfo" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%;" height="10" disabled solo no-resize flat dense v-model="comment">'{{comment}}'</v-textarea>
       <v-dialog v-model="dialog" persistent>
-        <v-card style="width:30%; left: 30%; height: 70%">
+        <v-card style="width:30%; left: 30%; height: 70%; border-radius: 0px;">
           <v-card-title class="surfaceTitle">
             <v-card-text style="bottom:28px; position: relative; font-size: 15px; text-align: left;">Comments</v-card-text>
           </v-card-title>
@@ -113,10 +113,10 @@
       Sketch has been removed.
     </v-alert> -->
     <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
-      <v-card-title class="confirmationTitle">Are you sure you want to discard this item?</v-card-title>
+      <v-card-title class="confirmationTitle">Are you sure you want to discard this edit?</v-card-title>
         
-      <v-btn style="position: absolute; right:3vw;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
-      <v-btn style="position: relative; right:6vw;" depressed tile text color="#14375A" @click="discardAlertQuest = false">NO</v-btn>
+      <v-btn style="position: absolute; right:.5vw;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
+      <v-btn style="position: relative; left:3.5vw;" depressed tile text color="#14375A" @click="discardAlertQuest = false">NO</v-btn>
     </v-card>
   <confirmAlertSuccess v-if="successAlert"/>
   <finalCheck v-if="finalCheck === true"/>
@@ -582,7 +582,6 @@ export default {
   padding-bottom: 0%;
   font-size: 16px;
   width:0%;
-  border-radius: 0px;
   overflow-y: hidden;
 }
 .scroller {

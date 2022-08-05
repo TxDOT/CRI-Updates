@@ -116,18 +116,18 @@
       <v-col  v-for="(item,index) in mileInfo" :key="index">
         <v-row style="border: 1px solid #204E70; height: 70px;" width="800px"> <!-- add for loop to display items; previous button should create an object, which can be displayed below info -->
           <v-card-text style="position: relative; left:1px; text-align: left;" >This road is <em style="color:white" :style="{backgroundColor:`${assetColorTable[item.SRFC_TYPE]}`}">{{item.SRFC_TYPE}}</em> between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
-          <v-btn v-if="!infoRoad" plain color="#15648C" style="left:270px; bottom: 63px;" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
-          <small v-if="!infoRoad" style="color:#15648C; left:222px; bottom:33px; position: relative;">EDIT</small>
+          <v-btn v-if="!infoRoad" plain color="#204E70" style="left:270px; bottom: 63px;" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
+          <small v-if="!infoRoad" style="color:#204E70; left:222px; bottom:33px; position: relative;">EDIT</small>
           <v-btn v-if="!infoRoad" plain style="left:230px; bottom:63px;" @click="deleteSurface(index); updateMileInfo();updateGraphic();cancelDfoLocation();" :disabled="mileInfo.length === 1"><v-icon color="red" >mdi-delete</v-icon></v-btn>
           <small v-if="!infoRoad" style="color:red; left:175px; bottom:33px; position: relative;" :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">DELETE</small>
         </v-row>
         <v-spacer></v-spacer>
       </v-col>
-      <a v-if="!infoRoad" @click="isAssetFinished = isAssetFullLen = false; isAssetType = true; addRoadSurface();" style="position: absolute; left:0%; font-size: small; top: 110%; padding-bottom: 5px; color:#15648C"><v-icon color="#15648C">mdi-plus-thick</v-icon><u>Add another segment</u></a>
+      <a v-if="!infoRoad" @click="isAssetFinished = isAssetFullLen = false; isAssetType = true; addRoadSurface();" style="position: absolute; left:0%; font-size: small; top: 110%; padding-bottom: 5px; color:#204E70"><v-icon color="#204E70">mdi-plus-thick</v-icon><u>Add another segment</u></a>
       <!-- <v-btn depressed plain class="nextAssetBtns" @click="isAssetEnd = false; isAssetStart = false; isAssetFinished=true; isAssetType = false; nextStep(1)"> 
         Cancel
       </v-btn> -->
-      <v-btn v-if="!infoRoad" outlined class="nextAssetBtns" tile @click="nextStep(5); initLoadAsset('numLane'); cancelDfoLocation()" color="#15648C" :disabled="!setAssetCover[0]"> 
+      <v-btn v-if="!infoRoad" outlined class="nextAssetBtns" tile @click="nextStep(5); initLoadAsset('numLane'); cancelDfoLocation()" color="#204E70" :disabled="!setAssetCover[0]"> 
         <u>Continue</u>
       </v-btn>
     </v-card>

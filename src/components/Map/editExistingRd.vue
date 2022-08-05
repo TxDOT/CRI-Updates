@@ -1,14 +1,14 @@
 <template>
     <v-container>
-        <v-card id="edit">
+        <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">
             <v-card-title class="editRdTitle" v-if="edit===true">
-                Edit an Existing Road
+                <v-card-text style="font-size:20px; text-align: left; padding-left: 3%; bottom: 2.6vh; position: relative;">Edit Road</v-card-text>
              </v-card-title>
             <v-card-title class="editRdTitle" v-if="addR===true">
-                Add a new Road
+                <v-card-text style="font-size:20px; text-align: left; padding-left: 3%; bottom: 2.6vh; position: relative;">Add Road</v-card-text>
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="deleteR===true">
-                Delete a Road
+                <v-card-text style="font-size:20px; text-align: left; padding-left: 3%; bottom: 2.6vh; position: relative;">Delete Road</v-card-text>
             </v-card-title>
     
 
@@ -22,32 +22,32 @@
             <v-icon color="blue" class="editRdIcon">
                 mdi-cursor-default
             </v-icon>
-                Click on the Map to add a new Road
+            Click on the map to start digitizing a new road
         </v-card-text>
         <v-card-text v-if="deleteR === true" class="editRdInfo">
             <v-icon color="blue" class="editRdIcon" style="transform:rotate(330deg); top:0px">
                 mdi-navigation
-            </v-icon>Select a road to delete it
+            </v-icon>Select a road from the map to delete it
         </v-card-text>
-        <v-btn v-if="edit===true || addR === true || deleteR === true" plain block color="#E64545" @click="cancelEditAction(); clearEditBtn=false">Cancel Action</v-btn>
+        <v-btn tile outlined depressed style="right: 1%; top: 60%; position: absolute; border-color: black;" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false">Cancel</v-btn>
     </v-card>
     <v-card id="delWarn" v-if="deleteSecond === true || deleteClick"> <!-- //&& this.modifyR === false -->
         <v-card-title class="editRdTitle" style="width: 385px">
-            Delete a Road
+            <v-card-text style="font-size:20px; text-align: left; padding-left: 3%; bottom: 1.6rem; position: relative;">Delete a Road</v-card-text>
         </v-card-title>
-        <v-card-text style="text-align: left; top:5px; position: relative; flex-wrap: wrap;" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
-            <b>{{roadName[0].streetName}} {{roadName[0].streetType}}</b> will be deleted.
+        <v-card-text style="text-align: left; top:5px; position: relative; flex-wrap: wrap; color:black" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
+            <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> will be deleted.
         </v-card-text>
-        <v-alert color="orange" height="35" dense outlined style="width:100%; text-align: left; font-size: 13.3px;" v-if="!deleteClick" >
+        <v-alert color="orange" height="35" dense outlined style="width:100%; text-align: left; font-size: 13.3px; border-radius: 0px;" v-if="!deleteClick" >
             <v-icon color="orange" style="right:5px; bottom: 4px;">
                 mdi-information
             </v-icon>
             You can discard this edit later if you change your mind
          </v-alert>
-        <v-btn v-if="!deleteClick" depressed plain style="left:69px;top:10px" @click="deleteRoadClick(); deleteSecond=false"> 
+        <v-btn v-if="!deleteClick" depressed text color="black" style="left:69px;top:10px" @click="deleteRoadClick(); deleteSecond=false"> 
           Cancel
         </v-btn>
-        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" plain color="#15648C" :style="deleteClick ? {'top':'66px', 'left':'0px'}:{'top':'10px', 'left':'73px'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
+        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#15648C" :style="deleteClick ? {'top':'66px', 'left':'0px', 'border-color':'black'}:{'top':'10px', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
           <u :style="deleteClick ? {'text-decoration': 'none'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
         <v-btn v-if="deleteClick" dense tile outlined depressed plain style="left:00px;top:66px" color="#15648C" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
@@ -244,10 +244,7 @@ export default {
     .editRdTitle{
         background: #204E70;
         color:white;
-        font-size: 16px;
-        height: 40px;
-        padding-left: 40px;
-        padding-top: 1%;
+        height: 35px;
         text-align: justify;
         top: 10%;
         width: 25.3vw;
@@ -263,6 +260,7 @@ export default {
         top: 0px;
         width: 100%;
         left: 0px;
+        color: black !important;
     }
     .editRdIcon{
         position: absolute;
@@ -278,6 +276,7 @@ export default {
         width: 25.3vw;
         color: #204E70;
         border-radius: 0px;
+        height: 12%;
     }
     #delWarn{
         position: absolute;

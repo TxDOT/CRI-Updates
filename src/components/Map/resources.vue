@@ -28,17 +28,16 @@
         items: [
           { title: 'Advanced', icon: 'mdi-cog',action: ()=>{
               this.clearEditBtn = true
-              console.log('Advanced')
-              setTimeout(()=>{
-                this.clearEditBtn = false
-              },1000)
+              this.removeBtnFocus();
             }},
           { title: 'Criteria', icon: 'mdi-clipboard-text', action: ()=>{
               window.open('https://www.txdot.gov/apps/statewide_mapping/dusa/resources/COUNTY_ROAD_CRITERIA.pdf', '_blank')
+              this.removeBtnFocus();
             }
           },
           { title: 'Help & Training', icon: 'mdi-help-circle', action: ()=>{
               console.log('help and training')
+              this.removeBtnFocus();
             }
           },
           { title: 'About', icon: 'mdi-home', action: ()=>{
@@ -46,6 +45,13 @@
             }
           }
         ],
+      }
+    },
+    methods:{
+      removeBtnFocus(){
+        setTimeout(()=>{
+          this.clearEditBtn = false
+        },1000)
       }
     },
     computed:{
