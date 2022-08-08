@@ -76,8 +76,9 @@ export default {
         flowType: 'auto',
         popup: false,
         portalUrl: "https://txdot.maps.arcgis.com",
-        preserveUrlHash: true
+        preserveUrlHash: false
       });
+
       console.log(this.auth)
       esriId.registerOAuthInfos([this.auth]);
       this.loginStatus()
@@ -152,6 +153,7 @@ export default {
         console.log(await this.loginButton())
         esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
           .then(async (value) => {
+            
             this.loginToMap = true
             console.log(value)
             this.login
@@ -176,26 +178,12 @@ export default {
               objectidList.push(objectid)
             }
           }
-          console.log(objectidList)
+        console.log(objectidList)
 
-          featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
-        // reloadEdits().then((road)=>{
-        //   let objectidList = [];
-        //   for(let id in road.features){
-        //     if(road.features[id].attributes !== null){
-        //       let objectid = road.features[id].attributes.objectid || road.features[id].attributes.OBJECTID
-        //       objectidList.push(objectid)
-        //     }
-        //   }
-        //   console.log(objectidList)
-
-        //   featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
-        // });
+        featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
         console.log(nbr)
-        //featLayer.definitionExpression =`CNTY_TYPE_NM = '${name}'`
         txCounties.definitionExpression=`CNTY_NM='${name}'`
         
-        //rdbdSrfcGeom.definitionExpression=`CNTY_NM='${name}'`
         const query = new Query();
         query.where = `CNTY_NM = '${name}'`
         query.outFields = [ "*" ]

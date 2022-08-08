@@ -5,15 +5,15 @@
   <!-- <v-col v-for="(item,index) in rdbdSurf" :key="index" > -->
     <v-card v-if="isAssetType=== true" >
       <v-card-title class="surfaceTitle">
-        <v-card-text style="bottom:30px; position:relative; font-size: 15px; text-align: left;">What's the Design Type?</v-card-text>
+        <v-card-text class="cardText">What's the Design Type?</v-card-text>
       </v-card-title>
       <v-flex v-for="(item, index) in assetTypeOpt" :key="index">
         <v-select v-model="assetType" :items="item.types" dense placeholder="Pick a design type" @change="selectAssetType" ></v-select>          
       </v-flex>
-        <v-btn style="bottom: 10px; padding:0px; left:70px;" depressed plain @click= "isAssetType = isAssetStart = isAssetEnd = isAssetFullLen = false; isAssetFinished = true;">
+        <v-btn style="bottom: 10px; padding:0px; left:80px;" depressed plain @click= "isAssetType = isAssetStart = isAssetEnd = isAssetFullLen = false; isAssetFinished = true;">
           Cancel
         </v-btn>
-        <v-btn style="bottom: 10px; padding:0px; right:6px;" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetFinished = isAssetStart = false; isAssetFullLen = true;">
+        <v-btn style="bottom: 10px; padding:0px; right:0px;" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetFinished = isAssetStart = false; isAssetFullLen = true;">
           <u>Skip</u>
         </v-btn>
         <!-- <v-btn style="bottom: 10px; padding:0px; right:1px;" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetFinished = false; isAssetStart = true;">
@@ -23,7 +23,7 @@
 
     <v-card class="card" v-if="isAssetFullLen === true" height="80">
       <v-card-title class="surfaceTitle">
-        <v-card-text style="bottom:27px; position:relative; font-size: 15px; text-align: left;">Is the {{assetType}} full length?</v-card-text>
+        <v-card-text class="cardText">Is the {{assetType}} full length?</v-card-text>
       </v-card-title>
         <v-btn style="bottom: 0px; padding:0px; right:120px;" depressed plain @click= "isAssetType = isAssetStart = isAssetEnd = isAssetFullLen = false; isAssetFinished = true;">
           Back
@@ -31,7 +31,7 @@
         <v-btn style="bottom: 0px; padding:0px; right:20px;" depressed plain @click= "isAssetType = isAssetStart = isAssetEnd = isAssetFullLen = false; isAssetFinished = true;">
           Cancel
         </v-btn>
-        <v-btn style="bottom: 10px; padding:0px; right:1px;" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetStart = isAssetFullLen = false; isAssetFinished = true; atBegin(); atEnd(); updateMileInfo(); updateGraphic();">
+        <v-btn style="bottom: 10px; padding:0px; right:0px;" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetStart = isAssetFullLen = false; isAssetFinished = true; atBegin(); atEnd(); updateMileInfo(); updateGraphic();">
           <u>Yes</u>
         </v-btn>
         <v-btn style="bottom: 10px; padding:0px; right:70px;" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetFinished = isAssetFullLen = false; isAssetStart = true;">
@@ -41,7 +41,7 @@
 
     <v-card class="card" v-if="isAssetStart === true">
       <v-card-title class="surfaceTitle">
-        <v-card-text style="bottom:30px; position:relative; font-size: 15px; text-align: left;">Where does the {{assetType}} Start?</v-card-text>
+        <v-card-text class="cardText">Where does the {{assetType}} Start?</v-card-text>
       </v-card-title>
       <v-flex v-for="(item, i) in selectionBegin" :key="i">
         <v-select label="Select an option" v-model="assetStartDfo" :items="item.types" @input="selectAssetDFO"></v-select>
@@ -77,7 +77,7 @@
 
      <v-card class="card" v-if="isAssetEnd === true">
       <v-card-title class="surfaceTitle">
-        <v-card-text style="bottom:30px; position:relative; font-size: 15px; text-align: left;">Where does the {{assetType}} End?</v-card-text>
+        <v-card-text class="cardText">Where does the {{assetType}} End?</v-card-text>
       </v-card-title>
       <v-flex v-for="(item, i) in selectionEnd" :key="i">
         <v-select label="Select an option" v-model="assetEndDfo" :items="item.types" @input="selectAssetDFO" ></v-select>
@@ -116,9 +116,9 @@
       <v-col  v-for="(item,index) in mileInfo" :key="index">
         <v-row style="border: 1px solid #204E70; height: 70px;" width="800px"> <!-- add for loop to display items; previous button should create an object, which can be displayed below info -->
           <v-card-text style="position: relative; left:1px; text-align: left;" >This road is <em style="color:white" :style="{backgroundColor:`${assetColorTable[item.SRFC_TYPE]}`}">{{item.SRFC_TYPE}}</em> between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
-          <v-btn v-if="!infoRoad" plain color="#204E70" style="left:270px; bottom: 63px;" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
+          <v-btn v-if="!infoRoad" text color="#204E70" style="left:270px; bottom: 63px;" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
           <small v-if="!infoRoad" style="color:#204E70; left:222px; bottom:33px; position: relative;">EDIT</small>
-          <v-btn v-if="!infoRoad" plain style="left:230px; bottom:63px;" @click="deleteSurface(index); updateMileInfo();updateGraphic();cancelDfoLocation();" :disabled="mileInfo.length === 1"><v-icon color="red" >mdi-delete</v-icon></v-btn>
+          <v-btn v-if="!infoRoad" text style="left:230px; bottom:63px;" @click="deleteSurface(index); updateMileInfo();updateGraphic();cancelDfoLocation();" :disabled="mileInfo.length === 1"><v-icon color="red" >mdi-delete</v-icon></v-btn>
           <small v-if="!infoRoad" style="color:red; left:175px; bottom:33px; position: relative;" :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">DELETE</small>
         </v-row>
         <v-spacer></v-spacer>
@@ -324,6 +324,7 @@ export default {
         for(let z=0; z < gLayer.graphics.items.length; z++){
           if(gLayer.graphics.items[z].attributes.objectid === this.objid){
             gLayer.graphics.items[z].attributes.roadbedDesign = JSON.stringify(x)
+            this.rdbdDesign = JSON.parse(gLayer.graphics.items[z].attributes.roadbedDesign)
           }
         }
         //
@@ -479,6 +480,7 @@ export default {
 <style scoped>
 .card{
   border-radius: 0px;
+  max-width: 99%;
 }
 .surfaceTitle{
   background-color: #204E70;
@@ -497,7 +499,7 @@ export default {
 
 .cancelButton{
   bottom: 10px;
-  left: 280px;
+  left: 295px;
   padding:0px;  
 }
 .continueButton{
@@ -508,9 +510,9 @@ export default {
 
 .cardText{
   position:relative;
-  padding: 0%;
-  bottom:13px;
-  font-size: 14px;
+  padding-left: 0%;
+  bottom:27px;
+  font-size: 15px;
   text-align: left;
 }
 .nextAssetBtns{

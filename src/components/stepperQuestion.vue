@@ -94,7 +94,12 @@
         <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card> -->
     <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1vw; bottom: 13vh; z-index:1">Add An Optional Comment</a>
-    <v-textarea v-if="!forInfo" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%;" height="10" disabled solo no-resize flat dense v-model="comment">'{{comment}}'</v-textarea>
+    <v-card elevation="0" class="overflow-y-auto" v-if="!forInfo" v-scroll.self="onScroll" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%; overflow-y: scroll; max-height: 70px;">
+      <div>
+        <v-card-text>{{comment}}</v-card-text>
+      </div>
+    </v-card>
+    <!-- <v-textarea v-if="!forInfo" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%;" height="5vh" disabled solo no-resize flat dense v-model="comment">'{{comment}}'</v-textarea> -->
       <v-dialog v-model="dialog" persistent>
         <v-card style="width:30%; left: 30%; height: 70%; border-radius: 0px;">
           <v-card-title class="surfaceTitle">
@@ -184,6 +189,7 @@ export default {
         fetchRoadSurface: null,
         fetchRoadDesign: null,
         fetchNumLanes: null,
+        scrollInvoked: 0,
         //objectid: 0,
         // newDfo:0,
         //working on form validation
@@ -319,7 +325,9 @@ export default {
     },
 
     methods:{
-      
+      onScroll(){
+        this.scrollInvoked++
+      },
       delGraphic(){
         removeGraphic();
       },
@@ -581,8 +589,6 @@ export default {
   left: 16.5rem;
   padding-bottom: 0%;
   font-size: 16px;
-  width:0%;
-  overflow-y: hidden;
 }
 .scroller {
   width: auto;
@@ -631,8 +637,8 @@ export default {
 
 #discardSketch{
     width: 360px;
-    left: 750px;
-    top: 400px;
+    left: 51vw;
+    top: 50vh;
     border-radius: 0px;
 }
 .confirmationTitle{

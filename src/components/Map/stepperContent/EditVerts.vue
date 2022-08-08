@@ -4,7 +4,7 @@
         <v-btn small style="top:0px; left:70px;" depressed @click="deleteRoad()" text color="#204E70" v-if="!info && modifyRoad"> 
           <v-icon color="black" medium style="right:5px">mdi-trash-can</v-icon><u>Delete Road</u>
         </v-btn>
-        <v-btn outlined small style="top:0px; left:73px; border:black 1px solid" tile color="#204E70" v-on="!info ? {'click' : () =>{nextStep(2)}} : {'click' : () =>{beginEdit()}}"> 
+        <v-btn outlined small style="top:0px; left:73px; border:black 1px solid; position: relative;" tile color="#204E70" v-on="!info ? {'click' : () =>{nextStep(2)}} : {'click' : () =>{beginEdit()}}"> 
           <u v-if="info">{{editStep}}</u>
           <u v-if="!info">{{advanceStep}}</u>
         </v-btn>

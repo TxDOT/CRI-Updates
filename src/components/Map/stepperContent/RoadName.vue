@@ -80,7 +80,7 @@ export default {
             for(let z=0; z < gLayer.graphics.items.length; z++){
                 if(gLayer.graphics.items[z].attributes.objectid === this.objid){
                     gLayer.graphics.items[z].attributes.roadbedName = JSON.stringify(updateG)
-                    console.log(JSON.parse(gLayer.graphics.items[z].attributes.roadbedName))
+                
                     this.roadName = JSON.parse(gLayer.graphics.items[z].attributes.roadbedName)
                 }
             }

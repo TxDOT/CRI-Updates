@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-alert type="warning" prominent border="left" dense style="position:absolute; top: 6vh; width:17vw; left: 40%; text-align: left; border-radius: 0px;">
+        <v-alert type="warning" prominent border="left" dense style="position:fixed; top: 3.5rem; width:17rem; left: 40vw; text-align: left; border-radius: 0px;">
             Edit has been removed.
         </v-alert>
     </div>

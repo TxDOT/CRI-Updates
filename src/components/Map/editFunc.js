@@ -533,6 +533,8 @@ export function removeGraphic(){
   let graphicR = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
   initGraphicCheck(graphicR[0], true)
   gLayer.remove(graphicR[0])
+  let delHighlight = view.allLayerViews.items.filter(x => x.layer.type === 'feature' && x._highlightIds)
+  delHighlight[0]._highlightIds.delete(store.getters.getObjectid)
   hideEditedRoads(null,true)
   let length = Number(geometryEngine.geodesicLength(graphicR[0].geometry, "miles").toFixed(5))
   if(graphicR[0].attributes.editType === 'ADD'){
@@ -579,7 +581,9 @@ export async function getGraphic(){
         view.hitTest(event,option)
           .then(async function(response){
             if((response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
-              console.log('delete === true')
+              return;
+            }
+            else if(response.results.length && store.getters.getdeleteGraphClick === true){
               return;
             }
             else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1 && store.getters.getInfoRd === false) || (response.results.length && store.getters.getInfoRd === true && response.results[0].graphic.attributes['editType'] && store.getters.getStepperClose === true)){
