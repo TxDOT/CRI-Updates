@@ -19,10 +19,9 @@ export default {
       countyInfo().then((result) =>{
         if(result.response === true){
           this.$router.push({name:'MileSign', params:{id: result.nbr}})
+          return;
         }
-        else{
-          this.$router.push({name:'Login'})
-        }
+        this.$router.push({name:'Login'})
       })
       //roadInfo();
     }

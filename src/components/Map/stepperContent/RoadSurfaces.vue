@@ -1,5 +1,5 @@
 <template>
-  <div class="scroller" style="min-height: 0vh; display:flex; flex-direction: column; height:30vh"> 
+  <div class="scroller" style="min-height: 0vh; display:flex; flex-direction: column; height:30vh;"> 
   <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
   <!-- <v-col v-for="(item,index) in rdbdSurf" :key="index" > -->
   <v-card class="card" v-if="isAssetType=== true">
@@ -35,44 +35,43 @@
     <v-btn style="bottom: 10px; padding:0px; right:70px;" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetFinished = isAssetFullLen = false; isAssetStart = true;">
       <u>No</u>
     </v-btn>
-  </v-card>
-                  
-  <v-card class="card" v-if="isAssetStart === true">
-    <v-card-title class="surfaceTitle">
-      <v-card-text class="cardText">Where Does the {{assetType}} Start?</v-card-text>
-    </v-card-title>
-    <v-flex v-for="(item, i) in selectionBegin" :key="i">
-      <v-select label="Select an option" v-model="assetStartDfo" :items="item.types" @input="selectAssetDFO"></v-select>
-    </v-flex>
-    <v-btn class="cancelButton" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetStart = isAssetFullLen = false; isAssetFinished = true; cancelDfoLocation()">
-      Cancel
-    </v-btn>
-    <v-btn class="continueButton" depressed plain tile @click="isAssetStart = isAssetEnd = isAssetFinished = isAssetType = false; isAssetFullLen = true; cancelDfoLocation()">
-      Back
-    </v-btn>
-        <!-- <v-btn tile absolute left small @click="atBegin(); isAssetStartDisable=false; cancelDfoLocation()" color="#15648C" text active-class="border" style="top:35px;" retain-focus-on-click>
-          <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The beginning of the Road
-        </v-btn>
-        <v-col style="position:absolute; right: 80px; top:50px; font-size: 13px;">OR</v-col>
-        <v-btn tile class="mileButton" absolute left small @click="isAssetStartDisable=true; cancelDfoLocation()" color="#15648C" text active-class="border" style="top: 80px; width: 130px;" retain-focus-on-click>
-          <v-icon style="padding:0px;">mdi-plus</v-icon>At this mile: 
-        </v-btn>
-        <v-text-field @click="isAssetStartDisable=true;" :solo="isAssetStartDisable ? false: true" :flat="isAssetStartDisable ? false: true" class="enterMile" v-model="assetStartDfo" dense absolute :outlined="isAssetStartDisable" :label="isAssetStartDisable ? 'Enter Mile' : ''" :style="[isAssetStartDisable ? {'position': 'relative', 'top':'42px', 'left':'140px'} : {'position': 'relative', 'top':'42px', 'left':'140px'}]"></v-text-field>
-        <v-col style="position:absolute; right: 80px; top:95px; font-size: 13px;">OR</v-col>
-          <v-btn tile class="chooseMapBtn" absolute left small @click="getDfoLocation('start'); isAssetStartDisable=false" color="#15648C" text active-class="border" style="top:130px" retain-focus-on-click>
-            <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
+  </v-card>             
+    <v-card class="card" v-if="isAssetStart === true" >
+      <v-card-title class="surfaceTitle">
+        <v-card-text class="cardText">Where Does the {{assetType}} Surface Start?</v-card-text>
+      </v-card-title>
+      <v-flex v-for="(item, i) in selectionBegin" :key="i">
+        <v-select label="Select an option" v-model="assetStartDfo" :items="item.types" @input="selectAssetDFO"></v-select>
+      </v-flex>
+      <v-btn class="cancelButton" tile absolute outlined @click="isAssetType = isAssetEnd = isAssetStart = isAssetFullLen = false; isAssetFinished = true; cancelDfoLocation()">
+        Cancel
+      </v-btn>
+      <v-btn class="continueButton" depressed plain tile @click="isAssetStart = isAssetEnd = isAssetFinished = isAssetType = false; isAssetFullLen = true; cancelDfoLocation()">
+        Back
+      </v-btn>
+          <!-- <v-btn tile absolute left small @click="atBegin(); isAssetStartDisable=false; cancelDfoLocation()" color="#15648C" text active-class="border" style="top:35px;" retain-focus-on-click>
+            <v-icon style="padding:0px;">mdi-map-marker</v-icon>At The beginning of the Road
           </v-btn>
-          <v-btn class="cancelButton" depressed plain @click="isAssetStart = isAssetEnd = isAssetFinished = false; isAssetType = true;" style="bottom: 20px; right:10px;">
-            Cancel
+          <v-col style="position:absolute; right: 80px; top:50px; font-size: 13px;">OR</v-col>
+          <v-btn tile class="mileButton" absolute left small @click="isAssetStartDisable=true; cancelDfoLocation()" color="#15648C" text active-class="border" style="top: 80px; width: 130px;" retain-focus-on-click>
+            <v-icon style="padding:0px;">mdi-plus</v-icon>At this mile: 
           </v-btn>
-          <v-btn class="continueButton" absolute outlined tile @click="isAssetStart =  isAssetType = isAssetFinished= false; isAssetEnd = true;" style="bottom: 20px; right:10px;">
-            <u>Continue</u>
-          </v-btn> -->
-  </v-card>
-                
+          <v-text-field @click="isAssetStartDisable=true;" :solo="isAssetStartDisable ? false: true" :flat="isAssetStartDisable ? false: true" class="enterMile" v-model="assetStartDfo" dense absolute :outlined="isAssetStartDisable" :label="isAssetStartDisable ? 'Enter Mile' : ''" :style="[isAssetStartDisable ? {'position': 'relative', 'top':'42px', 'left':'140px'} : {'position': 'relative', 'top':'42px', 'left':'140px'}]"></v-text-field>
+          <v-col style="position:absolute; right: 80px; top:95px; font-size: 13px;">OR</v-col>
+            <v-btn tile class="chooseMapBtn" absolute left small @click="getDfoLocation('start'); isAssetStartDisable=false" color="#15648C" text active-class="border" style="top:130px" retain-focus-on-click>
+              <v-icon style="padding:0px;">mdi-map-plus</v-icon>Choose on the Map
+            </v-btn>
+            <v-btn class="cancelButton" depressed plain @click="isAssetStart = isAssetEnd = isAssetFinished = false; isAssetType = true;" style="bottom: 20px; right:10px;">
+              Cancel
+            </v-btn>
+            <v-btn class="continueButton" absolute outlined tile @click="isAssetStart =  isAssetType = isAssetFinished= false; isAssetEnd = true;" style="bottom: 20px; right:10px;">
+              <u>Continue</u>
+            </v-btn> -->
+    </v-card>
+  <!-- <v-expand-x-transition>             -->
   <v-card class="card" v-if="isAssetEnd === true">
-    <v-card-title class="surfaceTitle" style="border: #E64545 2px solid">
-      <v-card-text class="cardText">Where Does the {{assetType}} End?</v-card-text>
+    <v-card-title class="surfaceTitle">
+      <v-card-text class="cardText">Where Does the {{assetType}} Surface <span id="assetEnd">End</span>?</v-card-text>
     </v-card-title>
     <v-flex v-for="(item, i) in selectionEnd" :key="i">
       <v-select label="Select an option" v-model="assetEndDfo" :items="item.types" @input="selectAssetDFO" ></v-select>
@@ -102,6 +101,7 @@
           <u>Continue</u>
         </v-btn> -->
   </v-card>
+  <!-- </v-expand-x-transition> -->
   <v-card class="card" v-if="isAssetFinished=== true" absolute left flat >
     <assetAlert/>
       <v-col  v-for="(item,index) in mileInfo" :key="index">
@@ -256,6 +256,7 @@ export default {
           let returnSelectedDFO = await getSelectedDFO(this.objid);
           if(!returnSelectedDFO) return;
           type === 'start' ? this.assetStartDfo = Number(returnSelectedDFO[0].toFixed(3)) : this.assetEndDfo = Number(returnSelectedDFO[0].toFixed(3))
+          //type === 'start' ? this.assetStartDfo = Number(returnSelectedDFO[0].toFixed(3)) : this.assetEndDfo = Number(returnSelectedDFO[0].toFixed(3))
         }
         catch{
           console.log("canceled")
@@ -470,21 +471,12 @@ export default {
   border-radius: 0px;
   max-width: 99%;
 }
-.testIncrease{
-  height:20
-}
 .surfaceTitle{
   background-color: #204E70;
   color: white;
   height:30px;
   width: 100%;
   font-size: 25px; 
-}
-.enterMile{
-  width:100px;
-  top:38px;
-  left:150px;
-  height:160px;
 }
 
 .cancelButton{
@@ -516,5 +508,32 @@ export default {
 }
 .chooseMapBtn{
   top:120px;
+}
+#assetEnd{
+  font-weight: bold;
+  text-decoration: underline;
+  display: -moz-inline-stack;
+  display: inline-block;
+  animation: pulse-title 2s linear;
+}
+@keyframes pulse-title{
+  0%{
+    transform: scale(0);
+  }
+  50%{
+    transform: scale(1.3);
+  }
+  70%{
+    transform: scale(1);
+  }
+  80%{
+    transform: scale(.5);
+  }
+  90%{
+    transform: scale(.1);
+  }
+  100%{
+    transform: scale(.2)
+  }
 }
 </style>

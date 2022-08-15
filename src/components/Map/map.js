@@ -305,12 +305,14 @@ export const sketch = new SketchViewModel({
         selfEnabled: false
     }
 });
+
 sketch.polylineSymbol.color = {
     r: 204,
     g: 102,
     b: 0,
     a: 1
 }
+
 
 // export const newSketch = new Sketch({
 //     view: view,

@@ -1,5 +1,5 @@
 <template>
-    <v-footer app style="left: 200px; width: 100%; height:3.5vh; text-align: center;background: #4D4D4D" >
+    <v-footer app style="left: 190px; width: 100%; height:3.5vh; text-align: center;background: #4D4D4D" >
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
           <div id="footerCard" style="color:white"><div style="position:fixed; right: 4vw; bottom: .7vh; font-size: .7vw;">{{x}}, {{y}}</div>

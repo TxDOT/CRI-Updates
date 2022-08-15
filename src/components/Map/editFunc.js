@@ -10,13 +10,13 @@ import Query from "@arcgis/core/rest/support/Query";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils"
 import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
 //import TextSymbol from "@arcgis/core/symbols/TextSymbol";
-import {store} from '../../storeUpd'
+import {store} from '../../store'
+import router from '../../router';
 
 
 //querys the Refernce Layer table return geometry/attributes
-function queryFeat(qry){
-  console.log('1')
-  let queryFeat = featLayer.queryFeatures({
+async function queryFeat(qry){
+  let queryFeat = await featLayer.queryFeatures({
     objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : [qry.attributes.OBJECTID],
     outFields: ["*"],
     returnGeometry: true,
@@ -95,12 +95,13 @@ async function queryFeatureTables(tblqry){
   
 }
 //Sets Road Data in the data store. 
-function setDataToStore(surface, design, name, lane, objectid){
+function setDataToStore(surface, design, name, lane, objectid, comment){
   store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
   store.commit('setRoadbedDesign', design) 
   store.commit('setRoadbedName', name)
   store.commit('setNumLane', lane)
   store.commit('setObjectid', objectid)
+  store.commit('setComment', comment)
 }
 //get county name and road totals. Filters county for map zoom and definition query
 export async function countyInfo(){
@@ -110,6 +111,7 @@ export async function countyInfo(){
     console.log(queryUrl.match(regExUrl)[0].split('/'))
     //let crInfo = queryUrl.split('http://localhost:8080/')[1]
     let crInfo = queryUrl.match(regExUrl)[0].split('/')[1]
+    if(crInfo === 'login#'){return router.push('/load')}
     for (let j=0; j < cntyNbrNm.length; j++){
       if(cntyNbrNm[j][crInfo]){
         let whereStatement = `County_NBR = '${crInfo}'`
@@ -217,7 +219,8 @@ export async function addRoadbed(){
                  sketch.layer.graphics.items.at(-1).attributes.roadbedDesign,
                  sketch.layer.graphics.items.at(-1).attributes.roadbedName,
                  sketch.layer.graphics.items.at(-1).attributes.numLane,
-                 sketch.layer.graphics.items.at(-1).attributes.objectid)
+                 sketch.layer.graphics.items.at(-1).attributes.objectid,
+                 '')
   
   return returnAddNewRoad[0]
 }
@@ -346,7 +349,7 @@ export async function defineGraphic(graphics, clickType, editType){
           isCreatedAssets: true,
           createDt: new Date().getTime(),
           createNm: store.getters.getUserName, //replace with user login info. TODO,
-          comment: null
+          comment: graphics.features ? store.getters.getComment : graphics.attributes.EDIT_NOTES,
         },
                   
         symbol: {
@@ -473,6 +476,7 @@ export function updateLength(){
     console.log('updateLength error', Error)
   }
 }
+
 //setUpGraphic() gets old length of selected graphic and send old length to store
 function setUpGraphic(){
   view.on('click',(event)=>{
@@ -482,12 +486,17 @@ function setUpGraphic(){
     let opts = [gLayer]
     store.commit('setIsDfoReturn', false)
     view.hitTest(event,opts).then((response)=>{
+      // sketch._internalGraphicsLayer._promiseProps._resolver.promise.then((x)=>{
+      //   console.log(x.graphics)
+      //   console.log(x.graphics._observable._observers[0].properties.items[0].symbol.color = {r:0,g:255,b:111, a:1})
+      // })
       if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
         return;
       }
       response.results.forEach((result)=>{
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && store.getters.getInfoRd === false){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
+            console.log(sketch)
             sketch.update([result.graphic], {tool:"reshape"});
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
             console.log(oldLength)
@@ -603,7 +612,8 @@ export async function getGraphic(){
                               response.results[0].graphic.attributes['roadbedDesign'],
                               response.results[0].graphic.attributes['roadbedName'],
                               response.results[0].graphic.attributes['numLane'],
-                              response.results[0].graphic.attributes['objectid'])
+                              response.results[0].graphic.attributes['objectid'],
+                              response.results[0].graphic.attributes['comment'])
                 resp(response.results[0].graphic)
               }
               else if(response.results[0].graphic.attributes['editType'] === 'DELETE'){
@@ -611,7 +621,8 @@ export async function getGraphic(){
                               response.results[0].graphic.attributes['roadbedDesign'],
                               response.results[0].graphic.attributes['roadbedName'],
                               response.results[0].graphic.attributes['numLane'],
-                              response.results[0].graphic.attributes['objectid'])
+                              response.results[0].graphic.attributes['objectid'],
+                              response.results[0].graphic.attributes['comment'])
                 store.commit('setdeleteGraphClick', true)
               }
             }
@@ -1421,6 +1432,7 @@ export function mouseHoverDfoDisplay(type){
   view.on('pointer-move', pickRoute[`${type}`])
 }
 
+//reloads edits from EDITS Feature Service to Graphics Layer
 export async function reloadEdits(){
   //while user is logging in, query edits service and display currents from count
   let currentEditRoads = queryEditsLayer();
@@ -1430,29 +1442,28 @@ export async function reloadEdits(){
   //second query and and compare Ref layer length against add route length and apply to total length
   //finally subtract delete roads from total length 
   let mileSetUp = 0;
-  createGraphics.features.forEach((x)=>{
-    let length = geomToMiles(x.geometry,true,3)
-    console.log(x)
+  for(let i=0; i < createGraphics.features.length; i++){
+    let length = geomToMiles(createGraphics.features[i].geometry,true,3)
     //reset Edit TYPE_ID to add/edit/delete so that criConstants.editType can be used in defineGraphic func
-    if(x.attributes.EDIT_TYPE_ID === 1){
+    if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 1){
       mileSetUp += length
-      x.attributes.EDIT_TYPE_ID = 'add'
+      createGraphics.features[i].attributes.EDIT_TYPE_ID = 'add'
     }
-    else if(x.attributes.EDIT_TYPE_ID === 5){
-      let returnRoad = queryFeat(x)
-      returnRoad.then((oldLen)=>{
-        let oldLength = geomToMiles(oldLen.features[0].geometry,true,3)
-        let diff = oldLength - length
-        mileSetUp += diff
-      })
-      x.attributes.EDIT_TYPE_ID = 'edit'
+    else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 5){
+      let returnRoad = await queryFeat(createGraphics.features[i])
+      let oldLength = geomToMiles(returnRoad.features[0].geometry,true,3)
+      let diff = length - oldLength
+      mileSetUp += diff
+
+      createGraphics.features[i].attributes.EDIT_TYPE_ID = 'edit'
     }
-    else if(x.attributes.EDIT_TYPE_ID === 4){
-      x.attributes.EDIT_TYPE_ID = 'delete'
+    else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 4){
+      createGraphics.features[i].attributes.EDIT_TYPE_ID = 'delete'
     }
     
-    defineGraphic(x, 'click')
-  })
+    defineGraphic(createGraphics.features[i], 'click')
+  }
+
   console.log(mileSetUp)
   store.commit('setDeltaDis',[mileSetUp, 'Add'])
   return currentEditRoads
@@ -1480,4 +1491,30 @@ export function saveToEditsLayer(){
   initGraphicCheck(editGraphic, false)
 }
 
-
+//function to query ref table by OID and COUNTY NAME and go and load map
+export async function goToMap(name, nbr){
+  let road = await reloadEdits()
+    let objectidList = [];
+      for(let id in road.features){
+        if(road.features[id].attributes !== null){
+          let objectid = road.features[id].attributes.objectid || road.features[id].attributes.OBJECTID
+          objectidList.push(objectid)
+        }
+      }
+      console.log(objectidList)
+      // need to adjust objectid to asset id
+      featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
+      console.log(nbr, name)
+      txCounties.definitionExpression=`CNTY_NM='${name}'`
+        
+      const query = new Query();
+      query.where = `CNTY_NM = '${name}'`
+      query.outFields = [ "*" ]
+      query.returnGeometry = true
+      let countyQuery = txCounties.queryFeatures(query)
+      let returnCountyObj = await countyQuery
+      view.goTo({
+        target: returnCountyObj.features[0].geometry
+      })
+  return;
+} 

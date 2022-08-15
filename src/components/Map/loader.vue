@@ -5,7 +5,5 @@
 <script>
     export default {
     name: 'loader',
-    mounted:{
-    }
   }
 </script>

@@ -78,6 +78,7 @@ export default {
             esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
                 .then(()=>{
                     esriId.destroyCredentials()
+                    localStorage.removeItem('county')
                     this.$router.push('/login')
                 })
                 .catch(()=>{

@@ -4,7 +4,7 @@
       <v-list-item-group v-model="clearEditBtn" color="#15648C">
         <v-list-item v-for="(item,i) in items" :key="i" @click="item.action">
           <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
+            <v-icon v-text="item.icon" color="black" :disabled="item.disabled"></v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title v-text="item.title"></v-list-item-title>
@@ -84,4 +84,7 @@
   outline: #15648C solid 2px;
 }
 
+.v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child{
+  margin-right: 16px;
+}
 </style>

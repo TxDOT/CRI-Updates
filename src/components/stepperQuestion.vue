@@ -94,9 +94,9 @@
         <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card> -->
     <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1vw; bottom: 13vh; z-index:1">Add An Optional Comment</a>
-    <v-card elevation="0" class="overflow-y-auto" v-if="!forInfo" v-scroll.self="onScroll" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%; overflow-y: scroll; max-height: 70px;">
+    <v-card elevation="0" class="overflow-y-auto" v-if="!forInfo" v-scroll.self="onScroll" style="position: absolute; left:1vw; bottom: 6vh; line-height:.5px; width:93%; overflow-y: scroll; max-height: 70px; text-align: left;">
       <div>
-        <v-card-text>{{comment}}</v-card-text>
+        <v-card-text style="font-size: .7rem; color:gray">{{comment}}</v-card-text>
       </div>
     </v-card>
     <!-- <v-textarea v-if="!forInfo" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%;" height="5vh" disabled solo no-resize flat dense v-model="comment">'{{comment}}'</v-textarea> -->
@@ -275,7 +275,7 @@ export default {
             let sfx =  reformatName(this.roadName[0].suffix);
             let type = reformatName(this.roadName[0].streetType);
           
-            this.fetchRoadName = `${prfx} ${name} ${sfx} ${type}`
+            this.fetchRoadName = `${prfx} ${name} ${type} ${sfx}`
           }
           function reformatName (attr){
               if (attr === "NOT APPLICABLE" || attr === "OTHER" || attr === null) {
@@ -322,6 +322,12 @@ export default {
         }
         this.rdbdSurf = newRdbd
       },
+      getComment:{
+        handler: function(){
+          this.comment = this.getComment
+        },
+        immediate: true
+      }
     },
 
     methods:{
@@ -387,6 +393,7 @@ export default {
       saveAttri(){
         let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
         editGraphic.attributes.comment = this.comment
+        this.getComment = this.comment
         console.log(editGraphic)
         if(editGraphic.attributes.roadbedName === 'null' || JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
           this.finalCheck = true
@@ -514,7 +521,10 @@ export default {
       },
       roadName:{
         get(){
-          return JSON.parse(this.$store.state.roadbedName)
+          if(typeof(this.$store.state.roadbedName) === 'string'){
+            return JSON.parse(this.$store.state.roadbedName)
+          }
+          return ''
         },
         set(name){
           this.$store.commit('setRoadbedName',JSON.stringify(name))
@@ -574,6 +584,14 @@ export default {
         set(bool){
           this.$store.commit('setIsFinalCheck', bool)
         }
+      },
+      getComment:{
+        get(){
+          return this.$store.state.comment
+        },
+        set(comm){
+          this.$store.commit('setComment', comm)
+        }
       }
     }
 }
@@ -589,6 +607,7 @@ export default {
   left: 16.5rem;
   padding-bottom: 0%;
   font-size: 16px;
+  z-index: 1
 }
 .scroller {
   width: auto;

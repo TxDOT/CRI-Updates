@@ -1,5 +1,5 @@
 import {view, sketch, gLayer} from '../Map/map';
-import {store} from '../../storeUpd'
+import {store} from '../../store'
 
 export function jumpToGoogle() {
     console.log("I'm gonna jump to google now");

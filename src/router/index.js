@@ -1,43 +1,41 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import MapHome from '../views/mapHome.vue'
+//import { store } from '../store'
+// import { store } from '../store'
 import errorPage from '../views/errorPage.vue'
-import MileSign from '../views/mileSign.vue'
-import Login from '../views/Login.vue'
-import Loading from '../views/loadingPage.vue'
-import PickCounty from '../views/pickCounty.vue'
+//import { store } from '../store'
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/:id(\\d{0,3})', //uses Path-to-RegExp (https://github.com/pillarjs/path-to-regexp/tree/v1.7.0)
     name: 'MileSign',
-    component: MileSign,
+    component: () =>  import(/* webpackChunkName: "MileSign" */ "../views/mileSign.vue"),
     props: true
   },
   {
     path: '/map',
     name: 'MapHome',
-    component: MapHome,
-    props:true
-
+    component: () =>  import(/* webpackChunkName: "Map" */ "../views/mapHome.vue"),
+    props:true,
+    meta:{requiresAuth: true}
   },
   {
     path:'/login',
     name:'Login',
-    component: Login,
-    props:true
+    component: () =>  import(/* webpackChunkName: "Login" */ "../views/Login.vue"),
+    props:true,
   },
   {
     path:'/load',
     name:'Loading',
-    component: Loading,
-    props:true
+    component: () =>  import(/* webpackChunkName: "Load" */ "../views/loadingPage.vue"),
+    props:true,
   },
   {
     path:'/pickCounty',
     name:'PickCounty',
-    component: PickCounty,
+    component: () =>  import(/* webpackChunkName: "PickCounty" */ "../views/pickCounty.vue"),
     props:true
   },
   {
@@ -51,6 +49,26 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 })
+
+// router.beforeEach((to, from, next)=>{
+//   if(to.meta.requiresAuth){
+//     console.log(store.getters.username)
+//     if(!store.username){
+//       next({
+//         name: "Login"
+//       })
+//     }
+//     else{
+//       next({
+//         name: "MapHome"
+//       })
+//     }
+//   }
+//   else{
+//     next()
+//   }
+
+// })
 
 export default router
 

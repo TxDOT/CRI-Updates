@@ -77,7 +77,7 @@
 
      <v-card class="card" v-if="isAssetEnd === true">
       <v-card-title class="surfaceTitle">
-        <v-card-text class="cardText">Where does the {{assetType}} End?</v-card-text>
+        <v-card-text class="cardText">Where does the {{assetType}} <span id="assetEnd">End</span>?</v-card-text>
       </v-card-title>
       <v-flex v-for="(item, i) in selectionEnd" :key="i">
         <v-select label="Select an option" v-model="assetEndDfo" :items="item.types" @input="selectAssetDFO" ></v-select>
@@ -527,5 +527,31 @@ export default {
 .chooseMapBtn{
   top:120px;
 }
-
+#assetEnd{
+  font-weight: bold;
+  text-decoration: underline;
+  display: -moz-inline-stack;
+  display: inline-block;
+  animation: pulse-title 2s linear;
+}
+@keyframes pulse-title{
+  0%{
+    transform: scale(0);
+  }
+  50%{
+    transform: scale(1.3);
+  }
+  70%{
+    transform: scale(1);
+  }
+  80%{
+    transform: scale(.5);
+  }
+  90%{
+    transform: scale(.1);
+  }
+  100%{
+    transform: scale(.2)
+  }
+}
 </style>

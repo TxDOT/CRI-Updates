@@ -3,6 +3,7 @@
       v-model="disagree"
       persistent
       max-width="500"
+      id="cardDisplay"
       >
       <v-card v-model="disagree" height="250" style="border-radius:0px">
         <v-card-actions>
@@ -34,8 +35,8 @@
 
 <script>
 //import {autoDrawAsset} from '../components/Map/editFunc'
-import {txCounties,view, featLayer, viewPoint,countyOfficialInfo} from '../components/Map/map'
-import {reloadEdits} from '../components/Map/editFunc'
+import {viewPoint,countyOfficialInfo} from '../components/Map/map'
+import {goToMap} from '../components/Map/editFunc'
 import {cntyNbrNm} from '../common/txCnt'
 import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
 import esriId from "@arcgis/core/identity/IdentityManager";
@@ -71,19 +72,47 @@ export default {
     mounted(){
       // setup OAuth Constructor; gets loaded on mount of login.vue and check login Status
       this.auth = new OAuthInfo({
-        appId:"Chsd9GwkzlckpRBr",
+        appId:"9XWrQUJ2eX0jXEAW",
         expiration: 10080,
         flowType: 'auto',
         popup: false,
         portalUrl: "https://txdot.maps.arcgis.com",
         preserveUrlHash: false
       });
-
-      console.log(this.auth)
+      document.getElementById('cardDisplay').addEventListener('load', (event)=>{
+        console.log(event,'load')
+      })
+      // esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
+      //   .then((a)=>{
+      //     console.log(a)
+      //     this.$router.push('/load')
+      //     this.logMeIn()
+      //     return;
+      //   })
+      //   .catch((err) => {
+      //     console.log(err)
+      //     return;
+      //   })
+      //console.log(this.auth)
       esriId.registerOAuthInfos([this.auth]);
-      this.loginStatus()
-      console.log(document.getElementById('loginButton').baseURI)
-      
+      // this.loginStatus()
+      esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
+        .then(()=>{
+          this.handleSignedIn()
+          // esriId.setOAuthRedirectionHandler(function(info){
+          //     console.log(info)
+          //     this.$router.push('/load')
+          // })
+          // console.log(a)
+          // this.loginToMap = true
+          // this.logMeIn(a)
+          // this.$router.push('/load')
+          // return;
+        })
+        .catch((err) => {
+          console.log(err)
+          return;
+        })
       //this.loginStatus();
       // await this.logMeIn();
       // console.log('whatup before')
@@ -104,95 +133,102 @@ export default {
     methods:{
       logMeIn(){
         esriId.getCredential(this.auth.portalUrl + "/sharing")
-          .then((x)=>{
-            console.log('hey',x)
-            esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
-              .then(async (value) => {
-                console.log(value)
-                this.loginToMap = true
-                this.userName = value.userId
-                let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(value.userId)
-                let cntyNumber = county[1]
-                let cntyName = county[0]
-                this.countyName = cntyName
-                this.countyNumber = cntyNumber
-                this.countyMiles = county[2]
-                this.goToMap(cntyName,cntyNumber)
+          .then(()=>{
+            console.log('1')
           })
-          .catch((error) => {
-            console.log('new Error', error)
-            return;})
-          })
-          .catch((error) =>{
-            console.log('error', error)
-            return;
-          })
+              // .then(async(x)=>{
+              //   console.log('hey1')
+              //   console.log('hey',x)
+              //   this.logIn = true
+              //   this.loginToMap = true
+              //   this.userName = x.userId
+              //   let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(x.userId)
+              //   let cntyNumber = county[1]
+              //   let cntyName = county[0]
+              //   this.countyName = cntyName
+              //   this.countyNumber = cntyNumber
+              //   this.countyMiles = county[2]
+              //   this.loadMap(cntyName,cntyNumber)
+              // })
+              // .catch((err)=>{
+              //   console.log('error', err)
+              // })
+         
+        
+
         console.log('logging in')
         
       },
 
-      async loginButton(){
-        let buttonPromise = new Promise(function(res){
-          let regExUrl = /\/(?:.(?!\/))+$/
-          if(document.getElementById('loginButton').baseURI === `${regExUrl}/login`){
-            document.getElementById('loginButton').addEventListener('click',()=>{
-              this.logMeIn();
-              res(true)
-            })
-          }
-          else{
-            res(false)
-          }
-        })
+      // async loginButton(){
+      //   let buttonPromise = new Promise(function(res){
+      //     let regExUrl = /\/(?:.(?!\/))+$/
+      //     if(document.getElementById('loginButton').baseURI === `${regExUrl}/login`){
+      //       document.getElementById('loginButton').addEventListener('click',()=>{
+      //         this.logMeIn();
+      //         res(true)
+      //       })
+      //     }
+      //     else{
+      //       res(false)
+      //     }
+      //   })
 
-        let returnButtonPromise = await buttonPromise
-        return returnButtonPromise
-      },
+      //   let returnButtonPromise = await buttonPromise
+      //   return returnButtonPromise
+      // },
 
-      async loginStatus(){
-        console.log(await this.loginButton())
-        esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
-          .then(async (value) => {
+      // loginStatus(){
+      //   esriId.setOAuthRedirectionHandler(function(info){
+      //     console.log(info)
+      //     window.location = 'http://localhost:8080/load'
+      //     esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
+      //       .then(async (value) => {
             
-            this.loginToMap = true
-            console.log(value)
-            this.login
-            this.userName = value.userId
-            let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(value.userId)//value.userId
-            let cntyNumber = county[1]
-            let cntyName = county[0]
-            this.countyName = cntyName
-            this.countyNumber = cntyNumber
-            this.countyMiles = county[2]
-            this.goToMap(cntyName,cntyNumber)
-          })
-          .catch(() => {return;})
-        console.log('done')
-      },
-      async goToMap(name, nbr){
-        let road = await reloadEdits()
-        let objectidList = [];
-          for(let id in road.features){
-            if(road.features[id].attributes !== null){
-              let objectid = road.features[id].attributes.objectid || road.features[id].attributes.OBJECTID
-              objectidList.push(objectid)
-            }
-          }
-        console.log(objectidList)
+      //       this.loginToMap = true
+      //       console.log(value)
+      //       this.login
+      //       this.userName = value.userId
+      //       let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(value.userId)//value.userId
+      //       let cntyNumber = county[1]
+      //       let cntyName = county[0]
+      //       this.countyName = cntyName
+      //       this.countyNumber = cntyNumber
+      //       this.countyMiles = county[2]
+      //       this.goToMap(cntyName,cntyNumber)
+      //     })
+      //     .catch(() => {return;})
+      //     console.log('done')
+      //     //this.$router.push('/load')
+      //   })
+      //   //console.log(await this.loginButton())
+       
+      // },
+      async loadMap(name, nbr){
+        await goToMap(name, nbr)
+        // let road = await reloadEdits()
+        // let objectidList = [];
+        //   for(let id in road.features){
+        //     if(road.features[id].attributes !== null){
+        //       let objectid = road.features[id].attributes.objectid || road.features[id].attributes.OBJECTID
+        //       objectidList.push(objectid)
+        //     }
+        //   }
+        // console.log(objectidList)
 
-        featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
-        console.log(nbr)
-        txCounties.definitionExpression=`CNTY_NM='${name}'`
+        // featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
+        // console.log(nbr, name)
+        // txCounties.definitionExpression=`CNTY_NM='${name}'`
         
-        const query = new Query();
-        query.where = `CNTY_NM = '${name}'`
-        query.outFields = [ "*" ]
-        query.returnGeometry = true
-        let countyQuery = txCounties.queryFeatures(query)
-        let returnCountyObj = await countyQuery
-        view.goTo({
-          target: returnCountyObj.features[0].geometry
-        })
+        // const query = new Query();
+        // query.where = `CNTY_NM = '${name}'`
+        // query.outFields = [ "*" ]
+        // query.returnGeometry = true
+        // let countyQuery = txCounties.queryFeatures(query)
+        // let returnCountyObj = await countyQuery
+        // view.goTo({
+        //   target: returnCountyObj.features[0].geometry
+        // })
         console.log(viewPoint)
         this.$router.push('/map')
         this.loginToMap = false
@@ -201,10 +237,22 @@ export default {
       },
       handleSignedIn() {
         const portal = new Portal();
-        portal.load().then(() => {
-          const results = { name: portal.user.fullName, username: portal.user.username };
-          console.log(results)
-        });
+        portal.load()
+          .then( async () => {
+            this.loginToMap = true
+            this.$router.push('/load')
+            const results = { name: portal.user.fullName, username: portal.user.username };
+            console.log(results)
+            
+            let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(portal.user.username)
+            this.userName = portal.user.username 
+            let cntyNumber = county[1]
+            let cntyName = county[0]
+            this.countyName = cntyName
+            this.countyNumber = cntyNumber
+            this.countyMiles = county[2]
+            this.loadMap(cntyName,cntyNumber)
+          });
       },
       async getUserName(username){
         let county;
@@ -237,6 +285,15 @@ export default {
       }
     },
     computed:{
+      setLogOut:{
+        get(){
+          console.log(this.$store.state.isLoggedOut)
+          return this.$store.state.isLoggedOut
+        },
+        set(bool){
+          this.$store.commit('setIsLoggedOut', bool)
+        }
+      },
       countyName:{
         get(){
           return this.$store.state.cntyName
@@ -270,6 +327,14 @@ export default {
           this.$store.commit('setUserName', userName)
         }
       },
+      logIn:{
+        get(){
+          return this.$store.state.isLoggedIn
+        },
+        set(bool){
+          this.$store.commit('setIsLoggedIn', bool)
+        }
+      }
     }
     
 }
