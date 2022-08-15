@@ -1,16 +1,16 @@
 <template>
     <v-container style="height:100%">
-      <v-navigation-drawer app disable-resize-watcher style="top:59px; height:100%;">
+      <v-navigation-drawer app disable-resize-watcher style="top:59px; height:100%; width: 12rem;"> 
         <!-- <alert v-if="display === true"/> -->
           <!-- <v-alert v-model="display" color="green" @click="display = false">
             Click on the Map to start Drawing!
           </v-alert> -->
-        <v-card-title id="testTitle"><v-card-text style="position:relative; bottom:22px; font-size: .8vw;">What Do You Want To Do?</v-card-text></v-card-title>
+        <v-card-title id="testTitle"><v-card-text style="position:relative; bottom:22px; font-size: 12.2px;">What Do You Want To Do?</v-card-text></v-card-title>
           <v-list style="position: absolute; top: 4.5vh; width: 100%"> 
             <v-list-item-group id="tester" v-model="clearEditBtn" color="#15648C" active-class="border">
-              <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple>
+              <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple color="black">
                 <v-list-item-icon>
-                  <v-icon v-text="item.icon"></v-icon>
+                  <v-icon v-text="item.icon" color="black" :disabled="graphic"></v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title v-text="item.title"></v-list-item-title>
@@ -281,12 +281,14 @@
   display: flex;
   text-align: left;
 }
+.v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child{
+  margin-right: 16px;
+}
 .border{
   border: #15648C solid 2px;
 }
 body.select{
   cursor: pointer
 }
-
 
 </style>

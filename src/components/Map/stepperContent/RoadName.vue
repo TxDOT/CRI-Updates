@@ -20,7 +20,7 @@
             <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" item-value="dir" style="width:83px; left: 307px; bottom: 246px; position: relative;" @change="updateGraphic()"></v-select>   
         <!-- </v-row> -->
 
-        <v-btn v-if="!infoRoad" outlined style="bottom:210px; left:103px;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#15648C" :disabled="streetName.length < 1"> 
+        <v-btn v-if="!infoRoad" outlined style="bottom:210px; left:132px; border-color: black;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#204E70" :disabled="streetName.length < 1"> 
           <u>Continue</u>
         </v-btn>
     </v-card>
@@ -80,7 +80,7 @@ export default {
             for(let z=0; z < gLayer.graphics.items.length; z++){
                 if(gLayer.graphics.items[z].attributes.objectid === this.objid){
                     gLayer.graphics.items[z].attributes.roadbedName = JSON.stringify(updateG)
-                    console.log(JSON.parse(gLayer.graphics.items[z].attributes.roadbedName))
+                
                     this.roadName = JSON.parse(gLayer.graphics.items[z].attributes.roadbedName)
                 }
             }

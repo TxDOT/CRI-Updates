@@ -4,7 +4,7 @@
       <v-list-item-group v-model="clearEditBtn" color="#15648C">
         <v-list-item v-for="(item,i) in items" :key="i" @click="item.action">
           <v-list-item-icon>
-            <v-icon v-text="item.icon"></v-icon>
+            <v-icon v-text="item.icon" color="black" :disabled="item.disabled"></v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title v-text="item.title"></v-list-item-title>
@@ -28,17 +28,16 @@
         items: [
           { title: 'Advanced', icon: 'mdi-cog',action: ()=>{
               this.clearEditBtn = true
-              console.log('Advanced')
-              setTimeout(()=>{
-                this.clearEditBtn = false
-              },1000)
+              this.removeBtnFocus();
             }},
           { title: 'Criteria', icon: 'mdi-clipboard-text', action: ()=>{
               window.open('https://www.txdot.gov/apps/statewide_mapping/dusa/resources/COUNTY_ROAD_CRITERIA.pdf', '_blank')
+              this.removeBtnFocus();
             }
           },
           { title: 'Help & Training', icon: 'mdi-help-circle', action: ()=>{
               console.log('help and training')
+              this.removeBtnFocus();
             }
           },
           { title: 'About', icon: 'mdi-home', action: ()=>{
@@ -46,6 +45,13 @@
             }
           }
         ],
+      }
+    },
+    methods:{
+      removeBtnFocus(){
+        setTimeout(()=>{
+          this.clearEditBtn = false
+        },1000)
       }
     },
     computed:{
@@ -78,4 +84,7 @@
   outline: #15648C solid 2px;
 }
 
+.v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child{
+  margin-right: 16px;
+}
 </style>

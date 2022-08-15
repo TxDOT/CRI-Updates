@@ -1,5 +1,5 @@
 import { editsLayer } from './map';
-import {store} from '../../storeUpd'
+import {store} from '../../store'
 import Graphic from "@arcgis/core/Graphic";
 import { criConstants } from '../../common/cri_constants';
 

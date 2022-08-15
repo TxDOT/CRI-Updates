@@ -175,4 +175,9 @@ export default {
         justify-content: center;
         align-items: center;
     }
+    .esri-scale-bar.esri-widget{
+        position: relative;
+        top:93.5%;
+        left: 89%;
+    }
 </style>

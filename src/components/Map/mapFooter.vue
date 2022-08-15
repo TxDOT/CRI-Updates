@@ -1,8 +1,8 @@
 <template>
-    <v-footer app style="left: 233px; width: 100%; height:3.5vh; text-align: center;background: #4D4D4D" >
+    <v-footer app style="left: 190px; width: 100%; height:3.5vh; text-align: center;background: #4D4D4D" >
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
-          <div id="footerCard" class="f1-text" style="color:white"><div style="position:absolute; right:6%; bottom: .05vh; font-size: .7vw;">{{x}}, {{y}}</div>
+          <div id="footerCard" style="color:white"><div style="position:fixed; right: 4vw; bottom: .7vh; font-size: .7vw;">{{x}}, {{y}}</div>
             County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(rdbdDeltaDist.toFixed(3)) ===0? {'color':'white'} : null]">{{Number(rdbdDeltaDist.toFixed(3))}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(4))}}</b>
           </div>
         <!-- </v-card-text> -->

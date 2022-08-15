@@ -25,6 +25,7 @@ import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
 import dfoBox from '../components/Map/stepperContent/dfoBoxMap.vue'
 import about from '../components/Map/aboutApp.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
+//import esriId from "@arcgis/core/identity/IdentityManager";
 
 export default {
     components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about},
@@ -45,8 +46,10 @@ export default {
         next()
         return;
       }
-      console.log(to, from)
+      
       next(false)
+      // console.log(to, from)
+      //next(false)
     },
     mounted(){
       hightlightFeat('pointer-move')

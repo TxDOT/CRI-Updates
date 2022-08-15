@@ -82,7 +82,8 @@ const zoom = new Zoom({
 });
 
 const scaleBar = new ScaleBar({
-    view: view
+    view: view,
+    id: 'scalebar'
 });
 
 export const ccWidget = new CoordinateVM({
@@ -103,11 +104,11 @@ export const search = new Search({
 // PUSH SOURCES TO SEARCH WIDGET
 search.sources.push({
     layer: new FeatureLayer({
-        url: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_REF_LAYERS_dev/FeatureServer/0",
+        url: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_REF_LAYERS_dev2/FeatureServer/0",
         //definitionExpression: "CNTY_NBR = 11"//need to set dynamically using vuex store
     }),
-    searchFields: ["ST_DEFN_NM"],
-    displayField: "ST_DEFN_NM",
+    searchFields: ["SEARCH"],
+    displayField: "SEARCH",
     exactMatch: false,
     autoSelect: true,
     outFields: ["*"],
@@ -145,7 +146,7 @@ view.ui.add([
   },
   {
     component: scaleBar,
-    position: "bottom-right"
+    position: "manual"
   },
 //   {
 //     component: ccWidget,
@@ -304,6 +305,13 @@ export const sketch = new SketchViewModel({
         selfEnabled: false
     }
 });
+
+sketch.polylineSymbol.color = {
+    r: 204,
+    g: 102,
+    b: 0,
+    a: 1
+}
 
 
 // export const newSketch = new Sketch({

@@ -10,7 +10,7 @@
             <v-card-text style="text-align:left; padding-top: 10px;">
                 Please save your work in the stepper, to edit the selected road.
             </v-card-text>
-            <v-btn @click="setDenyFalse()" style="poistion:relative;" plain outlined color="#204E70"><u>close</u></v-btn>
+            <v-btn tile @click="setDenyFalse()" style="poistion:relative;" plain outlined color="#204E70"><u>close</u></v-btn>
         </v-card>
     </div>
    
@@ -51,9 +51,10 @@ export default {
     width: 300px;
     left: 800px;
     height: 150px;
+    border-radius: 0px;
 }
 .surfaceTitle{
-  background-color: #BCBCBC;
+  background-color: #204E70;
   color: #E64545;
   height:30px;
   width: 100%;

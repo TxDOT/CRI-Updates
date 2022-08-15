@@ -2,7 +2,7 @@
 <v-container>
   <div id="stepper">
     <v-stepper
-    style="margin-bottom:unset;"
+    style="margin-bottom:unset; border-radius: 0px;"
     v-model="e1"
     vertical
     non-linear
@@ -11,25 +11,25 @@
     min-width="0"
     :height="imageHeight"
     >
-    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a New Road</v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit an Existing Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
     <v-stepper-step
       :editable="setAssetCover[0]"
       step="1"
       color="#204E70"
       @click="showGIDVerts()"
-      class="font-weight-regular; body-1;" v-if="forInfo">
-      Edit Length: <strong>{{fetchLength}} Miles</strong>
+      class="font-weight-regular; body-1;">
+      Length: <strong>{{fetchLength}} Miles</strong>
     </v-stepper-step>
-    <v-stepper-step
+    <!-- <v-stepper-step
       :editable="setAssetCover[0]"
       step="1"
       @click="showGIDVerts()"
       color="#204E70"
       class="font-weight-regular; body-1;" v-else>
-      Edit Shape: <strong>{{fetchLength}} Miles</strong>
-    </v-stepper-step>
+      Length: <strong>{{fetchLength}} Miles</strong>
+    </v-stepper-step> -->
 
     <v-stepper-content step="1">
       <editVerts/>
@@ -79,12 +79,12 @@
     </v-stepper-content>
     <!-- <Map @nm="bool"/> -->
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
-      <v-btn-toggle v-if="!forInfo" tile borderless style="bottom: 2vh; right:1vw; position: absolute; z-index: 1;">
-        <v-btn depressed plain :disabled="!setAssetCover[0]" small @click="cancel()">Cancel</v-btn>
-        <v-btn v-if="!forInfo" depressed plain :disabled="!setAssetCover[0]" small color="#15648C" text @click="saveAttri();"><u>Save</u></v-btn>
-      </v-btn-toggle>
-      <v-btn v-if="!forInfo" plain small tile color ="#E64545" text outlined style="bottom:2vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Sketch</v-btn>
-      <v-btn v-else style="top: 45rem; position: absolute;" depressed plain block :disabled="!setAssetCover[0]" @click="cancel()">Cancel</v-btn>
+      
+      <v-btn v-if="!forInfo" depressed style="border:none; bottom: 2vh; right:5vw; position: absolute" tile text color="#204E70" :disabled="!setAssetCover[0]" small @click="cancel();">Cancel</v-btn>
+      <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 2vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0]" small color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
+      
+      <v-btn v-if="!forInfo" depressed small tile color ="#E64545" text style="bottom:2vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
+      <v-btn v-else style="bottom: 2vh; position: absolute; right: 1vw; border:black 1px solid;" tile outlined text color="#15648C" @click="cancel()"><u>Cancel</u></v-btn>
     <!-- </div> -->
     <!-- card used to display discard alert information -->
     <!-- <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
@@ -94,9 +94,14 @@
         <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card> -->
     <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1vw; bottom: 13vh; z-index:1">Add An Optional Comment</a>
-    <v-textarea v-if="!forInfo" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%;" height="10" disabled solo no-resize flat dense v-model="comment">'{{comment}}'</v-textarea>
+    <v-card elevation="0" class="overflow-y-auto" v-if="!forInfo" v-scroll.self="onScroll" style="position: absolute; left:1vw; bottom: 6vh; line-height:.5px; width:93%; overflow-y: scroll; max-height: 70px; text-align: left;">
+      <div>
+        <v-card-text style="font-size: .7rem; color:gray">{{comment}}</v-card-text>
+      </div>
+    </v-card>
+    <!-- <v-textarea v-if="!forInfo" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%;" height="5vh" disabled solo no-resize flat dense v-model="comment">'{{comment}}'</v-textarea> -->
       <v-dialog v-model="dialog" persistent>
-        <v-card style="width:30%; left: 30%; height: 70%">
+        <v-card style="width:30%; left: 30%; height: 70%; border-radius: 0px;">
           <v-card-title class="surfaceTitle">
             <v-card-text style="bottom:28px; position: relative; font-size: 15px; text-align: left;">Comments</v-card-text>
           </v-card-title>
@@ -113,10 +118,10 @@
       Sketch has been removed.
     </v-alert> -->
     <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
-      <v-card-title class="confirmationTitle">Are you sure you want to discard this item?</v-card-title>
+      <v-card-title class="confirmationTitle">Are you sure you want to discard this edit?</v-card-title>
         
-      <v-btn style="position: absolute; right:3vw;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
-      <v-btn style="position: relative; right:6vw;" depressed tile text color="#14375A" @click="discardAlertQuest = false">NO</v-btn>
+      <v-btn style="position: absolute; right:.5vw;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
+      <v-btn style="position: relative; left:3.5vw;" depressed tile text color="#14375A" @click="discardAlertQuest = false">NO</v-btn>
     </v-card>
   <confirmAlertSuccess v-if="successAlert"/>
   <finalCheck v-if="finalCheck === true"/>
@@ -184,6 +189,7 @@ export default {
         fetchRoadSurface: null,
         fetchRoadDesign: null,
         fetchNumLanes: null,
+        scrollInvoked: 0,
         //objectid: 0,
         // newDfo:0,
         //working on form validation
@@ -269,7 +275,7 @@ export default {
             let sfx =  reformatName(this.roadName[0].suffix);
             let type = reformatName(this.roadName[0].streetType);
           
-            this.fetchRoadName = `${prfx} ${name} ${sfx} ${type}`
+            this.fetchRoadName = `${prfx} ${name} ${type} ${sfx}`
           }
           function reformatName (attr){
               if (attr === "NOT APPLICABLE" || attr === "OTHER" || attr === null) {
@@ -316,10 +322,18 @@ export default {
         }
         this.rdbdSurf = newRdbd
       },
+      getComment:{
+        handler: function(){
+          this.comment = this.getComment
+        },
+        immediate: true
+      }
     },
 
     methods:{
-      
+      onScroll(){
+        this.scrollInvoked++
+      },
       delGraphic(){
         removeGraphic();
       },
@@ -379,6 +393,7 @@ export default {
       saveAttri(){
         let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
         editGraphic.attributes.comment = this.comment
+        this.getComment = this.comment
         console.log(editGraphic)
         if(editGraphic.attributes.roadbedName === 'null' || JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
           this.finalCheck = true
@@ -506,7 +521,10 @@ export default {
       },
       roadName:{
         get(){
-          return JSON.parse(this.$store.state.roadbedName)
+          if(typeof(this.$store.state.roadbedName) === 'string'){
+            return JSON.parse(this.$store.state.roadbedName)
+          }
+          return ''
         },
         set(name){
           this.$store.commit('setRoadbedName',JSON.stringify(name))
@@ -566,6 +584,14 @@ export default {
         set(bool){
           this.$store.commit('setIsFinalCheck', bool)
         }
+      },
+      getComment:{
+        get(){
+          return this.$store.state.comment
+        },
+        set(comm){
+          this.$store.commit('setComment', comm)
+        }
       }
     }
 }
@@ -581,9 +607,7 @@ export default {
   left: 16.5rem;
   padding-bottom: 0%;
   font-size: 16px;
-  width:0%;
-  border-radius: 0px;
-  overflow-y: hidden;
+  z-index: 1
 }
 .scroller {
   width: auto;
@@ -632,8 +656,8 @@ export default {
 
 #discardSketch{
     width: 360px;
-    left: 750px;
-    top: 400px;
+    left: 51vw;
+    top: 50vh;
     border-radius: 0px;
 }
 .confirmationTitle{
