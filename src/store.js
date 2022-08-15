@@ -287,7 +287,7 @@ export const store = new Vuex.Store({
             let diff = sumArr.reduce((prevValue, currentValue) => 
                 currentValue - prevValue, initValue
             )
-            
+            console.log(diff)
             const currentLength = state.roadGeometry.paths[0].at(-1)[2] - state.roadGeometry.paths[0].at(0)[2]
             if(Number(currentLength.toFixed(3)) === Number(diff.toFixed(3))){
                 state.assetCoverage = [true, null]
@@ -297,17 +297,21 @@ export const store = new Vuex.Store({
                 try{
                     if(assetDfos.length > 1){
                         for(let i =0; i < assetDfos.length; i++){
+                            console.log(assetDfos[i], assetDfos[i+1])
                             if(assetDfos[i+1][1] === undefined){
                                 return;
                             }
                             else if((assetDfos[i][1] > assetDfos[i+1][0])){
                                 state.assetCoverage = [false, 'overlap', assetDfos[i][1], assetDfos[i+1][0]]
+                                return state.assetCoverage;
                             }
                             else if((assetDfos[i][1] < assetDfos[i+1][0])){
                                 state.assetCoverage = [false, 'gap', assetDfos[i][1], assetDfos[i+1][0]]
+                                return state.assetCoverage
                             }
                             else{
                                 state.assetCoverage = [false, 'short', assetDfos[0][1], Number(currentLength.toFixed(3))]
+                                return state.assetCoverage
                             }
                         }
                         return;

@@ -604,7 +604,7 @@ export default {
 #stepper{
   position: fixed;
   top: 5rem;
-  left: 16.5rem;
+  left: 13.5rem;
   padding-bottom: 0%;
   font-size: 16px;
   z-index: 1

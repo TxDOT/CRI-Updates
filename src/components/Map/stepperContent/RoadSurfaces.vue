@@ -1,8 +1,8 @@
 <template>
-  <div class="scroller" style="min-height: 0vh; display:flex; flex-direction: column; height:30vh;"> 
+  <div class="scroller" style="min-height: 0vh; display:flex; flex-direction: column; height:30vh; overflow-y: auto;"> 
   <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
   <!-- <v-col v-for="(item,index) in rdbdSurf" :key="index" > -->
-  <v-card class="card" v-if="isAssetType=== true">
+  <v-card class="card" v-if="isAssetType=== true" >
     <v-card-title class="surfaceTitle">
       <v-card-text class="cardText">What's the Surface Type?</v-card-text>
     </v-card-title>

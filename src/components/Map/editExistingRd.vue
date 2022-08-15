@@ -272,7 +272,7 @@ export default {
     #edit{
         position: absolute;
         top: 5rem;
-        left: 16.4rem;
+        left: 13.4rem;
         width: 25.3vw;
         color: #204E70;
         border-radius: 0px;
@@ -280,8 +280,8 @@ export default {
     }
     #delWarn{
         position: absolute;
-        top:100px;
-        left:260px;
+        top:5rem;
+        left: 13.4rem;
         width: 385px;
         height: 200px;
         color: #204E70;
