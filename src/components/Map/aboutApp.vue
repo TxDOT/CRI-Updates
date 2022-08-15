@@ -6,7 +6,7 @@
         <v-card-text style="poistion: absolute; text-align: left; color: black;">Overview: this is a new version of the DUSA application. Refer to this section to review updates to the map.</v-card-text>
         <v-card-text style="poistion: absolute; text-align: left; color: black;">Release Notes: A lot of stuff</v-card-text>
         
-        <v-card-text style="position: absolute; color: black; bottom: 6.5rem; left: 40%"><u>Build Version: 1.4.3</u></v-card-text>
+        <v-card-text style="position: absolute; color: black; bottom: 6.5rem; left: 40%"><u>Build Version: 1.4.4</u></v-card-text>
         <v-btn style="position: absolute; right: 1%; bottom: 9%;" tile color="#204E70" outlined @click="close(); clearEditBtn=false">Close</v-btn>
       </v-card>
     <!-- </v-dialog> -->
