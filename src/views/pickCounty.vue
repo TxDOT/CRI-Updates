@@ -1,21 +1,14 @@
 <template>
     <v-container>
-        <v-dialog v-model="pick" persistent max-width="600">
-        <v-card>
-            <v-card-title class="surfaceTitleWarn">
-                <v-card-text style="bottom:28px; position:relative; font-size: 15px; text-align: left; color:black">Information:</v-card-text>
-                <v-card-text style="bottom:80px; position:relative; font-size: 15px; text-align: right; color:black">USERNAME: <b>{{userName}}</b></v-card-text>
+        <v-dialog v-model="pick" persistent max-width="550" style="border-radius:0%; ">
+        <v-card style="border-radius:0%">
+            <v-card-title class="surfaceTitle">
+                <v-card-text style="bottom:120px; right:10px; position:absolute; font-size: 15px; text-align: right; color:white">USERNAME: <b>{{userName}}</b></v-card-text>
             </v-card-title>
-            <v-card-text>
+            <v-card-text style="color:black; text-align: left; top: 30px;">
                 Your username does not specify a county.  Please a select a county to enter the County Road Inventory App.
             </v-card-text>
-        </v-card>
-        <v-spacer></v-spacer>
-        <v-card>
-            <v-card-title class="surfaceTitle">
-                <v-card-text style="bottom:28px; position:relative; font-size: 15px; text-align: left;">Pick A County To Start Editing</v-card-text>
-            </v-card-title>
-            <v-autocomplete v-model="pickCounty" :items="cntyNames" @change="getUserName()"></v-autocomplete>
+             <v-autocomplete v-model="pickCounty" :items="cntyNames" @change="getUserName()" style="width:fit-content; left:10rem; bottom: 10px" placeholder="County Name"></v-autocomplete>
         </v-card>
         
         </v-dialog>
@@ -186,5 +179,6 @@ export default {
   height:30px;
   width: 100%;
   font-size: 25px; 
+  border-radius: 0%;
 }
 </style>
