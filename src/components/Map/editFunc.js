@@ -324,7 +324,7 @@ export async function defineGraphic(graphics, clickType, editType){
   }
 
   if (clickType === "click"){
-    let oldLength = graphics.features ? Number(geometryEngine.geodesicLength(graphics.features[0].geometry, "miles").toFixed(3)) :  Number(geometryEngine.geodesicLength(graphics.geometry, "miles").toFixed(3))
+    let oldLength = graphics.features ? Number(geometryEngine.geodesicLength(graphics.features[0].geometry, "miles").toFixed(3)) :  graphics.attributes.oldLength
     document.body.style.cursor = 'context-menu'
     let graphicPromise = new Promise(function(res){
       let newGraphic = new Graphic({
@@ -537,9 +537,10 @@ export function delRoad(){
   graphicDel[0].symbol = symbol
 }
 //Delete a sketch i.e the graphic
-export function removeGraphic(){
+export async function removeGraphic(){
   stopEditing();
   let graphicR = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
+  console.log(graphicR)
   initGraphicCheck(graphicR[0], true)
   gLayer.remove(graphicR[0])
   let delHighlight = view.allLayerViews.items.filter(x => x.layer.type === 'feature' && x._highlightIds)
@@ -1438,6 +1439,7 @@ export async function reloadEdits(){
   let currentEditRoads = queryEditsLayer();
   
   let createGraphics = await currentEditRoads
+  console.log(createGraphics)
   //first add all Adds together
   //second query and and compare Ref layer length against add route length and apply to total length
   //finally subtract delete roads from total length 
@@ -1454,7 +1456,7 @@ export async function reloadEdits(){
       let oldLength = geomToMiles(returnRoad.features[0].geometry,true,3)
       let diff = length - oldLength
       mileSetUp += diff
-
+      createGraphics.features[i].attributes.oldLength = oldLength
       createGraphics.features[i].attributes.EDIT_TYPE_ID = 'edit'
     }
     else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 4){

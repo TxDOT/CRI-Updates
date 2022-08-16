@@ -1,14 +1,19 @@
 <template>
     <v-container>
-        <v-dialog v-model="pick" persistent max-width="550" style="border-radius:0%; ">
-        <v-card style="border-radius:0%">
+        <v-dialog v-model="pick" persistent max-width="320" style="border-radius:0%;  ">
+        <v-card style="border-radius:0%" height=200 max-width="100%">
             <v-card-title class="surfaceTitle">
-                <v-card-text style="bottom:120px; right:10px; position:absolute; font-size: 15px; text-align: right; color:white">USERNAME: <b>{{userName}}</b></v-card-text>
+                <v-card-text style="position:relative; bottom: 27px; right: 20px; font-size: 15px; text-align: left; color:white; padding: none;">County Road Inventory Map</v-card-text>
             </v-card-title>
-            <v-card-text style="color:black; text-align: left; top: 30px;">
-                Your username does not specify a county.  Please a select a county to enter the County Road Inventory App.
+            <v-card-text style="position: relative; color:black; text-align: left; top: 30px; rught: 5px;">
+                Select a county to begin work.
             </v-card-text>
-             <v-autocomplete v-model="pickCounty" :items="cntyNames" @change="getUserName()" style="width:fit-content; left:10rem; bottom: 10px" placeholder="County Name"></v-autocomplete>
+            <v-autocomplete persistent-placeholder outlined dense tile v-model="pickCounty" :items="cntyNames" style="position: absolute; width: 48%; right: 8.9rem; top: 6rem; border-radius: 0%;" label="County Name"></v-autocomplete>
+
+            <div>
+              <v-btn outlined style="top:5rem; left: 9rem; width: 100px;" depressed color="#204E70" plain tile @click="getCountyInfo()">Continue</v-btn>
+              <v-btn style="top:5rem; right: 3rem" depressed color="#204E70" plain tile @click="cancel()">Cancel</v-btn>
+            </div>
         </v-card>
         
         </v-dialog>
@@ -23,6 +28,7 @@ import {reloadEdits} from '../components/Map/editFunc'
 import {cntyNbrNm} from '../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query"
 import loader from '../components/Map/loader.vue'
+import esriId from "@arcgis/core/identity/IdentityManager";
 
 export default {
     name: 'PickCounty',
@@ -64,7 +70,18 @@ export default {
         }
     },
     methods:{
-      getUserName(){
+      cancel(){
+        esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
+          .then(()=>{
+            esriId.destroyCredentials()
+            localStorage.removeItem('county')
+            this.$router.push('/login')
+          })
+          .catch(()=>{
+            this.$router.push('/login')
+          })
+      },
+      getCountyInfo(){
         console.log('autocopmplete')
         this.pick=false
         this.load=true

@@ -15,7 +15,7 @@
           </v-alert>
           </div>
           <div style="position:absolute; top:15%; left: 5%; text-align: left;" class="black--text mb-3">
-            <v-card-text style="color:#15648C;" v-html="disagreeTxt">
+            <v-card-text style="color:black;" v-html="disagreeTxt">
             </v-card-text>
           </div>
             <div style="position:absolute ; right:4%; bottom:10%">
@@ -53,7 +53,7 @@ export default {
         certify: false,
         disagree: true,
         countyPopup: false,
-        disagreeTxt:'<br><br>Click on the Login button to use your CRI credentials to access DUSA. If you do not have a DUSA account, click on the sign up button to register.',
+        disagreeTxt:'<br><br>Click the Login button and use your TxDOT-provided credentials to access the County Road Inventory Map. If you do not have an account, click the Sign-Up button to register.',
         judgeName:'',
         county:'',
         auth: {},
@@ -82,46 +82,18 @@ export default {
       document.getElementById('cardDisplay').addEventListener('load', (event)=>{
         console.log(event,'load')
       })
-      // esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
-      //   .then((a)=>{
-      //     console.log(a)
-      //     this.$router.push('/load')
-      //     this.logMeIn()
-      //     return;
-      //   })
-      //   .catch((err) => {
-      //     console.log(err)
-      //     return;
-      //   })
-      //console.log(this.auth)
+
       esriId.registerOAuthInfos([this.auth]);
       // this.loginStatus()
       esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
         .then(()=>{
           this.handleSignedIn()
-          // esriId.setOAuthRedirectionHandler(function(info){
-          //     console.log(info)
-          //     this.$router.push('/load')
-          // })
-          // console.log(a)
-          // this.loginToMap = true
-          // this.logMeIn(a)
-          // this.$router.push('/load')
-          // return;
         })
         .catch((err) => {
           console.log(err)
           return;
         })
-      //this.loginStatus();
-      // await this.logMeIn();
-      // console.log('whatup before')
-      // document.getElementById('loginButton').addEventListener('click',()=>{
-      //   console.log('step 1')
-      //   this.loginStatus();
-      //   this.logMeIn();
-      // })
-      // this.logMeIn();
+
       this.certify = false;
       // this.logMeIn()
       const todayDate = new Date();
@@ -136,99 +108,12 @@ export default {
           .then(()=>{
             console.log('1')
           })
-              // .then(async(x)=>{
-              //   console.log('hey1')
-              //   console.log('hey',x)
-              //   this.logIn = true
-              //   this.loginToMap = true
-              //   this.userName = x.userId
-              //   let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(x.userId)
-              //   let cntyNumber = county[1]
-              //   let cntyName = county[0]
-              //   this.countyName = cntyName
-              //   this.countyNumber = cntyNumber
-              //   this.countyMiles = county[2]
-              //   this.loadMap(cntyName,cntyNumber)
-              // })
-              // .catch((err)=>{
-              //   console.log('error', err)
-              // })
-         
-        
-
         console.log('logging in')
         
       },
 
-      // async loginButton(){
-      //   let buttonPromise = new Promise(function(res){
-      //     let regExUrl = /\/(?:.(?!\/))+$/
-      //     if(document.getElementById('loginButton').baseURI === `${regExUrl}/login`){
-      //       document.getElementById('loginButton').addEventListener('click',()=>{
-      //         this.logMeIn();
-      //         res(true)
-      //       })
-      //     }
-      //     else{
-      //       res(false)
-      //     }
-      //   })
-
-      //   let returnButtonPromise = await buttonPromise
-      //   return returnButtonPromise
-      // },
-
-      // loginStatus(){
-      //   esriId.setOAuthRedirectionHandler(function(info){
-      //     console.log(info)
-      //     window.location = 'http://localhost:8080/load'
-      //     esriId.checkSignInStatus(this.auth.portalUrl + "/sharing")
-      //       .then(async (value) => {
-            
-      //       this.loginToMap = true
-      //       console.log(value)
-      //       this.login
-      //       this.userName = value.userId
-      //       let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(value.userId)//value.userId
-      //       let cntyNumber = county[1]
-      //       let cntyName = county[0]
-      //       this.countyName = cntyName
-      //       this.countyNumber = cntyNumber
-      //       this.countyMiles = county[2]
-      //       this.goToMap(cntyName,cntyNumber)
-      //     })
-      //     .catch(() => {return;})
-      //     console.log('done')
-      //     //this.$router.push('/load')
-      //   })
-      //   //console.log(await this.loginButton())
-       
-      // },
       async loadMap(name, nbr){
         await goToMap(name, nbr)
-        // let road = await reloadEdits()
-        // let objectidList = [];
-        //   for(let id in road.features){
-        //     if(road.features[id].attributes !== null){
-        //       let objectid = road.features[id].attributes.objectid || road.features[id].attributes.OBJECTID
-        //       objectidList.push(objectid)
-        //     }
-        //   }
-        // console.log(objectidList)
-
-        // featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
-        // console.log(nbr, name)
-        // txCounties.definitionExpression=`CNTY_NM='${name}'`
-        
-        // const query = new Query();
-        // query.where = `CNTY_NM = '${name}'`
-        // query.outFields = [ "*" ]
-        // query.returnGeometry = true
-        // let countyQuery = txCounties.queryFeatures(query)
-        // let returnCountyObj = await countyQuery
-        // view.goTo({
-        //   target: returnCountyObj.features[0].geometry
-        // })
         console.log(viewPoint)
         this.$router.push('/map')
         this.loginToMap = false
@@ -244,7 +129,7 @@ export default {
             const results = { name: portal.user.fullName, username: portal.user.username };
             console.log(results)
             
-            let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getUserName(portal.user.username)
+            let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username)
             this.userName = portal.user.username 
             let cntyNumber = county[1]
             let cntyName = county[0]
@@ -254,7 +139,7 @@ export default {
             this.loadMap(cntyName,cntyNumber)
           });
       },
-      async getUserName(username){
+      async getCountyInfo(username){
         let county;
         //let getCounty = username.split('_')[1]
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
@@ -279,9 +164,6 @@ export default {
         else{
           this.$router.push('/pickCounty')
         }
-        
-       
-        //let getCountyNbr = 
       }
     },
     computed:{
