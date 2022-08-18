@@ -202,6 +202,7 @@ export default {
             this.isAssetStart = this.isAssetType = this.isAssetFinished = this.isAssetFullLen = false; 
             this.isAssetEnd = true; 
             this.cancelDfoLocation()
+            this.getDfoBool = false
           },
           'At the end of the road': ()=>{
             this.atEnd();
@@ -221,6 +222,7 @@ export default {
             this.updateGraphic();
             this.cancelDfoLocation()
             this.isAssetFinished = true;
+            this.getDfoBool = false
           }
         }
         type[`${text}`]()
@@ -268,6 +270,7 @@ export default {
         this.cancelDfoLocation();
         let id = gLayer.graphics.items.filter(x=>x.attributes.objectid === this.objid);
         this.assetStartDfo = Number(id[0].geometry.paths[0][0][2].toFixed(3))
+        
         //this.$set(this.mileInfo[0], 'ASSET_LN_BEGIN_DFO_MS', id[0].geometry.paths[0][0][2])
       },
 
@@ -275,6 +278,7 @@ export default {
         this.cancelDfoLocation();
         let id = gLayer.graphics.items.filter(x=>x.attributes.objectid === this.objid);
         this.assetEndDfo = Number(id[0].geometry.paths[0].at(-1)[2].toFixed(3))
+        this.getDfoBool = false
         //this.$set(this.mileInfo[0], 'ASSET_LN_END_DFO_MS', Number(id[0].geometry.paths[0].at(-1)[2]).toFixed(3))
       },
 
@@ -420,49 +424,49 @@ export default {
         console.log(x)
         return x+76
       },
-       returnStep:{
-            get(){
-                return this.$store.state.stepNumber
-            },
-            set(x){
-                this.$store.commit('setStepNumber', Number(x))
-            }
+      returnStep:{
+        get(){
+          return this.$store.state.stepNumber
         },
-        rdbdSurf:{
-            get(){
-                if(typeof(this.$store.state.roadbedSurface) === 'string'){
-                  console.log('loading Surface')
-                  return JSON.parse(this.$store.state.roadbedSurface) 
-                }
-                else{
-                  return this.$store.state.roadbedSurface
-                }
-            },
-            set(x){
-                this.$store.commit('setRoadbedSurface',JSON.stringify(x))
-            }   
-        },
-        objid:{
-          get(){
-            return this.$store.state.objectid
+        set(x){
+          this.$store.commit('setStepNumber', Number(x))
+        }
+      },
+      rdbdSurf:{
+        get(){
+          if(typeof(this.$store.state.roadbedSurface) === 'string'){
+            console.log('loading Surface')
+            return JSON.parse(this.$store.state.roadbedSurface) 
+          }
+          else{
+            return this.$store.state.roadbedSurface
           }
         },
-        setAssetCover:{
-          get(){
-            return this.$store.state.assetCoverage
-          },
-          set(x){
-            this.$store.commit('setAssetCoverage', x)
-          }
+        set(x){
+          this.$store.commit('setRoadbedSurface',JSON.stringify(x))
+        }   
+      },
+      objid:{
+        get(){
+          return this.$store.state.objectid
+        }
+      },
+      setAssetCover:{
+        get(){
+          return this.$store.state.assetCoverage
         },
-        infoRoad:{
-          get(){
-            return this.$store.state.infoRd
-          },
-          set(info){
-            this.$store.commit('setInfoRd', info)
-          }
+        set(x){
+          this.$store.commit('setAssetCoverage', x)
+        }
+      },
+      infoRoad:{
+        get(){
+          return this.$store.state.infoRd
         },
+        set(info){
+          this.$store.commit('setInfoRd', info)
+        }
+      },
     }
 }
 </script>

@@ -7,21 +7,16 @@ export function jumpToGoogle() {
     let lat = viewCenter.latitude;
     let lon = viewCenter.longitude;
     let zoom = view.zoom;
-    console.log(sketch)
     window.open("https://www.google.com/maps/@"+lat+","+lon+","+zoom+"z");
 }
 
 export function undoSketch(){
-    console.log('undo')
-    console.log(sketch)
     let graphic = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
     sketch.undo(graphic, 'polyline')
     checkEditsHistory()
 }
 
 export function redoSketch(){
-    console.log('redo')
-    console.log(sketch)
     let graphic = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
     sketch.redo(graphic, 'polyline')
     checkEditsHistory()

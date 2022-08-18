@@ -35,7 +35,7 @@
 
 <script>
 //import {autoDrawAsset} from '../components/Map/editFunc'
-import {viewPoint,countyOfficialInfo} from '../components/Map/map'
+import {viewPoint,countyOfficialInfo, search} from '../components/Map/map'
 import {goToMap} from '../components/Map/editFunc'
 import {cntyNbrNm} from '../common/txCnt'
 import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
@@ -133,6 +133,8 @@ export default {
             this.userName = portal.user.username 
             let cntyNumber = county[1]
             let cntyName = county[0]
+            search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${cntyNumber}`
+            console.log(search.sources)
             this.countyName = cntyName
             this.countyNumber = cntyNumber
             this.countyMiles = county[2]

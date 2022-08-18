@@ -11,7 +11,7 @@
             <v-autocomplete persistent-placeholder outlined dense tile v-model="pickCounty" :items="cntyNames" style="position: absolute; width: 48%; right: 8.9rem; top: 6rem; border-radius: 0%;" label="County Name"></v-autocomplete>
 
             <div>
-              <v-btn outlined style="top:5rem; left: 9rem; width: 100px;" depressed color="#204E70" plain tile @click="getCountyInfo()">Continue</v-btn>
+              <v-btn :disabled="pickCounty.length === 0" outlined style="top:5rem; left: 9rem; width: 100px;" depressed color="#204E70" plain tile @click="getCountyInfo()">Continue</v-btn>
               <v-btn style="top:5rem; right: 3rem" depressed color="#204E70" plain tile @click="cancel()">Cancel</v-btn>
             </div>
         </v-card>

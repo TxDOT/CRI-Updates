@@ -48,9 +48,17 @@ export const store = new Vuex.Store({
         isClearMapTools: false,
         isClearAboutHelpTools: false,
         isAbout: false,
+        isStepCancel: false,
+        isInitAdd: false,
         comment:''
     },
     getters:{
+        getIsInitAdd(state){
+            return state.isInitAdd
+        },
+        getIsStepCancel(state){
+            return state.isStepCancel
+        },
         getComment(state){
             return state.comment
         },
@@ -183,6 +191,12 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsInitAdd(state, boolInit){
+            state.isInitAdd = boolInit
+        },
+        setIsStepCancel(state, boolCancel){
+            state.isStepCancel = boolCancel
+        },
         setComment(state, usrComment){
             state.comment = usrComment
         },

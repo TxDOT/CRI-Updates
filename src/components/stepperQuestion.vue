@@ -80,7 +80,7 @@
     <!-- <Map @nm="bool"/> -->
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
       
-      <v-btn v-if="!forInfo" depressed style="border:none; bottom: 2vh; right:5vw; position: absolute" tile text color="#204E70" :disabled="!setAssetCover[0]" small @click="cancel();">Cancel</v-btn>
+      <v-btn v-if="!forInfo" depressed style="border:none; bottom: 2vh; right:5vw; position: absolute" tile text color="#204E70" :disabled="firstAddToMap || !setAssetCover[0]" small @click="cancel(); cancelStepper();">Cancel</v-btn>
       <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 2vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0]" small color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
       
       <v-btn v-if="!forInfo" depressed small tile color ="#E64545" text style="bottom:2vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
@@ -118,10 +118,10 @@
       Sketch has been removed.
     </v-alert> -->
     <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
-      <v-card-title class="confirmationTitle">Are you sure you want to discard this edit?</v-card-title>
-        
+      <v-card-title class="confirmationTitle">Confirm Discard</v-card-title>
+      <v-card-text style="color:black; top: 9%; position:relative">Are you sure you want to discard this edit ?</v-card-text>
       <v-btn style="position: absolute; right:.5vw;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
-      <v-btn style="position: relative; left:3.5vw;" depressed tile text color="#14375A" @click="discardAlertQuest = false">NO</v-btn>
+      <v-btn style="position: absolute; right:18rem;" depressed tile text color="#14375A" @click="discardAlertQuest = false">NO</v-btn>
     </v-card>
   <confirmAlertSuccess v-if="successAlert"/>
   <finalCheck v-if="finalCheck === true"/>
@@ -131,7 +131,7 @@
 
 <script>
 //import { criConstants } from '../common/cri_constants';
-import {geomToMiles,removeAsstPoints, stopEditingPoint, sketchCompete,initLoadAssetGraphic, showVerticies, removeGraphic, saveToEditsLayer} from '../components/Map/editFunc'
+import {geomToMiles,removeAsstPoints, stopEditingPoint, sketchCompete,initLoadAssetGraphic, showVerticies, removeGraphic, saveToEditsLayer, cancelEditStepper} from '../components/Map/editFunc'
 //import {initGraphicCheck} from '../components/Map/crud'
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
@@ -331,10 +331,14 @@ export default {
     },
 
     methods:{
+      cancelStepper(){
+        cancelEditStepper()
+      },
       onScroll(){
         this.scrollInvoked++
       },
       delGraphic(){
+        this.firstAddToMap = false
         removeGraphic();
       },
       showGIDVerts(){
@@ -399,6 +403,7 @@ export default {
           this.finalCheck = true
           return;
         }
+        this.firstAddToMap = false
         this.successAlert=true;
         saveToEditsLayer()
         // for(let z=0; z < gLayer.graphics.items.length; z++){
@@ -592,6 +597,15 @@ export default {
         set(comm){
           this.$store.commit('setComment', comm)
         }
+      },
+      firstAddToMap:{
+        get(){
+          console.log(this.$store.state.isInitAdd)
+          return this.$store.state.isInitAdd
+        },
+        set(boolAdd){
+          this.$store.commit('setIsInitAdd', boolAdd)
+        }
       }
     }
 }
@@ -607,7 +621,7 @@ export default {
   left: 13.5rem;
   padding-bottom: 0%;
   font-size: 16px;
-  z-index: 1
+  z-index: 2
 }
 .scroller {
   width: auto;
@@ -659,15 +673,16 @@ export default {
     left: 51vw;
     top: 50vh;
     border-radius: 0px;
+    height: 13vh
 }
 .confirmationTitle{
   background: #14375A;
   color:white;
   font-size: 16px;
   height: 40px;
-  padding-left: 25px;
+  padding-left: 15px;
   padding-top: 1%;
-  text-align: justify;
+  text-align: left;
   top: 10%;
   width: 100%;
   left: 100%;

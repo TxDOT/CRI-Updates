@@ -1,5 +1,5 @@
 //import const from map.js
-import {search, sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, txCounties, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
+import {sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, txCounties, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
 import {cntyNbrNm} from '../../common/txCnt' //importing county name/nbr table via txCnt.js
 import { criConstants } from '../../common/cri_constants';
 import {initGraphicCheck, queryEditsLayer} from '../Map/crud'
@@ -130,7 +130,6 @@ export async function countyInfo(){
         geomQuery.returnGeometry = true;
         let returnGeom = txCounties.queryFeatures(geomQuery);
         //Dynamically adding County NBR to search definition expression via data store
-        search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${store.state.cntyNmbr}`
         let countyExtent = returnGeom;
         countyExtent.then(function(result) {
           viewPoint.targetGeometry = result.features[0].geometry.extent;
@@ -167,6 +166,7 @@ export async function addRoadbed(){
 
       if(event.state === "complete"){
         store.commit('setIsDfoReturn', false)
+        store.commit('setIsInitAdd', true)
       //creating the length of road in miles for user
         lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
         res([lengthMiles, event.graphic.geometry, 'add']);
@@ -257,29 +257,10 @@ export async function modifyRoadbed(clickType, editType){
   console.log(feature)
   store.commit('setRoadGeom', feature.features[0].geometry.clone())
   await queryFeatureTables(feature)
-  // if(clickType === "click" && editType === "info"){
-  //   hightlightFeat('click')
-  //   console.log("Info mode...")
-  //   //commit feature to store
-  //   store.commit('setFeatureGeom', feature)
-  //   store.commit('setInfoRd', true)
-  //   // // document.getElementById('stepper').style.width = '500px'
-  //   // defineGraphic(null, "click", "info")
-  //   return
-  // }
+  store.commit('setIsInitAdd', true)
   defineGraphic(feature,clickType, editType)
-  return feature//geometryEngine.geodesicLength(feature.features[0].geometry, "miles")
+  return feature
 }
-//turn on/off imagery at zoom level 9; NeedsReview
-// export function zoomExtents(){
-//   //maybe introduce watcher
-//   view.on('mouse-wheel',() => {
-//     //console.log(view.zoom)
-//     view.zoom < 9 ?  featLayer.visible = false : featLayer.visible = true;
-//     view.zoom < 9 ? map.basemap = criConstants.basemap : map.basemap = 'satellite';
-//     view.zoom > 9 ? map.basemap = 'satellite' : criConstants.basemap;
-//   })
-// }
 //highlightes reference layer geometry when mouse moves over
 export function hightlightFeat(eventType){
   let highlight;
@@ -318,6 +299,7 @@ export function hightlightFeat(eventType){
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
 export async function defineGraphic(graphics, clickType, editType){
+  console.log(graphics)
   let exist = graphics.features ? gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.features[0].attributes.OBJECTID) : gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.attributes.OBJECTID)
   if(exist.length){
     return;
@@ -360,8 +342,9 @@ export async function defineGraphic(graphics, clickType, editType){
         }
       })
       gLayer.graphics.add(newGraphic);
+      console.log(newGraphic)
       newGraphic.attributes.editType === 'EDIT' && editType ? showVerticies(newGraphic) : null
-      
+
       store.commit('setOldLength',oldLength)
       store.commit('setModifyRd', true)
       newGraphic.attributes.editType === 'DELETE' ? store.commit('setDeltaDis',[oldLength, 'Delete']) : null
@@ -494,7 +477,7 @@ function setUpGraphic(){
         return;
       }
       response.results.forEach((result)=>{
-        if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && store.getters.getInfoRd === false){
+        if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
             console.log(sketch)
             sketch.update([result.graphic], {tool:"reshape"});
@@ -609,6 +592,7 @@ export async function getGraphic(){
                 response.results[0].graphic.attributes['editType'] === 'ADD' ? store.commit('setModifyRd', false) : store.commit('setModifyRd', true)
                 store.commit('setStepperClose', true)
                 store.commit('setInfoRd', false)
+                console.log(response.results[0].graphic.attributes)
                 setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
                               response.results[0].graphic.attributes['roadbedDesign'],
                               response.results[0].graphic.attributes['roadbedName'],
@@ -1461,6 +1445,7 @@ export async function reloadEdits(){
     }
     else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 4){
       createGraphics.features[i].attributes.EDIT_TYPE_ID = 'delete'
+      createGraphics.features[i].attributes.oldLength = length
     }
     
     defineGraphic(createGraphics.features[i], 'click')
@@ -1520,3 +1505,43 @@ export async function goToMap(name, nbr){
       })
   return;
 } 
+
+export async function cancelEditStepper(){
+  let returnData = await queryEditsLayer()
+  let filterEdits = returnData.features.filter(x => x.attributes.OBJECTID === store.getters.getObjectid)
+  if(filterEdits.length){
+    let returnRoad = await queryFeat(filterEdits[0])
+    let oldLength = geomToMiles(returnRoad.features[0].geometry,true,3)
+    let getGraphicsLayer = gLayer.graphics.items.filter(x=> x.attributes.objectid === filterEdits[0].attributes.OBJECTID)
+    let graphicLength = geomToMiles(getGraphicsLayer[0].geometry, true, 3)
+    let editsLength = geomToMiles(filterEdits[0].geometry, true, 3)
+    let diff = editsLength - graphicLength
+    store.commit('setIsStepCancel', true)
+    if(filterEdits[0].attributes.EDIT_TYPE_ID === 1) {
+      store.commit('setDeltaDis',[Math.abs(diff), 'Delete'])
+      filterEdits[0].attributes.EDIT_TYPE_ID = 'add'
+    }
+    else if(filterEdits[0].attributes.EDIT_TYPE_ID === 5){
+      filterEdits[0].attributes.oldLength = oldLength
+      store.commit('setDeltaDis',[Math.abs(diff), 'Delete'])
+      filterEdits[0].attributes.EDIT_TYPE_ID = 'edit'
+    }
+    //resetAttributesToEdits(getGraphicsLayer[0])
+    gLayer.remove(getGraphicsLayer[0])
+    defineGraphic(filterEdits[0], 'click', null)
+    console.log(filterEdits[0])
+    store.commit('setIsStepCancel', false)
+    //getGraphicsLayer[0].geometry = filterEdits[0].geometry
+    return;
+  }
+  return null
+  //let isExistEdit = editsLayer.fea
+  //Check if edit is in EDITS Layer
+  //if so => return geom/attri in Edits Layer; 
+  //if not => remove graphic and bring back edit feat
+}
+
+// function resetAttributesToEdits(graphLayer){
+//   console.log(graphLayer)
+// }
+
