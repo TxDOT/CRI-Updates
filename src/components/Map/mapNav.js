@@ -4,9 +4,10 @@ import {store} from '../../store'
 export function jumpToGoogle() {
     console.log("I'm gonna jump to google now");
     let viewCenter = view.get('center');
+    console.log(view)
     let lat = viewCenter.latitude;
     let lon = viewCenter.longitude;
-    let zoom = view.zoom;
+    let zoom = view.zoom === -1 ? 12.71 : view.zoom;
     window.open("https://www.google.com/maps/@"+lat+","+lon+","+zoom+"z");
 }
 
