@@ -1514,29 +1514,31 @@ export async function cancelEditStepper(){
   let returnData = await queryEditsLayer()
   let filterEdits = returnData.features.filter(x => x.attributes.OBJECTID === store.getters.getObjectid)
   if(filterEdits.length){
-    let returnRoad = await queryFeat(filterEdits[0])
-    let oldLength = geomToMiles(returnRoad.features[0].geometry,true,3)
-    let getGraphicsLayer = gLayer.graphics.items.filter(x=> x.attributes.objectid === filterEdits[0].attributes.OBJECTID)
-    let graphicLength = geomToMiles(getGraphicsLayer[0].geometry, true, 3)
-    let editsLength = geomToMiles(filterEdits[0].geometry, true, 3)
-    let diff = editsLength - graphicLength
-    store.commit('setIsStepCancel', true)
-    if(filterEdits[0].attributes.EDIT_TYPE_ID === 1) {
-      store.commit('setDeltaDis',[Math.abs(diff), 'Delete'])
-      filterEdits[0].attributes.EDIT_TYPE_ID = 'add'
-    }
-    else if(filterEdits[0].attributes.EDIT_TYPE_ID === 5){
-      filterEdits[0].attributes.oldLength = oldLength
-      store.commit('setDeltaDis',[Math.abs(diff), 'Delete'])
-      filterEdits[0].attributes.EDIT_TYPE_ID = 'edit'
-    }
-    //resetAttributesToEdits(getGraphicsLayer[0])
-    gLayer.remove(getGraphicsLayer[0])
-    defineGraphic(filterEdits[0], 'click', null)
     console.log(filterEdits[0])
-    store.commit('setIsStepCancel', false)
-    //getGraphicsLayer[0].geometry = filterEdits[0].geometry
-    return;
+      let returnRoad = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? filterEdits[0] : await queryFeat(filterEdits[0])
+      let oldLength = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? geomToMiles(returnRoad.geometry,true,3) : geomToMiles(returnRoad.features[0].geometry,true,3)
+      let getGraphicsLayer = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
+      let graphicLength = geomToMiles(getGraphicsLayer[0].geometry, true, 3) 
+      let editsLength = geomToMiles(filterEdits[0].geometry, true, 3)
+      let diff = editsLength - graphicLength
+      store.commit('setIsStepCancel', true)
+      if(filterEdits[0].attributes.EDIT_TYPE_ID === 1) {
+        store.commit('setDeltaDis',[Math.abs(diff), 'Delete'])
+        filterEdits[0].attributes.EDIT_TYPE_ID = 'add'
+      }
+      else if(filterEdits[0].attributes.EDIT_TYPE_ID === 5){
+        filterEdits[0].attributes.oldLength = oldLength
+        store.commit('setDeltaDis',[Math.abs(diff), 'Delete'])
+        filterEdits[0].attributes.EDIT_TYPE_ID = 'edit'
+      }
+      //resetAttributesToEdits(getGraphicsLayer[0])
+      gLayer.remove(getGraphicsLayer[0])
+      defineGraphic(filterEdits[0], 'click', null)
+      console.log(filterEdits[0])
+      store.commit('setIsStepCancel', false)
+      //getGraphicsLayer[0].geometry = filterEdits[0].geometry
+      return;
+    
   }
   return null
   //let isExistEdit = editsLayer.fea
