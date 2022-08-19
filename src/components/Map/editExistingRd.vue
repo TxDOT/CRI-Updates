@@ -2,13 +2,13 @@
     <v-container>
         <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">
             <v-card-title class="editRdTitle" v-if="edit===true">
-                <v-card-text style="font-size:20px; text-align: left; padding-left: 3%; bottom: 2.6vh; position: relative;">Edit Road</v-card-text>
+                <v-card-text style="font-size:20px; text-align: left; padding-left: none; bottom: 2.7vh; right: 1rem; position: relative;">Edit Road</v-card-text>
              </v-card-title>
             <v-card-title class="editRdTitle" v-if="addR===true">
-                <v-card-text style="font-size:20px; text-align: left; padding-left: 3%; bottom: 2.6vh; position: relative;">Add Road</v-card-text>
+                <v-card-text style="font-size:20px; text-align: left; padding-left: none; bottom: 2.7vh; right: 1rem; position: relative;">Add Road</v-card-text>
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="deleteR===true">
-                <v-card-text style="font-size:20px; text-align: left; padding-left: 3%; bottom: 2.6vh; position: relative;">Delete Road</v-card-text>
+                <v-card-text style="font-size:20px; text-align: left; padding-left: none; bottom: 2.7vh; right: 1rem; position: relative;">Delete Road</v-card-text>
             </v-card-title>
     
 
@@ -29,7 +29,7 @@
                 mdi-navigation
             </v-icon>Select a road from the map to delete it
         </v-card-text>
-        <v-btn tile outlined depressed style="right: 1%; top: 60%; position: absolute; border-color: black;" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false">Cancel</v-btn>
+        <v-btn tile outlined depressed style="right: 2%; top: 60%; position: absolute; border-color: black;" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false">Cancel</v-btn>
     </v-card>
     <v-card id="delWarn" v-if="deleteSecond === true || deleteClick"> <!-- //&& this.modifyR === false -->
         <v-card-title class="editRdTitle" style="width: 385px">
@@ -245,14 +245,14 @@ export default {
         background: #204E70;
         color:white;
         height: 35px;
-        text-align: justify;
+        text-align: left;
         top: 10%;
         width: 25.3vw;
         left: 100%;
     }
     .editRdInfo{
         position: relative;
-        font-size: 16px;
+        font-size: 14px;
         height: 60px;
         padding-left: 35px;
         padding-top: 8px;
@@ -265,7 +265,7 @@ export default {
     .editRdIcon{
         position: absolute;
         padding-right: .7vw;
-        padding-top: .1vh;
+        padding-top: 0vh;
         text-align: justify;
         right: 23vw;
     }
@@ -276,7 +276,7 @@ export default {
         width: 25.3vw;
         color: #204E70;
         border-radius: 0px;
-        height: 15vh;
+        height: 14vh;
     }
     #delWarn{
         position: absolute;

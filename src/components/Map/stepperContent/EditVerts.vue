@@ -1,10 +1,11 @@
 <template>
     <v-card>
-        <v-card-text style="color:black">Click and drag vertices to edit the shape of the road.</v-card-text>
+        <v-card-text style="color:black" v-if="!info">Click and drag vertices to edit the shape of the road.</v-card-text>
+        <v-card-text style="color:black" v-else>Click Edit Road to make changes.</v-card-text>
         <v-btn small style="top:0px; left:70px;" depressed @click="deleteRoad()" text color="#204E70" v-if="!info && modifyRoad"> 
           <v-icon color="black" medium style="right:5px">mdi-trash-can</v-icon><u>Delete Road</u>
         </v-btn>
-        <v-btn outlined small style="top:0px; left:73px; border:black 1px solid; position: relative;" tile color="#204E70" v-on="!info ? {'click' : () =>{nextStep(2)}} : {'click' : () =>{beginEdit()}}"> 
+        <v-btn outlined small tile color="#204E70" v-on="!info ? {'click' : () =>{nextStep(2)}} : {'click' : () =>{beginEdit()}}" :style="[info ? isPopupT : isPopupF]"> 
           <u v-if="info">{{editStep}}</u>
           <u v-if="!info">{{advanceStep}}</u>
         </v-btn>
@@ -21,7 +22,10 @@ export default {
       return{
         advanceStep: 'Continue',
         editStep: 'Edit Road',
-        info: false
+        info: false,
+        isPopupT: {'top':'0px', 'left':'9rem', 'border':'black 1px solid', 'position': 'relative'},
+        isPopupF: {'top':'0px', 'left':'73px', 'border':'black 1px solid', 'position': 'relative'}
+
       }
     },
     methods:{
