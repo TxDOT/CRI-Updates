@@ -73,6 +73,7 @@
               this.infoRoad = false
               this.receiveLoadStatus = false
               this.modifyRoad = true
+              this.firstAddToMap = true
               this.openStepper();
             }
 
@@ -243,10 +244,17 @@
           return this.$store.state.infoRd
         },
         set(info){
-          console.log(info)
           this.$store.commit('setInfoRd', info)
         }
       },
+      firstAddToMap:{
+        get(){
+          return this.$store.state.isInitAdd
+        },
+        set(boolAdd){
+          this.$store.commit('setIsInitAdd', boolAdd)
+        }
+      }
     }
   }
 </script>

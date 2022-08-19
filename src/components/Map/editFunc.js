@@ -257,7 +257,6 @@ export async function modifyRoadbed(clickType, editType){
   console.log(feature)
   store.commit('setRoadGeom', feature.features[0].geometry.clone())
   await queryFeatureTables(feature)
-  store.commit('setIsInitAdd', true)
   defineGraphic(feature,clickType, editType)
   return feature
 }
