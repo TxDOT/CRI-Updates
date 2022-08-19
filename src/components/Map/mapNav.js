@@ -6,9 +6,9 @@ export function jumpToGoogle() {
     let viewCenter = view.get('center');
     console.log(view)
     let lat = viewCenter.latitude;
-    let lon = viewCenter.longitude;
+    let long = viewCenter.longitude;
     let zoom = view.zoom === -1 ? 12.71 : view.zoom;
-    window.open("https://www.google.com/maps/@"+lat+","+lon+","+zoom+"z");
+    window.open("https://www.google.com/maps/@"+lat+","+long+","+zoom+"z");
 }
 
 export function undoSketch(){
