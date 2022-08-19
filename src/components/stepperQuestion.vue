@@ -669,11 +669,12 @@ export default {
 }
 
 #discardSketch{
-    width: 360px;
-    left: 51vw;
-    top: 50vh;
+    position: absolute;
+    width: 22rem;
+    left: 57rem;
+    top: 25rem;
     border-radius: 0px;
-    height: 13vh
+    height:7.7rem
 }
 .confirmationTitle{
   background: #14375A;

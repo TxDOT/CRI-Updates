@@ -9,7 +9,7 @@
             <v-card-text style="position:relative; text-align:left; padding: 0px; color: black; top:20px; left: .9rem;">
                 Road Name is Required.
             </v-card-text>
-            <v-btn tile @click="setFinalCheck()" style="poistion:relative; right: 5.8rem; top:2.8rem" outlined color="#14375A"><u>close</u></v-btn>
+            <v-btn tile @click="setFinalCheck()" style="poistion:relative; right: 4.1rem; top:2.0rem" outlined color="#14375A"><u>close</u></v-btn>
         </v-card>
 </template>
 
@@ -45,10 +45,10 @@ export default {
 }
 #finalCheck{
     position: absolute;
-    top: 40%;
-    width: 300px;
-    left: 50%;
-    height: 150px;
+    top: 25rem;
+    width: 15rem;
+    left: 57rem;
+    height: 8rem;
     border-radius: 0px;
 }
 </style>
