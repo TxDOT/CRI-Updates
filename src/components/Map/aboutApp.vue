@@ -66,4 +66,6 @@ export default {
     display: flex;
     flex-direction: column;
 }
+
+ul { list-style-position: inside; }
 </style>

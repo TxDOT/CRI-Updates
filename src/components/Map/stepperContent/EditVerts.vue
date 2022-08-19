@@ -41,10 +41,11 @@ export default {
             this.steppClose = false 
             this.nextDeleteRoadForm = true
         },
-         beginEdit(){
+        beginEdit(){
             this.infoRoad = false
+            this.firstAddToMap = true
             defineGraphic(this.featureGeometry, 'click', 'edit') 
-         }
+        },
     },
     watch:{
         infoRoad:{
@@ -108,7 +109,15 @@ export default {
             get(){
                 return this.$store.state.featureGeometry
             }
-        }    
+        },
+        firstAddToMap:{
+            get(){
+                return this.$store.state.isInitAdd
+            },
+            set(boolAdd){
+                this.$store.commit('setIsInitAdd', boolAdd)
+            }
+      }    
     }
 }
 </script>
