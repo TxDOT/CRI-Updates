@@ -237,6 +237,7 @@ export async function modifyRoadbed(clickType, editType){
         store.commit('setEditExisting', null)
         store.commit('setDeleteRd', null)
         rej('cancel')
+        return;
       }
       let opts = { include: featLayer }
       view.hitTest(event, opts)
