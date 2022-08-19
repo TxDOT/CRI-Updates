@@ -151,6 +151,7 @@ export async function countyInfo(){
   let countyInfoReturn = await countyInfoPromise;
   return countyInfoReturn
 }
+
 // Adding a new Roadbed to map
 export async function addRoadbed(){
   let addNewRoad = new Promise(function(res){
@@ -237,6 +238,7 @@ export async function modifyRoadbed(clickType, editType){
         store.commit('setEditExisting', null)
         store.commit('setDeleteRd', null)
         rej('cancel')
+        return;
       }
       let opts = { include: featLayer }
       view.hitTest(event, opts)
@@ -535,10 +537,12 @@ export async function removeGraphic(){
     store.commit('setDeltaDis',[length, 'Delete'])
   }
   else if(graphicR[0].attributes.editType === 'DELETE'){
-    store.commit('setDeltaDis',[length, 'Add'])
+    console.log(graphicR[0].attributes.originalLength)
+    store.commit('setDeltaDis',[graphicR[0].attributes.originalLength, 'Add'])
   }
   else if(graphicR[0].attributes.editType === 'EDIT'){
     let diffAdded = Math.abs(graphicR[0].attributes.originalLength - length)
+    console.log(diffAdded)
     store.commit('setDeltaDis',[diffAdded, 'Edit'])
   }
 }
