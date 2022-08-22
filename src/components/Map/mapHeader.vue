@@ -1,12 +1,9 @@
 <template>
-    <div class ="mapHeader flex">
+    <div class ="mapHeader flex" >
         <v-app-bar app color="#14375A" class="white--text" style="height:60px; top:0%; width:100%;" clipped-left>
-        <!-- <header>TxDOT</header> -->
-            <!-- <img style="height: 50px; max-width: 100%; bottom: 20%; position: relative;" src="../../assets/TxDOT-logo.png"> -->
+            <img style="height: 50px; max-width: 100%; bottom: 20%; position: relative;" src="../../assets/TxDOT-logo.png">
             <!-- <span style="position: relative; top:50%; right: 20.7%; font-size: 14px;"><i>Connecting you with Texas</i></span> -->
-            <v-app-bar-title class="h1-text" style="left: 1%; top:6%; position: relative; width: 100%">
-                <p>TxDOT County Road Inventory Map</p>
-            </v-app-bar-title>
+            <v-app-bar-title class="h1-text" style="left: 1%; top:6%; position: relative; width: 100%"><i>County Road Inventory Map</i></v-app-bar-title>
                     <!-- <div class="flex"> -->
                         <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" style="position: relative; left:.8rem; bottom: .1rem"><u>Save & Exit</u></v-btn>
                         <v-btn height="3vh" tile style="color:white; background-color: green; border: 1px solid white; left: .6rem; bottom: .1rem; position: relative;" class="mx-3" small @click="submitCertify=true">Submit & Certify</v-btn>
@@ -121,6 +118,5 @@ export default {
 <style scoped>
     .h1-text{
         position: relative;
-        font-style: italic;
     }
 </style>
