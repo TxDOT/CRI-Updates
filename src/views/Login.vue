@@ -39,7 +39,7 @@ import {viewPoint,countyOfficialInfo, search} from '../components/Map/map'
 import {goToMap} from '../components/Map/editFunc'
 import {cntyNbrNm} from '../common/txCnt'
 //import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
-import esriId from "@arcgis/core/identity/IdentityManager";
+//import esriId from "@arcgis/core/identity/IdentityManager";
 import Portal from "@arcgis/core/portal/Portal";
 import Query from "@arcgis/core/rest/support/Query"
 
@@ -85,6 +85,7 @@ export default {
       })
 
       //esriId.registerOAuthInfos([this.auth]);
+      // this.loginStatus()
       // esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
       //   .then(()=>{
       //     this.handleSignedIn()
@@ -108,13 +109,15 @@ export default {
         //   .then(()=>{
         //     console.log('1')
         //   })
-        // console.log('logging in')
-        this.$router.push('/map') //change
+        // console.log('logging in')\\
+        
+        this.loadMap('Bastrop', 11)
       },
 
       async loadMap(name, nbr){
         await goToMap(name, nbr)
         console.log(viewPoint)
+        this.loginToMap = true
         this.$router.push('/map')
         this.loginToMap = false
         //view.goTo(viewPoint);
