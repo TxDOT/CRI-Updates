@@ -38,8 +38,8 @@
 import {viewPoint,countyOfficialInfo, search} from '../components/Map/map'
 import {goToMap} from '../components/Map/editFunc'
 import {cntyNbrNm} from '../common/txCnt'
-//import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
-//import esriId from "@arcgis/core/identity/IdentityManager";
+import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
+import esriId from "@arcgis/core/identity/IdentityManager";
 import Portal from "@arcgis/core/portal/Portal";
 import Query from "@arcgis/core/rest/support/Query"
 
@@ -70,30 +70,31 @@ export default {
       console.log(to, from)
       next(false)
     },
+    
     mounted(){
       // setup OAuth Constructor; gets loaded on mount of login.vue and check login Status
-      // this.auth = new OAuthInfo({
-      //   appId:"9XWrQUJ2eX0jXEAW",
-      //   expiration: 10080,
-      //   flowType: 'auto',
-      //   popup: false,
-      //   portalUrl: "https://txdot.maps.arcgis.com",
-      //   preserveUrlHash: false
-      // });
+      this.auth = new OAuthInfo({
+        appId:"9XWrQUJ2eX0jXEAW",
+        expiration: 10080,
+        flowType: 'auto',
+        popup: false,
+        portalUrl: "https://txdot.maps.arcgis.com",
+        preserveUrlHash: false
+      });
       document.getElementById('cardDisplay').addEventListener('load', (event)=>{
         console.log(event,'load')
       })
 
-      //esriId.registerOAuthInfos([this.auth]);
-      // this.loginStatus()
-      // esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
-      //   .then(()=>{
-      //     this.handleSignedIn()
-      //   })
-      //   .catch((err) => {
-      //     console.log(err)
-      //     return;
-      //   })
+      esriId.registerOAuthInfos([this.auth]);
+      this.loginStatus()
+      esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
+        .then(()=>{
+          this.handleSignedIn()
+        })
+        .catch((err) => {
+          console.log(err)
+          return;
+        })
 
       this.certify = false;
       // this.logMeIn()
@@ -105,13 +106,13 @@ export default {
     },
     methods:{
       logMeIn(){
-        // esriId.getCredential(this.auth.portalUrl + "/sharing")
-        //   .then(()=>{
-        //     console.log('1')
-        //   })
+        esriId.getCredential(this.auth.portalUrl + "/sharing")
+          .then(()=>{
+            console.log('1')
+          })
         // console.log('logging in')\\
         
-        this.loadMap('Bastrop', 11)
+        //this.loadMap('Bastrop', 11)
       },
 
       async loadMap(name, nbr){
