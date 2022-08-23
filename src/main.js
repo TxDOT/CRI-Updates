@@ -25,10 +25,10 @@ new Vue({
     // })
 
 
-    if(performance.navigation.type === 1){
-      console.log(this.$router)
-      this.$router.push('/login')
-      //this.$router.push('/login')
-    }
+    // if(performance.navigation.type === 1){
+    //   console.log(this.$router)
+    //   this.$router.push('/login')
+    //   //this.$router.push('/login')
+    // }
   }
 }).$mount('#app')
