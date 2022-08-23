@@ -7,7 +7,7 @@ export function jumpToGoogle() {
     console.log(view)
     let lat = viewCenter.latitude;
     let long = viewCenter.longitude;
-    let zoom = view.zoom === -1 ? 12.71 : view.zoom;
+    let zoom = Math.round(Math.log(591657550.500000 /(view.scale/2))/Math.log(2))-1;
     window.open("https://www.google.com/maps/@"+lat+","+long+","+zoom+"z");
 }
 

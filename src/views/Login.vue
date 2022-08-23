@@ -62,6 +62,7 @@ export default {
         }
     },
     beforeRouteLeave(to, from, next){
+      console.log(to)
       if(this.loginToMap){
         next()
         return;
@@ -122,22 +123,22 @@ export default {
       },
       handleSignedIn() {
         const portal = new Portal();
+        this.loginToMap = true
         portal.load()
           .then( async () => {
-            this.loginToMap = true
-            this.$router.push('/load')
             const results = { name: portal.user.fullName, username: portal.user.username };
             console.log(results)
             
-            let county = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username)
+            let countyInfo = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username)
+            this.$router.push('/load')
             this.userName = portal.user.username 
-            let cntyNumber = county[1]
-            let cntyName = county[0]
+            let cntyNumber = countyInfo[1]
+            let cntyName = countyInfo[0]
             search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${cntyNumber}`
             console.log(search.sources)
             this.countyName = cntyName
             this.countyNumber = cntyNumber
-            this.countyMiles = county[2]
+            this.countyMiles = countyInfo[2]
             this.loadMap(cntyName,cntyNumber)
           });
       },
@@ -151,7 +152,7 @@ export default {
             return cntyNbrNm[0]
           }
         })
-
+        console.log(getCountyNbr)
         if(getCountyNbr){
           let whereStatement = `County_NBR = '${getCountyNbr}'`
           const query = new Query();
@@ -164,6 +165,7 @@ export default {
           return [county, Number(getCountyNbr), queryResult.features[0].attributes['Total_Mileage']]
         }
         else{
+          console.log('leggo')
           this.$router.push('/pickCounty')
         }
       }
