@@ -121,7 +121,7 @@ export default {
           .then( async () => {
             const results = { name: portal.user.fullName, username: portal.user.username };
             console.log(results)
-            //this.$router.push('/load')
+            this.$router.push('/load')
             let countyInfo = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username)
             this.userName = portal.user.username 
             let cntyNumber = countyInfo[1]
