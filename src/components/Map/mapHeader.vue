@@ -3,8 +3,8 @@
         <v-app-bar app color="#14375A" class="white--text" style="height:60px; top:0%; width:100%;" clipped-left>
             <!-- <img style="height: 50px; max-width: 100%; bottom: 20%; position: relative;" src="../../assets/TxDOT-logo.png"> -->
             <!-- <span style="position: relative; top:50%; right: 20.7%; font-size: 14px;"><i>Connecting you with Texas</i></span> -->
-            <v-app-bar-title class="h1-text" style="text-align: left; top:0%; position: relative; width: 100%">
-                <span>TxDOT County Road Inventory Map</span>
+            <v-app-bar-title class="h1-text" style="text-align: left; top:8%; position: relative; width: 100%">
+                <p>TxDOT County Road Inventory Map</p>
             </v-app-bar-title>
                     <!-- <div class="flex"> -->
                         <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" style="position: relative; left:.8rem; bottom: .1rem"><u>Save & Exit</u></v-btn>
