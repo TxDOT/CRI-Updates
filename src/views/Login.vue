@@ -79,7 +79,6 @@ export default {
       });
 
       esriId.registerOAuthInfos([this.auth]);
-      // this.loginStatus()
       esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
         .then(()=>{
           this.handleSignedIn()
