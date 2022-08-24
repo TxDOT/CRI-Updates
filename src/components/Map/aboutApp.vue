@@ -2,7 +2,7 @@
     <!-- <v-dialog style="position:absolute; left: 50%; top: 50%;"> -->
       <v-card id="finalCheck">
         <v-card-title class="surfaceTitle"><v-card-text style="position:relative; bottom:25px; text-align: left; padding-left: 0px;">About the County Road Inventory Map</v-card-text></v-card-title>
-        <v-card-text style="position: absolute; color: black; top: 0rem; left: 0%; font-size: 10px;"><u>Build Version: 1.4.5</u></v-card-text>
+        <v-card-text style="position: absolute; color: black; top: 0rem; left: 0%; font-size: 10px;"><u>Build Version: 1.4.6</u></v-card-text>
         <!-- <v-card-text style="poistion: absolute; text-align: left; color: black;">Overview: this is a new version of the DUSA application. Refer to this section to review updates to the map.</v-card-text> -->
         <v-card-text style="poistion: absolute; text-align: left; color: black;" v-for="(i, index) in updateList" :key=index><ul style="position:relative; line-height: 1rem; padding: 0rem;"><li>{{updateList[index]}}</li></ul></v-card-text>
         
