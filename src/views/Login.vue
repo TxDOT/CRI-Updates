@@ -70,23 +70,16 @@ export default {
       console.log(to, from)
       next(false)
     },
-    
     mounted(){
       // setup OAuth Constructor; gets loaded on mount of login.vue and check login Status
       this.auth = new OAuthInfo({
         appId:"9XWrQUJ2eX0jXEAW",
         expiration: 10080,
-        flowType: 'auto',
         popup: false,
-        portalUrl: "https://txdot.maps.arcgis.com",
-        preserveUrlHash: false
       });
-      document.getElementById('cardDisplay').addEventListener('load', (event)=>{
-        console.log(event,'load')
-      })
 
       esriId.registerOAuthInfos([this.auth]);
-      this.loginStatus()
+      // this.loginStatus()
       esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
         .then(()=>{
           this.handleSignedIn()
@@ -110,15 +103,13 @@ export default {
           .then(()=>{
             console.log('1')
           })
-        // console.log('logging in')\\
+        console.log('logging in')
         
-        //this.loadMap('Bastrop', 11)
       },
 
       async loadMap(name, nbr){
         await goToMap(name, nbr)
         console.log(viewPoint)
-        this.loginToMap = true
         this.$router.push('/map')
         this.loginToMap = false
         //view.goTo(viewPoint);
@@ -131,7 +122,7 @@ export default {
           .then( async () => {
             const results = { name: portal.user.fullName, username: portal.user.username };
             console.log(results)
-            this.$router.push('/load')
+            //this.$router.push('/load')
             let countyInfo = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username)
             this.userName = portal.user.username 
             let cntyNumber = countyInfo[1]
@@ -168,7 +159,7 @@ export default {
         }
         else{
           console.log('leggo')
-          this.$router.push('/pickCounty')
+          this.$router.push({ name: 'PickCounty'})
         }
       }
     },
