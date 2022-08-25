@@ -68,7 +68,6 @@ export default {
     methods:{
         addRoad() {
             addRoadbed().then(result=>{
-                console.log(Number(parseFloat(result.toFixed(3))) )
                 this.previousTotal += Number(parseFloat(result.toFixed(3)))     
             })            
         },
@@ -101,13 +100,11 @@ export default {
         },
         returnCountyTotal:{
             get(){
-                console.log(this.$store.state.cntyEndingMiles)
                 return this.$store.state.cntyEndingMiles
             },
         },
         setLogOut:{
             get(){
-                console.log(this.$store.state.isLoggedOut)
                 return this.$store.state.isLoggedOut
             },
             set(bool){

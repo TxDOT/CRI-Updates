@@ -31,7 +31,7 @@
               this.removeBtnFocus();
             }},
           { title: 'Criteria', icon: 'mdi-clipboard-text', action: ()=>{
-              window.open('https://www.txdot.gov/apps/statewide_mapping/dusa/resources/COUNTY_ROAD_CRITERIA.pdf', '_blank')
+              window.open('https://www.txdot.gov/data-maps/roadway-inventory/county-road-criteria.html', '_blank')
               this.removeBtnFocus();
             }
           },

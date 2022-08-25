@@ -42,14 +42,13 @@ export default {
       }
     },
     beforeRouteLeave(to, from, next){
+      to, from
       if(this.setLogOut){
         next()
         return;
       }
       
       next(false)
-      // console.log(to, from)
-      //next(false)
     },
     mounted(){
       hightlightFeat('pointer-move')
@@ -79,20 +78,6 @@ export default {
         },
         immediate: true,
       },
-      // steppClose:{
-      //   handler: function(){
-      //     console.log(this.steppClose)
-      //     this.success = this.steppClose
-      //     console.log(this.success)
-      //   },
-      //   immediate: true,
-      // },
-      // success(bool){
-      //   if(bool) return
-      //   setTimeout(()=>{
-      //     this.success = true
-      //   },3000)
-      // }
     },
     computed:{
       getDfoBool:{
@@ -142,7 +127,6 @@ export default {
       },
       setLogOut:{
         get(){
-          console.log(this.$store.state.isLoggedOut)
           return this.$store.state.isLoggedOut
         },
         set(bool){

@@ -288,11 +288,9 @@ export const store = new Vuex.Store({
             state.roadGeometry = geom
         },
         setFeatureGeom(state, geom){
-            console.log(geom)
             state.featureGeometry = geom
         },
         setAssetCoverage(state, assetDfos){
-            console.log(assetDfos)
             let sumArr = []
             assetDfos.forEach(function(x){
                 sumArr.push(x[0]+x[1])
@@ -301,7 +299,6 @@ export const store = new Vuex.Store({
             let diff = sumArr.reduce((prevValue, currentValue) => 
                 currentValue - prevValue, initValue
             )
-            console.log(diff)
             const currentLength = state.roadGeometry.paths[0].at(-1)[2] - state.roadGeometry.paths[0].at(0)[2]
             if(Number(currentLength.toFixed(3)) === Number(diff.toFixed(3))){
                 state.assetCoverage = [true, null]
@@ -311,7 +308,6 @@ export const store = new Vuex.Store({
                 try{
                     if(assetDfos.length > 1){
                         for(let i =0; i < assetDfos.length; i++){
-                            console.log(assetDfos[i], assetDfos[i+1])
                             if(assetDfos[i+1][1] === undefined){
                                 return;
                             }
@@ -330,11 +326,6 @@ export const store = new Vuex.Store({
                         }
                         return;
                     }
-                    // else if(assetDfos[0][1] === Number(currentLength.toFixed(3))){
-                    //     console.log(assetDfos[0][1] === Number(currentLength.toFixed(3)))
-                    //     state.assetCoverage = [false, 'long', assetDfos[0][1], Number(currentLength.toFixed(3))]
-                    //     return;
-                    // }
                     else if((assetDfos[0][1] < Number(currentLength.toFixed(3)))){
                         state.assetCoverage = [false, 'short', assetDfos[0][1], Number(currentLength.toFixed(3))]
                         return;
@@ -370,17 +361,12 @@ export const store = new Vuex.Store({
             state.username = userName
         },
         setDeltaDis(state, newLen){
-            console.log(newLen, state.deltaDistance)
             if(newLen[1] === "Add"){
-                console.log(newLen, state.deltaDistance)
                 state.deltaDistance += newLen[0]
-                console.log(state.deltaDistance)
                 return;
             }
             else if(newLen[1] === "Delete"){
-                console.log(state.deltaDistance)
                 state.deltaDistance -= newLen[0]
-                console.log(state.deltaDistance)
                 return;
             }
             else if(newLen[1] === "Edit"){
@@ -388,8 +374,6 @@ export const store = new Vuex.Store({
                 return;
             }
             else{
-                console.log('is this starting??', state.oldLength, newLen[0])
-
                 if(state.oldLength === 0){
                     return;
                 }
@@ -426,7 +410,6 @@ export const store = new Vuex.Store({
             state.count = count
         },
         setCntyNmbr(state, ctyNmbr){
-            console.log(ctyNmbr)
             state.cntyNmbr = ctyNmbr
         },
         setCntyMiles(state, cntyMiles){

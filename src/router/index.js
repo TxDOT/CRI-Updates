@@ -48,26 +48,6 @@ const router = new VueRouter({
   routes
 })
 
-// router.beforeEach((to, from, next)=>{
-//   if(to.meta.requiresAuth){
-//     console.log(store.getters.username)
-//     if(!store.username){
-//       next({
-//         name: "Login"
-//       })
-//     }
-//     else{
-//       next({
-//         name: "MapHome"
-//       })
-//     }
-//   }
-//   else{
-//     next()
-//   }
-
-// })
-
 export default router
 
 

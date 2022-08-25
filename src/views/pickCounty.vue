@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import {txCounties,view, featLayer, viewPoint,countyOfficialInfo} from '../components/Map/map'
+import {txCounties,view, featLayer,countyOfficialInfo} from '../components/Map/map'
 import {reloadEdits} from '../components/Map/editFunc'
 import {cntyNbrNm} from '../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query"
@@ -82,7 +82,6 @@ export default {
           })
       },
       getCountyInfo(){
-        console.log('autocopmplete')
         this.pick=false
         this.load=true
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find(x => cntyNbrNm[0][x] === this.pickCounty)
@@ -92,14 +91,14 @@ export default {
         query.outFields = [ "*" ]
         let queryResult = countyOfficialInfo.queryFeatures(query)
         queryResult.then((result)=>{
-            console.log(result, result.features[0].attributes['Total_Mileage'], getCountyNbr)
-            this.countyNumber = getCountyNbr
-            this.countyName = this.pickCounty
-            this.countyMiles = result.features[0].attributes['Total_Mileage']
-            this.goToMap(this.pickCounty, this.getCountyNbr)
+          this.countyNumber = getCountyNbr
+          this.countyName = this.pickCounty
+          this.countyMiles = result.features[0].attributes['Total_Mileage']
+          this.goToMap(this.pickCounty, this.getCountyNbr)
         })
       },
       async goToMap(name, nbr){
+        nbr;
         let road = await reloadEdits()
         let objectidList = [];
           for(let id in road.features){
@@ -108,7 +107,6 @@ export default {
               objectidList.push(objectid)
             }
           }
-          console.log(objectidList)
 
           featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
         // reloadEdits().then((road)=>{
@@ -123,7 +121,6 @@ export default {
 
         //   featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
         // });
-        console.log(nbr)
         //featLayer.definitionExpression =`CNTY_TYPE_NM = '${name}'`
         txCounties.definitionExpression=`CNTY_NM='${name}'`
         
@@ -137,7 +134,6 @@ export default {
         view.goTo({
           target: returnCountyObj.features[0].geometry
         })
-        console.log(viewPoint)
         this.$router.push('/map')
         this.load=false
         //view.goTo(viewPoint);
@@ -158,7 +154,6 @@ export default {
           return this.$store.state.cntyNmbr
         },
         set(countyNumber){
-          console.log(countyNumber)
           this.$store.commit('setCntyNmbr', countyNumber)
         }
       },

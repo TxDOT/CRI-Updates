@@ -2,9 +2,7 @@ import {view, sketch, gLayer} from '../Map/map';
 import {store} from '../../store'
 
 export function jumpToGoogle() {
-    console.log("I'm gonna jump to google now");
     let viewCenter = view.get('center');
-    console.log(view)
     let lat = viewCenter.latitude;
     let long = viewCenter.longitude;
     let zoom = Math.round(Math.log(591657550.500000 /(view.scale/2))/Math.log(2))-1;

@@ -128,7 +128,7 @@
         Cancel
       </v-btn> -->
       <v-btn v-if="!infoRoad" outlined class="nextAssetBtns" tile @click="nextStep(5); initLoadAsset('numLane'); cancelDfoLocation()" color="#204E70" :disabled="!setAssetCover[0]"> 
-        <u>Continue</u>
+        <u>Next Step</u>
       </v-btn>
     </v-card>
   </div>
@@ -230,7 +230,6 @@ export default {
       },
 
       selectAssetType(text){
-        console.log(text)
         this.assetType = text
         this.assetNull = null
         this.isAssetType = this.isAssetEnd = this.isAssetFinished = this.isAssetStart = false;
@@ -267,29 +266,20 @@ export default {
         this.cancelDfoLocation();
         let id = gLayer.graphics.items.filter(x=>x.attributes.objectid === this.objid);
         this.assetStartDfo = Number(id[0].geometry.paths[0][0][2].toFixed(3))
-        console.log(this.assetStartDfo)
-        //this.$set(this.mileInfo[0], 'ASSET_LN_BEGIN_DFO_MS', id[0].geometry.paths[0][0][2])
       },
 
       atEnd(){
         this.cancelDfoLocation();
         let id = gLayer.graphics.items.filter(x=>x.attributes.objectid === this.objid);
         this.assetEndDfo = Number(id[0].geometry.paths[0].at(-1)[2].toFixed(3))
-        console.log(this.assetEndDfo)
-        //this.$set(this.mileInfo[0], 'ASSET_LN_END_DFO_MS', Number(id[0].geometry.paths[0].at(-1)[2]).toFixed(3))
       },
 
       updateMileInfo(){
-        console.log(this.assetType, this.assetStartDfo, this.assetEndDfo)
         this.$set(this.mileInfo.at(this.editIndex), 'SRFC_TYPE', this.assetType)
         this.$set(this.mileInfo.at(this.editIndex), 'ASSET_LN_BEGIN', Number(this.assetStartDfo))
         this.$set(this.mileInfo.at(this.editIndex), 'ASSET_LN_END', Number(this.assetEndDfo))
         this.$set(this.mileInfo.at(this.editIndex), 'OBJECTID', this.objid)
-        // this.rdbdSurf.at(-1).SRFC_TYPE_ID = this.assetType
-        // this.rdbdSurf.at(-1).ASSET_LN_BEGIN_DFO_MS = this.assetStartDfo
-        // this.rdbdSurf.at(-1).ASSET_LN_END_DFO_MS = this.assetEndDfo
-       
-        // beginEndArr.push(this.mileInfo.at(0).ASSET_LN_BEGIN, this.mileInfo.at(-1).ASSET_LN_END)
+
         this.checkFullCoverage();
         this.executeDFOgraph('point')
       },
@@ -297,17 +287,10 @@ export default {
       checkFullCoverage(){
         let beginEndArr = []
         this.mileInfo.sort((a,b)=>(a.ASSET_LN_BEGIN > b.ASSET_LN_BEGIN)? 1:-1)
-        console.log(this.mileInfo)
-        //this.updateMileInfo();
         this.mileInfo.forEach(function(x){
           beginEndArr.push([x.ASSET_LN_BEGIN, x.ASSET_LN_END])
         })
         beginEndArr.sort((a,b)=>(a[0] > b[0])? 1:-1)
-        console.log(beginEndArr)
-        // let initValue = 0
-        // let diff = beginEndArr.reduce((prevValue, currentValue) => 
-        //   currentValue - prevValue, initValue
-        // )
         this.setAssetCover = beginEndArr
       },
 
@@ -339,7 +322,6 @@ export default {
       },
 
       async executeDFOgraph(){
-        console.log(this.mileInfo)
         this.newDfo = applyMToAsset(this.mileInfo)
       },
 
@@ -374,9 +356,7 @@ export default {
       objid:{
         handler: async function(){
           this.resetItems();
-          console.log(this.objid)
           if(this.mileInfo.length){
-            console.log('roadDesign cleared')
             this.mileInfo.length = 0
             this.addRoadSurface()
           }
@@ -396,7 +376,6 @@ export default {
             this.mileInfo.length = 0
           }
           if(this.rdbdDesign){
-            console.log(this.rdbdDesign)
             for(let i=0; i < this.rdbdDesign.length; i++){
               this.mileInfo.push({
                 SRFC_TYPE: this.rdbdDesign[i].SRFC_TYPE_ID,
@@ -519,7 +498,6 @@ export default {
   position: absolute;
   right:0%;
   top: 106%;
-  width: 100px;
 }
 .mileButton{
   top:75px;

@@ -108,7 +108,6 @@ export async function countyInfo(){
   let countyInfoPromise =  new Promise(function(res){
     let queryUrl = window.location.href
     let regExUrl = /\/(?:.(?!\/))+$/
-    console.log(queryUrl.match(regExUrl)[0].split('/'))
     //let crInfo = queryUrl.split('http://localhost:8080/')[1]
     let crInfo = queryUrl.match(regExUrl)[0].split('/')[1]
     if(crInfo === 'login#'){return router.push('/load')}
@@ -232,7 +231,6 @@ export async function addRoadbed(){
 export async function modifyRoadbed(clickType, editType){
   let promise = new Promise(function(res, rej){
     view.on(clickType,(event) => {
-      console.log(clickType,editType)
       if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
         store.commit('setEditExisting', null)
         store.commit('setDeleteRd', null)
@@ -256,7 +254,6 @@ export async function modifyRoadbed(clickType, editType){
     })
   })
   let feature = await promise
-  console.log(feature)
   store.commit('setRoadGeom', feature.features[0].geometry.clone())
   await queryFeatureTables(feature)
   defineGraphic(feature,clickType, editType)
@@ -300,7 +297,6 @@ export function hightlightFeat(eventType){
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
 export async function defineGraphic(graphics, clickType, editType){
-  console.log(graphics)
   let exist = graphics.features ? gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.features[0].attributes.OBJECTID) : gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.attributes.OBJECTID)
   if(exist.length){
     return;
@@ -343,7 +339,6 @@ export async function defineGraphic(graphics, clickType, editType){
         }
       })
       gLayer.graphics.add(newGraphic);
-      console.log(newGraphic)
       newGraphic.attributes.editType === 'EDIT' && editType ? showVerticies(newGraphic) : null
 
       store.commit('setOldLength',oldLength)
@@ -384,7 +379,6 @@ async function hideEditedRoads(graphicL, update){
   //let objectidEdits = [];
 
   //let roadsEdited = await reloadEdits()
-  //console.log(roadsEdited)
   if(update === true){
     if(objectidList.length){
       objectidList.length = 0
@@ -470,20 +464,14 @@ function setUpGraphic(){
     let opts = [gLayer]
     store.commit('setIsDfoReturn', false)
     view.hitTest(event,opts).then((response)=>{
-      // sketch._internalGraphicsLayer._promiseProps._resolver.promise.then((x)=>{
-      //   console.log(x.graphics)
-      //   console.log(x.graphics._observable._observers[0].properties.items[0].symbol.color = {r:0,g:255,b:111, a:1})
-      // })
       if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
         return;
       }
       response.results.forEach((result)=>{
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
-            console.log(sketch)
             sketch.update([result.graphic], {tool:"reshape"});
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
-            console.log(oldLength)
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
           }
@@ -505,7 +493,6 @@ export function stopEditingPoint(){
 }
 //show verticies along line
 export function showVerticies(x){
-  console.log(x)
   sketch.update([x], {tool:'reshape'})
 }
 //Delete a road from inside the stepper
@@ -520,38 +507,36 @@ export function delRoad(){
   symbol.color = criConstants.editType['delete'][0]
   graphicDel[0].symbol = symbol
 }
+//removes highlight around road
+export function removeHighlight(){
+  let delHighlight = view.allLayerViews.items.filter(x => x.layer.type === 'feature' && x._highlightIds)
+  delHighlight[0]._highlightIds.delete(store.getters.getObjectid)
+}
 //Delete a sketch i.e the graphic
 export async function removeGraphic(){
   stopEditing();
   let graphicR = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
-  console.log(graphicR)
   initGraphicCheck(graphicR[0], true)
   gLayer.remove(graphicR[0])
-  let delHighlight = view.allLayerViews.items.filter(x => x.layer.type === 'feature' && x._highlightIds)
-  delHighlight[0]._highlightIds.delete(store.getters.getObjectid)
+  removeHighlight();
   hideEditedRoads(null,true)
   let length = Number(geometryEngine.geodesicLength(graphicR[0].geometry, "miles").toFixed(5))
   if(graphicR[0].attributes.editType === 'ADD'){
-    console.log('add being deleted')
     store.commit('setDeltaDis',[length, 'Delete'])
   }
   else if(graphicR[0].attributes.editType === 'DELETE'){
-    console.log(graphicR[0].attributes.originalLength)
     store.commit('setDeltaDis',[graphicR[0].attributes.originalLength, 'Add'])
   }
   else if(graphicR[0].attributes.editType === 'EDIT'){
     let diffAdded = Math.abs(graphicR[0].attributes.originalLength - length)
-    console.log(diffAdded)
     store.commit('setDeltaDis',[diffAdded, 'Edit'])
   }
 }
 //set data for popup display
 export async function popUpData(res){
-  console.log('popup')
   let info = queryFeat(res)
   store.commit('setActiveLoader',true)
   info.then(async (x)=>{
-    console.log(x)
     await queryFeatureTables(x)
     hightlightFeat('click')
     store.commit('setStepperClose', true)
@@ -566,7 +551,6 @@ export async function popUpData(res){
 export async function getGraphic(){
   let getGraphPromise = new Promise(function(resp){
     view.on("click", function(event){
-      console.log('click')
       let option = {include: [featLayer,gLayer]}
       if (sketch.state === "active") {
         console.log('active')
@@ -595,7 +579,6 @@ export async function getGraphic(){
                 response.results[0].graphic.attributes['editType'] === 'ADD' ? store.commit('setModifyRd', false) : store.commit('setModifyRd', true)
                 store.commit('setStepperClose', true)
                 store.commit('setInfoRd', false)
-                console.log(response.results[0].graphic.attributes)
                 setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
                               response.results[0].graphic.attributes['roadbedDesign'],
                               response.results[0].graphic.attributes['roadbedName'],
@@ -771,14 +754,6 @@ function createAssetGraph(pathArr,y){
       symbol: assetLineSym
     })
     rdbdAssetLine.graphics.add(pavement);
-    
-    //let addGeom = gLayer.graphics.items.filter(gl => gl.attributes.objectid === y[0].OBJECTID)
-    //console.log(addGeom[0].geometry.paths = store.getters.roadGeometry)
-    // if(densUpdate.at(-1)[2] !== Number(y[d].ASSET_LN_END)){
-    //   let delIndex = densUpdate.findIndex(x=> x[2] === Number(y[d].ASSET_LN_END))
-    //   console.log(densUpdate.splice(delIndex,1))
-    // }
-
   }
   return;
 }
@@ -795,8 +770,6 @@ export function addAssetBreakPts(y, type)
 
   let updatedGeom;
   if(type !== 'click'){
-    // let m = applyMToAsset(a)
-    // console.log(m)
     for(let x=0; x<a.length; x++){
       if(!a[x].attributes.edit){
         let returnDFO = getNewDfoDist(a[x].attributes.objectid, a[x].geometry.x, a[x].geometry.y, false)
@@ -939,7 +912,6 @@ export function getCoordsRange(y){
   }
   catch(error){
     console.log(error)
-    alert('Error has occurred')
     return error;
   }
  
@@ -1081,95 +1053,7 @@ function getNewDfoDist(objectid, x, y, slide){
   
   return newDfo;
 }
-//Edit the assest brake point on route via pencil icon in stepper
-export async function updateAsset(y){
-  //variable y is asset break object. Created in Stepper
-  console.log("this point is being updated",y)
-  let rdbdobj = [];
-  if(rdbdobj.length){rdbdobj.length = 0}
-  //gathering asset points and zooming to location. 
-  for(let i in rdbdAssetPt.graphics.items){
-    if((rdbdAssetPt.graphics.items[i].attributes.objectid === y[0].objectid) && (rdbdAssetPt.graphics.items[i].attributes.assetTyp === y[0].SRFC_TYPE_ID) && Number(rdbdAssetPt.graphics.items[i].attributes.eDfo) === y[0].ASSET_LN_END_DFO_MS){
-      view.goTo({center: rdbdAssetPt.graphics.items[i].geometry, zoom: 20})
-      rdbdAssetPt.graphics.items[i].attributes.edit = null
-      rdbdobj = rdbdAssetPt.graphics.items[i]
-    }
-  }
-  let returnAssetPt = await getSelectedDFO(rdbdobj.attributes.objectid);
-  
-  //start Sketch for placement of new asset break point
-  // let assetPtPromise = new Promise(function(res){
-  //   sketchPoint.create("point",{mode: "click"})
-  //   sketchPoint.on("create",function(event){
-  //     sketchPoint.cancel();
-  //     res(event)
-  //   })
-  // })
-  // //returns new point x,y
-  // let returnAssetPt = await assetPtPromise
 
-  //gets new DFO Distance (m-value) of new asset break point
-  //let newDfo = getNewDfoDist(rdbdobj.attributes.objectid, returnAssetPt.graphic.geometry.x, returnAssetPt.graphic.geometry.y)
-  let assetType = y[0].SRFC_TYPE_ID
-
-  const assetSymb = {
-    type: "simple-marker",
-    color: criConstants.colorTable[`${assetType}`]
-  } 
-  //sets new asset point Graphic and converts point to Lat/Long
-  const convertPt = new Graphic({
-    geometry: {
-      type: "point", 
-      longitude: returnAssetPt[0].graphic.geometry.x,
-      latitude: returnAssetPt[1].graphic.geometry.y,
-      m: Number(parseFloat(returnAssetPt[0]).toFixed(3))
-    },
-  })
-
-  let a = webMercatorUtils.webMercatorToGeographic(convertPt.geometry)
-  let newAssetPt = new Graphic({
-    geometry: {
-      type: "point",
-      hasM: true,
-      longitude: a.x,
-      latitude: a.y,
-      spatialReference: {
-        wkid: 3857
-      }
-    },
-    attributes: {
-      objectid: y[0].OBJECTID,
-      assetTyp: assetType,
-      bDfo: y[0].ASSET_LN_BEGIN_DFO_MS,
-      eDfo: Number(parseFloat(returnAssetPt[0]).toFixed(3)),
-      edit: true,
-    },
-    symbol: assetSymb
-  });
-
-  //removes old graphic and add new asset point
-  rdbdAssetPt.graphics.remove(rdbdobj)
-  rdbdAssetPt.graphics.add(newAssetPt)
-
-  store.commit('setUpdateDfo',newAssetPt.attributes.eDfo)
-  //returns all asset points related by objectid
-  let currentAsst = rdbdAssetPt.graphics.items.filter(ca => ca.attributes.objectid === y[0].objectid)
-  let assetArray=[]
-  for(let x=0; x < currentAsst.length; x++){
-    assetArray.push({
-      SRFC_TYPE_ID: currentAsst[x].attributes.assetTyp,
-      ASSET_LN_BEGIN_DFO_MS: Number(parseFloat(currentAsst[x].attributes.bDfo)),
-      ASSET_LN_END_DFO_MS: Number(parseFloat(currentAsst[x].attributes.eDfo)),
-      objectid: currentAsst[x].attributes.objectid,
-      edit: currentAsst[x].attributes.edit
-    })
-  }
-  //making sure there aren't any gaps/overlaps. Adjusting asset Break Dfos.
-  let updateM = applyMToAsset(assetArray, "click")
-  addAssetBreakPts(updateM, 'click')
-  return updateM;
-}
-//******************************************************************************************************/
 //Removes graphics points on click
 export function removeAsstPoints(){
   rdbdAssetPt.graphics.removeAll();
@@ -1185,51 +1069,7 @@ export function applyMToAsset(assetArray, type){
     }
   }
 
-  // length[0].attributes.roadbedSurface = assetArray
-  // for(let z=0; z < length[0].attributes.roadbedSurface.length; z++){
-  //   if(typeof(length[0].attributes.roadbedSurface[z].ASSET_LN_BEGIN_DFO_MS) === "string" || typeof(length[0].attributes.roadbedSurface[z].ASSET_LN_END_DFO_MS) === "string" ){
-  //     assetArray[z].edit = true;
-  //   }
-  // }
   rdbdAssetLine.removeAll();
-  // let assetInfo = [];
-  // if(assetInfo.length){
-  //   assetInfo.length = 0
-  // }
-
-  // for(let h=0; h < assetArray.length; h++){
-  //   console.log(h)
-  //   let add = {srfcType: assetArray[h].srfcType, AssetBeginDfo: parseFloat(assetArray[h].AssetBeginDfo), AssetEndDfo: parseFloat(assetArray[h].AssetEndDfo), objectid: assetArray[h].objectid}
-  //   console.log(add.AssetBeginDfo, add.AssetEndDfo)
-  //   assetInfo.push(add)
-  //   console.log(assetInfo)
-  // }
-//make a new function for these
-  // assetArray.sort((a,b) => a.ASSET_LN_BEGIN > b.ASSET_LN_END)
-  // if(assetArray.at(-1).ASSET_LN_END !== Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))){
-  //   assetArray.at(-1).ASSET_LN_END = Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))
-  // }
-  // for(let i=1; i<assetArray.length; i++){
-  //   if(assetArray.at(-1).ASSET_LN_END !== Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))){
-
-  //   }
-  //   if(assetArray[i].edit){
-  //     assetArray[i-1].ASSET_LN_END = Number(assetArray[i].ASSET_LN_BEGIN)
-  //     if(assetArray[i+1]){
-  //       assetArray[i+1].ASSET_LN_BEGIN = Number(assetArray[i].ASSET_LN_END)
-  //     }
-      
-  //   }
-  //   if(assetArray[i-1].edit){
-  //     assetArray[i].ASSET_LN_BEGIN = Number(assetArray[i-1].ASSET_LN_END)
-  //     if(assetArray[i+1]){
-  //       assetArray[i+1].ASSET_LN_BEGIN = Number(assetArray[i].ASSET_LN_END)
-  //     }
-  //   }
-  // }
-  // if(assetArray.at(-1).ASSET_LN_END !== Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))){
-  //   assetArray.at(-1).ASSET_LN_END = Number(length[0].geometry.paths[0].at(-1)[2].toFixed(3))
-  // }
 
   if(type!=='click'){
     rdbdAssetPt.removeAll();
@@ -1257,23 +1097,6 @@ export async function getSelectedDFO(oid){
     return;
   }
   
-  // let pointB = new Graphic({
-  //   geometry:{
-  //     type: "point",
-  //     longitude: returnClickedPt.graphic.geometry.x,
-  //     latitude: returnClickedPt.graphic.geometry.y
-  //   }
-  // })
-  // let isPointInterLine = geometryEngine.intersects(pointB.geometry, store.getters.getRoadGeom)
-  // console.log(isPointInterLine)
-  // let newDfo;
-  // if(isPointInterLine === false){
-  //   let nearestCoord = geometryEngine.nearestCoordinate(store.getters.getRoadGeom, pointB.geometry)
-  //   newDfo = getNewDfoDist(oid, nearestCoord.coordinate.x, nearestCoord.coordinate.y, false)
-  // }
-  // else{
-  //   newDfo = getNewDfoDist(oid, returnClickedPt.graphic.geometry.x, returnClickedPt.graphic.geometry.y, false)
-  // }
   let newDfo = getNewDfoDist(oid, returnClickedPt.graphic.geometry.x, returnClickedPt.graphic.geometry.y, false)
   
   return [newDfo[0], returnClickedPt.graphic.geometry.x, returnClickedPt.graphic.geometry.y]
@@ -1426,7 +1249,6 @@ export async function reloadEdits(){
   let currentEditRoads = queryEditsLayer();
   
   let createGraphics = await currentEditRoads
-  console.log(createGraphics)
   //first add all Adds together
   //second query and and compare Ref layer length against add route length and apply to total length
   //finally subtract delete roads from total length 
@@ -1453,8 +1275,6 @@ export async function reloadEdits(){
     
     defineGraphic(createGraphics.features[i], 'click')
   }
-
-  console.log(mileSetUp)
   store.commit('setDeltaDis',[mileSetUp, 'Add'])
   return currentEditRoads
   // currentEditRoads.then((roads)=>{
@@ -1483,6 +1303,7 @@ export function saveToEditsLayer(){
 
 //function to query ref table by OID and COUNTY NAME and go and load map
 export async function goToMap(name, nbr){
+  nbr;
   let road = await reloadEdits()
     let objectidList = [];
       for(let id in road.features){
@@ -1491,10 +1312,8 @@ export async function goToMap(name, nbr){
           objectidList.push(objectid)
         }
       }
-      console.log(objectidList)
       // need to adjust objectid to asset id
       featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
-      console.log(nbr, name)
       txCounties.definitionExpression=`CNTY_NM='${name}'`
         
       const query = new Query();
@@ -1513,7 +1332,6 @@ export async function cancelEditStepper(){
   let returnData = await queryEditsLayer()
   let filterEdits = returnData.features.filter(x => x.attributes.OBJECTID === store.getters.getObjectid)
   if(filterEdits.length){
-    console.log(filterEdits[0])
       let returnRoad = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? filterEdits[0] : await queryFeat(filterEdits[0])
       let oldLength = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? geomToMiles(returnRoad.geometry,true,3) : geomToMiles(returnRoad.features[0].geometry,true,3)
       let getGraphicsLayer = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
@@ -1530,23 +1348,11 @@ export async function cancelEditStepper(){
         store.commit('setDeltaDis',[Math.abs(diff), 'Delete'])
         filterEdits[0].attributes.EDIT_TYPE_ID = 'edit'
       }
-      //resetAttributesToEdits(getGraphicsLayer[0])
       gLayer.remove(getGraphicsLayer[0])
       defineGraphic(filterEdits[0], 'click', null)
-      console.log(filterEdits[0])
       store.commit('setIsStepCancel', false)
-      //getGraphicsLayer[0].geometry = filterEdits[0].geometry
       return;
     
   }
   return null
-  //let isExistEdit = editsLayer.fea
-  //Check if edit is in EDITS Layer
-  //if so => return geom/attri in Edits Layer; 
-  //if not => remove graphic and bring back edit feat
 }
-
-// function resetAttributesToEdits(graphLayer){
-//   console.log(graphLayer)
-// }
-

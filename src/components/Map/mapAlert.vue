@@ -14,8 +14,7 @@
     },
     watch:{
         display(){
-            console.log(this.display)
-            this.display = this.alertStatus
+          this.display = this.alertStatus
         }
     }
   }

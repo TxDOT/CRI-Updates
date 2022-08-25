@@ -3,7 +3,7 @@
       <!-- <v-card elevation="0" class="black--text" id="footerCard"> -->
         <!-- <v-card-text justify="center" v-if="isNaN(countyTots)&&isNaN(modifyLine)&&isNaN(modifyLength) ? 0: countyTots"> -->
           <div id="footerCard" style="color:white"><div style="position:fixed; right: 4vw; bottom: .7vh; font-size: .7vw;">{{x}}, {{y}}</div>
-            County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(rdbdDeltaDist.toFixed(3)) ===0? {'color':'white'} : null]">{{Number(rdbdDeltaDist.toFixed(3))}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
+            County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(rdbdDeltaDist.toFixed(1)) ===0? {'color':'white'} : null]">{{Number(rdbdDeltaDist.toFixed(1))}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
           </div>
         <!-- </v-card-text> -->
         <!-- <v-btn style="right: 30%; bottom: 20%">Criteria</v-btn>
@@ -57,19 +57,19 @@ export default {
     },
     countyTots:{
       handler: function(){
-        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist.toFixed(3))
+        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist)
         // \this.modifyLength += this.rdbdDeltaDist
       },
       immediate: true, 
     },
-    rdbdDeltaDist:{
-      handler: function(){
-        console.log(Number(this.countyTotal), Number(this.rdbdDeltaDist))
-        this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist.toFixed(3))
-        // \this.modifyLength += this.rdbdDeltaDist
-      },
-      immediate: true, 
-    },
+    // rdbdDeltaDist:{
+    //   handler: function(){
+    //     console.log(Number(this.countyTotal), Number(this.rdbdDeltaDist))
+    //     //this.returnCountyTotal = Number(this.countyTotal.toFixed(1)) + Number(this.rdbdDeltaDist.toFixed(1))
+    //     // \this.modifyLength += this.rdbdDeltaDist
+    //   },
+    //   immediate: true, 
+    // },
     // modifyLine:{
     //   handler: async function(){
     //     let modify = await modifyRoadbed("click")

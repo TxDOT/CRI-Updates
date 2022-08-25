@@ -35,7 +35,7 @@
 
 <script>
 //import {autoDrawAsset} from '../components/Map/editFunc'
-import {viewPoint,countyOfficialInfo, search} from '../components/Map/map'
+import {countyOfficialInfo, search} from '../components/Map/map'
 import {goToMap} from '../components/Map/editFunc'
 import {cntyNbrNm} from '../common/txCnt'
 import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
@@ -62,12 +62,12 @@ export default {
         }
     },
     beforeRouteLeave(to, from, next){
-      console.log(to)
+      to;
+      from;
       if(this.loginToMap){
         next()
         return;
       }
-      console.log(to, from)
       next(false)
     },
     mounted(){
@@ -99,16 +99,12 @@ export default {
     methods:{
       logMeIn(){
         esriId.getCredential(this.auth.portalUrl + "/sharing")
-          .then(()=>{
-            console.log('1')
-          })
         console.log('logging in')
         
       },
 
       async loadMap(name, nbr){
         await goToMap(name, nbr)
-        console.log(viewPoint)
         this.$router.push('/map')
         this.loginToMap = false
         //view.goTo(viewPoint);
@@ -119,15 +115,13 @@ export default {
         this.loginToMap = true
         portal.load()
           .then( async () => {
-            const results = { name: portal.user.fullName, username: portal.user.username };
-            console.log(results)
             this.$router.push('/load')
             let countyInfo = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username)
+            if(!countyInfo){return;}
             this.userName = portal.user.username 
             let cntyNumber = countyInfo[1]
             let cntyName = countyInfo[0]
             search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${cntyNumber}`
-            console.log(search.sources)
             this.countyName = cntyName
             this.countyNumber = cntyNumber
             this.countyMiles = countyInfo[2]
@@ -139,12 +133,11 @@ export default {
         //let getCounty = username.split('_')[1]
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
           if(username.toLowerCase().includes(cntyNbrNm[0][x].replace(/\s/,'').toLowerCase())){
-            console.log(cntyNbrNm[0][x])
             county = cntyNbrNm[0][x]
             return cntyNbrNm[0]
           }
         })
-        console.log(getCountyNbr)
+        
         if(getCountyNbr){
           let whereStatement = `County_NBR = '${getCountyNbr}'`
           const query = new Query();
@@ -152,20 +145,18 @@ export default {
           query.outFields = [ "*" ]
           let queryResult = await countyOfficialInfo.queryFeatures(query)
           this.countyNumber = getCountyNbr
-          console.log(queryResult, queryResult.features[0].attributes['Total_Mileage'], getCountyNbr)
           localStorage.setItem('county',JSON.stringify([county,getCountyNbr,queryResult.features[0].attributes['Total_Mileage']]))
           return [county, Number(getCountyNbr), queryResult.features[0].attributes['Total_Mileage']]
         }
         else{
-          console.log('leggo')
           this.$router.push({ name: 'PickCounty'})
+          return;
         }
       }
     },
     computed:{
       setLogOut:{
         get(){
-          console.log(this.$store.state.isLoggedOut)
           return this.$store.state.isLoggedOut
         },
         set(bool){
@@ -185,7 +176,6 @@ export default {
           return this.$store.state.cntyNmbr
         },
         set(countyNumber){
-          console.log(countyNumber)
           this.$store.commit('setCntyNmbr', countyNumber)
         }
       },
