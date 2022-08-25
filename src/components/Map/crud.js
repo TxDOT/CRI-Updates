@@ -15,7 +15,6 @@ export function queryEditsLayer(){
 //if not already in editsLayer then it will be added; else it will be updated
 export function initGraphicCheck(editId, isRemove){
     let returnQuery = queryEditsLayer();
-    console.log(editId)
     //create and map to new graphic available assets about road
     let lineObj = new Graphic({
         attributes:
@@ -55,9 +54,7 @@ export function initGraphicCheck(editId, isRemove){
     })
     //checks to determine if road has been touched or not
     returnQuery.then((result)=>{
-        console.log(result)
         let isExist = result.features.filter((x) => x.attributes.OBJECTID === editId.attributes.objectid)
-        console.log(isExist, editId)
         if(isExist.length){
             //update
             lineObj.attributes.RTE_DEFN_LN_EDIT_DT = Number(new Date().getTime().toFixed(7))
@@ -75,11 +72,10 @@ export function initGraphicCheck(editId, isRemove){
 
 //for adding to edits Layer
 function addFeat(editId){
-    console.log(editId)
     editsLayer.applyEdits({
         addFeatures: [editId]
     })
-    .then(result => console.log(result))
+    .then(result => result)
     .catch(err => console.log(err))
     //check to see if object objectid exists in featureClass
 }
@@ -89,7 +85,7 @@ function updateFeat(editId){
     editsLayer.applyEdits({
         updateFeatures: [editId]
     })
-    .then(result=>console.log(result))
+    .then(result=>result)
     .catch(err => console.log(err))
 }
 
@@ -98,7 +94,7 @@ function deleteFeat(editId){
     editsLayer.applyEdits({
         deleteFeatures: [editId]
     })
-    .then(result=>console.log(result))
+    .then(result=>result)
     .catch(err => console.log(err))
 
 }

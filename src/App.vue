@@ -8,14 +8,11 @@
 
 <script>
 import {countyInfo} from './components/Map/editFunc'
-//import Login from './views/Login.vue'
-// import {roadInfo} from './store.js'
+
 export default {
     name: 'App',
-    //components: {Login},
-    //props: [roadInfo],
+
     mounted(){
-      //this.$router.push({name: 'Login'});{result.response === true ? this.$router.push({ name: 'MileSign', params: { id: result.nbr}}) : this.$router.push('/catchAll(.*)')}
       countyInfo().then((result) =>{
         if(result.response === true){
           this.$router.push({name:'MileSign', params:{id: result.nbr}})
@@ -23,7 +20,6 @@ export default {
         }
         this.$router.push({name:'Login'})
       })
-      //roadInfo();
     }
 }
 </script>

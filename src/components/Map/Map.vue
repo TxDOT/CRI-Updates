@@ -37,9 +37,6 @@ export default {
     async mounted() { //async waits for map to load
         const app = await import('../Map/map');
         app.initialize(this.$el); //assigns esri map to the container
-        //zoomExtents();
-        //hightlightFeat();
-        console.log(this.cntyName)
     },
     methods: {
         // addRoad() {

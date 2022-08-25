@@ -282,17 +282,10 @@ export default {
     checkFullCoverage(){
       let beginEndArr = []
       this.mileInfo.sort((a,b)=>(a.ASSET_LN_BEGIN > b.ASSET_LN_BEGIN)? 1:-1)
-      console.log(this.mileInfo)
-        //this.updateMileInfo();
       this.mileInfo.forEach(function(x){
         beginEndArr.push([x.ASSET_LN_BEGIN, x.ASSET_LN_END])
       })
       beginEndArr.sort((a,b)=>(a[0] > b[0])? 1:-1)
-      console.log(beginEndArr)
-        // let initValue = 0
-        // let diff = beginEndArr.reduce((prevValue, currentValue) => 
-        //   currentValue - prevValue, initValue
-        // )
       this.setAssetCover = beginEndArr
     },
 
@@ -347,15 +340,9 @@ export default {
       handler: async function(){
         this.resetItems();
          if(this.mileInfo.length){
-              console.log('numLanes cleared')
-              this.mileInfo.length = 0
-              this.addRoadSurface()
-            }
-        //let countG = await getGraphic()
-        //this.feature = false;
-        //this.graphic = true;
-        //this.graphicObj = countG
-        //this.stepperClose = true;
+            this.mileInfo.length = 0
+            this.addRoadSurface()
+          }
       }, 
       immediate: true,
     },

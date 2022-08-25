@@ -21,7 +21,7 @@
         <!-- </v-row> -->
 
         <v-btn v-if="!infoRoad" outlined style="bottom:210px; left:132px; border-color: black;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#204E70" :disabled="streetName.length < 1"> 
-          <u>Continue</u>
+          <u>Next Step</u>
         </v-btn>
     </v-card>
 </template>
@@ -76,7 +76,6 @@ export default {
                     suffix: this.suffixStreet,
                     streetType: this.roadNameType
             }]
-            console.log(updateG)
             for(let z=0; z < gLayer.graphics.items.length; z++){
                 if(gLayer.graphics.items[z].attributes.objectid === this.objid){
                     gLayer.graphics.items[z].attributes.roadbedName = JSON.stringify(updateG)
@@ -106,12 +105,10 @@ export default {
             handler: function(){
                 if(this.streetName.length > 1){
                     this.error = false
-                    console.log(this.streetName)
                     clearTimeout(this.timeout)
 
                     this.timeout = setTimeout(()=>{
                         this.updateGraphic()
-                        console.log('Road Name updated')
                     },1000)
                 }
             },
@@ -128,7 +125,6 @@ export default {
             handler: function(){
                 if(this.roadName){
                     for(let i=0; i < this.roadName.length; i++){
-                        console.log(this.roadName)
                         this.streetName = this.roadName[i].streetName
                         this.roadNameType = this.roadName[i].streetType !== 'NOT APPLICABLE' ? this.roadName[i].streetType : ''              
                         this.prefixStreet = this.roadName[i].prefix !== 'NOT APPLICABLE' ? criConstants.suffixPrefix[`${this.roadName[i].prefix}`] || this.roadName[i].prefix : ''
@@ -148,13 +144,7 @@ export default {
                 return (this.prefixStreet ? this.prefixStreet : '') + ' ' + (this.streetName ? this.streetName : '') + ' ' + (this.roadNameType ? this.roadNameType : '') + ' ' +  (this.suffixStreet ? this.suffixStreet : '')
             },
             set:function(x){
-                console.log(x)
                 document.getElementById('input1').style.width = ((x+1)*8) + 'px'
-                // let splitName = x.split(' ')
-                // console.log(splitName)
-                // this.streetName = splitName[0]
-                // this.roadNameType = splitName[1]
-
             }
         },
         returnStep:{
@@ -171,7 +161,6 @@ export default {
                   return JSON.parse(this.$store.state.roadbedName) 
                 }
                 else{
-                  console.log(this.$store.state.roadbedName)
                   return this.$store.state.roadbedName
                 }
             },

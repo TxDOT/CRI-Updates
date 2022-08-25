@@ -2,10 +2,10 @@
     <v-card>
         <v-card-text style="color:black" v-if="!info">Click and drag vertices to edit the shape of the road.</v-card-text>
         <v-card-text style="color:black" v-else>Click Edit Road to make changes.</v-card-text>
-        <v-btn small style="top:0px; left:70px;" depressed @click="deleteRoad()" text color="#204E70" v-if="!info && modifyRoad"> 
+        <v-btn style="top:0px; left:3rem;" depressed @click="deleteRoad()" text color="#204E70" v-if="!info && modifyRoad"> 
           <v-icon color="black" medium style="right:5px">mdi-trash-can</v-icon><u>Delete Road</u>
         </v-btn>
-        <v-btn outlined small tile color="#204E70" v-on="!info ? {'click' : () =>{nextStep(2)}} : {'click' : () =>{beginEdit()}}" :style="[info ? isPopupT : isPopupF]"> 
+        <v-btn outlined tile color="#204E70" v-on="!info ? {'click' : () =>{nextStep(2)}} : {'click' : () =>{beginEdit()}}" :style="!info && modifyRoad ? [isPopupF] : [isPopupT]"> 
           <u v-if="info">{{editStep}}</u>
           <u v-if="!info">{{advanceStep}}</u>
         </v-btn>
@@ -20,11 +20,11 @@ export default {
     name: 'editVerts',
     data(){
       return{
-        advanceStep: 'Continue',
+        advanceStep: 'Next Step',
         editStep: 'Edit Road',
         info: false,
-        isPopupT: {'top':'0px', 'left':'9rem', 'border':'black 1px solid', 'position': 'relative'},
-        isPopupF: {'top':'0px', 'left':'73px', 'border':'black 1px solid', 'position': 'relative'}
+        isPopupT: {'top':'0rem', 'left':'8.8rem', 'border':'black 1px solid', 'position': 'relative'},
+        isPopupF: {'top':'0rem', 'left':'3.8rem', 'border':'black 1px solid', 'position': 'relative'}
 
       }
     },
@@ -82,7 +82,6 @@ export default {
         },
         modifyRoad:{
             get(){
-                console.log(this.$store.state.modifyRd)
                 return this.$store.state.modifyRd
             },
             set(mod){

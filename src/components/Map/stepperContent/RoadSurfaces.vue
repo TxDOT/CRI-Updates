@@ -120,7 +120,7 @@
       Cancel
     </v-btn> -->
     <v-btn v-if="!infoRoad" outlined class="nextAssetBtns" tile @click="nextStep(4); initLoadAsset('design')" color="#204E70" :disabled="!setAssetCover[0]"> 
-      <u>Continue</u>
+      <u>Next Step</u>
     </v-btn>
   </v-card>
   </div> 
@@ -185,7 +185,6 @@ export default {
       returnDFO(){
         this.getDfoBool = true;
         mouseHoverDfoDisplay('dfo')
-        console.log('dfo')
       },
       selectAssetDFO(text){
         let type = {
@@ -216,7 +215,6 @@ export default {
             this.isAssetStartDisable=false;
             this.returnDFO()
             await this.getDfoLocation('end')
-            console.log('did I wait?')
             this.isAssetEnd = this.isAssetStart = this.isAssetType = this.isAssetFullLen = false;
             this.updateMileInfo();
             this.updateGraphic();
@@ -298,17 +296,10 @@ export default {
       checkFullCoverage(){
         let beginEndArr = []
         this.mileInfo.sort((a,b)=>(a.ASSET_LN_BEGIN > b.ASSET_LN_BEGIN)? 1:-1)
-        console.log(this.mileInfo)
-        //this.updateMileInfo();
         this.mileInfo.forEach(function(x){
           beginEndArr.push([x.ASSET_LN_BEGIN, x.ASSET_LN_END])
         })
         beginEndArr.sort((a,b)=>(a[0] > b[0])? 1:-1)
-        console.log(beginEndArr)
-        // let initValue = 0
-        // let diff = beginEndArr.reduce((prevValue, currentValue) => 
-        //   currentValue - prevValue, initValue
-        // )
         this.setAssetCover = beginEndArr
       },
 
@@ -344,7 +335,6 @@ export default {
       deleteSurface(index){
         this.mileInfo.splice(index, 1)
         this.checkFullCoverage()
-        console.log(this.mileInfo)
         applyMToAsset(this.mileInfo)
       },
       
@@ -365,7 +355,6 @@ export default {
         handler: async function(){
           this.resetItems();
           if(this.mileInfo.length){
-            console.log('roadSurface cleared')
             this.mileInfo.length = 0
             this.addRoadSurface()
           }
@@ -421,7 +410,6 @@ export default {
         }
       },
       newHeight(x){
-        console.log(x)
         return x+76
       },
       returnStep:{
@@ -435,7 +423,6 @@ export default {
       rdbdSurf:{
         get(){
           if(typeof(this.$store.state.roadbedSurface) === 'string'){
-            console.log('loading Surface')
             return JSON.parse(this.$store.state.roadbedSurface) 
           }
           else{
@@ -505,7 +492,6 @@ export default {
   position: absolute;
   right:0%;
   top: 106%;
-  width: 100px;
 }
 .mileButton{
   top:75px;

@@ -150,7 +150,6 @@
             document.getElementById('stepper').style.width = '500px'
           } 
           if(this.steppClose === false){
-            console.log(this.steppClose)
             this.clearEditBtn = false
             
           }
