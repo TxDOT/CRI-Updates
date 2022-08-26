@@ -1,7 +1,7 @@
 <template>
     <v-card>
-        <v-card-text style="color:black" v-if="!info">Click and drag vertices to edit the shape of the road.</v-card-text>
-        <v-card-text style="color:black" v-else>Click Edit Road to make changes.</v-card-text>
+        <v-card-text style="color:black; text-align: left; position: relative; right:1rem;" v-if="!info">Click and drag vertices to edit the shape of the road.</v-card-text>
+        <v-card-text style="color:black; text-align: left; position: relative; right:1rem;" v-else>Click Edit Road to make changes.</v-card-text>
         <v-btn style="top:0px; left:3rem;" depressed @click="deleteRoad()" text color="#204E70" v-if="!info && modifyRoad"> 
           <v-icon color="black" medium style="right:5px">mdi-trash-can</v-icon><u>Delete Road</u>
         </v-btn>
@@ -15,7 +15,6 @@
 <script>
 
 import {stopEditing, delRoad, defineGraphic} from './../editFunc'
-
 export default {
     name: 'editVerts',
     data(){
@@ -69,6 +68,7 @@ export default {
                 return this.$store.state.deleteRdSecond
             },
             set(secondStep){
+                console.log(secondStep)
                 this.$store.commit('setDeleteRdSecond', secondStep)
             }
         },
@@ -116,7 +116,7 @@ export default {
             set(boolAdd){
                 this.$store.commit('setIsInitAdd', boolAdd)
             }
-      }    
+        },
     }
 }
 </script>

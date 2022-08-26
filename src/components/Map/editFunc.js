@@ -242,6 +242,7 @@ export async function modifyRoadbed(clickType, editType){
       .then(function(response){
         for(let i=0; i < response.results.length; i++){
           if(store.getters.getEditExisting === true || store.getters.getDeleteRd === true){
+            console.log('clicked')
             store.commit('setActiveLoader',true)
           }
           if(response.results[i].graphic.geometry !== null && response.results[i].graphic.sourceLayer !== null){
@@ -458,6 +459,7 @@ export function updateLength(){
 //setUpGraphic() gets old length of selected graphic and send old length to store
 function setUpGraphic(){
   view.on('click',(event)=>{
+    if(store.getters.getStepperClose === true){return;}
     if(sketch.state === 'active'){
       return;
     }
@@ -465,15 +467,16 @@ function setUpGraphic(){
     store.commit('setIsDfoReturn', false)
     view.hitTest(event,opts).then((response)=>{
       if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
+        console.log(response.results)
         return;
       }
       response.results.forEach((result)=>{
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
-            sketch.update([result.graphic], {tool:"reshape"});
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
+            sketch.update([result.graphic], {tool:"reshape"});
           }
         }
         else if(result.graphic.attributes.editType === 'DELETE'){
@@ -543,11 +546,11 @@ export async function popUpData(res){
     store.commit('setActiveLoader',false)
     store.commit('setFeatureGeom', x)
     store.commit('setRoadGeom', x.features[0].geometry.clone())
-    store.commit('setInfoRd', true)
+    //store.commit('setInfoRd', true)
   })
   return;
 }
-//populates stepper form when graphic is clicked.
+//populates stepper form when graphic is clicked.s
 export async function getGraphic(){
   let getGraphPromise = new Promise(function(resp){
     view.on("click", function(event){
@@ -560,18 +563,21 @@ export async function getGraphic(){
         //get response from graphics and set getters in store.js
         view.hitTest(event,option)
           .then(async function(response){
-            if((response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
+            console.log(response.results)
+            console.log(store.getters.getStepperClose)
+            if(response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true) ){
               return;
             }
-            else if(response.results.length && store.getters.getdeleteGraphClick === true){
+            if(response.results.length && store.getters.getdeleteGraphClick === true){
               return;
             }
-            else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1 && store.getters.getInfoRd === false) || (response.results.length && store.getters.getInfoRd === true && response.results[0].graphic.attributes['editType'] && store.getters.getStepperClose === true)){
+            else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber >= 1 && store.getters.getInfoRd === false && store.getters.getObjectid !== response.results[0].graphic.attributes['objectid'])){
               store.commit('setdenyFeatClick', true)
               return;
             }
             else if(response.results.length){
               if(!response.results[0].graphic.attributes['editType']){
+                store.commit('setInfoRd', true)
                 popUpData(response)
                 return;
               }

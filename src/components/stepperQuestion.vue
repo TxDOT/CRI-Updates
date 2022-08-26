@@ -80,7 +80,7 @@
     <!-- <Map @nm="bool"/> -->
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
       
-      <v-btn v-if="!forInfo" depressed style="border:none; bottom: 2vh; right:5vw; position: absolute" tile text color="#204E70" :disabled="firstAddToMap || !setAssetCover[0]" @click="cancel(); cancelStepper();">Cancel</v-btn>
+      <v-btn v-if="!forInfo" depressed style="border:none; bottom: 2vh; right:5vw; position: absolute" tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();">Cancel</v-btn>
       <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 2vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0]" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
       
       <v-btn v-if="!forInfo" depressed tile color ="#E64545" text style="bottom:2vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
@@ -357,6 +357,7 @@ export default {
         sketchCompete();
         document.getElementById("stepper").style.width = '0px'
         this.steppClose = false;
+        this.infoRoad = false;
         this.e1 = 1;
         removeAsstPoints();
         this.getDfoBool = false;

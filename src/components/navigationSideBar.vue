@@ -64,13 +64,13 @@
             this.editExistingRd = true;
             this.nextDeleteRoadForm = false
             this.addRdBoolean = false;
-            this.deleteRoad = false
+            this.deleteRoad = false;
+            this.infoRoad = false
             // setTimeout(()=>{
             //   this.editExistingRd = null;
             // },5000)
             await modifyRoadbed('click', 'edit')
             if(this.editExistingRd === true){
-              this.infoRoad = false
               this.receiveLoadStatus = false
               this.modifyRoad = true
               this.firstAddToMap = true

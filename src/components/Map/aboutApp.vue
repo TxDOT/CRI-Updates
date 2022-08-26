@@ -1,12 +1,12 @@
 <template>
     <!-- <v-dialog style="position:absolute; left: 50%; top: 50%;"> -->
       <v-card id="finalCheck">
-        <v-card-title class="surfaceTitle"><v-card-text style="position:relative; bottom:25px; text-align: left; padding-left: 0px;">About the County Road Inventory Map</v-card-text></v-card-title>
-        <v-card-text style="position: absolute; color: black; top: 0rem; left: 0%; font-size: 10px;"><u>Build Version: 1.4.7</u></v-card-text>
+        <v-card-title class="surfaceTitle">About the County Road Inventory Map</v-card-title>
+        <v-card-text style="position: absolute; color: black; top: 1rem; left: 0%; font-size: 10px; text-align: left;"><u>Build Version: 1.4.7</u></v-card-text>
         <!-- <v-card-text style="poistion: absolute; text-align: left; color: black;">Overview: this is a new version of the DUSA application. Refer to this section to review updates to the map.</v-card-text> -->
         <v-card-text style="poistion: absolute; text-align: left; color: black;" v-for="(i, index) in updateList" :key=index><ul style="position:relative; line-height: 1rem; padding: 0rem;"><li>{{updateList[index]}}</li></ul></v-card-text>
         
-        <div style="position: relative; left: 35%; bottom: .5rem;"><v-btn tile color="#204E70" outlined @click="close(); clearEditBtn=false">Close</v-btn></div>
+        <div style="position: relative; left: 35%; bottom: .5rem;"><v-btn underline tile color="#14375A" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
         
       </v-card>
     <!-- </v-dialog> -->
@@ -49,12 +49,15 @@ export default {
 <style scoped>
 .surfaceTitle{
   position: relative;
-  background-color: #204E70;
+  background-color: #14375A;
+  text-align: left;
+  top:10%;
   color: white;
   bottom:30px;
-  height:30px;
+  height:40px;
+  padding-top: 1%;
   width: 100%;
-  font-size: 10px;
+  font-size: 16px;
 }
 
 #finalCheck{
