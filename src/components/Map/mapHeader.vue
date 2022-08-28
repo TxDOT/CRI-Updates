@@ -29,24 +29,17 @@
         </div>
         <v-dialog
             v-model="submitCertify"
-            max-width="500">
-            <v-card v-model="submitCertify" height="300">
-                <v-img><img style="position:relative; top:0%;" src="@/assets/favicon-32x32.png"></v-img>
-                <v-card-actions>
-                    <div style="position:absolute; top:20%; left: 5%" class="black--text mb-3">
-                        <v-card-text >
-                            You are about to submit and certify county mileage for {{countyName}} County.<br>
-                            The previous years mileage was <b>{{countyTotal}} miles</b>.<br>The new total mileage is <b>{{Number(returnCountyTotal.toFixed(3))}} miles.</b>
-                        </v-card-text>
-                    </div>
-                    <div style="position:absolute; left: 10%; bottom: 5%;">
-                        <div style="position:relative; left:70%; top:0%">
-                            <v-btn elevation="2" color="primary">
-                                Submit & Certify
-                            </v-btn>
-                        </div>
-                    </div>
-                </v-card-actions>
+            max-width="400"
+            persistent>
+            <v-card v-model="submitCertify" height="150" style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
+                <v-card-title class="surfaceTitle"><p style="bottom: .7rem; position:relative; right: .5rem;">Temporarily Unavailable</p></v-card-title>
+                    <v-card-text style="text-align:left; color: black; top: 1rem; position: relative; right: .5rem;">
+                        This functionality is under development and temporarily unavailable.
+                    </v-card-text>
+                    <v-btn outlined tile @click="submitCertify = false" color="#14375A" style="left: 9rem; top: 0rem; border: 1px solid black">
+                        <u>Close</u>
+                    </v-btn>
+
             </v-card>
         </v-dialog>
     </div> 
@@ -115,7 +108,16 @@ export default {
 }    
 </script>
 <style scoped>
-    .h1-text{
-        position: relative;
-    }
+.surfaceTitle{
+  position: relative;
+  background-color: #14375A;
+  text-align: left;
+  top:0%;
+  color: white;
+  bottom:40px;
+  height:40px;
+  padding-bottom: 1%;
+  width: 100%;
+  font-size: 16px;
+}
 </style>

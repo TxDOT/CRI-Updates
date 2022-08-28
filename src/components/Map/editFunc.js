@@ -1,5 +1,5 @@
 //import const from map.js
-import {sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, txCounties, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
+import {sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, txCounties, search, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
 import {cntyNbrNm} from '../../common/txCnt' //importing county name/nbr table via txCnt.js
 import { criConstants } from '../../common/cri_constants';
 import {initGraphicCheck, queryEditsLayer} from '../Map/crud'
@@ -243,6 +243,7 @@ export async function modifyRoadbed(clickType, editType){
       .then(function(response){
         for(let i=0; i < response.results.length; i++){
           if(store.getters.getEditExisting === true || store.getters.getDeleteRd === true){
+            console.log('clicked')
             store.commit('setActiveLoader',true)
           }
           if(response.results[i].graphic.geometry !== null && response.results[i].graphic.sourceLayer !== null){
@@ -459,6 +460,9 @@ export function updateLength(){
 //setUpGraphic() gets old length of selected graphic and send old length to store
 function setUpGraphic(){
   view.on('click',(event)=>{
+    if(store.getters.getStepperClose === true){
+      return;
+    }
     if(sketch.state === 'active'){
       return;
     }
@@ -471,10 +475,10 @@ function setUpGraphic(){
       response.results.forEach((result)=>{
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
-            sketch.update([result.graphic], {tool:"reshape"});
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
+            sketch.update([result.graphic], {tool:"reshape"});
           }
         }
         else if(result.graphic.attributes.editType === 'DELETE'){
@@ -535,6 +539,7 @@ export async function removeGraphic(){
 }
 //set data for popup display
 export async function popUpData(res){
+  search.clear()
   let info = queryFeat(res)
   store.commit('setActiveLoader',true)
   info.then(async (x)=>{
@@ -548,7 +553,7 @@ export async function popUpData(res){
   })
   return;
 }
-//populates stepper form when graphic is clicked.
+//populates stepper form when graphic is clicked.s
 export async function getGraphic(){
   let getGraphPromise = new Promise(function(resp){
     view.on("click", function(event){
@@ -561,13 +566,13 @@ export async function getGraphic(){
         //get response from graphics and set getters in store.js
         view.hitTest(event,option)
           .then(async function(response){
-            if((response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
+            if(response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true) ){
               return;
             }
-            else if(response.results.length && store.getters.getdeleteGraphClick === true){
+            if(response.results.length && store.getters.getdeleteGraphClick === true){
               return;
             }
-            else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1 && store.getters.getInfoRd === false) || (response.results.length && store.getters.getInfoRd === true && response.results[0].graphic.attributes['editType'] && store.getters.getStepperClose === true)){
+            else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber >= 1 && store.getters.getInfoRd === false && store.getters.getObjectid !== response.results[0].graphic.attributes['objectid'])){
               store.commit('setdenyFeatClick', true)
               return;
             }
@@ -578,6 +583,7 @@ export async function getGraphic(){
               }
               if(response.results[0].graphic.attributes['editType'] === 'ADD' || response.results[0].graphic.attributes['editType'] === 'EDIT'){
                 response.results[0].graphic.attributes['editType'] === 'ADD' ? store.commit('setModifyRd', false) : store.commit('setModifyRd', true)
+                sketch.update([response.results[0].graphic], {tool:"reshape"});
                 store.commit('setStepperClose', true)
                 store.commit('setInfoRd', false)
                 setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
@@ -1304,7 +1310,7 @@ export function saveToEditsLayer(){
 
 //function to query ref table by OID and COUNTY NAME and go and load map
 export async function goToMap(name, nbr){
-  nbr;
+  console.log(nbr)
   let road = await reloadEdits()
     let objectidList = [];
       for(let id in road.features){
@@ -1323,9 +1329,19 @@ export async function goToMap(name, nbr){
       query.returnGeometry = true
       let countyQuery = txCounties.queryFeatures(query)
       let returnCountyObj = await countyQuery
+      //set search sources to selected county
+      search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${nbr}`;
+      // zoom to selected county geometry      
       view.goTo({
         target: returnCountyObj.features[0].geometry
       })
+      // set home button viewpoint with geom from query
+      viewPoint.targetGeometry = returnCountyObj.features[0].geometry.extent;
+      viewPoint.scale = 500000;
+      home.viewpoint = viewPoint;
+      // set mapview constraints to county geometry
+      view.constraints.geometry = returnCountyObj.features[0].geometry.extent;
+      view.constraints.minZoom = 8;
   return;
 } 
 

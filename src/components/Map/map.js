@@ -178,6 +178,11 @@ export const featLayer = new FeatureLayer({
     }
   });
 
+export const snapLayer = new FeatureLayer({
+    url: criConstants.snapLayer,
+    definitionExpression: "RTE_PRFX NOT IN ('CR')",
+    visible: false
+});
 // const paved = {
 //     type: "simple-line",
 //     color: "#FFBF00",
@@ -301,7 +306,7 @@ export const sketch = new SketchViewModel({
     },
     snappingOptions:{
         enabled: true,
-        featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true}, { layer: featLayer, enabled: true, featureEnabled: true }],
+        featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true}, { layer: featLayer, enabled: true, featureEnabled: true }, { layer: snapLayer, enabled: true, featureEnabled: true }],
         selfEnabled: false
     }
 });

@@ -29,28 +29,28 @@
                 mdi-navigation
             </v-icon>Select a road from the map to delete it
         </v-card-text>
-        <v-btn tile outlined depressed style="right: 2%; top: 60%; position: absolute; border-color: black;" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false">Cancel</v-btn>
+        <v-btn tile outlined depressed style="right: 2%; top: 63%; position: absolute; border-color: black;" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false"><u>Cancel</u></v-btn>
     </v-card>
     <v-card id="delWarn" v-if="deleteSecond === true || deleteClick"> <!-- //&& this.modifyR === false -->
-        <v-card-title class="editRdTitle" style="width: 385px">
-            <v-card-text style="font-size:20px; text-align: left; padding-left: 3%; bottom: 1.6rem; position: relative;">Delete a Road</v-card-text>
+        <v-card-title class="delRdTitle" style="width: 385px">
+            Delete a Road
         </v-card-title>
         <v-card-text style="text-align: left; top:5px; position: relative; flex-wrap: wrap; color:black" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
             <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> will be deleted.
         </v-card-text>
-        <v-alert color="orange" height="35" dense outlined style="width:100%; text-align: left; font-size: 13.3px; border-radius: 0px;" v-if="!deleteClick" >
+        <v-alert color="orange" height="35" dense outlined style="width:91%; left:16px; text-align: left; font-size: 12.09px; border-radius: 0px;" v-if="!deleteClick" >
             <v-icon color="orange" style="right:5px; bottom: 4px;">
                 mdi-information
             </v-icon>
-            You can discard this edit later if you change your mind
+            Edit may be discarded later if you change your mind
          </v-alert>
         <v-btn v-if="!deleteClick" depressed text color="black" style="left:69px;top:10px" @click="deleteRoadClick(); deleteSecond=false"> 
           Cancel
         </v-btn>
-        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#15648C" :style="deleteClick ? {'top':'66px', 'left':'0px', 'border-color':'black'}:{'top':'10px', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
+        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'5rem', 'left':'2rem', 'border-color':'black'}:{'top':'10px', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
           <u :style="deleteClick ? {'text-decoration': 'none'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
-        <v-btn v-if="deleteClick" dense tile outlined depressed plain style="left:00px;top:66px" color="#15648C" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
+        <v-btn v-if="deleteClick" tile outlined depressed style="left: 2.5rem;top:5rem;" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
           <u>Discard Edit</u>
         </v-btn>
     </v-card>
@@ -64,7 +64,7 @@
 <script>
 import confirmationAlert from './stepperContent/confirmationAlertsDEL.vue'
 import sketchAlert from '../Map/stepperContent/discardAlert.vue'
-import {stopEditing, removeGraphic, saveToEditsLayer} from './editFunc'
+import {stopEditing, removeGraphic, saveToEditsLayer, removeHighlight} from './editFunc'
 export default {
     name: 'editExistingRd',
     components: {confirmationAlert, sketchAlert},
@@ -87,6 +87,7 @@ export default {
         },
         deleteRoadClick(){
             removeGraphic()
+            removeHighlight()
             this.deleteClick = false
         },
         cancelEditAction(){
@@ -124,37 +125,37 @@ export default {
             handler: function(){
                 this.stepper =  this.steppClose
             },
-        immediate:true,
+            immediate:true,
         },
         editStatus:{
             handler: function(){
                 this.edit =  this.editStatus
             },
-        immediate:true,
+            immediate:true,
         },
         deleteRoad:{
             handler: function(){
                 this.deleteR =  this.deleteRoad
             },
-        immediate:true,
+            immediate:true,
         },
         modifyRoad:{
             handler: function(){
                 this.modifyR =  this.modifyRoad
             },
-        immediate:true,
+            immediate:true,
         },
         addRdBoolean:{
             handler: function(){
                 this.addR =  this.addRdBoolean
             },
-        immediate:true,
+            immediate:true,
         },
         nextDeleteRoadForm:{
             handler: function(){
-                this.deleteSecond =  this.nextDeleteRoadForm
+                this.deleteSecond = this.nextDeleteRoadForm
             },
-        immediate:true,
+            immediate:true,
         },
     },
     computed:{
@@ -241,12 +242,23 @@ export default {
 
 <style scoped>
     .editRdTitle{
-        background: #204E70;
+        background: #14375A;
         color:white;
-        height: 35px;
+        height: 40px;
         text-align: left;
         top: 10%;
         width: 25.3vw;
+        left: 100%;
+    }
+    .delRdTitle{
+        background: #14375A;
+        color:white;
+        font-size: 16px;
+        height: 40px;
+        text-align: left;
+        padding-top: 1%;
+        top: 10%;
+        width: 100%;
         left: 100%;
     }
     .editRdInfo{
@@ -275,7 +287,7 @@ export default {
         width: 25.3vw;
         color: #204E70;
         border-radius: 0px;
-        height: 14vh;
+        height: 15vh;
     }
     #delWarn{
         position: absolute;
