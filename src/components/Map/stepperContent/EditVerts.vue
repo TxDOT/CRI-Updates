@@ -34,7 +34,6 @@ export default {
             this.getDfoBool = false
         },
         deleteRoad(){
-            console.log(this.nextDeleteRoadForm)
             delRoad();
             stopEditing();
             document.getElementById("stepper").style.width = '0px'
