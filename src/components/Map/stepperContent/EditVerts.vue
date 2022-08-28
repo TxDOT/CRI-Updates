@@ -41,6 +41,7 @@ export default {
             this.nextDeleteRoadForm = true
         },
         beginEdit(){
+            this.nextDeleteRoadForm = false
             this.infoRoad = false
             this.firstAddToMap = true
             defineGraphic(this.featureGeometry, 'click', 'edit') 
