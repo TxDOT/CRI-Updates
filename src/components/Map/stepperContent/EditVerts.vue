@@ -34,6 +34,7 @@ export default {
             this.getDfoBool = false
         },
         deleteRoad(){
+            console.log(this.nextDeleteRoadForm)
             delRoad();
             stopEditing();
             document.getElementById("stepper").style.width = '0px'
@@ -41,6 +42,7 @@ export default {
             this.nextDeleteRoadForm = true
         },
         beginEdit(){
+            this.nextDeleteRoadForm = false
             this.infoRoad = false
             this.firstAddToMap = true
             defineGraphic(this.featureGeometry, 'click', 'edit') 

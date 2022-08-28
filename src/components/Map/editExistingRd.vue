@@ -153,7 +153,9 @@ export default {
         },
         nextDeleteRoadForm:{
             handler: function(){
+                console.log(this.deleteSecond)
                 this.deleteSecond = this.nextDeleteRoadForm
+                console.log(this.deleteSecond)
             },
             immediate:true,
         },
