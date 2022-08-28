@@ -20,7 +20,7 @@
           </div>
             <div style="position:absolute ; right:4%; bottom:10%">
               <v-btn id="loginButton" outlined tile @click="disagree = false; logMeIn();" color="#14375A"> <!-- goToMap() -->
-                Login
+                <u>Login</u>
               </v-btn>
             </div>
               <v-btn style="position:absolute; left:4%; bottom:13%" depressed text tile color="black" x-small onclick="window.open('https://www.dot.state.tx.us/apps-cg/contact_us/form/dusa-form.htm','_blank')" >
@@ -116,9 +116,9 @@ export default {
         portal.load()
           .then( async () => {
             this.$router.push('/load')
+            this.userName = portal.user.username 
             let countyInfo = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username)
             if(!countyInfo){return;}
-            this.userName = portal.user.username 
             let cntyNumber = countyInfo[1]
             let cntyName = countyInfo[0]
             search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${cntyNumber}`

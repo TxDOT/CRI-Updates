@@ -80,10 +80,10 @@
     <!-- <Map @nm="bool"/> -->
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
       
-      <v-btn v-if="!forInfo" depressed style="border:none; bottom: 2vh; right:5vw; position: absolute" tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();">Cancel</v-btn>
-      <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 2vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0]" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
+      <v-btn v-if="!forInfo" depressed style="border:none; bottom: 1vh; right:6rem; position: absolute" tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
+      <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 1vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0]" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
       
-      <v-btn v-if="!forInfo" depressed tile color ="#E64545" text style="bottom:2vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
+      <v-btn v-if="!forInfo" depressed tile color ="#E64545" text style="bottom:1vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
       <v-btn v-else style="bottom: 2vh; position: absolute; right: 1vw; border:black 1px solid;" tile outlined text color="#204E70" @click="cancel()"><u>Cancel</u></v-btn>
     <!-- </div> -->
     <!-- card used to display discard alert information -->
@@ -94,19 +94,19 @@
         <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card> -->
     <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1vw; bottom: 13vh; z-index:1">Add An Optional Comment</a>
-    <v-card elevation="0" class="overflow-y-auto" v-if="!forInfo" v-scroll.self="onScroll" style="position: absolute; left:1vw; bottom: 6vh; line-height:.5px; width:93%; overflow-y: scroll; max-height: 70px; text-align: left;">
+    <v-card elevation="0" class="overflow-y-auto" v-if="!forInfo" v-scroll.self="onScroll" style="position: absolute; left:1vw; bottom: 3rem; line-height:.5px; width:93%; overflow-y: scroll; max-height: 70px; text-align: left;">
       <div>
-        <v-card-text style="font-size: .7rem; color:gray">{{comment}}</v-card-text>
+        <v-card-text style="font-size: .7rem; color:gray;">{{comment}}</v-card-text>
       </div>
     </v-card>
     <!-- <v-textarea v-if="!forInfo" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%;" height="5vh" disabled solo no-resize flat dense v-model="comment">'{{comment}}'</v-textarea> -->
       <v-dialog v-model="dialog" persistent>
         <v-card style="width:30%; left: 30%; height: 70%; border-radius: 0px;">
           <v-card-title class="surfaceTitle">
-            <v-card-text style="bottom:28px; position: relative; font-size: 15px; text-align: left;">Comments</v-card-text>
+            <v-card-text style="bottom:28px; position: relative; font-size: 15px; text-align: left; left: -31px;">Comments</v-card-text>
           </v-card-title>
           <v-textarea v-model="comment" style="padding-left:10px; padding-right: 10px;padding-bottom: 5%;"></v-textarea>
-          <v-btn outlined tile color="#15648C" @click="dialog=false" style="position: absolute; right:2%; bottom: 2%;"><u>Save</u></v-btn>
+          <v-btn outlined tile color="#204E70" @click="dialog=false" style="position: absolute; right:2%; bottom: 2%; border: 1px solid black"><u>Save</u></v-btn>
         </v-card>
       </v-dialog>
   </v-stepper>
@@ -119,9 +119,9 @@
     </v-alert> -->
     <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
       <v-card-title class="confirmationTitle">Confirm Discard</v-card-title>
-      <v-card-text style="color:black; top: 9%; position:relative; text-align: left;">Are you sure you want to discard this edit ?</v-card-text>
+      <v-card-text style="color:black; top: 9%; position:relative; text-align: left;">Are you sure you want to discard this edit?</v-card-text>
       <v-btn style="position: absolute; right: .5rem;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
-      <v-btn style="position: absolute; right:5rem;" depressed tile text color="#14375A" @click="discardAlertQuest = false">NO</v-btn>
+      <v-btn style="position: absolute; right:5rem;" depressed tile text color="#14375A" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card>
   <confirmAlertSuccess v-if="successAlert"/>
   <finalCheck v-if="finalCheck === true"/>

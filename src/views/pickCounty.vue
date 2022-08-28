@@ -5,14 +5,14 @@
             <v-card-title class="surfaceTitle">
                 <v-card-text style="position:relative; bottom: 27px; right: 20px; font-size: 15px; text-align: left; color:white; padding: none;">County Road Inventory Map</v-card-text>
             </v-card-title>
-            <v-card-text style="position: relative; color:black; text-align: left; top: 30px; rught: 5px;">
+            <v-card-text style="position: relative; color:black; text-align: left; top: 30px;">
                 Select a county to begin work.
             </v-card-text>
             <v-autocomplete persistent-placeholder outlined dense tile v-model="pickCounty" :items="cntyNames" style="position: absolute; width: 48%; right: 8.9rem; top: 6rem; border-radius: 0%;" label="County Name"></v-autocomplete>
 
             <div>
-              <v-btn :disabled="pickCounty.length === 0" outlined style="top:5rem; left: 9rem; width: 100px;" depressed color="#204E70" plain tile @click="getCountyInfo()">Continue</v-btn>
-              <v-btn style="top:5rem; right: 3rem" depressed color="#204E70" plain tile @click="cancel()">Cancel</v-btn>
+              <v-btn :disabled="pickCounty.length === 0" outlined style="top:5rem; left: 9rem; width: 100px; border: 1px solid black" depressed color="#204E70" tile @click="getCountyInfo()"><u>Continue</u></v-btn>
+              <v-btn style="top:5rem; right: 3rem" depressed text color="#204E70" tile @click="cancel()"><u>Cancel</u></v-btn>
             </div>
         </v-card>
         
@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import {txCounties,view, featLayer,countyOfficialInfo} from '../components/Map/map'
-import {reloadEdits} from '../components/Map/editFunc'
+import {countyOfficialInfo} from '../components/Map/map'
+import {goToMap} from '../components/Map/editFunc'
 import {cntyNbrNm} from '../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query"
 import loader from '../components/Map/loader.vue'
@@ -85,6 +85,7 @@ export default {
         this.pick=false
         this.load=true
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find(x => cntyNbrNm[0][x] === this.pickCounty)
+        console.log(getCountyNbr)
         let whereStatement = `County_NBR = '${getCountyNbr}'`
         const query = new Query();
         query.where = whereStatement
@@ -94,51 +95,15 @@ export default {
           this.countyNumber = getCountyNbr
           this.countyName = this.pickCounty
           this.countyMiles = result.features[0].attributes['Total_Mileage']
-          this.goToMap(this.pickCounty, this.getCountyNbr)
+          this.loadData(this.pickCounty, getCountyNbr)
         })
       },
-      async goToMap(name, nbr){
-        nbr;
-        let road = await reloadEdits()
-        let objectidList = [];
-          for(let id in road.features){
-            if(road.features[id].attributes !== null){
-              let objectid = road.features[id].attributes.objectid || road.features[id].attributes.OBJECTID
-              objectidList.push(objectid)
-            }
-          }
-
-          featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
-        // reloadEdits().then((road)=>{
-        //   let objectidList = [];
-        //   for(let id in road.features){
-        //     if(road.features[id].attributes !== null){
-        //       let objectid = road.features[id].attributes.objectid || road.features[id].attributes.OBJECTID
-        //       objectidList.push(objectid)
-        //     }
-        //   }
-        //   console.log(objectidList)
-
-        //   featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
-        // });
-        //featLayer.definitionExpression =`CNTY_TYPE_NM = '${name}'`
-        txCounties.definitionExpression=`CNTY_NM='${name}'`
-        
-        //rdbdSrfcGeom.definitionExpression=`CNTY_NM='${name}'`
-        const query = new Query();
-        query.where = `CNTY_NM = '${name}'`
-        query.outFields = [ "*" ]
-        query.returnGeometry = true
-        let countyQuery = txCounties.queryFeatures(query)
-        let returnCountyObj = await countyQuery
-        view.goTo({
-          target: returnCountyObj.features[0].geometry
-        })
+      async loadData(name, nbr){
+        await goToMap(name, nbr)
         this.$router.push('/map')
         this.load=false
-        //view.goTo(viewPoint);
-        //autoDrawAsset(queryFeat)
-      },
+      }
+
     },
     computed:{
       countyName:{

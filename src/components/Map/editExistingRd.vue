@@ -29,7 +29,7 @@
                 mdi-navigation
             </v-icon>Select a road from the map to delete it
         </v-card-text>
-        <v-btn tile outlined depressed style="right: 2%; top: 60%; position: absolute; border-color: black;" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false">Cancel</v-btn>
+        <v-btn tile outlined depressed style="right: 2%; top: 63%; position: absolute; border-color: black;" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false"><u>Cancel</u></v-btn>
     </v-card>
     <v-card id="delWarn" v-if="deleteSecond === true || deleteClick"> <!-- //&& this.modifyR === false -->
         <v-card-title class="delRdTitle" style="width: 385px">
@@ -42,7 +42,7 @@
             <v-icon color="orange" style="right:5px; bottom: 4px;">
                 mdi-information
             </v-icon>
-            You can discard this edit later if you change your mind
+            Edit may be discarded later if you change your mind
          </v-alert>
         <v-btn v-if="!deleteClick" depressed text color="black" style="left:69px;top:10px" @click="deleteRoadClick(); deleteSecond=false"> 
           Cancel
@@ -125,38 +125,37 @@ export default {
             handler: function(){
                 this.stepper =  this.steppClose
             },
-        immediate:true,
+            immediate:true,
         },
         editStatus:{
             handler: function(){
                 this.edit =  this.editStatus
             },
-        immediate:true,
+            immediate:true,
         },
         deleteRoad:{
             handler: function(){
                 this.deleteR =  this.deleteRoad
             },
-        immediate:true,
+            immediate:true,
         },
         modifyRoad:{
             handler: function(){
                 this.modifyR =  this.modifyRoad
             },
-        immediate:true,
+            immediate:true,
         },
         addRdBoolean:{
             handler: function(){
                 this.addR =  this.addRdBoolean
             },
-        immediate:true,
+            immediate:true,
         },
         nextDeleteRoadForm:{
             handler: function(){
-                console.log(this.nextDeleteRoadForm)
-                this.deleteSecond =  this.nextDeleteRoadForm
+                this.deleteSecond = this.nextDeleteRoadForm
             },
-        immediate:true,
+            immediate:true,
         },
     },
     computed:{
@@ -288,7 +287,7 @@ export default {
         width: 25.3vw;
         color: #204E70;
         border-radius: 0px;
-        height: 14vh;
+        height: 15vh;
     }
     #delWarn{
         position: absolute;
