@@ -8,7 +8,7 @@
             <v-card-text style="position: relative; color:black; text-align: left; top: 30px;">
                 Select a county to begin work.
             </v-card-text>
-            <v-autocomplete persistent-placeholder outlined dense tile v-model="pickCounty" :items="cntyNames" style="position: absolute; width: 48%; right: 8.9rem; top: 6rem; border-radius: 0%;" label="County Name"></v-autocomplete>
+            <v-autocomplete id="pickCount" persistent-placeholder outlined dense tile v-model="pickCounty" :items="cntyNames" style="position: absolute; width: 48%; right: 8.9rem; top: 6rem; border-radius: 0%;" label="County Name"></v-autocomplete>
 
             <div>
               <v-btn :disabled="pickCounty.length === 0" outlined style="top:5rem; left: 9rem; width: 100px; border: 1px solid black" depressed color="#204E70" tile @click="getCountyInfo()"><u>Continue</u></v-btn>
@@ -143,6 +143,9 @@ export default {
 }
 </script>
 <style scoped>
+#pickCount input {
+  cursor: pointer;
+}
 .surfaceTitle{
   background-color: #204E70;
   color: white;

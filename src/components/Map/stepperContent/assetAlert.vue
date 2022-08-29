@@ -11,9 +11,9 @@
             </template>
             <span>This is a test</span>
           </v-tooltip> -->
-            <p class="assetAlert" v-if="shortLong === 'short'">The provided assets is {{shortLong.toUpperCase()}} - asset ends at <u>{{dfoValue}}</u> but ending mile for road is <u>{{lineEndValue}}</u></p>
+            <p class="assetAlert" v-if="shortLong === 'short'">The provided asset is {{shortLong.toUpperCase()}} - asset ends at <u>{{dfoValue}}</u> but ending mile for road is <u>{{lineEndValue}}</u></p>
             <p class="assetAlert" v-if="shortLong==='long'">An asset is covering a portion of this road to the end <u>{{dfoValue}}</u> but additional assets are missing</p>
-            <p class="assetAlert" v-if="shortLong === 'gap' || shortLong === 'overlap'"> An {{shortLong.toUpperCase()}} detected - refer to asset with ending value of <u>{{dfoValue}}</u></p>
+            <p class="assetAlert" v-if="shortLong === 'gap' || shortLong === 'overlap'"> {{shortLong.toUpperCase()}} detected - refer to asset with ending value of <u>{{dfoValue}}</u></p>
             <v-tooltip bottom color="error" left nudge-right="120" nudge-top="50" max-width="130">
               <template v-slot:activator="{ on, attrs }">
                 <v-icon v-bind="attrs" v-on="on" right style="position: absolute; left:91%; bottom: 50%;">mdi-help-circle</v-icon>
