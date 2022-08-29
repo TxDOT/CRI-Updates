@@ -51,7 +51,8 @@
             }
           },
           { title: 'Help & Training', icon: 'mdi-help-circle', action: ()=>{
-              console.log('help and training')
+              this.display = true
+              this.clearEditBtn = true
               this.removeBtnFocus();
             }
           },

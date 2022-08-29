@@ -8,7 +8,7 @@
             </v-app-bar-title>
                     <!-- <div class="flex"> -->
                         <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" style="position: relative; left:.8rem; bottom: .1rem"><u>Save & Exit</u></v-btn>
-                        <v-btn height="3vh" tile style="color:white; background-color: green; border: 1px solid white; left: .6rem; bottom: .1rem; position: relative;" class="mx-3" small @click="submitCertify=true">Submit & Certify</v-btn>
+                        <v-btn height="3vh" tile style="color:white; background-color: green; border: 1px solid white; left: .6rem; bottom: .1rem; position: relative;" class="mx-3" small @click="submitCertify=true"><u>Submit & Certify</u></v-btn>
                     <!-- </div> -->
         </v-app-bar>
 

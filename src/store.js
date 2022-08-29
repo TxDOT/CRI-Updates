@@ -326,7 +326,7 @@ export const store = new Vuex.Store({
                         }
                         return;
                     }
-                    else if((assetDfos[0][1] < Number(currentLength.toFixed(3)))){
+                    else if(((assetDfos[0][1] - assetDfos[0][1]) < Number(currentLength.toFixed(3)) || (assetDfos[0][1] - assetDfos[0][1]) > Number(currentLength.toFixed(3)))){
                         state.assetCoverage = [false, 'short', assetDfos[0][1], Number(currentLength.toFixed(3))]
                         return;
                     }

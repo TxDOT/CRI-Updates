@@ -25,6 +25,7 @@
 </template>
 <script>
   import { addRoadbed, modifyRoadbed, stopEditing} from "./Map/editFunc"
+  import {search} from './Map/map.js'
   import mapTools from "../components/Map/mapTools.vue"
   import aboutHelp from "../components/Map/resources.vue"
   //import alert from './Map/alert.vue'
@@ -119,6 +120,7 @@
       openStepper(){
         this.steppClose = true;
         this.editExistingRd = null;
+        search.clear()
       },
       alertTest(){
         if(this.stepDisplay)
