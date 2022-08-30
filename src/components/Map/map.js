@@ -33,7 +33,7 @@ const txdotVectorTiles = new VectorTileLayer({
 
 // ADD GOOGLE IMAGERY WMTS LAYER
 const imagery = new WMTSLayer({
-    url: "https://txgi.tnris.org/login/path/corner-express-popcorn-compact/wmts",
+    url: "https://txgi.tnris.org/login/path/right-address-virus-dilemma/wmts",
     serviceMode: "KVP",
     id: "imagery"
 });
@@ -104,7 +104,7 @@ export const search = new Search({
 // PUSH SOURCES TO SEARCH WIDGET
 search.sources.push({
     layer: new FeatureLayer({
-        url: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_REF_LAYERS_dev2/FeatureServer/0",
+        url: criConstants.refernceLayer,
         //definitionExpression: "CNTY_NBR = 11"//need to set dynamically using vuex store
     }),
     searchFields: ["SEARCH"],

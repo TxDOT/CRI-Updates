@@ -178,7 +178,7 @@
 import {countyInfo} from '../components/Map/editFunc'
 import {featLayer,txCounties,view, viewPoint} from '../components/Map/map'
 import Query from "@arcgis/core/rest/support/Query"
-import {criConstants} from '../common/cri_constants';
+//import {criConstants} from '../common/cri_constants';
 //import {roadInfo} from '../store'
 //import MileSignConfirmation from '../components/Map/mileageConfirmation.vue'
 export default {
@@ -278,48 +278,48 @@ export default {
                                                                   An Equal Opportunity Employer</p></footer>`
         },
          methods:{
-          submit(step){
-             // loop through emailCounter object and extract values
-            for (let e =0; e < this.emailCounter.length; e++){
-              this.ccEmailList.push(this.emailCounter[e].ccEmail)
-            }
-            // submit data to fme server workspace via webhook for processing
-            let xmlhttp = new XMLHttpRequest();
-            xmlhttp.responseType = 'json';
-            xmlhttp.onreadystatechange=function() {
-              if (xmlhttp.readyState==4 && xmlhttp.status==200)   {
-                console.log("Webhook fired! Check your email...");
-              }
-            };
+          // submit(step){
+          //    // loop through emailCounter object and extract values
+          //   for (let e =0; e < this.emailCounter.length; e++){
+          //     this.ccEmailList.push(this.emailCounter[e].ccEmail)
+          //   }
+          //   // submit data to fme server workspace via webhook for processing
+          //   let xmlhttp = new XMLHttpRequest();
+          //   xmlhttp.responseType = 'json';
+          //   xmlhttp.onreadystatechange=function() {
+          //     if (xmlhttp.readyState==4 && xmlhttp.status==200)   {
+          //       console.log("Webhook fired! Check your email...");
+          //     }
+          //   };
             
-            // populate from data properties
-            let theJson = {
-              "workflow":{
-                  "step": step,
-                  "countyInfo": {
-                      "countyName": this.county,
-                      "countyMileage": this.currentMiles
-                  },
-                  "judgeName": this.judgeName,
-                  "delegateName": [
-                    "Json Ferrell",
-                    "Matplotlib Washburn",
-                    "David Interoperability"
-                  ],
-                  "email": [
-                      "TXDOT.SPM@gmail.com"                      
-                  ],
-                  "ccEmails": this.ccEmailList,
-                }
-            };
+          //   // populate from data properties
+          //   let theJson = {
+          //     "workflow":{
+          //         "step": step,
+          //         "countyInfo": {
+          //             "countyName": this.county,
+          //             "countyMileage": this.currentMiles
+          //         },
+          //         "judgeName": this.judgeName,
+          //         "delegateName": [
+          //           "Json Ferrell",
+          //           "Matplotlib Washburn",
+          //           "David Interoperability"
+          //         ],
+          //         "email": [
+          //             "TXDOT.SPM@gmail.com"                      
+          //         ],
+          //         "ccEmails": this.ccEmailList,
+          //       }
+          //   };
             
-            // prepare params for sending
-            let params = encodeURIComponent(JSON.stringify(theJson));
-            let theService = criConstants.webhookUrl + params;
-            xmlhttp.open("GET",theService,true);
-            xmlhttp.setRequestHeader(criConstants.headerName, criConstants.headerValue)
-            xmlhttp.send();
-          },
+          //   // prepare params for sending
+          //   let params = encodeURIComponent(JSON.stringify(theJson));
+          //   let theService = criConstants.webhookUrl + params;
+          //   xmlhttp.open("GET",theService,true);
+          //   xmlhttp.setRequestHeader(criConstants.headerName, criConstants.headerValue)
+          //   xmlhttp.send();
+          // },
            addSignature(){
              return this.signature
            },

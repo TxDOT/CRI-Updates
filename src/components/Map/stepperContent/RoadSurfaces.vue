@@ -161,7 +161,7 @@ export default {
                  {text: 'Brick'},
                  {text: 'Dirt/Natural'},
                  {text: 'Gravel'},
-                 {text: 'Concrete'}
+                 {text: 'Concrete'},
                  ]
         }],
         emptyValues:[v => !!v || 'Road Name is required'],
