@@ -273,7 +273,7 @@ export const txCounties = new FeatureLayer({
 })
 
 export const countyOfficialInfo = new FeatureLayer({
-    url: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_County_Info_Test/FeatureServer/0'
+    url: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_CNTY_INFO/FeatureServer/0'
 })
 
 // export const sketch = new Sketch({
