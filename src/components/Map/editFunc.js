@@ -113,7 +113,7 @@ export async function countyInfo(){
     if(crInfo === 'login#'){return router.push('/load')}
     for (let j=0; j < cntyNbrNm.length; j++){
       if(cntyNbrNm[j][crInfo]){
-        let whereStatement = `County_NBR = '${crInfo}'`
+        let whereStatement = `ID = '${crInfo}'`
         // roadInfo.getcntyNmbr = crInfo
         store.commit('setCntyNmbr', crInfo)
         // roadInfo.getcntyName = cntyNbrNm[j][crInfo]
