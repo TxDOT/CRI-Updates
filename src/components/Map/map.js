@@ -107,8 +107,8 @@ search.sources.push({
         url: criConstants.refernceLayer,
         //definitionExpression: "CNTY_NBR = 11"//need to set dynamically using vuex store
     }),
-    searchFields: ["SEARCH"],
-    displayField: "SEARCH",
+    searchFields: ["SRCH_SHORT", "SRCH_LONG"],
+    displayField: "SRCH_SHORT",
     exactMatch: false,
     autoSelect: true,
     outFields: ["*"],
