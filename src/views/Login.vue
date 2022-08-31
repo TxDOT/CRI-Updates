@@ -140,7 +140,7 @@ export default {
         })
         
         if(getCountyNbr){
-          let whereStatement = `ID = '${getCountyNbr}'`
+          let whereStatement = `CNTY_NBR = '${getCountyNbr}'`
           const query = new Query();
           query.where = whereStatement
           query.outFields = [ "*" ]

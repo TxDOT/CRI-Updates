@@ -86,7 +86,7 @@ export default {
         this.load=true
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find(x => cntyNbrNm[0][x] === this.pickCounty)
         console.log(getCountyNbr)
-        let whereStatement = `ID = '${getCountyNbr}'`
+        let whereStatement = `CNTY_NBR = '${getCountyNbr}'`
         const query = new Query();
         query.where = whereStatement
         query.outFields = [ "*" ]
