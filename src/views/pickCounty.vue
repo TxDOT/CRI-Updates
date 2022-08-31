@@ -86,7 +86,7 @@ export default {
         this.load=true
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find(x => cntyNbrNm[0][x] === this.pickCounty)
         console.log(getCountyNbr)
-        let whereStatement = `County_NBR = '${getCountyNbr}'`
+        let whereStatement = `CNTY_NBR = '${getCountyNbr}'`
         const query = new Query();
         query.where = whereStatement
         query.outFields = [ "*" ]
@@ -94,7 +94,7 @@ export default {
         queryResult.then((result)=>{
           this.countyNumber = getCountyNbr
           this.countyName = this.pickCounty
-          this.countyMiles = result.features[0].attributes['Total_Mileage']
+          this.countyMiles = result.features[0].attributes['TOT_MLGE']
           this.loadData(this.pickCounty, getCountyNbr)
         })
       },

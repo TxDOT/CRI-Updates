@@ -133,20 +133,21 @@ export default {
         //let getCounty = username.split('_')[1]
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
           if(username.toLowerCase().includes(cntyNbrNm[0][x].replace(/\s/,'').toLowerCase())){
+            console.log(cntyNbrNm[0][x])
             county = cntyNbrNm[0][x]
             return cntyNbrNm[0]
           }
         })
         
         if(getCountyNbr){
-          let whereStatement = `County_NBR = '${getCountyNbr}'`
+          let whereStatement = `CNTY_NBR = '${getCountyNbr}'`
           const query = new Query();
           query.where = whereStatement
           query.outFields = [ "*" ]
           let queryResult = await countyOfficialInfo.queryFeatures(query)
           this.countyNumber = getCountyNbr
-          localStorage.setItem('county',JSON.stringify([county,getCountyNbr,queryResult.features[0].attributes['Total_Mileage']]))
-          return [county, Number(getCountyNbr), queryResult.features[0].attributes['Total_Mileage']]
+          localStorage.setItem('county',JSON.stringify([county,getCountyNbr,queryResult.features[0].attributes['TOT_MLGE']]))
+          return [county, Number(getCountyNbr), queryResult.features[0].attributes['TOT_MLGE']]
         }
         else{
           this.$router.push({ name: 'PickCounty'})

@@ -78,7 +78,7 @@ async function queryFeatureTables(tblqry){
   rdbdSrfArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
   rdbdDsgnArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
   rdbdNumLnArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
-
+  console.log(rdbdSrfArry)
   //push values to setters and getters are in vue components
   for(let i=0; i < rdbdSrfArry.length; i++){
     rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3))
@@ -114,7 +114,7 @@ export async function countyInfo(){
     if(crInfo === 'login#'){return router.push('/load')}
     for (let j=0; j < cntyNbrNm.length; j++){
       if(cntyNbrNm[j][crInfo]){
-        let whereStatement = `County_NBR = '${crInfo}'`
+        let whereStatement = `CNTY_NBR = '${crInfo}'`
         // roadInfo.getcntyNmbr = crInfo
         store.commit('setCntyNmbr', crInfo)
         // roadInfo.getcntyName = cntyNbrNm[j][crInfo]
@@ -427,6 +427,7 @@ export function updateLength(){
   
       if(event.state === 'complete'){
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
+        console.log(newLengths)
         if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){
          //store.commit('setDeltaDis',[newLengths, 'Add'])
         }
@@ -460,22 +461,27 @@ export function updateLength(){
 //setUpGraphic() gets old length of selected graphic and send old length to store
 function setUpGraphic(){
   view.on('click',(event)=>{
-    if(store.getters.getStepperClose === true){
-      return;
-    }
+    // if(store.getters.getStepperClose === true){
+    //   return;
+    // }
     if(sketch.state === 'active'){
       return;
     }
     let opts = [gLayer]
     store.commit('setIsDfoReturn', false)
     view.hitTest(event,opts).then((response)=>{
+      console.log(response.results, store.getters.getObjectid)
       if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
         return;
       }
       response.results.forEach((result)=>{
+        if(result.graphic.attributes.objectid !== store.getters.getObjectid){
+          return;
+        }
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
+            console.log(oldLength)
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
             sketch.update([result.graphic], {tool:"reshape"});
