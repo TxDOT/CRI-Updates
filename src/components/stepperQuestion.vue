@@ -262,6 +262,7 @@ export default {
         handler: function(){
           if(!this.roadName){
             this.fetchRoadName = 'NAME HAS NOT BEEN DEFINED'
+            return;
           }
           
           if (this.roadName.length){

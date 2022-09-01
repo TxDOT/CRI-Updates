@@ -69,7 +69,6 @@ export default {
                 return this.$store.state.deleteRdSecond
             },
             set(secondStep){
-                console.log(secondStep)
                 this.$store.commit('setDeleteRdSecond', secondStep)
             }
         },

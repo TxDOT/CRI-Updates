@@ -582,7 +582,7 @@ export async function getGraphic(){
               }
               if(response.results[0].graphic.attributes['editType'] === 'ADD' || response.results[0].graphic.attributes['editType'] === 'EDIT'){
                 response.results[0].graphic.attributes['editType'] === 'ADD' ? store.commit('setModifyRd', false) : store.commit('setModifyRd', true)
-                sketch.update([response.results[0].graphic], {tool:"reshape"});
+                //sketch.update([response.results[0].graphic], {tool:"reshape"});
                 store.commit('setStepperClose', true)
                 store.commit('setInfoRd', false)
                 setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
@@ -641,7 +641,7 @@ function reapplyM(arr){
     }
   }
   catch{
-    console.log('end of the line')
+    //console.log('end of the line')
   }
   if(gl){
     for(let j=0; j < applyM.length; j++){
@@ -1302,7 +1302,6 @@ export function geomToMiles(geometry, isNum, precision){
 //send graphic to CRUD js file to add/update Edits layer
 export function saveToEditsLayer(){
   let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === store.getters.getObjectid)
-  console.log(editGraphic)
 
   initGraphicCheck(editGraphic, false)
 }
