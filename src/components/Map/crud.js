@@ -25,7 +25,7 @@ export function initGraphicCheck(editId, isRemove){
             TASK_ID: null,
             EDIT_TYPE_ID: criConstants.editType[`${editId.attributes.editType}`.toLowerCase()][2],
             EDIT_STATUS_ID: null,
-            GID: editId.attributes.GID,
+            GID: editId.attributes.gid,
             RDWAY_STAT_TYPE_ID: null,
             RTE_DEFN_LN_NM: null,
             RTE_ID: null,	
