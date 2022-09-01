@@ -132,8 +132,8 @@ export default {
         let county;
         //let getCounty = username.split('_')[1]
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
-          if(username.toLowerCase().includes(cntyNbrNm[0][x].replace(/\s/,'').toLowerCase())){
-            console.log(cntyNbrNm[0][x])
+          let userNameSplit = username.split('_')
+          if(userNameSplit[1].toLowerCase().includes(cntyNbrNm[0][x].replace(/\s/,'').toLowerCase())){
             county = cntyNbrNm[0][x]
             return cntyNbrNm[0]
           }

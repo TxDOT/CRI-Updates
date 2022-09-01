@@ -57,7 +57,6 @@ export function initGraphicCheck(editId, isRemove){
         let isExist = result.features.filter((x) => x.attributes.OBJECTID === editId.attributes.objectid)
         if(isExist.length){
             //update
-            console.log(lineObj)
             lineObj.attributes.RTE_DEFN_LN_EDIT_DT = Number(new Date().getTime().toFixed(7))
             lineObj.attributes.RTE_DEFN_LN_EDIT_USER_NM = store.getters.getUserName
             lineObj.attributes.OBJECTID_1 = isExist[0].attributes.OBJECTID_1
