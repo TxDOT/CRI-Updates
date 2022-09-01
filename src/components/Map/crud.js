@@ -25,7 +25,7 @@ export function initGraphicCheck(editId, isRemove){
             TASK_ID: null,
             EDIT_TYPE_ID: criConstants.editType[`${editId.attributes.editType}`.toLowerCase()][2],
             EDIT_STATUS_ID: null,
-            GID: editId.attributes.GID,
+            GID: editId.attributes.gid,
             RDWAY_STAT_TYPE_ID: null,
             RTE_DEFN_LN_NM: null,
             RTE_ID: null,	
@@ -57,6 +57,7 @@ export function initGraphicCheck(editId, isRemove){
         let isExist = result.features.filter((x) => x.attributes.OBJECTID === editId.attributes.objectid)
         if(isExist.length){
             //update
+            console.log(lineObj)
             lineObj.attributes.RTE_DEFN_LN_EDIT_DT = Number(new Date().getTime().toFixed(7))
             lineObj.attributes.RTE_DEFN_LN_EDIT_USER_NM = store.getters.getUserName
             lineObj.attributes.OBJECTID_1 = isExist[0].attributes.OBJECTID_1

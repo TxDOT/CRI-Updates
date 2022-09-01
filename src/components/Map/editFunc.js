@@ -296,6 +296,8 @@ export function hightlightFeat(eventType){
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
 export async function defineGraphic(graphics, clickType, editType){
+  console.log(graphics)
+
   let exist = graphics.features ? gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.features[0].attributes.OBJECTID) : gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.attributes.OBJECTID)
   if(exist.length){
     return;
@@ -317,7 +319,7 @@ export async function defineGraphic(graphics, clickType, editType){
     
         attributes: {
           editType: graphics.features ? criConstants.editType[`${editType}`][1] : criConstants.editType[`${graphics.attributes.EDIT_TYPE_ID}`][1], 
-          gid: graphics.features ? graphics.features[0].attributes.GID : graphics.attributes.GID,
+          gid: graphics.features ? graphics.features[0].attributes.RDBD_GMTRY_LN_ID : graphics.attributes.GID,
           objectid: graphics.features ? graphics.features[0].attributes.OBJECTID : graphics.attributes.OBJECTID,
           roadbedName: graphics.features ? store.getters.getRoadbedName : graphics.attributes.ASSET_ST_DEFN_NM,
           roadbedDesign: graphics.features ? store.getters.getRoadbedDesign : graphics.attributes.ASSET_RDWAY_DSGN_TYPE_DSCR,
