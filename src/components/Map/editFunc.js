@@ -77,7 +77,6 @@ async function queryFeatureTables(tblqry){
   rdbdSrfArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
   rdbdDsgnArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
   rdbdNumLnArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
-  console.log(rdbdSrfArry)
   //push values to setters and getters are in vue components
   for(let i=0; i < rdbdSrfArry.length; i++){
     rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3))
@@ -242,7 +241,6 @@ export async function modifyRoadbed(clickType, editType){
       .then(function(response){
         for(let i=0; i < response.results.length; i++){
           if(store.getters.getEditExisting === true || store.getters.getDeleteRd === true){
-            console.log('clicked')
             store.commit('setActiveLoader',true)
           }
           if(response.results[i].graphic.geometry !== null && response.results[i].graphic.sourceLayer !== null){
@@ -426,7 +424,6 @@ export function updateLength(){
   
       if(event.state === 'complete'){
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
-        console.log(newLengths)
         if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){
          //store.commit('setDeltaDis',[newLengths, 'Add'])
         }
@@ -469,7 +466,6 @@ function setUpGraphic(){
     let opts = [gLayer]
     store.commit('setIsDfoReturn', false)
     view.hitTest(event,opts).then((response)=>{
-      console.log(response.results, store.getters.getObjectid)
       if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
         return;
       }
@@ -480,7 +476,6 @@ function setUpGraphic(){
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
-            console.log(oldLength)
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
             sketch.update([result.graphic], {tool:"reshape"});
@@ -564,7 +559,6 @@ export async function getGraphic(){
     view.on("click", function(event){
       let option = {include: [featLayer,gLayer]}
       if (sketch.state === "active") {
-        console.log('active')
         return;
       }
       view.when(function(){
