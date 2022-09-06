@@ -51,8 +51,7 @@
             }
           },
           { title: 'Help & Training', icon: 'mdi-help-circle', action: ()=>{
-              //window.open('https://www.txdot.gov/data-maps/roadway-inventory/county-road-criteria.html', '_blank')
-              this.display = true
+              window.open('https://youtube.com/playlist?list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2', '_blank')
               this.clearEditBtn = true
               this.removeBtnFocus();
             }
