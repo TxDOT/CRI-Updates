@@ -22,6 +22,7 @@ async function queryFeat(qry){
     returnGeometry: true,
     returnM: true,
   })
+
   return queryFeat
 }
 //Querying asset (nonGeom) tables and pushing values to store
