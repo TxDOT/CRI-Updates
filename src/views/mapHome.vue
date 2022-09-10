@@ -11,6 +11,7 @@
     <v-progress-circular indeterminate color="primary" style="top:400px;" v-if="loading===true"></v-progress-circular>
     <dfoBox v-if="isDfoRead===true"/>
     <about v-if="aboutClick === true"/>
+    <Legend/>
   </div>
 </template>
 
@@ -24,11 +25,12 @@ import editExistingRd from "../components/Map/editExistingRd.vue"
 import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
 import dfoBox from '../components/Map/stepperContent/dfoBoxMap.vue'
 import about from '../components/Map/aboutApp.vue'
+import Legend from '../components/Map/mapLegend.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
 //import esriId from "@arcgis/core/identity/IdentityManager";
 
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend},
     props:["id"],
     name: 'MapHome',
     data(){

@@ -18,6 +18,7 @@ import Zoom from "@arcgis/core/widgets/Zoom";
 import ScaleBar from "@arcgis/core/widgets/ScaleBar";
 import CoordinateVM from "@arcgis/core/widgets/CoordinateConversion/CoordinateConversionViewModel";
 import Search from "@arcgis/core/widgets/Search";
+//import Legend from "@arcgis/core/widgets/Legend";
 //import {store} from '../../storeUpd'
 // import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 //import SnappingOptions from "@arcgis/core/views/interactive/snapping/SnappingOptions";
@@ -72,6 +73,14 @@ export const basemapToggle = new BasemapToggle({
 });
 
 export const viewPoint = new Viewpoint();
+
+// const legend = new Legend({
+//     view: view,
+//     layerInfos: [{
+//         layer: editsLayer,
+//         title: 'Edit Ty[e'
+//     }]
+// })
 
 export const home = new Home({
     view: view,
@@ -149,8 +158,8 @@ view.ui.add([
     position: "manual"
   },
 //   {
-//     component: ccWidget,
-//     position: "bottom-left"   
+//     component: legend,
+//     position: "bottom-right"   
 //   },
   {
     component: search,
@@ -264,7 +273,7 @@ export const rdbdLaneAsst = new FeatureLayer({
     url: criConstants.assetLyrRdbLane
 })
 export const editsLayer = new FeatureLayer({
-    url: criConstants.editsLayer
+    url: criConstants.editsLayer,
 })
 export const txCounties = new FeatureLayer({
     url: criConstants.txCounties,

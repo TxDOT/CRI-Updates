@@ -2,7 +2,7 @@ export const criConstants = {
   
     portalUrl: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_SurfType_Geom_view/FeatureServer/0",
     refernceLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/0', //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/0",
-    editsLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS_dev/FeatureServer/0',//"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Edits_view/FeatureServer/0",
+    editsLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS/FeatureServer/0',//"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Edits_view/FeatureServer/0",
     assetLyrRdbSrf: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/3',//"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/1",
     assetLyrRdbDsgn: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/2',//"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/2",
     //assetLyrRdbName: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_Ref_Layers_view/FeatureServer/3",
