@@ -1,7 +1,7 @@
-<template>
+<template >
     <v-card style="position: absolute; bottom: 8%; right: 2%; width: 15rem; height: 10rem;" tile>
         <v-card-title class="editRdTitle"><p style="position:absolute; top: 2.5%; left: 5%">Legend</p></v-card-title>
-        <canvas id="legend" width="190" height="150"></canvas>
+        <canvas id="legend" width="190" height="150" style="position: absolute; right: 16%;"></canvas>
         <div id="add">
             <v-card-text>Add Road</v-card-text>
         </div>
@@ -12,22 +12,23 @@
             <v-card-text>Delete Road</v-card-text>
         </div>
         
-        
-        
     </v-card>
-    
+
+
 </template>
 
 <script>
+
+
 export default {
     name: "Legend",
     data() {
         return{
-            canvas: null
+            canvas: null,
+            display: false
         }
     },
     mounted(){
-
         let canvas = document.getElementById('legend')
         this.canvas = canvas.getContext('2d')
 

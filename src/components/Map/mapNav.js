@@ -36,3 +36,8 @@ function checkEditsHistory(){
     }
 }
 
+//function featLayerColorChange(){
+
+// }
+
+

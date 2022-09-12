@@ -48,5 +48,21 @@ export const criConstants = {
       'add':['#27D83E', 'ADD', 1],
       'edit': ['#F8A307', 'EDIT', 5],
       'delete': ['#E32636', 'DELETE', 4]
-    }
+    },
+
+    featLayerColorVector:{ 
+        type: "simple",
+        symbol:{
+            type: "simple-line",
+            color:[255,191,0]
+        }
+    },
+    
+    featLayerColorImagery:{ 
+      type: "simple",
+      symbol:{
+          type: "simple-line",
+          color:[0,127,255]
+      }
+  }
 }

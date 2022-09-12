@@ -11,7 +11,7 @@
     <v-progress-circular indeterminate color="primary" style="top:400px;" v-if="loading===true"></v-progress-circular>
     <dfoBox v-if="isDfoRead===true"/>
     <about v-if="aboutClick === true"/>
-    <Legend/>
+    <Legend v-if="displayLegend === true"/>
   </div>
 </template>
 
@@ -27,6 +27,8 @@ import dfoBox from '../components/Map/stepperContent/dfoBoxMap.vue'
 import about from '../components/Map/aboutApp.vue'
 import Legend from '../components/Map/mapLegend.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
+import { basemapToggle, featLayer, expandLegend } from '../components/Map/map'
+import { criConstants } from '../common/cri_constants'
 //import esriId from "@arcgis/core/identity/IdentityManager";
 
 export default {
@@ -41,6 +43,7 @@ export default {
         loading: false,
         success: true,
         isDfoRead: false,
+        displayLegend: false
       }
     },
     beforeRouteLeave(to, from, next){
@@ -53,6 +56,15 @@ export default {
       next(false)
     },
     mounted(){
+      expandLegend.watch('expanded',(curr)=>{
+            curr === false ? this.displayLegend = false : this.displayLegend = true
+            
+        });
+        
+      basemapToggle.watch('activeBasemap',(curr)=>{
+        curr.baseLayers.items[0].id === 'imagery' ? featLayer.renderer = criConstants.featLayerColorImagery : featLayer.renderer = criConstants.featLayerColorVector
+      });
+
       hightlightFeat('pointer-move')
     },
     watch:{

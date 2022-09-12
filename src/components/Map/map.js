@@ -1,5 +1,4 @@
 import { criConstants } from '../../common/cri_constants';
-//import {hightlightFeat} from '../Map/editFunc
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
 // import Sketch from "@arcgis/core/widgets/Sketch";
@@ -18,6 +17,7 @@ import Zoom from "@arcgis/core/widgets/Zoom";
 import ScaleBar from "@arcgis/core/widgets/ScaleBar";
 import CoordinateVM from "@arcgis/core/widgets/CoordinateConversion/CoordinateConversionViewModel";
 import Search from "@arcgis/core/widgets/Search";
+import Expand from "@arcgis/core/widgets/Expand";
 //import Legend from "@arcgis/core/widgets/Legend";
 //import {store} from '../../storeUpd'
 // import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
@@ -72,6 +72,12 @@ export const basemapToggle = new BasemapToggle({
     nextBasemap: imgBasemap
 });
 
+export const expandLegend = new Expand({
+    view: view,
+    container: document.getElementById('mapLegend'),
+    expandIconClass: "esri-icon-legend"
+})
+console.log(expandLegend)
 export const viewPoint = new Viewpoint();
 
 // const legend = new Legend({
@@ -148,7 +154,12 @@ view.ui.add([
     component: zoom,
     position: "top-right",
     index: 2
-  }, 
+  },
+  {
+    component: expandLegend,
+    position: "top-right",
+    index: 1
+  },
   {
     component: basemapToggle,
     position: "top-right"
@@ -182,7 +193,7 @@ export const featLayer = new FeatureLayer({
         type: "simple",
         symbol:{
             type: "simple-line",
-            color:[0,127,255]
+            color:[255,191,0]
         }
     }
   });
