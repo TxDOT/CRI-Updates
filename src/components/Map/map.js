@@ -74,7 +74,7 @@ export const basemapToggle = new BasemapToggle({
 
 export const expandLegend = new Expand({
     view: view,
-    container: document.getElementById('mapLegend'),
+    //container: document.getElementById('mapLegend'),
     expandIconClass: "esri-icon-legend"
 })
 console.log(expandLegend)

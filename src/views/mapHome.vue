@@ -57,9 +57,8 @@ export default {
     },
     mounted(){
       expandLegend.watch('expanded',(curr)=>{
-            curr === false ? this.displayLegend = false : this.displayLegend = true
-            
-        });
+          curr === false ? this.displayLegend = false : this.displayLegend = true
+      });
         
       basemapToggle.watch('activeBasemap',(curr)=>{
         curr.baseLayers.items[0].id === 'imagery' ? featLayer.renderer = criConstants.featLayerColorImagery : featLayer.renderer = criConstants.featLayerColorVector
