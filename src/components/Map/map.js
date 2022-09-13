@@ -193,7 +193,7 @@ export const featLayer = new FeatureLayer({
         type: "simple",
         symbol:{
             type: "simple-line",
-            color:[255,191,0]
+            color:[255, 16, 240]
         }
     }
   });

@@ -27,8 +27,8 @@ import dfoBox from '../components/Map/stepperContent/dfoBoxMap.vue'
 import about from '../components/Map/aboutApp.vue'
 import Legend from '../components/Map/mapLegend.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
-import { basemapToggle, featLayer, expandLegend } from '../components/Map/map'
-import { criConstants } from '../common/cri_constants'
+import { expandLegend } from '../components/Map/map'
+// import { criConstants } from '../common/cri_constants'
 //import esriId from "@arcgis/core/identity/IdentityManager";
 
 export default {
@@ -60,13 +60,24 @@ export default {
           curr === false ? this.displayLegend = false : this.displayLegend = true
       });
         
-      basemapToggle.watch('activeBasemap',(curr)=>{
-        curr.baseLayers.items[0].id === 'imagery' ? featLayer.renderer = criConstants.featLayerColorImagery : featLayer.renderer = criConstants.featLayerColorVector
-      });
+      // basemapToggle.watch('activeBasemap',(curr)=>{
+      //   curr.baseLayers.items[0].id === 'imagery' ? featLayer.renderer = criConstants.featLayerColorImagery : featLayer.renderer = criConstants.featLayerColorVector
+      // });
 
       hightlightFeat('pointer-move')
     },
     watch:{
+      steppClose:{
+        handler: function(){
+          if(this.steppClose === true){
+            this.displayLegend = true
+            return;
+          }
+          this.displayLegend = false
+          return;
+        },
+        immediate: true
+      },
       denyFeature:{
         handler: function(){
           this.denyClick = this.denyFeature
