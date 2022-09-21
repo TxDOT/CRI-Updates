@@ -174,6 +174,7 @@ export async function addRoadbed(){
     });
   })
   let returnAddNewRoad = await addNewRoad
+  geomCheck(returnAddNewRoad[1])
   sketch.layer.graphics.items.at(-1).geometry.hasM = true
   //add reApply M Measures function
   sketch.layer.graphics.items.at(-1).attributes = {
@@ -424,6 +425,7 @@ export function updateLength(){
       }
   
       if(event.state === 'complete'){
+        geomCheck(event.graphics[0].geometry)
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
         if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){
          //store.commit('setDeltaDis',[newLengths, 'Add'])
@@ -653,54 +655,7 @@ function reapplyM(arr){
 
   store.commit('setRoadGeom',gl.geometry.clone())
   return;
-} //TODO
-//push asset/geometry to edits feature layer
-// export function saveInfo(id){
-//   //get graphic layer and match by objectid
-//   const graphic = gLayer.graphics.items
-//   let geomPath;
-//   let createdate;
-//   let createName;
-//   let gid;
-//   for(let x in graphic){
-//     if(graphic[x].attributes.OBJECTID === id.objectid){
-//       geomPath = graphic[x].geometry
-//       createdate = graphic[x].attributes.createDt
-//       createName = graphic[x].attributes.createNm
-//       gid = graphic[x].attributes.gid
-//     }
-//   }
-//   //create new graphic and push new asset to edits feature layer
-//   const editGraphic = new Graphic({
-//     geometry: geomPath,
-//     attributes: {
-//       objectid: id.objectid,
-//       gid: gid,
-//       begin_dfo: 1, //TODO
-//       end_dfo: 1, //TODO
-//       seg_len:4, //TODO
-//       county: store.getters.getcntyNmbr,
-//       edit_type:'update',
-//       create_nm: createName,
-//       create_dt: createdate,
-//       edit_nm: id.editNm,
-//       edit_dt: id.editDt,
-//       submit: 0,
-//       cnty_nbr: store.getters.getcntyNmbr,
-//       srfc_type_id:id.rdbdSurfe,
-//       st_defn_nm: id.rdbdName,
-//       rdway_dsgn_type_dscr: id.rdbdDes,
-//       nbr_thru_lane_cnt: id.numLanes,
-//     }
-//   });
-  
-//   editsLayer.applyEdits({
-//     addFeatures: [editGraphic]
-//     //updateFeatures - TODO
-//     //deleteFeatures - TODO
-//   });
-// }
-//*************************************************************************************************/
+}
 //Drawing the new Asset Graphics on the route
 function createAssetGraph(pathArr,y){
   let assetGeom = rdbdAssetLine.graphics.items
@@ -1371,4 +1326,57 @@ export async function cancelEditStepper(){
     
   }
   return null
+}
+
+export function geomCheck(polyline){
+  //check for less than a specific length
+  let isLength = geometryEngine.geodesicLength(polyline, 'miles')
+  if(isLength < 0.007){
+    store.commit('setGeomCheck', 1) //road is less than .007 length
+    return;
+  }
+  //check for self interesecting lines
+  let splitGeom = [];
+  for(let i=0; i < polyline.paths[0].length; i++){
+    try{
+      if(polyline.paths[0].at(-1) === polyline.paths[0][i]){
+        console.log('done');
+      }
+      else{
+        splitGeom.push(
+          new Graphic({
+            geometry:{
+              type: "polyline",
+              paths:[polyline.paths[0][i], polyline.paths[0][i+1]]
+            }
+          })
+        )
+      }
+      
+    }
+    catch{
+      //The last index will not have a preceding vertex and throw an error
+    }
+  }
+  let step = 0;
+  while(step < splitGeom.length){
+    try{
+      for(let s=0; s < splitGeom.length; s++){
+        let isSelfInter = geometryEngine.crosses(splitGeom[step].geometry, splitGeom[s].geometry)
+        if(isSelfInter){
+          store.commit('setGeomCheck', 2) //road has self intersection
+          return;
+        }
+      } 
+      console.log(step)
+      step++
+    }
+    catch{
+//
+    }
+
+  }
+    
+  
+  store.commit('setGeomCheck', 0)
 }

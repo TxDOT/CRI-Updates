@@ -12,6 +12,7 @@
     <dfoBox v-if="isDfoRead===true"/>
     <about v-if="aboutClick === true"/>
     <Legend v-if="displayLegend === true"/>
+    <geomCheck v-if="isGeomCheck === true"/>
   </div>
 </template>
 
@@ -26,13 +27,14 @@ import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
 import dfoBox from '../components/Map/stepperContent/dfoBoxMap.vue'
 import about from '../components/Map/aboutApp.vue'
 import Legend from '../components/Map/mapLegend.vue'
+import geomCheck from '../components/Map/geomCheck.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
 import { expandLegend } from '../components/Map/map'
 // import { criConstants } from '../common/cri_constants'
 //import esriId from "@arcgis/core/identity/IdentityManager";
 
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck},
     props:["id"],
     name: 'MapHome',
     data(){
@@ -43,7 +45,8 @@ export default {
         loading: false,
         success: true,
         isDfoRead: false,
-        displayLegend: false
+        displayLegend: false,
+        isGeomCheck: true
       }
     },
     beforeRouteLeave(to, from, next){

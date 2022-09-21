@@ -81,7 +81,7 @@
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
       
       <v-btn v-if="!forInfo" depressed style="border:none; bottom: 1vh; right:6rem; position: absolute" tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
-      <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 1vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0]" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
+      <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 1vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0] || fetchRoadName.toUpperCase() === 'NAME HAS NOT BEEN DEFINED' || this.geomChecks > 0" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
       
       <v-btn v-if="!forInfo" depressed tile color ="#E64545" text style="bottom:1vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
       <v-btn v-else style="bottom: 2vh; position: absolute; right: 1vw; border:black 1px solid;" tile outlined text color="#204E70" @click="cancel()"><u>Cancel</u></v-btn>
@@ -190,6 +190,7 @@ export default {
         fetchRoadDesign: null,
         fetchNumLanes: null,
         scrollInvoked: 0,
+        geomChecks: 0,
         //objectid: 0,
         // newDfo:0,
         //working on form validation
@@ -320,7 +321,13 @@ export default {
           this.comment = this.getComment
         },
         immediate: true
-      }
+      },
+      isGeomCheck:{
+        handler: function(){
+          this.geomChecks = this.isGeomCheck
+        },
+          immediate: true
+        }
     },
 
     methods:{
@@ -532,6 +539,14 @@ export default {
         set(boolAdd){
           this.$store.commit('setIsInitAdd', boolAdd)
         }
+      },
+      isGeomCheck:{
+        get(){
+          return this.$store.state.geomCheck
+        },
+        set(check){
+          this.$store.commit('setGeomCheck', check)
+        }
       }
     }
 }
@@ -595,12 +610,12 @@ export default {
 }
 
 #discardSketch{
-    position: absolute;
-    width: 22rem;
-    left: 57rem;
-    top: 25rem;
-    border-radius: 0px;
-    height:7.7rem
+  position: absolute;
+  width: 22rem;
+  left: 57rem;
+  top: 20rem;
+  border-radius: 0px;
+  height:7.7rem
 }
 .confirmationTitle{
   background: #14375A;

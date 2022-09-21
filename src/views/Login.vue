@@ -23,7 +23,7 @@
                 <u>Login</u>
               </v-btn>
             </div>
-              <v-btn style="position:absolute; left:4%; bottom:13%" depressed text tile color="black" x-small onclick="window.open('https://www.dot.state.tx.us/apps-cg/contact_us/form/dusa-form.htm','_blank')" >
+              <v-btn style="position:absolute; left:4%; bottom:13%" depressed text tile color="black" x-small onclick="window.open('https://www.txdot.gov/data-maps/roadway-inventory/cri-form.html','_blank')" >
                 Sign-Up
               </v-btn>
          

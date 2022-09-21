@@ -50,9 +50,13 @@ export const store = new Vuex.Store({
         isAbout: false,
         isStepCancel: false,
         isInitAdd: false,
-        comment:''
+        comment:'',
+        geomCheck: ''
     },
     getters:{
+        getGeomCheck(state){
+            return state.geomCheck
+        },
         getIsInitAdd(state){
             return state.isInitAdd
         },
@@ -191,6 +195,10 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+       setGeomCheck(state, check){
+            console.log(check)
+            state.geomCheck = check
+        },
         setIsInitAdd(state, boolInit){
             state.isInitAdd = boolInit
         },

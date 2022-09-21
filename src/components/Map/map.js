@@ -77,7 +77,6 @@ export const expandLegend = new Expand({
     //container: document.getElementById('mapLegend'),
     expandIconClass: "esri-icon-legend"
 })
-console.log(expandLegend)
 export const viewPoint = new Viewpoint();
 
 // const legend = new Legend({
