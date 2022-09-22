@@ -12,17 +12,23 @@
         </v-list-item>
       </v-list-item-group>
     </v-list>
-     <v-dialog
+    <v-dialog
       v-model="display"
-      max-width="400"
+      max-width="700"
       persistent>
-        <v-card v-model="display" height="150" style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
-          <v-card-title class="surfaceTitle"><p style="bottom: .7rem; position:relative; right: .5rem;">Temporarily Unavailable</p></v-card-title>
-            <v-card-text style="text-align:left; color: black; top: 1rem; position: relative; right: .5rem;">
-              This functionality is under development and temporarily unavailable.
+        <v-card v-model="display" height="550" style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
+          <v-card-title class="surfaceTitle"><p style="bottom: .7rem; position:relative; right: .5rem;">Advanced Page</p></v-card-title>
+            <v-card-text style="text-align:left; color: black; top: 3rem; position: relative; left: 20rem;">
+              Download Your Counties Road Information.
             </v-card-text>
-            <v-btn outlined tile @click="display = false" color="#14375A" style="left: 9rem; top: 0rem; border: 1px solid black">
-              <u>Close</u>
+            <v-card-text style="text-align:left; color: black; top: 5.8rem; position: relative; left: 20rem;">
+              Download TxDOTs inventory for your county.
+            </v-card-text>
+            <v-btn outlined tile @click="display = false" color="#14375A" style="position: absolute; left: 1rem; top: 5rem; border: 1px solid black">
+              <u>Download Road Log</u>
+            </v-btn>
+            <v-btn outlined tile @click="display = false" color="#14375A" style="position: absolute; left: 1rem; top: 10.5rem; border: 1px solid black">
+              <u>Download Inventory</u>
             </v-btn>
         </v-card>
       </v-dialog>
