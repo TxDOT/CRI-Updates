@@ -18,7 +18,7 @@
       :editable="setAssetCover[0]"
       step="1"
       color="#204E70"
-      @click="showGIDVerts()"
+      @click="showGIDVerts(); removeAsstPt();"
       class="font-weight-regular; body-1;">
       Length: <strong>{{fetchLength}} Miles</strong>
     </v-stepper-step>
