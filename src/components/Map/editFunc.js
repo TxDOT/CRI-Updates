@@ -1343,7 +1343,7 @@ export function geomCheck(polyline){
         console.log('done');
       }
       else{
-        splitGeom.push(
+        splitGeom.push( //push created lines to splitGeom array
           new Graphic({
             geometry:{
               type: "polyline",

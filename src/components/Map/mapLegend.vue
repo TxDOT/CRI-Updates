@@ -1,15 +1,15 @@
 <template >
-    <v-card style="position: absolute; bottom: 8%; right: 2%; width: 15rem; height: 10rem;" tile>
-        <v-card-title class="editRdTitle"><p style="position:absolute; top: 2.5%; left: 5%">Legend</p></v-card-title>
-        <canvas id="legend" width="190" height="150" style="position: absolute; right: 16%;"></canvas>
+    <v-card style="position: absolute; bottom: 8%; right: 2%; width: 10.5rem; height: 8rem;" tile>
+        <v-card-title class="editRdTitle"><p style="position:absolute; top: 0.5%; left: 5%">Edit Types</p></v-card-title>
+        <canvas id="legend" width="190" height="150" style="position: absolute; left: 5%;"></canvas>
         <div id="add">
-            <v-card-text>Add Road</v-card-text>
+            <v-card-text class="editType">Add Road</v-card-text>
         </div>
         <div id="edit">
-            <v-card-text>Edit Road</v-card-text>
+            <v-card-text class="editType">Edit Road</v-card-text>
         </div>
         <div id="delete">
-            <v-card-text>Delete Road</v-card-text>
+            <v-card-text class="editType">Delete Road</v-card-text>
         </div>
         
     </v-card>
@@ -41,19 +41,19 @@ export default {
         this.canvas.lineDashOffset = 4
         this.canvas.beginPath()
         this.canvas.moveTo(1,20)
-        this.canvas.lineTo(80, 20);
+        this.canvas.lineTo(60, 20);
         this.canvas.stroke()
 
         this.canvas.strokeStyle = '#F8A307'
         this.canvas.beginPath()
-        this.canvas.moveTo(1,60)
-        this.canvas.lineTo(80, 60);
+        this.canvas.moveTo(1,50)
+        this.canvas.lineTo(60, 50);
         this.canvas.stroke()
         
         this.canvas.strokeStyle = '#E32636'
         this.canvas.beginPath()
-        this.canvas.moveTo(1,100)
-        this.canvas.lineTo(80,100);
+        this.canvas.moveTo(1,80)
+        this.canvas.lineTo(60,80);
         this.canvas.stroke()
     }
 }
@@ -68,25 +68,30 @@ export default {
     .editRdTitle{
         background: #14375A;
         color:white;
-        height: 40px;
+        height: 30px;
         text-align: left;
         top: 10%;
         width: 100%;
         left: 100%;
+        font-size: 16px;
     }
     #add{
         position: absolute;
-        top: 22%;
-        left: 50%;
+        top: 32%;
+        left: 55%;
     }
     #edit{
         position: absolute;
-        top: 47%;
-        left: 50%;
+        top: 55%;
+        left: 55%;
     }
     #delete{
         position: absolute;
-        top: 72%;
-        left: 50%;
+        top: 79%;
+        left: 55%;
+    }
+    .editType{
+        font-size: .8rem;
+        padding: 0%;
     }
 </style>

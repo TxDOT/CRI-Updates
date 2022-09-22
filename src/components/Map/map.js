@@ -157,7 +157,7 @@ view.ui.add([
   {
     component: expandLegend,
     position: "top-right",
-    index: 1
+    index: 4
   },
   {
     component: basemapToggle,
@@ -192,7 +192,7 @@ export const featLayer = new FeatureLayer({
         type: "simple",
         symbol:{
             type: "simple-line",
-            color:[255, 16, 240]
+            color:[0,127,255]
         }
     }
   });

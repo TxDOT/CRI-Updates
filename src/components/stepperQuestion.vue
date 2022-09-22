@@ -81,7 +81,7 @@
     <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
       
       <v-btn v-if="!forInfo" depressed style="border:none; bottom: 1vh; right:6rem; position: absolute" tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
-      <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 1vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0] || fetchRoadName.toUpperCase() === 'NAME HAS NOT BEEN DEFINED' || this.geomChecks > 0" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
+      <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 1vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0] || this.geomChecks > 0" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
       
       <v-btn v-if="!forInfo" depressed tile color ="#E64545" text style="bottom:1vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
       <v-btn v-else style="bottom: 2vh; position: absolute; right: 1vw; border:black 1px solid;" tile outlined text color="#204E70" @click="cancel()"><u>Cancel</u></v-btn>
