@@ -60,6 +60,7 @@ export default {
     },
     mounted(){
       expandLegend.watch('expanded',(curr)=>{
+          console.log(curr)
           curr === false ? this.displayLegend = false : this.displayLegend = true
       });
         
@@ -74,9 +75,12 @@ export default {
         handler: function(){
           if(this.steppClose === true){
             this.displayLegend = true
+            expandLegend.expanded = true
+            console.log(expandLegend)
             return;
           }
           this.displayLegend = false
+          expandLegend.expanded = false
           return;
         },
         immediate: true
