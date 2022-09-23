@@ -159,7 +159,6 @@ export async function addRoadbed(){
         mouseHoverDfoDisplay('addRoad');
       }
       else if(event.state === "active"){
-        console.log(event)
         let seglengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
         geomCheck(event.graphic.geometry)
         store.commit('setDfoReturn', seglengthMiles)
@@ -421,10 +420,15 @@ export function updateLength(){
   try{
     setUpGraphic();
     sketch.on('update', (event)=>{
-      if(event.state === 'active' && event.toolEventInfo.type === 'reshape-stop'){
-        geomCheck(event.graphics[0].geometry)
-        sketch['_operationHandle'].history.redo.length ?  store.commit('setIsRedoDisable', false) : store.commit('setIsRedoDisable', true)
-        sketch['_operationHandle'].history.undo.length ?  store.commit('setIsUndoDisable', false) : store.commit('setIsUndoDisable', true)
+      if(event.state === 'active'){
+        if(event.toolEventInfo.type === 'reshape-stop'){
+          geomCheck(event.graphics[0].geometry)
+          sketch['_operationHandle'].history.redo.length ?  store.commit('setIsRedoDisable', false) : store.commit('setIsRedoDisable', true)
+          sketch['_operationHandle'].history.undo.length ?  store.commit('setIsUndoDisable', false) : store.commit('setIsUndoDisable', true)
+        }
+        else if(event.toolEventInfo.type === 'vertex-remove'){
+          geomCheck(event.graphics[0].geometry)
+        }
       }
   
       if(event.state === 'complete'){
