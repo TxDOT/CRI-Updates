@@ -159,7 +159,9 @@ export async function addRoadbed(){
         mouseHoverDfoDisplay('addRoad');
       }
       else if(event.state === "active"){
+        console.log(event)
         let seglengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
+        geomCheck(event.graphic.geometry)
         store.commit('setDfoReturn', seglengthMiles)
       }
 
@@ -174,7 +176,7 @@ export async function addRoadbed(){
     });
   })
   let returnAddNewRoad = await addNewRoad
-  geomCheck(returnAddNewRoad[1])
+  
   sketch.layer.graphics.items.at(-1).geometry.hasM = true
   //add reApply M Measures function
   sketch.layer.graphics.items.at(-1).attributes = {
@@ -420,12 +422,13 @@ export function updateLength(){
     setUpGraphic();
     sketch.on('update', (event)=>{
       if(event.state === 'active' && event.toolEventInfo.type === 'reshape-stop'){
+        geomCheck(event.graphics[0].geometry)
         sketch['_operationHandle'].history.redo.length ?  store.commit('setIsRedoDisable', false) : store.commit('setIsRedoDisable', true)
         sketch['_operationHandle'].history.undo.length ?  store.commit('setIsUndoDisable', false) : store.commit('setIsUndoDisable', true)
       }
   
       if(event.state === 'complete'){
-        geomCheck(event.graphics[0].geometry)
+        
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
         if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){
          //store.commit('setDeltaDis',[newLengths, 'Add'])
@@ -1340,7 +1343,7 @@ export function geomCheck(polyline){
   for(let i=0; i < polyline.paths[0].length; i++){
     try{
       if(polyline.paths[0].at(-1) === polyline.paths[0][i]){
-        console.log('done');
+        //
       }
       else{
         splitGeom.push( //push created lines to splitGeom array
@@ -1368,7 +1371,6 @@ export function geomCheck(polyline){
           return;
         }
       } 
-      console.log(step)
       step++
     }
     catch{

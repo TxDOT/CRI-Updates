@@ -196,7 +196,6 @@ export const store = new Vuex.Store({
     mutations:
     {
        setGeomCheck(state, check){
-            console.log(check)
             state.geomCheck = check
         },
         setIsInitAdd(state, boolInit){
