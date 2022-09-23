@@ -117,12 +117,14 @@
     <!-- <v-alert v-if="discardAlert" type="warning" prominent border="left" style="height: 80px; top: 30px; width:550px; left: 30%;">
       Sketch has been removed.
     </v-alert> -->
-    <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
-      <v-card-title class="confirmationTitle">Confirm Discard</v-card-title>
+  <v-dialog persistent v-model="discardAlertQuest">
+    <v-card id="discardSketch" v-model="discardAlertQuest" elevation="10">
+      <v-card-title class="confirmationTitle"><p style="position: relative; bottom: .7rem;">Confirm Discard</p></v-card-title>
       <v-card-text style="color:black; top: 9%; position:relative; text-align: left;">Are you sure you want to discard this edit?</v-card-text>
       <v-btn style="position: absolute; right: .5rem;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
       <v-btn style="position: absolute; right:5rem;" depressed tile text color="#14375A" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card>
+  </v-dialog>
   <confirmAlertSuccess v-if="successAlert"/>
   <finalCheck v-if="finalCheck === true"/>
 
@@ -361,6 +363,7 @@ export default {
         removeAsstPoints();
       },
       cancel(){
+        this.isGeomCheck = 0;
         stopEditingPoint();
         sketchCompete();
         document.getElementById("stepper").style.width = '0px'
@@ -610,10 +613,11 @@ export default {
 }
 
 #discardSketch{
-  position: absolute;
+  position: relative;
+  padding: 0%;
+  top: 50%;
+  left: 45%;
   width: 22rem;
-  left: 57rem;
-  top: 20rem;
   border-radius: 0px;
   height:7.7rem
 }
