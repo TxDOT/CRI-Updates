@@ -76,7 +76,6 @@ export default {
           if(this.steppClose === true){
             this.displayLegend = true
             expandLegend.expanded = true
-            console.log(expandLegend)
             return;
           }
           this.displayLegend = false
