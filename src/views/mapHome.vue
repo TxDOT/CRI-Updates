@@ -60,7 +60,6 @@ export default {
     },
     mounted(){
       expandLegend.watch('expanded',(curr)=>{
-          console.log(curr)
           curr === false ? this.displayLegend = false : this.displayLegend = true
       });
         
