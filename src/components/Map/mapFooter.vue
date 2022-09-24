@@ -104,6 +104,7 @@ export default {
     //   return 0 + Number(this.rdbdDeltaDist)
     // },
     countyTots: function(){
+      console.log(this.countyTotal,this.rdbdDeltaDist)
       return Number(this.countyTotal) + Number(this.rdbdDeltaDist)
     },
     returnCountyTotal:{
