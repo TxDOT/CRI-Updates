@@ -1377,7 +1377,7 @@ export function geomCheck(polyline){
       step++
     }
     catch{
-//
+      //
     }
 
   }
