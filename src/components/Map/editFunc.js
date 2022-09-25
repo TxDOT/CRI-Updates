@@ -211,7 +211,6 @@ export async function addRoadbed(){
   }
   showVerticies(sketch.layer.graphics.items.at(-1))
   reapplyM(gLayer.graphics.items.at(-1))
-  console.log(Number(returnAddNewRoad[0].toFixed(5)))
   store.commit('setOldLength',Number(returnAddNewRoad[0].toFixed(3)))
   store.commit('setDeltaDis',[Number(returnAddNewRoad[0].toFixed(5)), 'Add'])
   store.commit('setRoadGeom', gLayer.graphics.items.at(-1).geometry.clone())
@@ -434,7 +433,6 @@ export function updateLength(){
   
       if(event.state === 'complete'){
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
-        console.log(newLengths)
         if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){
          //store.commit('setDeltaDis',[newLengths, 'Add'])
         }
@@ -487,7 +485,6 @@ function setUpGraphic(){
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
-            console.log(oldLength)
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
             sketch.update([result.graphic], {tool:"reshape"});
@@ -1273,7 +1270,6 @@ export function saveToEditsLayer(){
 
 //function to query ref table by OID and COUNTY NAME and go and load map
 export async function goToMap(name, nbr){
-  console.log(nbr)
   let road = await reloadEdits()
     let objectidList = [];
       for(let id in road.features){
@@ -1318,7 +1314,6 @@ export async function cancelEditStepper(){
       let graphicLength = geomToMiles(getGraphicsLayer[0].geometry, true, 3) 
       let editsLength = geomToMiles(filterEdits[0].geometry, true, 3)
       let diff = editsLength - graphicLength
-      console.log(diff, editsLength, graphicLength)
       store.commit('setIsStepCancel', true)
       let mileageAction = graphicLength < editsLength ? 'Add' : 'Delete'
       if(filterEdits[0].attributes.EDIT_TYPE_ID === 1) {
