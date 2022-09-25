@@ -368,7 +368,6 @@ export const store = new Vuex.Store({
             state.username = userName
         },
         setDeltaDis(state, newLen){
-            console.log(state.deltaDistance, newLen)
             if(newLen[1] === "Add"){
                 state.deltaDistance += newLen[0]
                 return;
@@ -386,7 +385,6 @@ export const store = new Vuex.Store({
                     return;
                 }
                 let delta = newLen[0] - state.oldLength
-                console.log(delta, newLen[0], state.oldLength)
                 let mileage;
                 if(state.oldLength < newLen[0]){
                     let addMiles = Math.abs(delta)
@@ -399,7 +397,6 @@ export const store = new Vuex.Store({
                 if(state.oldLength === newLen[0]){
                     mileage = 0
                 }
-                console.log(state.deltaDistance, mileage)
                 state.deltaDistance += mileage
                 return;
             }
