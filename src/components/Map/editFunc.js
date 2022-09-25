@@ -160,6 +160,7 @@ export async function addRoadbed(){
       }
       else if(event.state === "active"){
         let seglengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
+        geomCheck(event.graphic.geometry)
         store.commit('setDfoReturn', seglengthMiles)
       }
 
@@ -174,7 +175,7 @@ export async function addRoadbed(){
     });
   })
   let returnAddNewRoad = await addNewRoad
-  geomCheck(returnAddNewRoad[1])
+  
   sketch.layer.graphics.items.at(-1).geometry.hasM = true
   //add reApply M Measures function
   sketch.layer.graphics.items.at(-1).attributes = {
@@ -419,13 +420,18 @@ export function updateLength(){
   try{
     setUpGraphic();
     sketch.on('update', (event)=>{
-      if(event.state === 'active' && event.toolEventInfo.type === 'reshape-stop'){
-        sketch['_operationHandle'].history.redo.length ?  store.commit('setIsRedoDisable', false) : store.commit('setIsRedoDisable', true)
-        sketch['_operationHandle'].history.undo.length ?  store.commit('setIsUndoDisable', false) : store.commit('setIsUndoDisable', true)
+      if(event.state === 'active'){
+        if(event.toolEventInfo.type === 'reshape-stop'){
+          geomCheck(event.graphics[0].geometry)
+          sketch['_operationHandle'].history.redo.length ?  store.commit('setIsRedoDisable', false) : store.commit('setIsRedoDisable', true)
+          sketch['_operationHandle'].history.undo.length ?  store.commit('setIsUndoDisable', false) : store.commit('setIsUndoDisable', true)
+        }
+        else if(event.toolEventInfo.type === 'vertex-remove'){
+          geomCheck(event.graphics[0].geometry)
+        }
       }
   
       if(event.state === 'complete'){
-        geomCheck(event.graphics[0].geometry)
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
         if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){
          //store.commit('setDeltaDis',[newLengths, 'Add'])
@@ -1264,7 +1270,6 @@ export function saveToEditsLayer(){
 
 //function to query ref table by OID and COUNTY NAME and go and load map
 export async function goToMap(name, nbr){
-  console.log(nbr)
   let road = await reloadEdits()
     let objectidList = [];
       for(let id in road.features){
@@ -1310,13 +1315,14 @@ export async function cancelEditStepper(){
       let editsLength = geomToMiles(filterEdits[0].geometry, true, 3)
       let diff = editsLength - graphicLength
       store.commit('setIsStepCancel', true)
+      let mileageAction = graphicLength < editsLength ? 'Add' : 'Delete'
       if(filterEdits[0].attributes.EDIT_TYPE_ID === 1) {
-        store.commit('setDeltaDis',[Math.abs(diff), 'Delete'])
+        store.commit('setDeltaDis',[Math.abs(diff), mileageAction])
         filterEdits[0].attributes.EDIT_TYPE_ID = 'add'
       }
       else if(filterEdits[0].attributes.EDIT_TYPE_ID === 5){
         filterEdits[0].attributes.oldLength = oldLength
-        store.commit('setDeltaDis',[Math.abs(diff), 'Delete'])
+        store.commit('setDeltaDis',[Math.abs(diff), mileageAction])
         filterEdits[0].attributes.EDIT_TYPE_ID = 'edit'
       }
       gLayer.remove(getGraphicsLayer[0])
@@ -1340,7 +1346,7 @@ export function geomCheck(polyline){
   for(let i=0; i < polyline.paths[0].length; i++){
     try{
       if(polyline.paths[0].at(-1) === polyline.paths[0][i]){
-        console.log('done');
+        //
       }
       else{
         splitGeom.push( //push created lines to splitGeom array
@@ -1368,11 +1374,10 @@ export function geomCheck(polyline){
           return;
         }
       } 
-      console.log(step)
       step++
     }
     catch{
-//
+      //
     }
 
   }

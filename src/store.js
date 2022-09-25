@@ -196,7 +196,6 @@ export const store = new Vuex.Store({
     mutations:
     {
        setGeomCheck(state, check){
-            console.log(check)
             state.geomCheck = check
         },
         setIsInitAdd(state, boolInit){
@@ -391,7 +390,7 @@ export const store = new Vuex.Store({
                     let addMiles = Math.abs(delta)
                     mileage = addMiles
                 }
-                if (state.oldLength > newLen[0]){
+                if(state.oldLength > newLen[0]){
                     let subMiles = -Math.abs(delta)
                     mileage = subMiles
                 }

@@ -74,9 +74,11 @@ export default {
         handler: function(){
           if(this.steppClose === true){
             this.displayLegend = true
+            expandLegend.expanded = true
             return;
           }
           this.displayLegend = false
+          expandLegend.expanded = false
           return;
         },
         immediate: true

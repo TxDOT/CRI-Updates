@@ -1,8 +1,8 @@
 <template >
-    <v-card style="position: relative; top: 15rem; left: 54rem; width: 20rem; height: 10rem;" tile v-if="display">
+    <v-card style="position: relative; top: 2rem; left: 54rem; width: 20rem; height: 10rem;" tile v-if="display">
         <v-card-title class="editRdTitle"><p style="position:absolute; top: 2.5%; left: 4%">Edit Error</p></v-card-title>
-        <v-card-text style="color:black; text-align: left; padding-left: 4.5%; top:10%;">{{geomChecks}}</v-card-text>
-        <v-btn outlined tile color="#14375A" id="loginButton" @click="closeCheck()"><u>Close</u></v-btn>
+        <v-card-text style="position: relative; color:black; text-align: left; padding-left: 4.5%; top:15%;">{{geomChecks}}</v-card-text>
+        <!-- <v-btn outlined tile color="#14375A" id="loginButton" @click="closeCheck()"><u>Close</u></v-btn> -->
     </v-card>
 
 
@@ -31,7 +31,8 @@ export default {
                     this.isGeomCheck === 1 ? this.geomChecks = 'Roads must be a minimum of .007 miles long. Please edit the road to be longer than .007 miles, or discard the edit.': this.geomChecks = 'Roads must not intersect themselves. Please edit the road so that it does not intersect itself.'
                     this.display = true
                     return;
-                }                
+                }
+                this.display = false                
             },
             immediate: true
         }

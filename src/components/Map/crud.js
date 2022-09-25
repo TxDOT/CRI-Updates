@@ -4,8 +4,8 @@ import Graphic from "@arcgis/core/Graphic";
 import { criConstants } from '../../common/cri_constants';
 
 //import editsLayer from map
-//grab all items in the editsLayer tha is in county; editsLayer has the definition expression
-export function queryEditsLayer(){
+//grab all items in the editsLayer that is in county; editsLayer has the definition expression
+export async function queryEditsLayer(){
     editsLayer.definitionExpression = `CNTY_TYPE_NBR = ${Number(store.getters.getCntyNmbr)}`
     let currentItemsSubmitted = editsLayer.queryFeatures()
     return currentItemsSubmitted
