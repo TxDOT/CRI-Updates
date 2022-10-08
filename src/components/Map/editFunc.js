@@ -9,6 +9,8 @@ import Graphic from "@arcgis/core/Graphic";
 import Query from "@arcgis/core/rest/support/Query";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils"
 import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
+import esriRequest from "@arcgis/core/request";
+//import StatisticDefinition from "@arcgis/core/rest/support/StatisticDefinition";
 //import TextSymbol from "@arcgis/core/symbols/TextSymbol";
 import {store} from '../../store'
 import router from '../../router';
@@ -24,12 +26,14 @@ async function queryFeat(qry){
   })
   return queryFeat
 }
+
 //Querying asset (nonGeom) tables and pushing values to store
 async function queryFeatureTables(tblqry){
   //let length = parseFloat(geometryEngine.geodesicLength(tblqry.features[0].geometry, "miles")).toFixed(3)
   //let featIndex = tblqry.features[0].geometry.paths[0].length-1
+  let queryStatment = tblqry.features ? tblqry.features[0].attributes.RDBD_GMTRY_LN_ID : tblqry.attributes.RDBD_GMTRY_LN_ID
   const query = new Query();
-  query.where = `RDBD_GMTRY_LN_ID = ${tblqry.features[0].attributes.RDBD_GMTRY_LN_ID}`
+  query.where = `RDBD_GMTRY_LN_ID = ${queryStatment}`
   query.outFields = [ "*" ]
   const rdbdSrfc = rdbdSrfcAsst.queryFeatures(query)
   const rdbdDsgn = rdbdDsgnAsst.queryFeatures(query)
@@ -83,14 +87,16 @@ async function queryFeatureTables(tblqry){
     rdbdSrfArry[i].ASSET_LN_END_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_END_DFO_MS.toFixed(3))
     delete rdbdSrfArry.objectid
   }
+
   
   let roadNameObj = {streetName:tblqry.features[0].attributes.ST_DEFN_NM, 
-                     prefix: tblqry.features[0].attributes.ST_PRFX_TYPE_DSCR ? tblqry.features[0].attributes.ST_PRFX_TYPE_DSCR.toUpperCase() : null, 
-                     suffix: tblqry.features[0].attributes.ST_SFX_TYPE_DSCR ? tblqry.features[0].attributes.ST_SFX_TYPE_DSCR.toUpperCase() : null,
-                     streetType: tblqry.features[0].attributes.ST_TYPE_DSCR,
-                    }
-
+    prefix: tblqry.features[0].attributes.ST_PRFX_TYPE_DSCR ? tblqry.features[0].attributes.ST_PRFX_TYPE_DSCR.toUpperCase() : null, 
+    suffix: tblqry.features[0].attributes.ST_SFX_TYPE_DSCR ? tblqry.features[0].attributes.ST_SFX_TYPE_DSCR.toUpperCase() : null,
+    streetType: tblqry.features[0].attributes.ST_TYPE_DSCR,
+  }
   setDataToStore(JSON.stringify(rdbdSrfArry), JSON.stringify(rdbdDsgnArry), JSON.stringify([roadNameObj]), JSON.stringify(rdbdNumLnArry), tblqry.features[0].attributes.OBJECTID)
+  return;
+
   
 }
 //Sets Road Data in the data store. 
@@ -256,7 +262,7 @@ export async function modifyRoadbed(clickType, editType){
   })
   let feature = await promise
   store.commit('setRoadGeom', feature.features[0].geometry.clone())
-  await queryFeatureTables(feature)
+  await queryFeatureTables(feature, true)
   defineGraphic(feature,clickType, editType)
   return feature
 }
@@ -552,7 +558,7 @@ export async function popUpData(res){
   let info = queryFeat(res)
   store.commit('setActiveLoader',true)
   info.then(async (x)=>{
-    await queryFeatureTables(x)
+    await queryFeatureTables(x, true)
     hightlightFeat('click')
     store.commit('setStepperClose', true)
     store.commit('setActiveLoader',false)
@@ -790,7 +796,7 @@ export function getCoordsRange(y){
         //convert to points to graphic and plot on route
 
         const radius = (Math.abs(geom[0][2] - y[d].ASSET_LN_END)) * 1609.344
-        const pointA =  new Graphic({
+        const pointA = new Graphic({
          geometry: {
             type: "point", 
             longitude: geom[0][0],
@@ -1270,6 +1276,7 @@ export function saveToEditsLayer(){
 
 //function to query ref table by OID and COUNTY NAME and go and load map
 export async function goToMap(name, nbr){
+  //downloadRdLog(name)
   let road = await reloadEdits()
     let objectidList = [];
       for(let id in road.features){
@@ -1280,6 +1287,7 @@ export async function goToMap(name, nbr){
       }
       // need to adjust objectid to asset id
       featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
+      //console.log(featLayer.queryFeatures(queryTest))
       txCounties.definitionExpression=`CNTY_NM='${name}'`
         
       const query = new Query();
@@ -1288,6 +1296,7 @@ export async function goToMap(name, nbr){
       query.returnGeometry = true
       let countyQuery = txCounties.queryFeatures(query)
       let returnCountyObj = await countyQuery
+      store.commit('setDistrict', returnCountyObj.features[0].attributes.TXDOT_DIST_NBR)
       //set search sources to selected county
       search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${nbr}`;
       // zoom to selected county geometry      
@@ -1379,9 +1388,139 @@ export function geomCheck(polyline){
     catch{
       //
     }
-
   }
-    
-  
   store.commit('setGeomCheck', 0)
+}
+
+//downlaod road log csv
+export async function downloadRdLog(){
+  // await window.showOpenFilePicker({
+  //   types:[{
+  //     description: 'csv file',
+  //     accept: {'text/csv':['.csv']}
+  //   }]
+  // })
+  let dataHolder = [];
+
+  const featQuery = new Query();
+  featQuery.where = `CNTY_TYPE_NM = '${store.getters.getCntyName}'`
+  featQuery.outFields = [ "*" ]
+
+  let countyQuery = await featLayer.queryFeatures(featQuery)
+  let objIds = []
+
+  countyQuery.features.forEach(x => objIds.push(x.attributes.RDBD_GMTRY_LN_ID))
+
+  const assetQuery = new Query() 
+  assetQuery.where = `RDBD_GMTRY_LN_ID in (${objIds})`
+  assetQuery.sqlFormat = 'standard'
+  assetQuery.outFields = [ "*" ]
+
+  const roadSrfc = await rdbdSrfcAsst.queryFeatures(assetQuery)
+  const roadDsgn = await rdbdDsgnAsst.queryFeatures(assetQuery)
+  const roadLane = await rdbdLaneAsst.queryFeatures(assetQuery)
+  
+  //***********TEST 2000 limit --DELETE*******************************
+  // let count = 0 
+  // roadSrfc.features.forEach((x)=> {
+  //   count++
+  //   console.log(x.attributes.RDBD_GMTRY_LN_ID, count)
+  // })
+  //***********TEST 2000 limit --DELETE*******************************
+  
+  for(let i=0; i < countyQuery.features.length; i++){
+    let srfcAsset = sortSrfcAsset(countyQuery.features[i].attributes.RDBD_GMTRY_LN_ID, roadSrfc)
+    let dsgnAsset = sortSrfcAsset(countyQuery.features[i].attributes.RDBD_GMTRY_LN_ID, roadDsgn)
+    let laneAsset = sortSrfcAsset(countyQuery.features[i].attributes.RDBD_GMTRY_LN_ID, roadLane)
+
+    dataHolder.push({
+      "Road Name" : countyQuery.features[i].attributes.ST_DEFN_NM, 
+      "Route ID" : countyQuery.features[i].attributes.RTE_DEFN_LN_NM,
+      "Length" : countyQuery.features[i].attributes.LENGTH,
+      "Road Surface": srfcAsset.length ? srfcAsset.join(' then ') : 'N/A',
+      "Number of Lanes": laneAsset.length ? laneAsset.join(' then ') : 'N/A',
+      "Road Design": dsgnAsset.length ? dsgnAsset.join(' then ') : 'N/A',
+      "County Name": countyQuery.features[i].attributes.CNTY_TYPE_NM, 
+      "County Number": countyQuery.features[i].attributes.CNTY_TYPE_NBR, 
+      "District Number": store.getters.getDistrict
+    })
+  }
+
+  let createCsv = `${Object.keys(dataHolder[0]).toString()}\n`
+  dataHolder.forEach((value)=>{
+    let newRow = Object.values(value)
+    createCsv += newRow.join(',')
+    createCsv += "\n"
+  })
+
+  await buildCSV(createCsv)
+}
+
+function sortSrfcAsset(rdbdID, assetList){
+
+  let aggSrfc = []
+  let returnSrfc = []
+  assetList.features.filter((x) => {
+    if(x.attributes.RDBD_GMTRY_LN_ID === rdbdID){
+      aggSrfc.push({
+        srfcType: x.attributes.SRFC_TYPE_DSCR ? x.attributes.SRFC_TYPE_DSCR : 
+                  x.attributes.RDWAY_DSGN_TYPE_DSCR ? x.attributes.RDWAY_DSGN_TYPE_DSCR : x.attributes.NBR_THRU_LANE_CNT,
+        begin: Number(x.attributes.ASSET_LN_BEGIN_DFO_MS.toFixed(3)),
+        end: Number(x.attributes.ASSET_LN_END_DFO_MS.toFixed(3))
+      })
+    }
+  })
+  aggSrfc.sort((a,b) => (a.begin > b.begin) ? 1 : -1)
+  aggSrfc.forEach((z)=>{
+    returnSrfc.push(`${z.srfcType}: From ${z.begin} To ${z.end}`)
+  })
+  return returnSrfc
+}
+
+async function buildCSV(csvString){
+  let csvPromise = new Promise((res)=>{
+    let createElement = document.createElement('a')
+    createElement.href = `data:text/csv;charset=utf-8,${encodeURI(csvString)}`;
+    createElement.download = `${store.getters.getCntyName}_Road_Log.csv`
+    createElement.click()
+    res('complete')
+  })
+  return await csvPromise
+}
+
+export function retrieveFile(event){
+    let name = event.target.value.toLowerCase().split('.')
+    let fileName = name[0].replace('c:\\fakepath\\', '')
+    createFeatures(fileName)
+}
+
+async function createFeatures(file){
+  let fileParams = {
+    name: file,
+    targetSR: view.spatialReference,
+    maxRecordCount: 1000,
+    enforceInputFileSizeLimit: true,
+    enforceOutputJsonSizeLimit: true,
+    generalize: true,
+    maxAllowableOffset: 10,
+    reducePrecision: true,
+    numberOfDigitsAfterDecimal: 0
+  }
+
+  let content = {
+    filetype: "shapefile",
+    publishParameters: JSON.stringify(fileParams),
+    f: "json"
+  }
+
+  let portal = "https://www.arcgis.com"
+  esriRequest(portal + "/sharing/rest/content/features/generate",{
+    query: content,
+    body: document.getElementById('output'),
+    responseType: "json",
+    method: "post"
+  })
+  .then((response)=>{
+    console.log(response)
+  })
 }

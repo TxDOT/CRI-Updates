@@ -13,6 +13,7 @@ export const store = new Vuex.Store({
         cntyName:'',
         cntyNmbr: 0,
         cntyMiles:0,
+        district: 0,
         count:0,
         updateDfo:0,
         oldLength: 0,
@@ -51,9 +52,16 @@ export const store = new Vuex.Store({
         isStepCancel: false,
         isInitAdd: false,
         comment:'',
-        geomCheck: ''
+        geomCheck: '',
+        isDragDrop: false
     },
     getters:{
+        getIsDragDrop(state){
+            return state.isDragDrop
+        },
+        getDistrict(state){
+            return state.district
+        },
         getGeomCheck(state){
             return state.geomCheck
         },
@@ -195,6 +203,12 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsDragDrop(state, dragDrop){
+            state.isDragDrop = dragDrop
+        },
+        setDistrict(state, district){
+            state.district = district
+        },
        setGeomCheck(state, check){
             state.geomCheck = check
         },
