@@ -134,7 +134,6 @@
     watch:{
       isDownloadRoadLog:{
         handler: function(){
-          console.log(this.isDownloadRoadLog)
           if(this.isDownloadRoadLog === true){
             this.isFileSuccess = true
             this.isFileDwnload = false
