@@ -1394,31 +1394,22 @@ export function geomCheck(polyline){
 
 //downlaod road log csv
 export async function downloadRdLog(){
-  // await window.showOpenFilePicker({
-  //   types:[{
-  //     description: 'csv file',
-  //     accept: {'text/csv':['.csv']}
-  //   }]
-  // })
-  let dataHolder = [];
 
   const featQuery = new Query();
   featQuery.where = `CNTY_TYPE_NM = '${store.getters.getCntyName}'`
   featQuery.outFields = [ "*" ]
 
   let countyQuery = await featLayer.queryFeatures(featQuery)
-  let objIds = []
+ 
+  let fullAssets = await bulkAssetReturn(countyQuery)
+  console.log(fullAssets)
+  // const assetQuery = new Query() 
+  // assetQuery.where = objIds.length < 1500 ? `RDBD_GMTRY_LN_ID in (${objIds})` : spliceArr(objIds)
+  // assetQuery.outFields = [ "*" ]
 
-  countyQuery.features.forEach(x => objIds.push(x.attributes.RDBD_GMTRY_LN_ID))
-
-  const assetQuery = new Query() 
-  assetQuery.where = `RDBD_GMTRY_LN_ID in (${objIds})`
-  assetQuery.sqlFormat = 'standard'
-  assetQuery.outFields = [ "*" ]
-
-  const roadSrfc = await rdbdSrfcAsst.queryFeatures(assetQuery)
-  const roadDsgn = await rdbdDsgnAsst.queryFeatures(assetQuery)
-  const roadLane = await rdbdLaneAsst.queryFeatures(assetQuery)
+  // const roadSrfc = await rdbdSrfcAsst.queryFeatures(assetQuery)
+  // const roadDsgn = await rdbdDsgnAsst.queryFeatures(assetQuery)
+  // const roadLane = await rdbdLaneAsst.queryFeatures(assetQuery)
   
   //***********TEST 2000 limit --DELETE*******************************
   // let count = 0 
@@ -1428,54 +1419,58 @@ export async function downloadRdLog(){
   // })
   //***********TEST 2000 limit --DELETE*******************************
   
-  for(let i=0; i < countyQuery.features.length; i++){
-    let srfcAsset = sortSrfcAsset(countyQuery.features[i].attributes.RDBD_GMTRY_LN_ID, roadSrfc)
-    let dsgnAsset = sortSrfcAsset(countyQuery.features[i].attributes.RDBD_GMTRY_LN_ID, roadDsgn)
-    let laneAsset = sortSrfcAsset(countyQuery.features[i].attributes.RDBD_GMTRY_LN_ID, roadLane)
+  // for(let i=0; i < countyQuery.features.length; i++){
+  //   let isSrfcAsset = []
+  //   let srfcAsset = fullAssets[0][0].filter(x=>x.attributes.RDBD_GMTRY_LN_ID === countyQuery.features[i].attributes.RDBD_GMTRY_LN_ID)
+  //   srfcAsset.sort((a,b) => (a.attributes.ASSET_LN_BEGIN_DFO_MS > b.attributes.ASSET_LN_BEGIN_DFO_MS) ? 1 : -1)
+  //   isSrfcAsset.push(`${srfcAsset[0].attributes.SRFC_TYPE_DSCR}: From ${Number(srfcAsset[0].attributes.ASSET_LN_BEGIN_DFO_MS.toFixed(3))} To ${Number(srfcAsset[0].attributes.ASSET_LN_END_DFO_MS.toFixed(3))}`) 
+  //   // let dsgnAsset = sortSrfcAsset(countyQuery.features[i].attributes.RDBD_GMTRY_LN_ID, fullAssets[1])
+  //   // let laneAsset = sortSrfcAsset(countyQuery.features[i].attributes.RDBD_GMTRY_LN_ID, fullAssets[2])
 
-    dataHolder.push({
-      "Road Name" : countyQuery.features[i].attributes.ST_DEFN_NM, 
-      "Route ID" : countyQuery.features[i].attributes.RTE_DEFN_LN_NM,
-      "Length" : countyQuery.features[i].attributes.LENGTH,
-      "Road Surface": srfcAsset.length ? srfcAsset.join(' then ') : 'N/A',
-      "Number of Lanes": laneAsset.length ? laneAsset.join(' then ') : 'N/A',
-      "Road Design": dsgnAsset.length ? dsgnAsset.join(' then ') : 'N/A',
-      "County Name": countyQuery.features[i].attributes.CNTY_TYPE_NM, 
-      "County Number": countyQuery.features[i].attributes.CNTY_TYPE_NBR, 
-      "District Number": store.getters.getDistrict
-    })
-  }
+  //   dataHolder.push({
+  //     "Road Name" : countyQuery.features[i].attributes.ST_DEFN_NM, 
+  //     "Route ID" : countyQuery.features[i].attributes.RTE_DEFN_LN_NM,
+  //     "Length" : countyQuery.features[i].attributes.LENGTH,
+  //     "Road Surface": isSrfcAsset,
+  //     "Number of Lanes": 'N/A',
+  //     "Road Design": 'N/A',
+  //     "County Name": countyQuery.features[i].attributes.CNTY_TYPE_NM, 
+  //     "County Number": countyQuery.features[i].attributes.CNTY_TYPE_NBR, 
+  //     "District Number": store.getters.getDistrict
+  //   })
+  // }
 
-  let createCsv = `${Object.keys(dataHolder[0]).toString()}\n`
-  dataHolder.forEach((value)=>{
-    let newRow = Object.values(value)
-    createCsv += newRow.join(',')
-    createCsv += "\n"
-  })
+  // let createCsv = `${Object.keys(dataHolder[0]).toString()}\n`
+  // dataHolder.forEach((value)=>{
+  //   let newRow = Object.values(value)
+  //   createCsv += newRow.join(',')
+  //   createCsv += "\n"
+  // })
 
-  await buildCSV(createCsv)
+  // await buildCSV(createCsv)
 }
 
-function sortSrfcAsset(rdbdID, assetList){
-
-  let aggSrfc = []
-  let returnSrfc = []
-  assetList.features.filter((x) => {
-    if(x.attributes.RDBD_GMTRY_LN_ID === rdbdID){
-      aggSrfc.push({
-        srfcType: x.attributes.SRFC_TYPE_DSCR ? x.attributes.SRFC_TYPE_DSCR : 
-                  x.attributes.RDWAY_DSGN_TYPE_DSCR ? x.attributes.RDWAY_DSGN_TYPE_DSCR : x.attributes.NBR_THRU_LANE_CNT,
-        begin: Number(x.attributes.ASSET_LN_BEGIN_DFO_MS.toFixed(3)),
-        end: Number(x.attributes.ASSET_LN_END_DFO_MS.toFixed(3))
-      })
-    }
-  })
-  aggSrfc.sort((a,b) => (a.begin > b.begin) ? 1 : -1)
-  aggSrfc.forEach((z)=>{
-    returnSrfc.push(`${z.srfcType}: From ${z.begin} To ${z.end}`)
-  })
-  return returnSrfc
-}
+// function sortSrfcAsset(rdbdID, assetList){
+//   let aggSrfc = []
+//   let returnSrfc = []
+//   console.log(rdbdID, assetList)
+//   console.log('for loop starting')
+//   // for(let x=0; x < assetList[0].length; x++) {
+//   //   if(assetList[0][x].attributes.RDBD_GMTRY_LN_ID === rdbdID){
+//   //     aggSrfc.push({
+//   //       srfcType: assetList[0][x].attributes.SRFC_TYPE_DSCR ? assetList[0][x].attributes.SRFC_TYPE_DSCR : 
+//   //       assetList[0][x].attributes.RDWAY_DSGN_TYPE_DSCR ? assetList[0][x].attributes.RDWAY_DSGN_TYPE_DSCR : assetList[0][x].attributes.NBR_THRU_LANE_CNT,
+//   //       begin: Number(assetList[0][x].attributes.ASSET_LN_BEGIN_DFO_MS.toFixed(3)),
+//   //       end: Number(assetList[0][x].attributes.ASSET_LN_END_DFO_MS.toFixed(3))
+//   //     })
+//   //   }
+//   // }
+//   aggSrfc.sort((a,b) => (a.begin > b.begin) ? 1 : -1)
+//   aggSrfc.forEach((z)=>{
+//     returnSrfc.push(`${z.srfcType}: From ${z.begin} To ${z.end}`)
+//   })
+//   return returnSrfc
+// }
 
 async function buildCSV(csvString){
   let csvPromise = new Promise((res)=>{
@@ -1483,7 +1478,9 @@ async function buildCSV(csvString){
     createElement.href = `data:text/csv;charset=utf-8,${encodeURI(csvString)}`;
     createElement.download = `${store.getters.getCntyName}_Road_Log.csv`
     createElement.click()
+    store.commit('setIsDownload', true)
     res('complete')
+    
   })
   return await csvPromise
 }
@@ -1514,13 +1511,198 @@ async function createFeatures(file){
   }
 
   let portal = "https://www.arcgis.com"
-  esriRequest(portal + "/sharing/rest/content/features/generate",{
+  const createGraphic = esriRequest(portal + "/sharing/rest/content/features/generate",{
     query: content,
     body: document.getElementById('output'),
     responseType: "json",
     method: "post"
   })
-  .then((response)=>{
-    console.log(response)
-  })
+  
+  console.log(await createGraphic)
 }
+
+async function bulkAssetReturn(countyQuery){
+  //get length
+  //base 5000, splice every 5000
+  let incre = 5000
+  let iStart = 0 //initialStart
+  let eStart = 5000 //endStart
+  let srfcAsset = []
+  let dsgnAsset = []
+  let laneAsset = []
+
+  let ids = []
+  let useInfo = []
+  countyQuery.features.forEach((x) => {
+    ids.push(x.attributes.RDBD_GMTRY_LN_ID)
+    useInfo.push({
+      roadId: x.attributes.RDBD_GMTRY_LN_ID,
+      roadN: x.attributes.ST_DEFN_NM,
+      routeId: x.attributes.RTE_DEFN_LN_NM,
+      len: x.attributes.LENGTH,
+      cntyN: x.attributes.CNTY_TYPE_NM,
+      cntyNbr: x.attributes.CNTY_TYPE_NBR
+    })
+  }) 
+
+  while(iStart < ids.length){
+    let arr = ids.slice(iStart, eStart)
+
+    const assetQuery = new Query() 
+    assetQuery.where = `RDBD_GMTRY_LN_ID in (${arr})`
+    assetQuery.outFields = [ "*" ]
+
+    const roadSrfc = await rdbdSrfcAsst.queryFeatures(assetQuery)
+    console.log('1')
+    const roadDsgn = await rdbdDsgnAsst.queryFeatures(assetQuery)
+    const roadLane = await rdbdLaneAsst.queryFeatures(assetQuery)
+
+    
+    roadSrfc.features.forEach((x)=>{
+      let rdSrfc = criConstants.surface.find(({num}) => num === x.attributes.SRFC_TYPE_ID)
+      let srfcObj = {
+        rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
+        srfcType: rdSrfc.name,
+        begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
+        end: x.attributes.ASSET_LN_END_DFO_MS
+      }
+      srfcAsset.push(srfcObj)
+    })
+
+    roadDsgn.features.forEach((x)=>{
+      let dsgnObj = {
+        rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
+        srfcType: x.attributes.RDWAY_DSGN_TYPE_DSCR,
+        begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
+        end: x.attributes.ASSET_LN_END_DFO_MS
+      }
+      dsgnAsset.push(dsgnObj)
+    })
+
+    roadLane.features.forEach((x)=>{
+      let laneObj = {
+        rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
+        srfcType: x.attributes.NBR_THRU_LANE_CNT,
+        begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
+        end: x.attributes.ASSET_LN_END_DFO_MS
+      }
+      laneAsset.push(laneObj)
+    })
+
+    iStart += incre
+    eStart += incre
+  }
+  await surfaceAsset(srfcAsset, dsgnAsset, laneAsset, useInfo) 
+}
+
+async function surfaceAsset(roadSrfc, roadDsgn, roadLane, cntyQ){
+  let dataHolder = []
+  console.log('2')
+
+  let surfacePromise = new Promise(()=>{
+    for(let x=0; x < cntyQ.length; x++){
+      let srfcAst = roadSrfc.filter(y=>y.rdbdId === cntyQ[x].roadId)
+      let dsgnAst = roadDsgn.filter(y=>y.rdbdId === cntyQ[x].roadId)
+      let laneAst = roadLane.filter(y=>y.rdbdId === cntyQ[x].roadId)
+
+      srfcAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
+      dsgnAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
+      laneAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
+
+      srfcAst.forEach((z,i)=>{
+        srfcAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
+      })
+      dsgnAst.forEach((z,i)=>{
+        dsgnAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
+      })
+      laneAst.forEach((z,i)=>{
+        laneAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
+      })
+      dataHolder.push({
+        "Road Name" : cntyQ[x].roadN, 
+        "Route ID" : cntyQ[x].routeId,
+        "Length" : cntyQ[x].len,
+        "Road Surface": srfcAst.join(' then '),
+        "Number of Lanes": laneAst.join(' then '),
+        "Road Design": dsgnAst.join(' then '),
+        "County Name": cntyQ[x].cntyN, 
+        "County Number": cntyQ[x].cntyNbr, 
+        "District Number": store.getters.getDistrict
+      })
+    }
+  })
+
+    let createCsv = `${Object.keys(dataHolder[0]).toString()}\n`
+    dataHolder.forEach((value)=>{
+      let newRow = Object.values(value)
+      createCsv += newRow.join(',')
+      createCsv += "\n"
+    })
+
+    buildCSV(createCsv)
+    console.log(dataHolder)
+  
+
+  return await surfacePromise
+}
+
+// async function asyncCount(roadSrfc, roadDsgn, roadLane, cntyQ){
+//   let test = await asyncFor(roadSrfc, roadDsgn, roadLane, cntyQ)
+//   console.log(test)
+// }
+// async function surfaceAsset(roadSrfc, roadDsgn, roadLane, cntyQ){
+//     console.log("Start:", new Date())
+//     let totalLen = cntyQ.length
+//     console.log(totalLen)
+//     let dataHolder = []
+//     for(let x=0; x < cntyQ.length; x++){
+//       let assetPromise = new Promise((res)=>{
+//         setTimeout(()=>{
+//           let srfcAst = roadSrfc.filter(y=>y.rdbdId === cntyQ[x].roadId)
+//           let dsgnAst = roadDsgn.filter(y=>y.rdbdId === cntyQ[x].roadId)
+//           let laneAst = roadLane.filter(y=>y.rdbdId === cntyQ[x].roadId)
+
+//           srfcAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
+//           dsgnAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
+//           laneAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
+
+//           srfcAst.forEach((z,i)=>{
+//             srfcAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
+//           })
+//           dsgnAst.forEach((z,i)=>{
+//             dsgnAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
+//           })
+//           laneAst.forEach((z,i)=>{
+//             laneAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
+//           })
+//           dataHolder.push({
+//             "Road Name" : cntyQ[x].roadN, 
+//             "Route ID" : cntyQ[x].routeId,
+//             "Length" : cntyQ[x].len,
+//             "Road Surface": srfcAst.join(' then '),
+//             "Number of Lanes": laneAst.join(' then '),
+//             "Road Design": dsgnAst.join(' then '),
+//             "County Name": cntyQ[x].cntyN, 
+//             "County Number": cntyQ[x].cntyNbr, 
+//             "District Number": store.getters.getDistrict
+//           })
+//           res(dataHolder)
+//         },0)
+//       })
+//       let returnPromise = await assetPromise
+//       //console.log(returnPromise)
+//       if(returnPromise.length === totalLen){
+//         let createCsv = `${Object.keys(dataHolder[0]).toString()}\n`
+//         dataHolder.forEach((value)=>{
+//           let newRow = Object.values(value)
+//           createCsv += newRow.join(',')
+//           createCsv += "\n"
+//         })
+
+//       await buildCSV(createCsv)
+//       console.log("End:", new Date())
+
+//       }
+//     }
+//     console.log('complete')
+// }

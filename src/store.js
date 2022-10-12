@@ -53,9 +53,13 @@ export const store = new Vuex.Store({
         isInitAdd: false,
         comment:'',
         geomCheck: '',
-        isDragDrop: false
+        isDragDrop: false,
+        isDownload: false,
     },
     getters:{
+        getIsDownload(state){
+            return state.isDownload
+        },
         getIsDragDrop(state){
             return state.isDragDrop
         },
@@ -203,6 +207,9 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsDownload(state, dwnload){
+            state.isDownload = dwnload
+        },
         setIsDragDrop(state, dragDrop){
             state.isDragDrop = dragDrop
         },

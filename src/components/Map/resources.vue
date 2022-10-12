@@ -23,7 +23,7 @@
       v-model="display"
       max-width="700"
       persistent>
-        <v-card v-model="display" height="550" style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
+        <v-card v-model="display" height="550" style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;" @click="isFileDwnload=true">
           <v-card-title class="surfaceTitle"><p style="bottom: .7rem; position:relative; right: .5rem;">Advanced Page</p></v-card-title>
             <v-card-text style="text-align:left; color: black; top: 3rem; position: relative; left: 20rem;">
               Download Your Counties Road Information.
@@ -51,6 +51,21 @@
           <v-card-text style="text-align: left; color:black">You can download your counties roads via the new tab.</v-card-text>
        </v-card>
       </v-dialog>
+      <v-dialog v-model="isFileDwnload" width="500">
+        <v-card tile>
+          <v-card-title style="background-color:#14375A; color:white">Downloading Road Log</v-card-title>
+          <v-progress-linear indeterminate color="green" ></v-progress-linear>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="isFileSuccess" max-width="350" >
+        <v-card tile style="height:10rem;">
+          <v-card-title class="surfaceTitle" style="background-color:#14375A; color:white;"><p style="position:absolute; top: .4rem; left: 1rem;"><v-icon color="green" style="position:relative; bottom:.1rem;">mdi-check-bold</v-icon>  Road Log Success</p></v-card-title>
+          <v-card-text style="position:absolute; top: 4rem; text-align: left; color:black; right: .5rem;">
+            Road Log has Succesfully downloaded. Look in Downloads folder or user save location.
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      
 
   </v-container>
 </template>
@@ -63,6 +78,8 @@
     name: 'aboutHelp',
     data (){
       return {
+        isFileSuccess: false,
+        isFileDwnload: false,
         disclaimer: false,
         exitApp: false,
         display:false,
@@ -105,6 +122,28 @@
         setTimeout(()=>{
           this.clearEditBtn = false
         },1000)
+      },
+      removeFileSuccess(){
+        setTimeout(()=>{
+          this.isFileSuccess = false
+          this.isDownloadRoadLog = false
+
+        },2000)
+      }
+    },
+    watch:{
+      isDownloadRoadLog:{
+        handler: function(){
+          console.log(this.isDownloadRoadLog)
+          if(this.isDownloadRoadLog === true){
+            this.isFileSuccess = true
+            this.isFileDwnload = false
+            this.removeFileSuccess()
+            return
+          }
+          return
+        },
+        immediate: true
       }
     },
     computed:{
@@ -132,6 +171,14 @@
           this.$store.commit('setIsDragDrop', isBool)
         }
       },
+      isDownloadRoadLog:{
+        get(){
+          return this.$store.state.isDownload
+        },
+        set(isBool){
+          this.$store.commit('setIsDownload', isBool)
+        }
+      },
     }
   }
 </script>
@@ -149,7 +196,6 @@
   margin-right: 16px;
 }
 .surfaceTitle{
-  
   background-color: #14375A;
   text-align: left;
   top:0%;
