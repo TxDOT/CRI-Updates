@@ -9,8 +9,9 @@
             </div>
         </v-card-text>
         <v-card-text id="text" style="position: absolute; top: 7rem; z-index: 0;">Drag zip shapfiles here</v-card-text>
+        <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
     </v-card>
-
+    
  
 </template>
 <script>
@@ -32,10 +33,10 @@ export default {
             document.getElementById('output').style.border = '2px dashed #14375A'
         },
         drop($event){
+            document.getElementById('text').style.display = 'block'
+            //document.getElementById('progress').style.display = 'block'
             console.log($event)
-            document.getElementById('output').style.border = '2px solid green'
-            document.getElementById('text').innerText = 'Succesfully uploaded your shapefile! Standby while we assess your file.'
-            document.getElementById('text').style.color = 'green'
+            //document.getElementById('progress').style.display = 'block'
         },
         drag(event){
             event.stopPropagation();
@@ -43,6 +44,7 @@ export default {
         },
         dropItem(event){
             retrieveFile(event)
+
 
         }
     },
@@ -79,6 +81,13 @@ export default {
         border: 2px dashed green;
         color:#14375A;
         background-color: white;
+    }
+
+    #progress{
+        display:none;
+        position: relative;
+        top: 5rem;
+        left: 13.5rem;
     }
 
 </style>

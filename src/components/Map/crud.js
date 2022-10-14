@@ -43,10 +43,10 @@ export function initGraphicCheck(editId, isRemove){
             ASSET_SRFC_TYPE_DSCR: editId.attributes.roadbedSurface,	
             ASSET_NBR_THRU_LANE_CNT: editId.attributes.numLane,	
             ASSET_RDWAY_DSGN_TYPE_DSCR: editId.attributes.roadbedDesign,	
-            RTE_DEFN_LN_CREATE_USER_NM: store.getters.getUserName,	
+            RTE_DEFN_LN_CREATE_USER_NM: editId.attributes.createNm,	
             RTE_DEFN_LN_CREATE_DT: editId.attributes.createDt,
-            RTE_DEFN_LN_EDIT_USER_NM: null,	
-            RTE_DEFN_LN_EDIT_DT: null,	
+            RTE_DEFN_LN_EDIT_USER_NM: store.getters.getUserName,	
+            RTE_DEFN_LN_EDIT_DT: new Date().getTime(),	
             PREV_TASK_ID: null,	
             EDIT_NOTES: editId.attributes.comment
         },

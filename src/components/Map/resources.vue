@@ -12,38 +12,45 @@
         </v-list-item>
       </v-list-item-group>
     </v-list>
-    <v-dialog v-model="disclaimer" max-width="350" persistent>
-      <v-card style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
-        <v-card-title class="surfaceTitle"><p style="position:relative; right: .5rem; bottom: .7rem;">Disclaimer</p></v-card-title>
-        <v-card-text style="position: relative; text-align: left; color:black; top: .5rem; right: .5rem;">This section of the app is for advanced users and is optional.</v-card-text>
-        <v-btn outlined tile color="#14375A" style="position:relative; left: 8rem; bottom: .5rem;" @click="disclaimer=false; display=true;">OK</v-btn>
-      </v-card>
-    </v-dialog>
     <v-dialog
       v-model="display"
       max-width="700"
       persistent>
-        <v-card v-model="display" height="550" style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;" @click="isFileDwnload=true">
+      <v-card v-model="display" height="590" style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
           <v-card-title class="surfaceTitle"><p style="bottom: .7rem; position:relative; right: .5rem;">Advanced Page</p></v-card-title>
-            <v-card-text style="text-align:left; color: black; top: 3rem; position: relative; left: 20rem;">
-              Download Your Counties Road Information.
+            <v-icon style="position: relative; font-size: 2rem; top: 1.8rem; right: 18rem; color:black">mdi-table-large</v-icon>
+            <v-card-text style="text-align:left; color: black; bottom: 0.2rem; position: relative; left: 5rem;">
+              <b>DOWNLOAD ROAD LOG<br>
+              Download a table of your county's road information.</b><br>
+              <p style="font-size: .8rem;">This is a CSV file that anyone can open using a spreadsheet software such as Microsoft Excel or<br>
+              Google Sheets.</p>
             </v-card-text>
-            <v-card-text style="text-align:left; color: black; top: 5.8rem; position: relative; left: 20rem;">
-              Download TxDOTs inventory for your county.
+            <v-btn small outlined tile @click="display = false; downloadRoadLog(); isFileDwnload=true" color="#14375A" style="position: absolute; left: 6.5rem; top: 10rem; border: 1px solid black" >
+              <u>Download</u>
+            </v-btn>
+            <v-divider style="width: 90%; position: relative; top: .8rem; left: 2rem; border-color:black"></v-divider>
+            <v-card-text style="text-align:left; color: red; top: 1.5rem; position: relative; left: 2rem;">
+              <b>Disclaimer:</b> This section is for advanced GIS users.
             </v-card-text>
-            <v-card-text style="text-align:left; color: black; top: 8.1rem; position: relative; left: 20rem;">
-              Upload a shapefiles that contain your edited roads.
+            <v-icon style="position: relative; font-size: 2rem; top: 1rem; right: 18rem; color:black">mdi-layers</v-icon>
+            <v-card-text style="text-align:left; color: black; bottom: 1.1rem; position: relative; left: 5rem;">
+              <b>DOWNLOAD INVENTORY<br>
+              Download TxDOT's county road inventory for your county.</b><br>
+              <p style="font-size: .8rem;">This is GIS data which allows GIS professionals to compare TxDOT's CRI with their inventory for<br>discrepancies.</p>
             </v-card-text>
-            <v-btn outlined tile @click="display = false; downloadRoadLog()" color="#14375A" style="position: absolute; left: 1rem; top: 5rem; border: 1px solid black">
-              <u>Download Road Log</u>
+            <v-btn outlined tile small @click="display = false; exitApp = true; cntyQueryTab()" color="#14375A" style="position: absolute; left: 6.5rem; top: 21.5rem; border: 1px solid black">
+              <u>Download</u>
             </v-btn>
-            <v-btn outlined tile @click="display = false; exitApp = true; cntyQueryTab()" color="#14375A" style="position: absolute; left: 1rem; top: 10.5rem; border: 1px solid black">
-              <u>Download Inventory</u>
+            <v-icon style="position: relative; font-size: 2rem; top: .8rem; right: 18rem; color:black">mdi-upload</v-icon>
+            <v-card-text style="text-align:left; color: black; bottom: 1.3rem; position: relative; left: 5rem;">
+              <b>UPLOAD GIS DATA<br>
+                Drag and drop your suggested road edits.</b><br>
+              <p style="font-size: .8rem;">Acceptable file formats include shapefiles, and file geodatabases. Only submit<br>changes to your inventory with adds, removes, and updates. Please do not submit your<br>county's entire road inventory.</p>
+            </v-card-text>
+            <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" style="position: absolute; left: 6.5rem; top: 32.5rem; border: 1px solid black">
+              <u>Upload</u>
             </v-btn>
-            <v-btn outlined tile @click="display = false; dragDropClick = true;" color="#14375A" style="position: absolute; left: 1rem; top: 15.5rem; border: 1px solid black">
-              <u>Upload Shapefiles</u>
-            </v-btn>
-        </v-card>
+          </v-card>
       </v-dialog>
       <v-dialog v-model="exitApp" max-width="350">
         <v-card style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
@@ -53,8 +60,8 @@
       </v-dialog>
       <v-dialog v-model="isFileDwnload" width="500">
         <v-card tile>
-          <v-card-title style="background-color:#14375A; color:white">Downloading Road Log</v-card-title>
-          <v-progress-linear indeterminate color="green" ></v-progress-linear>
+          <v-card-title style="background-color:#14375A; color:white;"><p style="position: relative; bottom: 0rem;">Downloading Road Log</p></v-card-title>
+          <v-progress-linear background-color="white" indeterminate color="green" style="position:absolute; bottom: .2rem;"></v-progress-linear>
         </v-card>
       </v-dialog>
       <v-dialog v-model="isFileSuccess" max-width="350" >
@@ -65,7 +72,6 @@
           </v-card-text>
         </v-card>
       </v-dialog>
-      
 
   </v-container>
 </template>
@@ -78,6 +84,7 @@
     name: 'aboutHelp',
     data (){
       return {
+        countyNm: null,
         isFileSuccess: false,
         isFileDwnload: false,
         disclaimer: false,
@@ -86,8 +93,7 @@
         drawer: true,
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
-              this.disclaimer= true
-              this.display = false
+              this.display = true
               this.clearEditBtn = true
               this.removeBtnFocus();
             }},
@@ -112,7 +118,9 @@
     methods:{
       cntyQueryTab(){
         setTimeout(()=>{
-          window.open('https://txdot.maps.arcgis.com/home/item.html?id=7fffa75557a84c869bbbb38f6c4f6dcc//', '_blank')
+          window.open(`https://opendata.arcgis.com/api/v3/datasets/008906d83772435bb757cb76c9644e5d_0/downloads/data?format=shp&spatialRefId=4326&where=(COUNTY+IN+('${this.countyNm}'))`, '_blank')
+          //https://opendata.arcgis.com/api/v3/datasets/008906d83772435bb757cb76c9644e5d_0/downloads?spatialRefId=4326&formats=shp&where=(COUNTY IN ('Fort Bend'))
+          this.exitApp = false
         },3000)
       },
       async downloadRoadLog(){
@@ -127,7 +135,6 @@
         setTimeout(()=>{
           this.isFileSuccess = false
           this.isDownloadRoadLog = false
-
         },2000)
       }
     },
@@ -141,6 +148,12 @@
             return
           }
           return
+        },
+        immediate: true
+      },
+      countyName:{
+        handler: function(){
+          this.countyNm = this.countyName
         },
         immediate: true
       }
@@ -176,6 +189,14 @@
         },
         set(isBool){
           this.$store.commit('setIsDownload', isBool)
+        }
+      },
+      countyName:{
+        get(){
+          return this.$store.state.cntyName
+        },
+        set(countyName){
+          this.$store.commit('setCntyName',countyName)
         }
       },
     }

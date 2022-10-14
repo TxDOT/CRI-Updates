@@ -55,8 +55,16 @@ export const store = new Vuex.Store({
         geomCheck: '',
         isDragDrop: false,
         isDownload: false,
+        editNm: null,
+        createNm: null
     },
     getters:{
+        getCreateName(state){
+            return state.createNm
+        },
+        getEditName(state){
+            return state.editNm
+        },
         getIsDownload(state){
             return state.isDownload
         },
@@ -207,6 +215,12 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setCreateName(state, crtName){
+            state.createNm = crtName
+        },
+        setEditName(state, editName){
+            state.editNm = editName
+        },
         setIsDownload(state, dwnload){
             state.isDownload = dwnload
         },

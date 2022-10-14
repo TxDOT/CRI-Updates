@@ -100,13 +100,15 @@ async function queryFeatureTables(tblqry){
   
 }
 //Sets Road Data in the data store. 
-function setDataToStore(surface, design, name, lane, objectid, comment){
+function setDataToStore(surface, design, name, lane, objectid, comment, editName, createName){
   store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
   store.commit('setRoadbedDesign', design) 
   store.commit('setRoadbedName', name)
   store.commit('setNumLane', lane)
   store.commit('setObjectid', objectid)
   store.commit('setComment', comment)
+  store.commit('setEditName', editName)
+  store.commit('setCreateName', createName)
 }
 //get county name and road totals. Filters county for map zoom and definition query
 export async function countyInfo(){
@@ -334,8 +336,10 @@ export async function defineGraphic(graphics, clickType, editType){
           numLane: graphics.features ? store.getters.getNumLane : graphics.attributes.ASSET_NBR_THRU_LANE_CNT,
           originalLength: oldLength,
           isCreatedAssets: true,
-          createDt: new Date().getTime(),
-          createNm: store.getters.getUserName, //replace with user login info. TODO,
+          createDt: graphics.features ? new Date().getTime() : graphics.attributes.RTE_DEFN_LN_CREATE_DT ,
+          createNm: graphics.features ? store.getters.getUserName : graphics.attributes.RTE_DEFN_LN_CREATE_USER_NM, //replace with user login info. TODO,
+          editNm: graphics.features ? null: graphics.attributes.RTE_DEFN_LN_EDIT_USER_NM,
+          editDt: null,
           comment: graphics.features ? store.getters.getComment : graphics.attributes.EDIT_NOTES,
         },
                   
@@ -605,7 +609,9 @@ export async function getGraphic(){
                               response.results[0].graphic.attributes['roadbedName'],
                               response.results[0].graphic.attributes['numLane'],
                               response.results[0].graphic.attributes['objectid'],
-                              response.results[0].graphic.attributes['comment'])
+                              response.results[0].graphic.attributes['comment'],
+                              response.results[0].graphic.attributes['editNm'],
+                              response.results[0].graphic.attributes['createNm'])
                 resp(response.results[0].graphic)
               }
               else if(response.results[0].graphic.attributes['editType'] === 'DELETE'){
@@ -614,7 +620,9 @@ export async function getGraphic(){
                               response.results[0].graphic.attributes['roadbedName'],
                               response.results[0].graphic.attributes['numLane'],
                               response.results[0].graphic.attributes['objectid'],
-                              response.results[0].graphic.attributes['comment'])
+                              response.results[0].graphic.attributes['comment'],
+                              response.results[0].graphic.attributes['editNm'],
+                              response.results[0].graphic.attributes['createNm'])
                 store.commit('setdeleteGraphClick', true)
               }
             }
@@ -1510,15 +1518,29 @@ async function createFeatures(file){
     f: "json"
   }
 
-  let portal = "https://www.arcgis.com"
-  const createGraphic = esriRequest(portal + "/sharing/rest/content/features/generate",{
+  const convShpToGraphic = esriRequest("https://www.arcgis.com/sharing/rest/content/features/generate",{
     query: content,
     body: document.getElementById('output'),
     responseType: "json",
     method: "post"
   })
-  
-  console.log(await createGraphic)
+
+  convShpToGraphic
+    .then((res)=>{
+      console.log(res)
+      document.getElementById('progress').style.display = 'none'
+      document.getElementById('text').style.display = "block"
+      document.getElementById('output').style.border = '2px solid green'
+      document.getElementById('text').innerText = 'Succesfully uploaded your shapefile! Standby while we assess your file.'
+      document.getElementById('text').style.color = 'green'
+    })
+    .catch((fail)=>{
+      document.getElementById('progress').style.display = 'none'
+      document.getElementById('text').style.display = "block"
+      document.getElementById('output').style.border = '2px solid red'
+      document.getElementById('text').innerText = `Error! ${fail.message}.`
+      document.getElementById('text').style.color = 'red'
+    })
 }
 
 async function bulkAssetReturn(countyQuery){
@@ -1632,24 +1654,17 @@ async function surfaceAsset(roadSrfc, roadDsgn, roadLane, cntyQ){
     }
   })
 
-    let createCsv = `${Object.keys(dataHolder[0]).toString()}\n`
-    dataHolder.forEach((value)=>{
-      let newRow = Object.values(value)
-      createCsv += newRow.join(',')
-      createCsv += "\n"
-    })
+  let createCsv = `${Object.keys(dataHolder[0]).toString()}\n`
+  dataHolder.forEach((value)=>{
+    let newRow = Object.values(value)
+    createCsv += newRow.join(',')
+    createCsv += "\n"
+  })
 
-    buildCSV(createCsv)
-    console.log(dataHolder)
-  
-
+  buildCSV(createCsv)
   return await surfacePromise
 }
 
-// async function asyncCount(roadSrfc, roadDsgn, roadLane, cntyQ){
-//   let test = await asyncFor(roadSrfc, roadDsgn, roadLane, cntyQ)
-//   console.log(test)
-// }
 // async function surfaceAsset(roadSrfc, roadDsgn, roadLane, cntyQ){
 //     console.log("Start:", new Date())
 //     let totalLen = cntyQ.length

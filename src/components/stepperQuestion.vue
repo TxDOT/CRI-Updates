@@ -11,8 +11,8 @@
     min-width="0"
     :height="imageHeight"
     >
-    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road</v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road <p v-if="editName !== null" style="font-size: .8rem; position:relative; top:.3rem; right: 1rem;">Editor Name: {{editName}}</p></v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road <p style="font-size: .8rem; position:relative; top:.3rem; right: 1rem;">Editor Name: {{editName}}</p></v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
     <v-stepper-step
       :editable="setAssetCover[0]"
@@ -193,6 +193,7 @@ export default {
         fetchNumLanes: null,
         scrollInvoked: 0,
         geomChecks: 0,
+        editName: null,
         //objectid: 0,
         // newDfo:0,
         //working on form validation
@@ -306,6 +307,23 @@ export default {
           if(!this.numLane) return
           let lanes = this.numLane[0].SRFC_TYPE_ID
           this.fetchNumLanes = this.numLane.length > 1 ? "MULTIPLE" : `${lanes}`
+        },
+        immediate: true
+      },
+      editorName: {
+        handler: function(){
+          if(!this.editorName) return;
+  
+          this.editName = this.editorName
+        },
+        immediate: true
+      },
+      creatorName: {
+        handler: function(){
+          if(!this.editorName){
+            this.editName = this.creatorName
+            return;
+          }
         },
         immediate: true
       },
@@ -549,6 +567,22 @@ export default {
         },
         set(check){
           this.$store.commit('setGeomCheck', check)
+        }
+      },
+      editorName:{
+        get(){
+          return this.$store.state.editNm
+        },
+        set(editNm){
+          this.$store.commit('setEditName', editNm)
+        }
+      },
+      creatorName:{
+        get(){
+          return this.$store.state.createNm
+        },
+        set(nm){
+          this.$store.commit('setCreateName', nm)
         }
       }
     }
