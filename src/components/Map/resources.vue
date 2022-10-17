@@ -52,12 +52,6 @@
             </v-btn>
           </v-card>
       </v-dialog>
-      <v-dialog v-model="exitApp" max-width="350">
-        <v-card style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
-          <v-card-title>External Site</v-card-title>
-          <v-card-text style="text-align: left; color:black">You can download your counties roads via the new tab.</v-card-text>
-       </v-card>
-      </v-dialog>
       <v-dialog v-model="isFileDwnload" width="500">
         <v-card tile>
           <v-card-title style="background-color:#14375A; color:white;"><p style="position: relative; bottom: 0rem;">Downloading Road Log</p></v-card-title>
@@ -118,7 +112,7 @@
     methods:{
       cntyQueryTab(){
         setTimeout(()=>{
-          window.open(`https://opendata.arcgis.com/api/v3/datasets/008906d83772435bb757cb76c9644e5d_0/downloads/data?format=shp&spatialRefId=4326&where=(COUNTY+IN+('${this.countyNm}'))`, '_blank')
+          window.open('https://txdot.maps.arcgis.com/home/item.html?id=7fffa75557a84c869bbbb38f6c4f6dcc')
           //https://opendata.arcgis.com/api/v3/datasets/008906d83772435bb757cb76c9644e5d_0/downloads?spatialRefId=4326&formats=shp&where=(COUNTY IN ('Fort Bend'))
           this.exitApp = false
         },3000)

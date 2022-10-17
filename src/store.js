@@ -56,9 +56,14 @@ export const store = new Vuex.Store({
         isDragDrop: false,
         isDownload: false,
         editNm: null,
-        createNm: null
+        createNm: null,
+        uploadFields: []
+
     },
     getters:{
+        getUploadFields(state){
+            return state.uploadFields
+        },
         getCreateName(state){
             return state.createNm
         },
@@ -215,6 +220,9 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setUploadFields(state, fieldNames){
+            state.uploadFields = fieldNames
+        },
         setCreateName(state, crtName){
             state.createNm = crtName
         },

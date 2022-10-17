@@ -1527,12 +1527,12 @@ async function createFeatures(file){
 
   convShpToGraphic
     .then((res)=>{
-      console.log(res)
       document.getElementById('progress').style.display = 'none'
       document.getElementById('text').style.display = "block"
       document.getElementById('output').style.border = '2px solid green'
       document.getElementById('text').innerText = 'Succesfully uploaded your shapefile! Standby while we assess your file.'
       document.getElementById('text').style.color = 'green'
+      processUpload(res)  
     })
     .catch((fail)=>{
       document.getElementById('progress').style.display = 'none'
@@ -1541,8 +1541,19 @@ async function createFeatures(file){
       document.getElementById('text').innerText = `Error! ${fail.message}.`
       document.getElementById('text').style.color = 'red'
     })
+
+  
 }
 
+function processUpload(upload){
+  //populate store with array with upload attribute values. 
+  console.log(upload)
+  let attName = upload.data.featureCollection.layers[0].layerDefinition.fields
+  let completeAttName = []
+  attName.forEach((x) => completeAttName.push(x.name))
+  store.commit('setUploadFields', completeAttName)
+
+}
 async function bulkAssetReturn(countyQuery){
   //get length
   //base 5000, splice every 5000

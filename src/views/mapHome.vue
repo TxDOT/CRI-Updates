@@ -14,6 +14,7 @@
     <Legend v-if="displayLegend === true"/>
     <geomCheck v-if="isGeomCheck === true"/>
     <dragndrop/>
+    <mapValues v-if="isMapValues === true"/>
   </div>
 </template>
 
@@ -32,11 +33,12 @@ import geomCheck from '../components/Map/geomCheck.vue'
 import dragndrop from '../components/Map/dragNDrop.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
 import { expandLegend } from '../components/Map/map'
+import mapValues from '../components/Map/mapUpload.vue'
 // import { criConstants } from '../common/cri_constants'
 //import esriId from "@arcgis/core/identity/IdentityManager";
 
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, mapValues},
     props:["id"],
     name: 'MapHome',
     data(){
@@ -47,6 +49,7 @@ export default {
         loading: false,
         success: true,
         isDfoRead: false,
+        isMapValues: false,
         displayLegend: false,
         isGeomCheck: true
       }
@@ -109,6 +112,13 @@ export default {
         },
         immediate: true,
       },
+      returnFieldNames:{
+        handler: function(){
+          if(this.returnFieldNames.length){
+            this.isMapValues = true
+          }
+        }
+      }
     },
     computed:{
       getDfoBool:{
@@ -170,6 +180,11 @@ export default {
         },
         set(bool){
           this.$store.commit('setIsAbout', bool)
+        }
+      },
+      returnFieldNames:{
+        get(){ 
+          return this.$store.state.uploadFields
         }
       }
     }

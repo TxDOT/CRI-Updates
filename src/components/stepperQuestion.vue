@@ -11,9 +11,10 @@
     min-width="0"
     :height="imageHeight"
     >
-    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road <p v-if="editName !== null" style="font-size: .8rem; position:relative; top:.3rem; right: 1rem;">Editor Name: {{editName}}</p></v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road </v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road <p style="font-size: .8rem; position:relative; top:.3rem; right: 1rem;">Editor Name: {{editName}}</p></v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
+
     <v-stepper-step
       :editable="setAssetCover[0]"
       step="1"
@@ -109,7 +110,12 @@
           <v-btn outlined tile color="#204E70" @click="dialog=false" style="position: absolute; right:2%; bottom: 2%; border: 1px solid black"><u>Save</u></v-btn>
         </v-card>
       </v-dialog>
+
   </v-stepper>
+  <v-footer v-if="steppClose" style="position: absolute; background: #204E70; height: 3%; width: 97%;">
+    <p v-if="editName !== null" style="color: white; font-size: .8rem; position:relative; bottom: .1rem; right: .8rem;">Editor Name: {{editName}}</p>
+    <p v-if="editName !== null" style="color: white; font-size: .8rem; position:relative; bottom: .1rem; left: 10rem;">Edit Date: 08/876/99</p>
+  </v-footer>
   
   </div>
   <!-- alert used to confirm that the sketch has been removed -->
@@ -623,7 +629,6 @@ export default {
   text-align: left;
   border-radius: 0px;
   }
-
 .v-stepper--vertical{
   padding-bottom: unset;
 }

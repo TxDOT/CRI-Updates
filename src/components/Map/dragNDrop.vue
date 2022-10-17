@@ -33,8 +33,8 @@ export default {
             document.getElementById('output').style.border = '2px dashed #14375A'
         },
         drop($event){
-            document.getElementById('text').style.display = 'block'
-            //document.getElementById('progress').style.display = 'block'
+            document.getElementById('text').style.display = 'none'
+            document.getElementById('progress').style.display = 'block'
             console.log($event)
             //document.getElementById('progress').style.display = 'block'
         },
