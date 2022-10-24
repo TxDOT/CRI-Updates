@@ -55,8 +55,7 @@ export const store = new Vuex.Store({
         geomCheck: '',
         isDragDrop: false,
         isDownload: false,
-        editNm: null,
-        createNm: null,
+        editInfo: '',
         uploadFields: []
 
     },
@@ -64,11 +63,8 @@ export const store = new Vuex.Store({
         getUploadFields(state){
             return state.uploadFields
         },
-        getCreateName(state){
-            return state.createNm
-        },
-        getEditName(state){
-            return state.editNm
+        getEditInfo(state){
+            return state.editInfo
         },
         getIsDownload(state){
             return state.isDownload
@@ -223,11 +219,8 @@ export const store = new Vuex.Store({
         setUploadFields(state, fieldNames){
             state.uploadFields = fieldNames
         },
-        setCreateName(state, crtName){
-            state.createNm = crtName
-        },
-        setEditName(state, editName){
-            state.editNm = editName
+        setEditInfo(state, edit){
+            state.editInfo = edit
         },
         setIsDownload(state, dwnload){
             state.isDownload = dwnload

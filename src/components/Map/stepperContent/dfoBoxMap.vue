@@ -1,3 +1,4 @@
+//displays dfo values as a user moves thier mouse
 <template>
     <div id="dfoBox">
         <v-card outlined height="55" tile style="border-color: #15648C;">

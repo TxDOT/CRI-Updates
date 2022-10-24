@@ -45,8 +45,8 @@ export function initGraphicCheck(editId, isRemove){
             ASSET_RDWAY_DSGN_TYPE_DSCR: editId.attributes.roadbedDesign,	
             RTE_DEFN_LN_CREATE_USER_NM: editId.attributes.createNm,	
             RTE_DEFN_LN_CREATE_DT: editId.attributes.createDt,
-            RTE_DEFN_LN_EDIT_USER_NM: store.getters.getUserName,	
-            RTE_DEFN_LN_EDIT_DT: new Date().getTime(),	
+            RTE_DEFN_LN_EDIT_USER_NM: null,	
+            RTE_DEFN_LN_EDIT_DT: null,
             PREV_TASK_ID: null,	
             EDIT_NOTES: editId.attributes.comment
         },
@@ -57,7 +57,8 @@ export function initGraphicCheck(editId, isRemove){
         let isExist = result.features.filter((x) => x.attributes.OBJECTID === editId.attributes.objectid)
         if(isExist.length){
             //update
-            lineObj.attributes.RTE_DEFN_LN_EDIT_DT = Number(new Date().getTime().toFixed(7))
+            const date = new Date();
+            lineObj.attributes.RTE_DEFN_LN_EDIT_DT = date
             lineObj.attributes.RTE_DEFN_LN_EDIT_USER_NM = store.getters.getUserName
             lineObj.attributes.OBJECTID_1 = isExist[0].attributes.OBJECTID_1
             isRemove ? deleteFeat(lineObj) : updateFeat(lineObj)

@@ -1,3 +1,4 @@
+//display cards to let users which workflow they are on and what to do next.
 <template>
     <v-card>
         <v-card-text style="color:black; text-align: left; position: relative; right:1rem;" v-if="!info">Click and drag vertices to edit the shape of the road.</v-card-text>

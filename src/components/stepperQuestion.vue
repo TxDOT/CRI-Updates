@@ -12,7 +12,7 @@
     :height="imageHeight"
     >
     <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road </v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road <p style="font-size: .8rem; position:relative; top:.3rem; right: 1rem;">Editor Name: {{editName}}</p></v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
 
     <v-stepper-step
@@ -112,9 +112,9 @@
       </v-dialog>
 
   </v-stepper>
-  <v-footer v-if="steppClose" style="position: absolute; background: #204E70; height: 3%; width: 97%;">
-    <p v-if="editName !== null" style="color: white; font-size: .8rem; position:relative; bottom: .1rem; right: .8rem;">Editor Name: {{editName}}</p>
-    <p v-if="editName !== null" style="color: white; font-size: .8rem; position:relative; bottom: .1rem; left: 10rem;">Edit Date: 08/876/99</p>
+  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 3%; width: 97%;">
+    <p style="color: white; font-size: .8rem; position:relative; bottom: .6vh; left: .4rem;">Editor Name: {{editName}}</p>
+    <p style="color: white; font-size: .8rem; position:relative; bottom: .6vh; left: 5rem;">Edit Date: {{editDt}}</p>
   </v-footer>
   
   </div>
@@ -200,6 +200,7 @@ export default {
         scrollInvoked: 0,
         geomChecks: 0,
         editName: null,
+        editDt: null,
         //objectid: 0,
         // newDfo:0,
         //working on form validation
@@ -316,24 +317,19 @@ export default {
         },
         immediate: true
       },
-      editorName: {
+      editorInfo: {
         handler: function(){
-          if(!this.editorName) return;
-  
-          this.editName = this.editorName
-        },
-        immediate: true
-      },
-      creatorName: {
-        handler: function(){
-          if(!this.editorName){
-            this.editName = this.creatorName
-            return;
+          if(!this.editorInfo) return;
+          if(!this.editorInfo[0]){
+            this.editName = this.editorInfo[2]
+            this.editDt = this.editorInfo[3]
+            return
           }
+          this.editName = this.editorInfo[0]
+          this.editDt = this.editorInfo[1]
         },
         immediate: true
       },
-
       newDfo(){
         this.emptyMileArr()
         let newRdbd = []
@@ -575,22 +571,14 @@ export default {
           this.$store.commit('setGeomCheck', check)
         }
       },
-      editorName:{
+      editorInfo:{
         get(){
-          return this.$store.state.editNm
+          return this.$store.state.editInfo
         },
-        set(editNm){
-          this.$store.commit('setEditName', editNm)
+        set(editIn){
+          this.$store.commit('setEditInfo', editIn)
         }
       },
-      creatorName:{
-        get(){
-          return this.$store.state.createNm
-        },
-        set(nm){
-          this.$store.commit('setCreateName', nm)
-        }
-      }
     }
 }
 </script>

@@ -31,7 +31,7 @@
         </v-card-text>
         <v-btn tile outlined depressed style="right: 2%; top: 63%; position: absolute; border-color: black;" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false"><u>Cancel</u></v-btn>
     </v-card>
-    <v-card id="delWarn" v-if="deleteSecond === true || deleteClick"> <!-- //&& this.modifyR === false -->
+    <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style="deleteClick ? {'height': '200px'} : {}"> <!-- //&& this.modifyR === false -->
         <v-card-title class="delRdTitle" style="width: 385px">
             Delete a Road
         </v-card-title>
@@ -44,10 +44,21 @@
             </v-icon>
             Edit may be discarded later if you change your mind
          </v-alert>
-        <v-btn v-if="!deleteClick" depressed text color="#14375A" style="left:69px;top:10px" @click="deleteRoadClick(); deleteSecond=false"> 
+         <a v-if="!deleteClick" @click="comment=true" style="position: absolute; left:1vw; bottom: 2vh; z-index:1">Comment</a>
+         <v-checkbox v-if="!deleteClick" style="position: absolute; left: 1rem" :label="'Is this deletion the result of a city annexation?'"></v-checkbox>
+         <v-dialog v-model="comment" persistent>
+            <v-card style="width:30%; left: 30%; height: 70%; border-radius: 0px;">
+                <v-card-title class="surfaceTitle">
+                    <v-card-text style="bottom:28px; position: relative; font-size: 15px; text-align: left; left: -31px;">Comments</v-card-text>
+                </v-card-title>
+                <v-textarea v-model="commentText" style="padding-left:10px; padding-right: 10px;padding-bottom: 5%;"></v-textarea>
+                <v-btn outlined tile color="#204E70" @click="comment=false" style="position: absolute; right:2%; bottom: 2%; border: 1px solid black"><u>Save</u></v-btn>
+            </v-card>
+        </v-dialog>
+        <v-btn v-if="!deleteClick" depressed text color="#14375A" style="left:69px;top:4.5rem" @click="deleteRoadClick(); deleteSecond=false"> 
           <u>Cancel</u>
         </v-btn>
-        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'5rem', 'left':'2rem', 'border-color':'black'}:{'top':'10px', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
+        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'5rem', 'left':'2rem', 'border-color':'black'}:{'top':'4.5rem', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
           <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
         <v-btn v-if="deleteClick" tile outlined depressed style="left: 2.5rem;top:5rem;" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
@@ -65,6 +76,7 @@
 import confirmationAlert from './stepperContent/confirmationAlertsDEL.vue'
 import sketchAlert from '../Map/stepperContent/discardAlert.vue'
 import {stopEditing, removeGraphic, saveToEditsLayer, removeHighlight} from './editFunc'
+import { gLayer } from '../Map/map'
 export default {
     name: 'editExistingRd',
     components: {confirmationAlert, sketchAlert},
@@ -77,11 +89,15 @@ export default {
         addR: false,
         stepper: false,
         deleteConfirm: false,
-        discardEdits: false
+        discardEdits: false,
+        comment: false,
+        commentText: ''
       }
     },
     methods:{
         setDeleteFalse(){
+            let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
+            editGraphic.attributes.comment = this.commentText
             this.deleteClick = false
             saveToEditsLayer()
         },
@@ -235,7 +251,12 @@ export default {
             set(isBool){
                 this.$store.commit('setIsClearEditBtn', isBool)
             }
-        }
+        },
+        objid:{
+            get(){
+                return this.$store.state.objectid
+            }
+      },
     }
 }
 </script>
@@ -294,8 +315,15 @@ export default {
         top:5rem;
         left: 13.4rem;
         width: 385px;
-        height: 200px;
+        height: 250px;
         color: #204E70;
         border-radius: 0px;
+    }
+    .surfaceTitle{
+        background-color: #14375A;
+        color: white;
+        height:30px;
+        width: 100%;
+        font-size: 25px; 
     }
 </style>
