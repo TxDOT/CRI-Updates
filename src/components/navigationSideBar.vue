@@ -1,10 +1,6 @@
 <template>
     <v-container style="height:100%">
       <v-navigation-drawer app disable-resize-watcher style="top:59px; height:100%; width: 12rem;"> 
-        <!-- <alert v-if="display === true"/> -->
-          <!-- <v-alert v-model="display" color="green" @click="display = false">
-            Click on the Map to start Drawing!
-          </v-alert> -->
         <v-card-title id="testTitle"><v-card-text style="position:relative; bottom:22px; font-size: 12.2px;">What Do You Want To Do?</v-card-text></v-card-title>
           <v-list style="position: absolute; top: 4.5vh; width: 100%"> 
             <v-list-item-group id="tester" v-model="clearEditBtn" color="#15648C" active-class="border">
@@ -28,7 +24,6 @@
   import {search} from './Map/map.js'
   import mapTools from "../components/Map/mapTools.vue"
   import aboutHelp from "../components/Map/resources.vue"
-  //import alert from './Map/alert.vue'
 
   export default {
     name: 'navSideBar',
@@ -50,12 +45,6 @@
             this.display=true;
             this.addRdBoolean = true
             this.modifyRoad = false
-            //this.graphic = false;
-            
-            // setTimeout(()=>{
-            //   this.editExistingRd = null;
-            //   this.display = false;
-            // },5000)
 
             }
           },
@@ -67,9 +56,7 @@
             this.addRdBoolean = false;
             this.deleteRoad = false;
             this.infoRoad = false
-            // setTimeout(()=>{
-            //   this.editExistingRd = null;
-            // },5000)
+
             await modifyRoadbed('click', 'edit')
             if(this.editExistingRd === true){
               this.receiveLoadStatus = false
@@ -77,10 +64,6 @@
               this.firstAddToMap = true
               this.openStepper();
             }
-
-            //hightlightFeat();
-            
-            
           }},
           { title: 'Delete Road', icon: 'mdi-close-circle', action: async ()=>{
             this.infoRoad = false
@@ -101,7 +84,6 @@
               this.nextDeleteRoadForm = true
             }
           }},
-          // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}
         ],
       }
     },

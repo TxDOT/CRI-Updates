@@ -1,3 +1,4 @@
+//geometry checks to display road length and overlaps
 <template >
     <v-card style="position: relative; top: 2rem; left: 54rem; width: 20rem; height: 10rem;" tile v-if="display">
         <v-card-title class="editRdTitle"><p style="position:absolute; top: 2.5%; left: 4%">Edit Error</p></v-card-title>

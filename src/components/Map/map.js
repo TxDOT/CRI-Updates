@@ -1,10 +1,8 @@
 import { criConstants } from '../../common/cri_constants';
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
-// import Sketch from "@arcgis/core/widgets/Sketch";
 import SketchViewModel from "@arcgis/core/widgets/Sketch/SketchViewModel";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
-//import Graphic from "@arcgis/core/Graphic";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
 import * as watchUtils from "@arcgis/core/core/watchUtils";
 import VectorTileLayer from "@arcgis/core/layers/VectorTileLayer";
@@ -18,10 +16,6 @@ import ScaleBar from "@arcgis/core/widgets/ScaleBar";
 import CoordinateVM from "@arcgis/core/widgets/CoordinateConversion/CoordinateConversionViewModel";
 import Search from "@arcgis/core/widgets/Search";
 import Expand from "@arcgis/core/widgets/Expand";
-//import Legend from "@arcgis/core/widgets/Legend";
-//import {store} from '../../storeUpd'
-// import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
-//import SnappingOptions from "@arcgis/core/views/interactive/snapping/SnappingOptions";
 export const gLayer = new GraphicsLayer();
 export const delgLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
@@ -38,20 +32,20 @@ const imagery = new WMTSLayer({
     serviceMode: "KVP",
     id: "imagery"
 });
-
+//add vector tile basemap
 const vTBasemap = new Basemap({
     baseLayers: txdotVectorTiles
 });
-
+//add imagery as basemap
 const imgBasemap = new Basemap({
     baseLayers: imagery
 });
-
+//map constructor 
 export const map = new Map({
     basemap: vTBasemap,
     layers: [rdbdAssetLine,rdbdAssetPt,gLayer]
 });
-
+//mapview constructor
 export const view = new MapView({
     container: 'viewDiv',
     map: map,
@@ -71,35 +65,27 @@ export const basemapToggle = new BasemapToggle({
     view: view,
     nextBasemap: imgBasemap
 });
-
+//expand legend button
 export const expandLegend = new Expand({
     view: view,
-    //container: document.getElementById('mapLegend'),
     expandIconClass: "esri-icon-legend"
 })
+
 export const viewPoint = new Viewpoint();
-
-// const legend = new Legend({
-//     view: view,
-//     layerInfos: [{
-//         layer: editsLayer,
-//         title: 'Edit Ty[e'
-//     }]
-// })
-
+//home button
 export const home = new Home({
     view: view,
 });
-
+//zoom buttons
 const zoom = new Zoom({
     view: view
 });
-
+//scalebar widget
 const scaleBar = new ScaleBar({
     view: view,
     id: 'scalebar'
 });
-
+//coordinate widget
 export const ccWidget = new CoordinateVM({
     view: view
 });
@@ -119,7 +105,6 @@ export const search = new Search({
 search.sources.push({
     layer: new FeatureLayer({
         url: criConstants.refernceLayer,
-        //definitionExpression: "CNTY_NBR = 11"//need to set dynamically using vuex store
     }),
     searchFields: ["SRCH_SHORT", "SRCH_LONG"],
     displayField: "SRCH_SHORT",
@@ -127,7 +112,7 @@ search.sources.push({
     autoSelect: true,
     outFields: ["*"],
     name: "County Road",
-    placeholder: "Ex: Smith Road",//need to set dynamically using vuex store
+    placeholder: "Ex: Smith Road",
     maxResults: 12,
     maxSuggestions: 12,
     suggestionsEnabled: true,
@@ -167,10 +152,6 @@ view.ui.add([
     component: scaleBar,
     position: "manual"
   },
-//   {
-//     component: legend,
-//     position: "bottom-right"   
-//   },
   {
     component: search,
     position: "top-right",
@@ -178,12 +159,11 @@ view.ui.add([
   },
 ]);
 
+//referenceLayer feature Layer
 export const featLayer = new FeatureLayer({
     url: criConstants.refernceLayer,
     opacity: 1,
     editingEnabled: true,
-    //geometryTypeRd: criConstants.geomType,
-    //definitionExpression: "CNTY_NM= 'Travis'",
     returnM: true,
     returnZ: true,
     hasM: true,
@@ -196,115 +176,39 @@ export const featLayer = new FeatureLayer({
         }
     }
   });
-
+//all other roadbeds that need to be snappable. i.e Highways
 export const snapLayer = new FeatureLayer({
     url: criConstants.snapLayer,
     definitionExpression: "RTE_PRFX NOT IN ('CR')",
     visible: false
 });
-// const paved = {
-//     type: "simple-line",
-//     color: "#FFBF00",
-//     width: "1.5px",
-//     style: "solid"
-// };
-// const brick = {
-//     type: "simple-line",
-//     color: "#FF9966",
-//     width: "1px",
-//     style: "solid"
-// };
-// const dirtNatural = {
-//     type: "simple-line",
-//     color: "#7B3F00",
-//     width: "1px",
-//     style: "solid"
-// };
-// const gravel = {
-//     type: "simple-line",
-//     color: "#89CFF0",
-//     width: "1.5px",
-//     style: "solid"
-// };
-// const concrete = {
-//     type: "simple-line",
-//     color: "#FFA700",
-//     width: "1px",
-//     style: "solid"
-// };
-
-// const rdbdTypeRendere = {
-//     type: "unique-value",
-//     field: "SURFACE",
-//     uniqueValueInfos:[
-//         {
-//             value: 10,
-//             symbol: paved,
-//             label: "Paved"
-//         },
-//         {
-//             value: 11,
-//             symbol: brick,
-//             label: "Brick"
-//         },
-//         {
-//             value: 12,
-//             symbol: dirtNatural,
-//             label: "Dirt/Natural"
-//         },
-//         {
-//             value: 13,
-//             symbol: gravel,
-//             label: "Gravel"
-//         },
-//         {
-//             value: 2,
-//             symbol: concrete,
-//             label: "Concrete"
-//         },
-
-//     ]
-// }
-
-// export const rdbdSrfcGeom = new FeatureLayer({
-//     url: criConstants.portalUrl,
-//     renderer: rdbdTypeRendere
-// }) 
+//roadSurface Feature layer
 export const rdbdSrfcAsst = new FeatureLayer({
     url: criConstants.assetLyrRdbSrf
 })
+//roadDesign Feature Layer
 export const rdbdDsgnAsst = new FeatureLayer({
     url: criConstants.assetLyrRdbDsgn
 })
-// export const rdbdNameAsst = new FeatureLayer({
-//     url: criConstants.assetLyrRdbName
-// })
+//roadLane Feature Layer
 export const rdbdLaneAsst = new FeatureLayer({
     url: criConstants.assetLyrRdbLane
 })
+//edits Layer Feature Layer
 export const editsLayer = new FeatureLayer({
     url: criConstants.editsLayer,
 })
+//county polyhon feature Layer
 export const txCounties = new FeatureLayer({
     url: criConstants.txCounties,
     //definitionExpression: "CNTY_NM= 'Travis'"
     //effect: "blur(8px) brightness(1.2) grayscale(0.8)"
 })
-
+//county information feature layer
 export const countyOfficialInfo = new FeatureLayer({
     url: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_CNTY_INFO/FeatureServer/0'
 })
-
-// export const sketch = new Sketch({
-//     view: view,
-//     layer: [gLayer],
-//     viewModel: new SketchViewModel({
-//         view: view,
-//         layer: gLayer,
-//     }),
-
-// });
-
+//sketch model used when modifying a new road.
 export const sketch = new SketchViewModel({
     view: view,
     layer: gLayer,
@@ -329,30 +233,14 @@ export const sketch = new SketchViewModel({
         selfEnabled: false
     }
 });
-
+//set color of line when sketch state is active. i.e Orange
 sketch.polylineSymbol.color = {
     r: 204,
     g: 102,
     b: 0,
     a: 1
 }
-
-
-// export const newSketch = new Sketch({
-//     view: view,
-//     layer: [addRdbd],
-//     viewModel: new SketchViewModel({
-//         view: view,
-//         layer: addRdbd,
-//         polylineSymbol: {
-//           type: "simple-line",
-//           color: [127, 255, 212	],
-//           width: 2,
-//           style: "dash"
-//         },
-//     }),
-// });
-// newSketch.id = "newSketch"
+//sketch model for asset ending points
 export const sketchPoint = new SketchViewModel({
     view: view,
     layer: delgLayer,
@@ -364,45 +252,18 @@ export const sketchPoint = new SketchViewModel({
         featureSources: [{ layer: gLayer, enabled: true, featureEnabled: true },{ layer: rdbdAssetPt, enabled: true, featureEnabled: true }]
     }
 });
-// export const sketchPoint = new Sketch({
-//     view: view,
-//     viewModel: new SketchViewModel({
-//         layer: delgLayer,
-//         view: view
-//     }),
-//     snappingOptions: {
-//         enabled: true,
-//         featureSources: [{ layer: gLayer, enabled: true, featureEnabled: true }],
-//         distance: 20
-//     }
-   
-//});
 
-// view.when(() => { 
-//     console.log('one')
-//     sketch.on(['update'], getNewLength)
-// });
-  //add portal service to map
+//watching the view until the state is set to Ready. Then stepper is set to close and add in featLayer and countyPolygons.
 watchUtils.whenOnce(view,"ready").then(()=>{
     document.getElementById('stepper').style.width = '0px'
     map.addMany([featLayer,txCounties])
 });
 
-// function pauseHoverPropagation(){
-//     setTimeout(1000)
-// }
-//TODO - disable graphics from drag, resize, flip, keyboard shortcuts
+//prevent users from double clicking
 view.on('double-click', (event)=>{
     event.stopPropagation();
 });
 
-// view.on('resize', (event)=>{
-//     event.stopPropagation();
-// })
-// view.on('drag', (event)=>{
-//     event.stopPropagation();
-// })
-//view.on("pointer-move", pauseHoverPropagation)
 view.ui.remove("zoom")  
 
 
@@ -410,6 +271,7 @@ view.ui.remove("zoom")
  * Assigns the container element to the View
  * @param container
 */
+//
 export const initialize = (container) => {
     view.container = container;
     watchUtils.whenOnce(view,"ready")

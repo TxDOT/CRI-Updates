@@ -1,90 +1,27 @@
+//map component
 <template>
-    <div id="viewDiv" class="main">
-        <!-- <div id="step"><stepper/></div> -->
-    </div>
+    <div id="viewDiv" class="main"></div>
 </template>
 
 <script>
-//import {zoomExtents, } from '../Map/editFunc'
-//import stepper from '../../components/stepperQuestion.vue'
-
-//import mapFooter from '../Map/mapFooter.vue'
-//import {roadInfo} from '../../store'
-//import { hightlightFeat } from '../Map/map';
-//import Graphic from "@arcgis/core/Graphic";
-// import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 
 export default {
     name: 'Map',
-    //components: {stepper},
     data(){
         return{
-            // submitCertify:false,
-            //snackbar: false,
             stepper: false,
             addButton: "add Road",
             previousTotal: 0,
-            //county:  roadInfo.getcntyName,
-            // username: 'DPROSACK', //TODO Dynamic
-            //countyTotal: roadInfo.getcntyMiles,
             lineLength: {},
             newMiles: '',
             modifyLine: 0,
             alert:''
-            //modifyLength: 0,
         }
     },
-    async mounted() { //async waits for map to load
+    async mounted() {
         const app = await import('../Map/map');
-        app.initialize(this.$el); //assigns esri map to the container
+        app.initialize(this.$el);
     },
-    methods: {
-        // addRoad() {
-        //     addRoadbed().then(result=>{
-        //     this.previousTotal += parseFloat(result.toFixed(3))         
-        //     })            
-        // },
-        // cancelEditing(){
-        //     stopEditing()
-        // },
-        uploadFile(){
-            document.getElementById("upldFile").click()
-        },
-        fileValid(){
-            let fileInput = document.getElementById('upldFile').value
-            let allowedExtens = /(\.shp|\.gdb)$/i;
-            if(!allowedExtens.exec(fileInput)){
-                alert("Incorrect File Type!")
-                fileInput = '';
-                return false
-            }
-        },
-    },
-    
-    watch:{
-      
-    },
-
-    computed:{
-        // countyTots: function(){
-        //     return Number(this.countyTotal) + Number(this.previousTotal) + Number(this.modifyLength)
-        // },
-
-        // currentMiles: function(){
-        //     return Number(this.previousTotal) + Number(this.modifyLength)
-        // },
-        // cntyName:{
-        //     get(){
-        //         return this.$store.state.cntyName
-        //     },
-        //     // set(cntyName){
-        //     //     this.$store.commit('setCntyName',cntyName)
-        //     // }
-        // },
-
-
-
-    }
 
 };
 </script>
@@ -146,6 +83,7 @@ export default {
     right: 600px;
 } */
 </style>
+//I think these can be applied in the app.vue
 <style>
     .esri-basemap-toggle__container, .esri-basemap-toggle__image {
         width: 32px;

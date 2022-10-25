@@ -23,14 +23,6 @@
       class="font-weight-regular; body-1;">
       Length: <strong>{{fetchLength}} Miles</strong>
     </v-stepper-step>
-    <!-- <v-stepper-step
-      :editable="setAssetCover[0]"
-      step="1"
-      @click="showGIDVerts()"
-      color="#204E70"
-      class="font-weight-regular; body-1;" v-else>
-      Length: <strong>{{fetchLength}} Miles</strong>
-    </v-stepper-step> -->
 
     <v-stepper-content step="1">
       <editVerts/>
@@ -78,29 +70,20 @@
       <!-- Send Asset/geometry edits to editFunc.js function -->
       <numOfLane/>
     </v-stepper-content>
-    <!-- <Map @nm="bool"/> -->
-    <!-- <div style="position:relative; bottom: 70px; left: 90px;"> -->
       
       <v-btn v-if="!forInfo" depressed style="border:none; bottom: 1vh; right:6rem; position: absolute" tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
       <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 1vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0] || this.geomChecks > 0" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
       
       <v-btn v-if="!forInfo" depressed tile color ="#E64545" text style="bottom:1vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
       <v-btn v-else style="bottom: 2vh; position: absolute; right: 1vw; border:black 1px solid;" tile outlined text color="#204E70" @click="cancel()"><u>Cancel</u></v-btn>
-    <!-- </div> -->
-    <!-- card used to display discard alert information -->
-    <!-- <v-card id="discardSketch" v-if="discardAlertQuest" elevation="10">
-        <v-card-title class="confirmationTitle">Are you sure you want to discard this item?</v-card-title>
-        
-        <v-btn tile outlined color="#15648C" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
-        <v-btn tile outlined color="#15648C" @click="discardAlertQuest = false"><u>NO</u></v-btn>
-    </v-card> -->
+
     <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1vw; bottom: 13vh; z-index:1">Add An Optional Comment</a>
     <v-card elevation="0" class="overflow-y-auto" v-if="!forInfo" v-scroll.self="onScroll" style="position: absolute; left:1vw; bottom: 3rem; line-height:.5px; width:93%; overflow-y: scroll; max-height: 70px; text-align: left;">
       <div>
         <v-card-text style="font-size: .7rem; color:gray;">{{comment}}</v-card-text>
       </div>
     </v-card>
-    <!-- <v-textarea v-if="!forInfo" style="position: absolute; left:1vw; bottom: 6vh; font-size: .7rem; line-height:.5px; width:93%;" height="5vh" disabled solo no-resize flat dense v-model="comment">'{{comment}}'</v-textarea> -->
+  
       <v-dialog v-model="dialog" persistent>
         <v-card style="width:30%; left: 30%; height: 70%; border-radius: 0px;">
           <v-card-title class="surfaceTitle">
@@ -118,11 +101,9 @@
   </v-footer>
   
   </div>
-  <!-- alert used to confirm that the sketch has been removed -->
+  
   <sketchAlert v-if="discardAlert"/>
-    <!-- <v-alert v-if="discardAlert" type="warning" prominent border="left" style="height: 80px; top: 30px; width:550px; left: 30%;">
-      Sketch has been removed.
-    </v-alert> -->
+  
   <v-dialog persistent v-model="discardAlertQuest">
     <v-card id="discardSketch" v-model="discardAlertQuest" elevation="10">
       <v-card-title class="confirmationTitle"><p style="position: relative; bottom: .7rem;">Confirm Discard</p></v-card-title>
@@ -138,9 +119,8 @@
 </template>
 
 <script>
-//import { criConstants } from '../common/cri_constants';
+
 import {removeHighlight, geomToMiles,removeAsstPoints, stopEditingPoint, sketchCompete,initLoadAssetGraphic, showVerticies, removeGraphic, saveToEditsLayer, cancelEditStepper} from '../components/Map/editFunc'
-//import {initGraphicCheck} from '../components/Map/crud'
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
@@ -150,9 +130,6 @@ import { gLayer } from './Map/map'
 import confirmAlertSuccess from '../components/Map/stepperContent/confirmAlertsSUCCESS.vue'
 import sketchAlert from '../components/Map/stepperContent/discardAlert.vue'
 import finalCheck from '../components/Map/stepperContent/saveAssetCheck.vue'
-//import {roadInfo} from '../store'a
-//import Map from '../components/Map/Map.vue'
-
 
 export default {
     name:"stepper",
@@ -160,19 +137,11 @@ export default {
     props:{
       received: Boolean
     },
-    //components: {Map},
+    
     data () {
       return {
-        // mileInfo:[],
-        //prefix: false,
-        //suffix: false,
         e1: 1,
-        // design: ['One Way', 'Two-way', 'Boulevard'],
-        // surface: ['Paved','Brick','Dirt/Natural','Gravel','Concrete'],
-        // lanes:[1,2,3,4,5,6],
-        //roadType: ['ALLEY','ANEX','ARCADE','AVENUE','BAYOU','BEACH','BEND','BLUFF','BLUFFS','BOTTOM','BOULEVARD','BRANCH','BRIDGE','BROOK','BROOKS','BURG','BURGS','BYPAS','CAMP','CANYON','CAPE','CAUSEWAY','CENTER','CENTERS','CIRCLE','CIRCLES','CLIFF','CLIFFS','CLUB','COMMON','COMMONS','CORNER','CORNERS','COURSE','COURT','COURTS','COVE','COVES','CREEK','CRESCENT','CREST','CROSSING','CROSSROAD','CROSSROADS','CURVE','DALE','DAM','DIVIDE','DRIVE','DRIVES','ESTATE','ESTATES','EXPRESSWAY','EXTENSION','EXTENSIONS','FALL','FALLS','FERRY','FIELD','FIELDS','FLAT','FLATS','FORD','FORDS','FOREST','FORGE','FORGES','FORK','FORKS','FORT','FREEWAY','GARDEN','GARDENS','GATEWAY','GLEN','GLENS','GREEN','GREENS','GROVE','GROVES','HARBOR','HARBORS','HAVEN','HEIGHTS','HIGHWAY','HILL','HILLS','HOLLOW','INLET','ISLAND','ISLANDS','ISLE','JUNCTION','JUNCTIONS','KEY','KEYS','KNOLL','KNOLLS','LAKE','LAKES','LAND','LANDING','LANE','LIGHT','LIGHTS','LOAF','LOCK','LOCKS','LODGE','LOOP','MALL','MANOR','MANORS','MEADOW','MEADOWS','MEWS','MILL','MILLS','MISSION','MOTORWAY','MOUNT','MOUNTAIN','MOUNTAINS','NECK','NOT APPLICABLE','ORCHARD','OTHER','OVAL','OVERPASS','PARKS','PARKWAYS','PASS','PASSAGE','PATH','PIKE','PINE','PINES','PLACE','PLAIN','PLAINS','PLAZA','POINT','POINTS','PORT','PORTS','PRAIRIE','RADIAL','RAMP','RANCH','RAPID','RAPIDS','REST','RIDGE','RIDGES','RIVER','ROAD','ROADS','ROUTE','ROW','RUE','RUN','SHOAL','SHOALS','SHORE','SHORES','SKYWAY','SPRING','SPRINGS','SPURS','SQUARE','SQUARES','STATION','STRAVENUE','STREAM','STREET','STREETS','SUMMIT','TERRACE','THROUGHWAY','TRACE','TRACK','TRAFFICWAY','TRAIL','TRAILER','TUNNEL','TURNPIKE','UNDERPASS','UNION','UNIONS','VALLEY','VALLEYS','VIADUCT','VIEW','VIEWS','VILLAGE','VILLAGES','VILLE','VISTA','WALKS','WALL','WAY','WAYS','WELL','WELLS'],
         counter:0,
-        //prefixSuffixList: ['East','North','Northeast','Northwest','Not Applicable','South','Southeast','Southwest','West'],
         beginDFO:null,
         endDFO:null,
         forMod: false,
@@ -201,10 +170,6 @@ export default {
         geomChecks: 0,
         editName: null,
         editDt: null,
-        //objectid: 0,
-        // newDfo:0,
-        //working on form validation
-        //emptyValues:[v => !!v || 'Road Name is required'],
          
         dfoRules:{
           DFO: value => !!value || 'Required',
@@ -436,7 +401,7 @@ export default {
         set(bool){
           this.$store.commit('setIsDfoReturn', bool)
         }
-      }, //Used to work with the vue properties without modifying them
+      }, 
       deleteSketch:{
         get(){
           return this.$store.state.delSketch

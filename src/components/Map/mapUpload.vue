@@ -1,13 +1,10 @@
-<template>
+//not needed at the moment
+<!-- <template>
     <v-card id="mapValue">
         <v-card-title>Map Values</v-card-title>
         <v-card-text  style="width: 100%;" v-for="i in txdotMapK" :key="i" id="txdotKey">
             <v-row>{{i}}<div id="dropdwn"><v-autocomplete outlined dense :items="txdotMapV" @change="changeValue($event,i)"></v-autocomplete></div></v-row>
         </v-card-text>
-        
-        
-
-        
     </v-card>
 </template>
 <script>
@@ -80,4 +77,4 @@ export default {
     top: 0rem;
     padding: 1rem;
 }
-</style>
+</style> -->

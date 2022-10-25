@@ -52,24 +52,24 @@
           <u>Upload</u>
         </v-btn>
       </v-card>
-      </v-dialog>
-      <v-dialog v-model="isFileDwnload" width="500">
-        <v-card tile>
-          <v-card-title style="background-color:#14375A; color:white;"><p style="position: relative; bottom: 0rem;">Downloading Road Log</p></v-card-title>
-          <v-progress-linear background-color="white" indeterminate color="green" style="position:absolute; bottom: .2rem;"></v-progress-linear>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="isFileSuccess" max-width="350" >
-        <v-card tile style="height:10rem;">
-          <v-card-title class="surfaceTitle" style="background-color:#14375A; color:white;"><p style="position:absolute; top: .4rem; left: 1rem;"><v-icon color="green" style="position:relative; bottom:.1rem;">mdi-check-bold</v-icon>  Road Log Success</p></v-card-title>
-          <v-card-text style="position:absolute; top: 4rem; text-align: left; color:black; right: .5rem;">
-            Road Log has Succesfully downloaded. Look in Downloads folder or user save location.
-          </v-card-text>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="isHelpTraining" width="650">
-        <v-card tile>
-          <v-card-title class="surfaceTitle"><p style="bottom: .7rem; position:relative; right: .5rem;">Help and Training</p></v-card-title>
+    </v-dialog>
+    <v-dialog v-model="isFileDwnload" width="500">
+      <v-card tile>
+        <v-card-title style="background-color:#14375A; color:white;"><p style="position: relative; bottom: 0rem;">Downloading Road Log</p></v-card-title>
+        <v-progress-linear background-color="white" indeterminate color="green" style="position:absolute; bottom: .2rem;"></v-progress-linear>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="isFileSuccess" max-width="350" >
+      <v-card tile style="height:10rem;">
+        <v-card-title class="surfaceTitle" style="background-color:#14375A; color:white;"><p style="position:absolute; top: .4rem; left: 1rem;"><v-icon color="green" style="position:relative; bottom:.1rem;">mdi-check-bold</v-icon>  Road Log Success</p></v-card-title>
+        <v-card-text style="position:absolute; top: 4rem; text-align: left; color:black; right: .5rem;">
+          Road Log has Succesfully downloaded. Look in Downloads folder or user save location.
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="isHelpTraining" width="650">
+      <v-card tile>
+        <v-card-title class="surfaceTitle"><p style="bottom: .7rem; position:relative; right: .5rem;">Help and Training</p></v-card-title>
           <v-card-text>
             <v-item-group>
               <v-container>
@@ -77,28 +77,25 @@
                   <v-col v-for="n in 3" :key="n" cols="12" md="4">
                     <v-item>
                       <v-tooltip bottom max-width="200" color="#204E70" style="border-radius: 0px;"> 
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" width=600 @click="openPage($event)" color="green"><p style="position:absolute; text-align: left; top: 1rem; right: 3.1rem; padding-left: 1rem;">{{mediaType[n]}}</p><v-icon style="position:absolute; top:5rem; right: 4.2rem; font-size: 2.5rem;">{{iconType[n]}}</v-icon></v-card>
-                      </template>
-                      <span>{{tooltips[n]}}</span>
-                    </v-tooltip>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" width=600 @click="openPage($event)" color="green"><p style="position:absolute; text-align: left; top: 1rem; right: 3.1rem; padding-left: 1rem;">{{mediaType[n]}}</p><v-icon style="position:absolute; top:5rem; right: 4.2rem; font-size: 2.5rem;">{{iconType[n]}}</v-icon></v-card>
+                        </template>
+                        <span>{{tooltips[n]}}</span>
+                      </v-tooltip>
                     </v-item>
                   </v-col>
                 </v-row>
               </v-container>
             </v-item-group>
           </v-card-text>
-        </v-card>
-        
-      </v-dialog>
-
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
   import { downloadRdLog } from "./editFunc"
-  //import stepper from "../components/stepperQuestion.vue"
-  //import alert from './Map/alert.vue'
+
   export default {
     name: 'aboutHelp',
     data (){
@@ -114,7 +111,6 @@
         tooltips: ['',"Click here to access TxDOT's County Inventory Youtube Channel", "Click here to access PDFs about CRI.", "Click here to access a Sandbox Enviornment. This allows you to practice making edits, without affecting your counties inventory"],
         mediaType: ['', 'TxDOT Youtube Channel', 'Go To PDFs','Access Sandbox Environment'],
         iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github'],
-        //actionType: ['', window.open('https://youtube.com/playlist?list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2', '_blank'), window.open('https://www.google.com', '_blank'), window.open('https://txdot.github.io/CRI-Updates/login', '_blank')],
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
               this.display = true
@@ -129,7 +125,6 @@
           },
           { title: 'Help & Training', icon: 'mdi-help-circle', action: ()=>{
               this.isHelpTraining = true
-              //window.open('https://youtube.com/playlist?list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2', '_blank')
               this.clearEditBtn = true
               this.removeBtnFocus();
             }
@@ -145,7 +140,6 @@
       openPage(event){
         console.log(event.explicitOriginalTarget)
         if(event.explicitOriginalTarget.textContent === 'Access Sandbox Environment'){
-          
           window.open('https://txdot.github.io/CRI-Updates/login')
         }
         else if(event.explicitOriginalTarget.textContent === 'Go To PDFs'){
@@ -157,7 +151,6 @@
       },
       cntyQueryTab(){
         window.open('https://txdot.maps.arcgis.com/home/item.html?id=7fffa75557a84c869bbbb38f6c4f6dcc')
-        //https://opendata.arcgis.com/api/v3/datasets/008906d83772435bb757cb76c9644e5d_0/downloads?spatialRefId=4326&formats=shp&where=(COUNTY IN ('Fort Bend'))
         this.exitApp = false
       },
       async downloadRoadLog(){

@@ -1,4 +1,5 @@
-<template>
+//I dont think this is needed
+<!-- <template>
     <v-alert type="success" dismissible>
         Click on the Map to start Drawing!
     </v-alert>
@@ -18,4 +19,4 @@
         }
     }
   }
-</script>
+</script> -->

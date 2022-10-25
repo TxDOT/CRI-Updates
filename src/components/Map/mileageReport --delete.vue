@@ -1,4 +1,5 @@
-<template>
+//not needed 
+<!-- <template>
     <v-row justify="center">
     <v-dialog
       v-model="dialog"
@@ -142,4 +143,4 @@ import {criConstants} from '@/common/cri_constants'
           }
         }
     }
-</script>
+</script> -->

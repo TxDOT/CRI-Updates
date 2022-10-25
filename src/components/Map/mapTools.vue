@@ -1,3 +1,4 @@
+//tools in sidebar nav
 <template>
   <v-list class="outlineColor" style="position: absolute; bottom: 39vh; width: 100%;" >
     <v-list-item-group v-model="clearEditBtn" color="#15648C">
@@ -15,9 +16,6 @@
 
 <script>
 import { jumpToGoogle, undoSketch, redoSketch } from './mapNav'
-  //import { addRoadbed } from "./Map/editFunc"
-  //import stepper from "../components/stepperQuestion.vue"
-  //import alert from './Map/alert.vue'
   export default {
     name: 'mapTools',
     data (){
@@ -48,7 +46,6 @@ import { jumpToGoogle, undoSketch, redoSketch } from './mapNav'
               this.clearEditBtn = false
             },1000)
           }},
-          // { title: 'Road Form', icon: 'mdi-form-select', action: ()=>{this.openStepper()}}
         ],
       }
     },

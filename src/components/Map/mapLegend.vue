@@ -1,3 +1,4 @@
+//Legend component
 <template >
     <v-card style="position: absolute; bottom: 8%; right: 2%; width: 10.5rem; height: 8rem;" tile>
         <v-card-title class="editRdTitle"><p style="position:absolute; top: 0.5%; left: 5%">Edit Types</p></v-card-title>
@@ -37,7 +38,6 @@ export default {
         this.canvas.lineWidth = 3.5
         this.canvas.lineCap = 'round'
 
-
         this.canvas.lineDashOffset = 4
         this.canvas.beginPath()
         this.canvas.moveTo(1,20)
@@ -62,7 +62,6 @@ export default {
 <style scoped>
     #legend{
         position: relative;
-        /* border: 1px solid grey; */
         right: .5rem;
     }
     .editRdTitle{
