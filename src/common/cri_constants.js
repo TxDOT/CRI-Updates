@@ -24,7 +24,7 @@ export const criConstants = {
     
     design: [{num:'1', name:'One Way'}, {num:'2',name:'Two Way'}, {num:'3',name:'Boulevard'}],
     surface: [{num:1, name:'Concrete'},{num:2, name:'Concrete'},{num:3, name:'Concrete'},{num:4, name:'Paved'},{num:5, name:'Paved'},{num:6, name:'Paved'},{num:7, name:'Paved'},{num:8, name:'Paved'},{num:9, name:'Paved'},{num:10, name:'Paved'}, {num:11, name:'Brick'},{num:12, name:'Dirt/Natural'},{num:13, name:'Gravel'},{num:14, name:'Paved'}],
-    testRoadInfo: [{type:"Paved",bdfo:'0', edfo:'12'},{type:"Brick",bdfo:'12', edfo:'24'}],
+    //delete -- testRoadInfo: [{type:"Paved",bdfo:'0', edfo:'12'},{type:"Brick",bdfo:'12', edfo:'24'}],
     suffixPrefix: {'EAST': 'E', 'NORTH':'N', 'NORTHEAST':'NE','NORTHWEST': 'NW','NOT APPLICABLE':'N/A','SOUTH':'S','SOUTHEAST':'SE','SOUTHWEST':'SW','WEST':'W'},
 
     colorTable: {

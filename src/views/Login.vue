@@ -111,13 +111,14 @@ export default {
         //autoDrawAsset(queryFeat)
       },
       handleSignedIn() {
+        //TODO -- Remove LocalStorage and replace with ESRI OAUTH userId
         const portal = new Portal();
         this.loginToMap = true
         portal.load()
           .then( async () => {
             this.$router.push('/load')
             this.userName = portal.user.username 
-            let countyInfo = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username)
+            let countyInfo = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed.
             if(!countyInfo){return;}
             let cntyNumber = countyInfo[1]
             let cntyName = countyInfo[0]
@@ -129,8 +130,10 @@ export default {
           });
       },
       async getCountyInfo(username){
+        //dprosack_anderson
         let county;
         //let getCounty = username.split('_')[1]
+        //cntyNbrNm located /common/txCnt.js
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
           let userNameSplit = username.split('_')
           if(userNameSplit[1].toLowerCase().includes(cntyNbrNm[0][x].replace(/\s/,'').toLowerCase())){
