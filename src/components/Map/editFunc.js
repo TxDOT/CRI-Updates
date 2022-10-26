@@ -1642,7 +1642,7 @@ async function uploadValueCheck(feat){
   let valueCheckPromise = new Promise((res)=>{
     let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Modify or Delete. Re-submit"
     let lengthMessage = "Empty fields have been detected.\nPlease revise and re-submit"
-
+    
     for(let i=0; i < feat.featureSet.features.length; i++){
       let item = Object.entries(feat.featureSet.features[i].attributes)
       let isCheckLength = item.filter((x)=>x[1].toString().replace(/\s/g, "").length === 0)

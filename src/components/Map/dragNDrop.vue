@@ -22,7 +22,7 @@ export default {
     name: 'dragndrop',
     data(){
         return{
-
+  
         }
     },
     methods:{
@@ -43,16 +43,24 @@ export default {
             event.preventDefault();
         },
         dropItem(event){
+            if(event.target.files[0].type !== 'application/zip'){
+                document.getElementById('progress').style.display = 'none'
+                document.getElementById('text').style.display = "block"
+                document.getElementById('text').innerText = 'File is not a Zip File. Upload Only Zip Files.'
+                document.getElementById('output').style.border = '2px solid red'
+                document.getElementById('text').style.color = 'red'
+                return;
+            }
             retrieveFile(event)
         }
     },
     computed:{
         dragDropClick:{
             get(){
-            return this.$store.state.isDragDrop
+                return this.$store.state.isDragDrop
             },
             set(isBool){
-            this.$store.commit('setIsDragDrop', isBool)
+                this.$store.commit('setIsDragDrop', isBool)
             }
       },
     }
@@ -87,5 +95,6 @@ export default {
         top: 9.1rem;
         left: 14.5rem;
     }
+    
 
 </style>
