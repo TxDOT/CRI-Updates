@@ -1639,6 +1639,7 @@ async function uploadGeometryCheck(featSet){
 
 //check values are filled in and have correct values
 async function uploadValueCheck(feat){
+  //TODO -- look for special characters - [',]
   let valueCheckPromise = new Promise((res)=>{
     let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Modify or Delete. Re-submit"
     let lengthMessage = "Empty fields have been detected.\nPlease revise and re-submit"
