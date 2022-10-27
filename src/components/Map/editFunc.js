@@ -481,7 +481,7 @@ export function stopEditingPoint(){
 export function showVerticies(x){
   sketch.update([x], {tool:'reshape'})
 }
-//Delete a road from inside the stepper and change symbology
+//Delete a road from inside the stepper and symbology
 export function delRoad(){
   let graphicDel = gLayer.graphics.items.filter((x)=>{
     return x.attributes.objectid === store.getters.getObjectid
@@ -522,7 +522,7 @@ export function removeGraphic(){
     store.commit('setDeltaDis',[diffAdded, 'Edit'])
   }
 }
-//set data for popup stepper display
+//set data for popup display
 export async function popUpData(res){
   search.clear()
   let info = queryFeat(res)
@@ -868,7 +868,7 @@ export function getCoordsRange(y){
   return;
 }
 
-//Getting new M-Value and placing the new point on the line
+//Getting new M-Value for new asset Point
 function getNewDfoDist(objectid, x, y, slide){
   objectid
   let objid = store.getters.getRoadGeom;
@@ -1220,7 +1220,8 @@ export async function reloadEdits(){
   return currentEditRoads
 }
 
-//getting geometry to miles
+
+//convert geometry to miles
 export function geomToMiles(geometry, isNum, precision){
   if(isNum){
     return Number(geometryEngine.geodesicLength(geometry, "miles").toFixed(precision))
