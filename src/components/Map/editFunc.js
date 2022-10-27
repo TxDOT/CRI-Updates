@@ -219,7 +219,7 @@ export async function addRoadbed(){
   let timestamp = epochToHumanTime(date)
   //Apply M Measures function
   reapplyM(gLayer.graphics.items.at(-1))
-  //commiting values to the store
+  //commiting add road values to the store
   store.commit('setOldLength',Number(returnAddNewRoad[0].toFixed(3)))
   store.commit('setDeltaDis',[Number(returnAddNewRoad[0].toFixed(5)), 'Add'])
   store.commit('setRoadGeom', gLayer.graphics.items.at(-1).geometry.clone())
@@ -232,10 +232,8 @@ export async function addRoadbed(){
                  sketch.layer.graphics.items.at(-1).attributes.numLane,
                  sketch.layer.graphics.items.at(-1).attributes.objectid,
                  '')
-  
   return;
 }
-
 //Modifying Existing Road and gathering existing road attributes based on clickType variable
 //clickType = immediate-click; returns attributes
 //clickType = double-click; creates graphic for editing
@@ -594,7 +592,7 @@ export async function getGraphic(){
                 //sketch.update([response.results[0].graphic], {tool:"reshape"});
                 store.commit('setStepperClose', true)
                 store.commit('setInfoRd', false)
-                
+
                 setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
                               response.results[0].graphic.attributes['roadbedDesign'],
                               response.results[0].graphic.attributes['roadbedName'],
