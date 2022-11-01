@@ -11,10 +11,9 @@
     min-width="0"
     :height="imageHeight"
     >
-    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road </v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road</v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
-
     <v-stepper-step
       :editable="setAssetCover[0]"
       step="1"
@@ -59,7 +58,6 @@
       Road Design: <strong>{{fetchRoadDesign}}</strong>
     </v-stepper-step>
      <v-stepper-content step="4">
-         <!-- If graphic is clicked (true), it presents this form -->
       <roadDesign/>
     </v-stepper-content>
 
@@ -67,47 +65,41 @@
       Number of Lanes: <strong>{{fetchNumLanes}}</strong>
     </v-stepper-step>
     <v-stepper-content step="5">
-      <!-- Send Asset/geometry edits to editFunc.js function -->
       <numOfLane/>
     </v-stepper-content>
       
-      <v-btn v-if="!forInfo" depressed style="border:none; bottom: 1vh; right:6rem; position: absolute" tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
-      <v-btn v-if="!forInfo" tile style="border: black 1px solid;bottom: 1vh; right:1vw; position: absolute" depressed :disabled="!setAssetCover[0] || this.geomChecks > 0" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
+    <v-btn v-if="!forInfo" id="cnclBtnEdit" depressed tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
+    <v-btn v-if="!forInfo" tile id="saveBtnEdit" depressed :disabled="!setAssetCover[0] || this.geomChecks > 0" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
       
-      <v-btn v-if="!forInfo" depressed tile color ="#E64545" text style="bottom:1vh; left:1vw; position: absolute;z-index: 1;" @click="discardAlertQuest = true">Discard Edit</v-btn>
-      <v-btn v-else style="bottom: 2vh; position: absolute; right: 1vw; border:black 1px solid;" tile outlined text color="#204E70" @click="cancel()"><u>Cancel</u></v-btn>
+    <v-btn v-if="!forInfo" depressed tile color ="#E64545" text id="discardBtnEdit" @click="discardAlertQuest = true">Discard Edit</v-btn>
+    <v-btn v-else id="cancelInfo" tile outlined text color="#204E70" @click="cancel()"><u>Cancel</u></v-btn>
 
-    <a v-if="!forInfo" @click="dialog=true" style="position: absolute; left:1vw; bottom: 13vh; z-index:1">Add An Optional Comment</a>
-    <v-card elevation="0" class="overflow-y-auto" v-if="!forInfo" v-scroll.self="onScroll" style="position: absolute; left:1vw; bottom: 3rem; line-height:.5px; width:93%; overflow-y: scroll; max-height: 70px; text-align: left;">
+    <a v-if="!forInfo" @click="dialog=true" id="addCommentBtn">Add An Optional Comment</a>
+    <v-card elevation="0" class="overflow-y-auto" id="comment" v-if="!forInfo" v-scroll.self="onScroll" >
       <div>
-        <v-card-text style="font-size: .7rem; color:gray;">{{comment}}</v-card-text>
+        <v-card-text id="commentTxt">{{comment}}</v-card-text>
       </div>
     </v-card>
-  
-      <v-dialog v-model="dialog" persistent>
-        <v-card style="width:30%; left: 30%; height: 70%; border-radius: 0px;">
-          <v-card-title class="surfaceTitle">
-            <v-card-text style="bottom:28px; position: relative; font-size: 15px; text-align: left; left: -31px;">Comments</v-card-text>
-          </v-card-title>
-          <v-textarea v-model="comment" style="padding-left:10px; padding-right: 10px;padding-bottom: 5%;"></v-textarea>
-          <v-btn outlined tile color="#204E70" @click="dialog=false" style="position: absolute; right:2%; bottom: 2%; border: 1px solid black"><u>Save</u></v-btn>
-        </v-card>
-      </v-dialog>
-
+    <v-dialog v-model="dialog" persistent>
+      <v-card id="dialogComment">
+        <v-card-title class="surfaceTitle">
+          <v-card-text id="dialogCommentTxt">Comments</v-card-text>
+        </v-card-title>
+        <v-row no-gutters id="dialogCommentBox">
+          <v-textarea v-model="comment"></v-textarea>
+        </v-row>
+        <v-btn outlined tile color="#204E70" @click="dialog=false" id="dialogSaveBtn"><u>Save</u></v-btn>
+      </v-card>
+    </v-dialog>
   </v-stepper>
-  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 3%; width: 97%;">
-    <p style="color: white; font-size: .8rem; position:relative; bottom: .6vh; left: .4rem;">Editor Name: {{editName}}</p>
-    <p style="color: white; font-size: .8rem; position:relative; bottom: .6vh; left: 5rem;">Edit Date: {{editDt}}</p>
-  </v-footer>
   
   </div>
-  
+  <!-- alert used to confirm that the sketch has been removed -->
   <sketchAlert v-if="discardAlert"/>
-  
   <v-dialog persistent v-model="discardAlertQuest">
     <v-card id="discardSketch" v-model="discardAlertQuest" elevation="10">
-      <v-card-title class="confirmationTitle"><p style="position: relative; bottom: .7rem;">Confirm Discard</p></v-card-title>
-      <v-card-text style="color:black; top: 9%; position:relative; text-align: left;">Are you sure you want to discard this edit?</v-card-text>
+      <v-card-title class="cardTitle"><p id="discardTitleTxt">Confirm Discard</p></v-card-title>
+      <v-card-text id="discardTxt">Are you sure you want to discard this edit?</v-card-text>
       <v-btn style="position: absolute; right: .5rem;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
       <v-btn style="position: absolute; right:5rem;" depressed tile text color="#14375A" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card>
@@ -119,14 +111,17 @@
 </template>
 
 <script>
-
-import {removeHighlight, geomToMiles,removeAsstPoints, stopEditingPoint, sketchCompete,initLoadAssetGraphic, showVerticies, removeGraphic, saveToEditsLayer, cancelEditStepper} from '../components/Map/editFunc'
+//importing functions
+import {removeHighlight, geomToMiles,removeAsstPoints, 
+        stopEditingPoint, sketchCompete,initLoadAssetGraphic, 
+        showVerticies, removeGraphic, saveToEditsLayer, cancelEditStepper} from '../components/Map/editFunc'
+import { gLayer } from './Map/map'
+//importing vue components
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
 import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
 import numOfLane from './Map/stepperContent/NumberOfLanes.vue'
 import editVerts from './Map/stepperContent/EditVerts.vue'
-import { gLayer } from './Map/map'
 import confirmAlertSuccess from '../components/Map/stepperContent/confirmAlertsSUCCESS.vue'
 import sketchAlert from '../components/Map/stepperContent/discardAlert.vue'
 import finalCheck from '../components/Map/stepperContent/saveAssetCheck.vue'
@@ -137,11 +132,18 @@ export default {
     props:{
       received: Boolean
     },
-    
     data () {
       return {
+        // mileInfo:[],
+        //prefix: false,
+        //suffix: false,
         e1: 1,
+        // design: ['One Way', 'Two-way', 'Boulevard'],
+        // surface: ['Paved','Brick','Dirt/Natural','Gravel','Concrete'],
+        // lanes:[1,2,3,4,5,6],
+        //roadType: ['ALLEY','ANEX','ARCADE','AVENUE','BAYOU','BEACH','BEND','BLUFF','BLUFFS','BOTTOM','BOULEVARD','BRANCH','BRIDGE','BROOK','BROOKS','BURG','BURGS','BYPAS','CAMP','CANYON','CAPE','CAUSEWAY','CENTER','CENTERS','CIRCLE','CIRCLES','CLIFF','CLIFFS','CLUB','COMMON','COMMONS','CORNER','CORNERS','COURSE','COURT','COURTS','COVE','COVES','CREEK','CRESCENT','CREST','CROSSING','CROSSROAD','CROSSROADS','CURVE','DALE','DAM','DIVIDE','DRIVE','DRIVES','ESTATE','ESTATES','EXPRESSWAY','EXTENSION','EXTENSIONS','FALL','FALLS','FERRY','FIELD','FIELDS','FLAT','FLATS','FORD','FORDS','FOREST','FORGE','FORGES','FORK','FORKS','FORT','FREEWAY','GARDEN','GARDENS','GATEWAY','GLEN','GLENS','GREEN','GREENS','GROVE','GROVES','HARBOR','HARBORS','HAVEN','HEIGHTS','HIGHWAY','HILL','HILLS','HOLLOW','INLET','ISLAND','ISLANDS','ISLE','JUNCTION','JUNCTIONS','KEY','KEYS','KNOLL','KNOLLS','LAKE','LAKES','LAND','LANDING','LANE','LIGHT','LIGHTS','LOAF','LOCK','LOCKS','LODGE','LOOP','MALL','MANOR','MANORS','MEADOW','MEADOWS','MEWS','MILL','MILLS','MISSION','MOTORWAY','MOUNT','MOUNTAIN','MOUNTAINS','NECK','NOT APPLICABLE','ORCHARD','OTHER','OVAL','OVERPASS','PARKS','PARKWAYS','PASS','PASSAGE','PATH','PIKE','PINE','PINES','PLACE','PLAIN','PLAINS','PLAZA','POINT','POINTS','PORT','PORTS','PRAIRIE','RADIAL','RAMP','RANCH','RAPID','RAPIDS','REST','RIDGE','RIDGES','RIVER','ROAD','ROADS','ROUTE','ROW','RUE','RUN','SHOAL','SHOALS','SHORE','SHORES','SKYWAY','SPRING','SPRINGS','SPURS','SQUARE','SQUARES','STATION','STRAVENUE','STREAM','STREET','STREETS','SUMMIT','TERRACE','THROUGHWAY','TRACE','TRACK','TRAFFICWAY','TRAIL','TRAILER','TUNNEL','TURNPIKE','UNDERPASS','UNION','UNIONS','VALLEY','VALLEYS','VIADUCT','VIEW','VIEWS','VILLAGE','VILLAGES','VILLE','VISTA','WALKS','WALL','WAY','WAYS','WELL','WELLS'],
         counter:0,
+        //prefixSuffixList: ['East','North','Northeast','Northwest','Not Applicable','South','Southeast','Southwest','West'],
         beginDFO:null,
         endDFO:null,
         forMod: false,
@@ -168,8 +170,10 @@ export default {
         fetchNumLanes: null,
         scrollInvoked: 0,
         geomChecks: 0,
-        editName: null,
-        editDt: null,
+        //objectid: 0,
+        // newDfo:0,
+        //working on form validation
+        //emptyValues:[v => !!v || 'Road Name is required'],
          
         dfoRules:{
           DFO: value => !!value || 'Required',
@@ -282,19 +286,7 @@ export default {
         },
         immediate: true
       },
-      editorInfo: {
-        handler: function(){
-          if(!this.editorInfo) return;
-          if(!this.editorInfo[0]){
-            this.editName = this.editorInfo[2]
-            this.editDt = this.editorInfo[3]
-            return
-          }
-          this.editName = this.editorInfo[0]
-          this.editDt = this.editorInfo[1]
-        },
-        immediate: true
-      },
+
       newDfo(){
         this.emptyMileArr()
         let newRdbd = []
@@ -401,7 +393,7 @@ export default {
         set(bool){
           this.$store.commit('setIsDfoReturn', bool)
         }
-      }, 
+      }, //Used to work with the vue properties without modifying them
       deleteSketch:{
         get(){
           return this.$store.state.delSketch
@@ -535,15 +527,7 @@ export default {
         set(check){
           this.$store.commit('setGeomCheck', check)
         }
-      },
-      editorInfo:{
-        get(){
-          return this.$store.state.editInfo
-        },
-        set(editIn){
-          this.$store.commit('setEditInfo', editIn)
-        }
-      },
+      }
     }
 }
 </script>
@@ -551,7 +535,86 @@ export default {
 .stepStyle{
   width:50%;
 }
+#cnclBtnEdit{
+  border:none;
+  bottom: .5rem;
+  right:6rem;
+  position: absolute;
+}
 
+#saveBtnEdit{
+  border: black 1px solid;
+  bottom: .5rem;
+  right:1rem;
+  position: absolute
+}
+#discardBtnEdit{
+  bottom: .5rem; 
+  left: 1rem; 
+  position: absolute;
+  z-index: 1;
+}
+#addCommentBtn{
+  position: absolute;
+  left: 1rem;
+  bottom: 7rem; 
+  z-index:1
+}
+#comment{
+  position: absolute;
+  left:1rem;
+  bottom: 3rem;
+  line-height:.5px;
+  width:93%;
+  overflow-y: scroll;
+  max-height: 70px;
+  text-align: left;
+}
+#dialogComment{
+  width:30%;
+  left: 44%;
+  height: 70%;
+  border-radius: 0px;
+}
+#dialogComment #dialogCommentTxt{
+  bottom:28px;
+  position: relative;
+  font-size: 15px;
+  text-align: left;
+  left: -31px;
+}
+#dialogComment #dialogCommentBox{
+  padding-left:1rem;
+  padding-right: 1rem;
+  padding-bottom:2rem;
+}
+#dialogSaveBtn{
+  position: absolute;
+  right:2%;
+  bottom: .5rem;
+  border: 1px solid black
+}
+
+#commentTxt{
+  font-size: .7rem;
+  color:gray;
+}
+#cancelInfo{
+  bottom: .5rem; 
+  position: absolute; 
+  right: 1rem; 
+  border:black 1px solid;
+}
+#discardTitleTxt{
+  position: relative;
+  bottom: .7rem;
+}
+#discardTxt{
+  color:black;
+  top: 9%;
+  position:relative;
+  text-align: left;
+}
 #stepper{
   position: fixed;
   top: 5rem;
@@ -563,7 +626,7 @@ export default {
 .scroller {
   width: auto;
   height: 500px;
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-color: grey;
   scrollbar-width: thin;
 }
@@ -582,6 +645,7 @@ export default {
   text-align: left;
   border-radius: 0px;
   }
+
 .v-stepper--vertical{
   padding-bottom: unset;
 }

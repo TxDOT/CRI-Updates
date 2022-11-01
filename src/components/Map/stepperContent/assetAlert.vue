@@ -1,11 +1,10 @@
 //display asset alerts i.e short, gap, long
 <template>
   <div>
-    <v-alert type="success" v-if="isAssetCoverage" height="44" dense outlined style="text-align: left; border-radius: 0px;">
+    <v-alert type="success" v-if="isAssetCoverage" height="44" dense outlined id="assetFullCvg">
       This asset covers the full length of the road
     </v-alert>
-    <v-alert type="error" color="#E64545" v-if="!isAssetCoverage" height="60" dense outlined style="border-radius: 0px;">
-        
+    <v-alert type="error" color="#E64545" v-if="!isAssetCoverage" height="60" dense outlined tile>
       <p class="assetAlert" v-if="shortLong === 'short'">The provided asset is {{shortLong.toUpperCase()}} - asset ends at <u>{{dfoValue}}</u> but ending mile for road is <u>{{lineEndValue}}</u></p>
       <p class="assetAlert" v-if="shortLong==='long'">An asset is covering a portion of this road to the end <u>{{dfoValue}}</u> but additional assets are missing</p>
       <p class="assetAlert" v-if="shortLong === 'gap' || shortLong === 'overlap'"> {{shortLong.toUpperCase()}} detected - refer to asset with ending value of <u>{{dfoValue}}</u></p>
@@ -83,6 +82,11 @@ $alert-font-size: 13px;
   border-radius: 0px;
   text-align: left;
   margin-right: 15px;
+}
+
+#assetFullCvg{
+  text-align: left;
+  border-radius: 0px;
 }
 
 </style>

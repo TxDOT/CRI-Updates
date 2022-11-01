@@ -1,24 +1,17 @@
 <template>
     <v-card height="230" elevation="0">
-        <!-- <v-row no gutters dense>
-            <v-col> -->
-                <v-text-field autofocus id="input1" v-model="streetNames" solo flat disabled></v-text-field>
-            <!-- </v-col> -->
-    
-            <span>
-                <v-text-field :disabled="infoRoad" persistent-placeholder dense outlined id="input1" :rules="emptyValues" label="Road Name" v-model="streetName" style="font-size: 15px; left: 87px; bottom: 16px; width: 100px; position: relative;"></v-text-field>
-            </span>
+        <v-text-field autofocus id="input1" v-model="streetNames" solo flat disabled></v-text-field>
+        <span>
+            <v-text-field :disabled="infoRoad" persistent-placeholder dense outlined id="input1" :rules="emptyValues" label="Road Name" v-model="streetName" style="font-size: 15px; left: 87px; bottom: 16px; width: 100px; position: relative;"></v-text-field>
+        </span>
                 
-            <v-card-text>
-                <v-autocomplete :disabled="infoRoad" persistent-placeholder dense outlined v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;" @change="updateGraphic()"></v-autocomplete>
-            </v-card-text>
+        <v-card-text>
+            <v-autocomplete :disabled="infoRoad" persistent-placeholder dense outlined v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;" @change="updateGraphic()"></v-autocomplete>
+        </v-card-text>
                 
-            <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width: 83px; left: 0%; bottom:180px; position: relative" @change="updateGraphic()"></v-select>
-            <!-- <v-autocomplete persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width:3-1%; left:0px; top:66px; position: absolute"></v-autocomplete> -->
+        <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width: 83px; left: 0%; bottom:180px; position: relative" @change="updateGraphic()"></v-select>
 
-
-            <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" item-value="dir" style="width:83px; left: 307px; bottom: 246px; position: relative;" @change="updateGraphic()"></v-select>   
-        <!-- </v-row> -->
+        <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" item-value="dir" style="width:83px; left: 307px; bottom: 246px; position: relative;" @change="updateGraphic()"></v-select>
 
         <v-btn v-if="!infoRoad" outlined style="bottom:210px; left:132px; border-color: black;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#204E70" :disabled="streetName.length < 1"> 
           <u>Next Step</u>
@@ -116,7 +109,6 @@ export default {
         },
         objid:{
           handler: function(){
-            //this.streetName = this.roadName
             this.resetItems();    
           }, 
           immediate: true,
@@ -185,10 +177,12 @@ export default {
 }
 </script>
 <style>
+#input1{
+    
+}
 .v-input input{
     text-transform: uppercase;
 }
-
 .v-text-field--outlined fieldset{
     border-radius: 0px 0px 0px 0px;
     border: black solid .5px;
