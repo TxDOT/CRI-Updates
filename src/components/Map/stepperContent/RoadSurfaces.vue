@@ -3,7 +3,7 @@
     <!-- each v-card has a property assigned to it. isAssetType, isAssetFullLen, isAssetStart, isAssetEnd or isAssetFinished  -->
     <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
   <v-card class="card" v-if="isAssetType=== true" elevation="0" tile>
-    <v-card-title class="cardTitle surfaceTitle">
+    <v-card-title class="cardTitle assetTitle">
       <v-card-text class="cardText">What's the Surface Type?</v-card-text>
     </v-card-title>
     <!-- loop through assetTypeOpt and list items -->
@@ -19,7 +19,7 @@
   </v-card>
   <!-- if isAssetFullLen is true, it will be displayed. All other cards will be hidden -->
   <v-card class="card" v-if="isAssetFullLen === true" height="80" elevation="0" tile>
-    <v-card-title class="cardTitle surfaceTitle">
+    <v-card-title class="cardTitle assetTitle">
       <v-card-text class="cardText">Is the {{assetType}} Surface full length?</v-card-text>
     </v-card-title>
     <div class="divSrfcFullLen">
@@ -43,7 +43,7 @@
   </v-card>  
   <!-- if isAssetStart is true, this card will be displayed. All other cards will be hidden -->
   <v-card class="card" v-if="isAssetStart === true" elevation="0" tile>
-    <v-card-title class="cardTitle surfaceTitle">
+    <v-card-title class="cardTitle assetTitle">
       <v-card-text class="cardText">Where Does the {{assetType}} Surface Start?</v-card-text>
     </v-card-title>
     <!-- displays selectionBegin options in v-select -->
@@ -62,7 +62,7 @@
   </v-card>
   <!-- if isAssetEnd is true, this card will be displayed. All other cards will be hidden -->
   <v-card class="card" v-if="isAssetEnd === true" elevation="0" tile>
-    <v-card-title class="cardTitle surfaceTitle">
+    <v-card-title class="cardTitle assetTitle">
       <v-card-text class="cardText">Where Does the {{assetType}} Surface <span id="assetEnd">End</span>?</v-card-text>
     </v-card-title>
     <!-- displays selectionEnd options in v-select -->
@@ -475,7 +475,7 @@ export default {
   max-width: 99%;
 } */
 
-/* .surfaceTitle {
+/* .assetTitle {
   background-color: #204E70;
   color: white;
   height: 30px;

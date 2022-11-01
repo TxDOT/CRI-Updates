@@ -2,7 +2,7 @@
   <div class="totalDiv"> 
   <!-- Loop through asset breaks assigned in rdbdSurf. Assign surface type lable and dfo values -->
     <v-card class="card" v-if="isAssetType=== true" elevation="0" tile>
-      <v-card-title class="cardTitle surfaceTitle">
+      <v-card-title class="cardTitle assetTitle">
         <v-card-text class="cardText">What's the Design Type?</v-card-text>
       </v-card-title>
       <v-flex v-for="(item, index) in assetTypeOpt" :key="index">
@@ -17,7 +17,7 @@
     </v-card>
 
     <v-card class="card" v-if="isAssetFullLen === true" height="80" elevation="0" tile>
-      <v-card-title class="cardTitle surfaceTitle">
+      <v-card-title class="cardTitle assetTitle">
         <v-card-text class="cardText">Is the {{assetType}} Design full length?</v-card-text>
       </v-card-title>
       <div class="divSrfcFullLen">
@@ -37,7 +37,7 @@
     </v-card>
 
     <v-card class="card" v-if="isAssetStart === true" elevation="0" tile>
-      <v-card-title class="cardTitle surfaceTitle">
+      <v-card-title class="cardTitle assetTitle">
         <v-card-text class="cardText">Where Does the {{assetType}} Start?</v-card-text>
       </v-card-title>
       <v-flex v-for="(item, i) in selectionBegin" :key="i">
@@ -52,7 +52,7 @@
     </v-card>
 
     <v-card class="card" v-if="isAssetEnd === true" elevation="0" tile>
-      <v-card-title class="cardTitle surfaceTitle">
+      <v-card-title class="cardTitle assetTitle">
         <v-card-text class="cardText">Where Does the {{assetType}} <span id="assetEnd">End</span>?</v-card-text>
       </v-card-title>
       <v-flex v-for="(item, i) in selectionEnd" :key="i">
@@ -451,7 +451,7 @@ export default {
   border-radius: 0px;
   max-width: 99%;
 } */
-/* .surfaceTitle{
+/* .assetTitle{
   background-color: #204E70;
   color: white;
   height:30px;
