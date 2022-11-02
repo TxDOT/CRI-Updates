@@ -1005,7 +1005,7 @@ export function removeAsstPoints(){
   rdbdAssetLine.removeAll();
   return;
 }
-
+//TODO -- extract getCoordsRange from this function and replace in _edits.js
 export function applyMToAsset(assetArray, type){
   let length = []
   for(let x=0; x < gLayer.graphics.items.length; x++){
@@ -1088,10 +1088,10 @@ export function initLoadAssetGraphic(asset){
             OBJECTID: graphicAsset[i].OBJECTID
           })
         }
-        applyMToAsset(newGraphic)
+        applyMToAsset(newGraphic) //TODO -- replace this with getCoordsRange
       }
       else{
-        applyMToAsset(graphicAsset)
+        applyMToAsset(graphicAsset) //TODO -- replace this with getCoordsRange
       }
     }
     else{
