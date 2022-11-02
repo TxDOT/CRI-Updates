@@ -1597,6 +1597,7 @@ function uploadFail(message){
   document.getElementById('progress').style.display = 'none'
   document.getElementById('text').style.display = "block"
   document.getElementById('output').style.border = '2px solid red'
+  document.getElementById('output').style.width = '27rem'
   document.getElementById('text').innerText = `Error! ${message}`
   document.getElementById('text').style.color = 'red'
 }
@@ -1605,6 +1606,7 @@ function uploadPass(message){
   document.getElementById('progress').style.display = 'none'
   document.getElementById('text').style.display = "block"
   document.getElementById('output').style.border = '2px solid green'
+  document.getElementById('output').style.width = '27rem'
   document.getElementById('text').innerText = `Succesfully uploaded your shapefile! ${message}`
   document.getElementById('text').style.color = 'green'
 }

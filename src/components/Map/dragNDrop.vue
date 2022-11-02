@@ -36,6 +36,7 @@ export default {
         drop(){
             document.getElementById('text').style.display = 'none'
             document.getElementById('progress').style.display = 'block'
+            document.getElementById('output').style.width = '27rem'
         },
         drag(event){
             event.stopPropagation();
@@ -48,10 +49,10 @@ export default {
     computed:{
         dragDropClick:{
             get(){
-            return this.$store.state.isDragDrop
+                return this.$store.state.isDragDrop
             },
             set(isBool){
-            this.$store.commit('setIsDragDrop', isBool)
+                this.$store.commit('setIsDragDrop', isBool)
             }
       },
     }
@@ -84,7 +85,7 @@ export default {
         color:#14375A;
         background-color: white;
         min-height: 200px;
-        max-width: 34rem; 
+        max-width: 32rem; 
         white-space: pre; 
         position: absolute; 
         left: 0rem; 
@@ -99,6 +100,7 @@ export default {
         right: 13.8rem;
     }
     .fileContainer input {
+        max-width: 34rem;
         padding: 60px 0px 100px 190px;
         opacity: 0;
     }
