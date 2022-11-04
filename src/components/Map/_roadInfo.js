@@ -1,17 +1,13 @@
 // import methods and functions into file
-import {sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, txCounties, search, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
-import {cntyNbrNm} from '../../common/txCnt' //importing county name/nbr table via txCnt.js
+import { sketch, sketchPoint, view, featLayer, gLayer, search,  rdbdAssetPt, rdbdAssetLine } from './map' 
 import { criConstants } from '../../common/cri_constants';
-import {initGraphicCheck, queryEditsLayer} from '../Map/crud'
-//import esri js classes via ESM
+import { highLightFeat, setDataToStore, queryFeatureTables, queryFeat } from './_helper';
+import { store } from '../../store'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
-import Query from "@arcgis/core/rest/support/Query";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils"
 import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
-import esriRequest from "@arcgis/core/request";
-import {store} from '../../store'
-import router from '../../router';
+
 
 
 //set data for popup display
@@ -21,7 +17,7 @@ export async function popUpData(res){
     store.commit('setActiveLoader',true)
     info.then(async (x)=>{
       await queryFeatureTables(x, true)
-      hightlightFeat('click')
+      highLightFeat('click')
       store.commit('setStepperClose', true)
       store.commit('setActiveLoader',false)
       store.commit('setFeatureGeom', x)
@@ -554,8 +550,3 @@ function epochToHumanTime(editTime, createTime){
     }
     return [createTimestamp, editTimestamp]
 }
-
-// import from helper.js
-// queryFeatureTables
-// hightlightFeat
-// setDataToStore

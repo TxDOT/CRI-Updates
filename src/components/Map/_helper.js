@@ -1,3 +1,12 @@
+// import methods and functions into file
+import { view, featLayer, gLayer, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map' //importing from ESRI API via map.js
+import { criConstants } from '../../common/cri_constants';
+import { store } from '../../store'
+import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
+import Graphic from "@arcgis/core/Graphic";
+import Query from "@arcgis/core/rest/support/Query";
+
+
 //Sets Road Data in the data store. 
 function setDataToStore(surface, design, name, lane, objectid, comment, editInfo){
     store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
@@ -10,7 +19,7 @@ function setDataToStore(surface, design, name, lane, objectid, comment, editInfo
   }
 
 //querys the Refernce Layer table returns geometry/attributes
-async function queryFeat(qry){
+export async function queryFeat(qry){
     let queryFeat = await featLayer.queryFeatures({
       objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : [qry.attributes.OBJECTID],
       outFields: ["*"],
@@ -21,7 +30,7 @@ async function queryFeat(qry){
   }
 
 //Querying asset (nonGeom) tables and pushing values to store
-async function queryFeatureTables(tblqry){
+export async function queryFeatureTables(tblqry){
     //this function is called when a user makes an initial edit (first part of the ternery) and on reload of the map (second part of the ternery).
     let queryStatment = tblqry.features ? tblqry.features[0].attributes.RDBD_GMTRY_LN_ID : tblqry.attributes.RDBD_GMTRY_LN_ID
     const query = new Query();
@@ -90,7 +99,7 @@ async function queryFeatureTables(tblqry){
   
     setDataToStore(JSON.stringify(rdbdSrfArry), JSON.stringify(rdbdDsgnArry), JSON.stringify([roadNameObj]), JSON.stringify(rdbdNumLnArry), tblqry.features[0].attributes.OBJECTID)
     return;
-  }
+}
 
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
@@ -155,7 +164,7 @@ export async function defineGraphic(graphics, clickType, editType){
 }
 
 //highlightes reference layer geometry when mouse moves over
-export function hightlightFeat(eventType){
+export function highLightFeat(eventType){
     let highlight;
     if(highlight){
       highlight.remove()
@@ -188,4 +197,14 @@ export function hightlightFeat(eventType){
           })
         })
       })
+}
+
+//convert geometry to miles
+export function geomToMiles(geometry, isNum, precision){
+    if(isNum){
+      return Number(geometryEngine.geodesicLength(geometry, "miles").toFixed(precision))
+    }
+    else{
+      return geometryEngine.geodesicLength(geometry, "miles")
+    }
 }

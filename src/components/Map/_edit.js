@@ -1,16 +1,13 @@
-import {sketch, sketchPoint, view, featLayer, gLayer, countyOfficialInfo, txCounties, search, viewPoint, home, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst, rdbdAssetPt, rdbdAssetLine} from '../Map/map' //importing from ESRI API via map.js
-import {cntyNbrNm} from '../../common/txCnt' //importing county name/nbr table via txCnt.js
+import { sketch, sketchPoint, view, featLayer, gLayer } from './map'
 import { criConstants } from '../../common/cri_constants';
-import {initGraphicCheck, queryEditsLayer} from '../Map/crud'
-//import esri js classes via ESM
+import {initGraphicCheck, queryEditsLayer} from './crud'
+import {store} from '../../store'
+import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic } from './_helper';
+import { getNewDfoDist } from './_roadInfo' 
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
-import Query from "@arcgis/core/rest/support/Query";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils"
 import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
-import esriRequest from "@arcgis/core/request";
-import {store} from '../../store'
-import { showVerticies } from './editFunc';
 
 
 export async function addRoadbed(){
@@ -369,7 +366,34 @@ export function showVerticies(x){
   sketch.update([x], {tool:'reshape'})
 }
 
-
+export async function cancelEditStepper(){
+  let returnData = await queryEditsLayer()
+  let filterEdits = returnData.features.filter(x => x.attributes.OBJECTID === store.getters.getObjectid)
+  if(filterEdits.length){
+    let returnRoad = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? filterEdits[0] : await queryFeat(filterEdits[0])
+    let oldLength = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? geomToMiles(returnRoad.geometry,true,3) : geomToMiles(returnRoad.features[0].geometry,true,3)
+    let getGraphicsLayer = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
+    let graphicLength = geomToMiles(getGraphicsLayer[0].geometry, true, 3) 
+    let editsLength = geomToMiles(filterEdits[0].geometry, true, 3)
+    let diff = editsLength - graphicLength
+    store.commit('setIsStepCancel', true)
+    let mileageAction = graphicLength < editsLength ? 'Add' : 'Delete'
+    if(filterEdits[0].attributes.EDIT_TYPE_ID === 1) {
+      store.commit('setDeltaDis',[Math.abs(diff), mileageAction])
+      filterEdits[0].attributes.EDIT_TYPE_ID = 'add'
+    }
+    else if(filterEdits[0].attributes.EDIT_TYPE_ID === 5){
+      filterEdits[0].attributes.oldLength = oldLength
+      store.commit('setDeltaDis',[Math.abs(diff), mileageAction])
+      filterEdits[0].attributes.EDIT_TYPE_ID = 'edit'
+    }
+    gLayer.remove(getGraphicsLayer[0])
+    defineGraphic(filterEdits[0], 'click', null)
+    store.commit('setIsStepCancel', false)
+    return;    
+  }
+  return null
+}
 // LOCAL EDITING FUNCTIONS (NOT EXPORTED)
 
 //setting M-Vaules on geometry changes
@@ -503,12 +527,12 @@ function hideEditedRoads(graphicL, update){
   featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
 }
 
+export function saveToEditsLayer(){
+  let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === store.getters.getObjectid)
+  initGraphicCheck(editGraphic, false)
+}
 
-// import from helper.js
-// function setDataToStore
-// queryFeat
-// queryFeatureTables
-// defineGraphic
-// 
+
+
 
 
