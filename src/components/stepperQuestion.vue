@@ -112,9 +112,9 @@
 
 <script>
 //importing functions
-import {removeHighlight, geomToMiles,removeAsstPoints, 
-        stopEditingPoint, sketchCompete,initLoadAssetGraphic, 
-        showVerticies, removeGraphic, saveToEditsLayer, cancelEditStepper} from '../components/Map/editFunc'
+import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, sketchCompete, cancelEditStepper, saveToEditsLayer} from './Map/edit'
+import { removeAsstPoints, initLoadAssetGraphic } from './Map/roadInfo'
+import { geomToMiles } from './Map/helper'
 import { gLayer } from './Map/map'
 //importing vue components
 import roadName from '../components/Map/stepperContent/RoadName.vue'

@@ -175,7 +175,7 @@
 </template>
 
 <script>
-import {countyInfo} from '../components/Map/editFunc'
+import {countyInfo} from '../components/Map/login'
 import {featLayer,txCounties,view, viewPoint} from '../components/Map/map'
 import Query from "@arcgis/core/rest/support/Query"
 import {criConstants} from '../common/cri_constants';

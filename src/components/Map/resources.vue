@@ -94,7 +94,7 @@
 </template>
 
 <script>
-  import { downloadRdLog } from "./editFunc"
+  import { downloadRdLog } from "./advanced"
 
   export default {
     name: 'aboutHelp',

@@ -2,8 +2,8 @@ import { sketch, sketchPoint, view, featLayer, gLayer } from './map'
 import { criConstants } from '../../common/cri_constants';
 import {initGraphicCheck, queryEditsLayer} from './crud'
 import {store} from '../../store'
-import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic } from './_helper';
-import { getNewDfoDist } from './_roadInfo' 
+import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic , geomToMiles} from './helper';
+import { getNewDfoDist, epochToHumanTime } from './roadInfo' 
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils"
@@ -247,15 +247,15 @@ export function removeGraphic(){
     store.commit('setDeltaDis',[diffAdded, 'Edit'])
   }
 }
-//Stop Editing by calling the sketch cancel() method.
-export function stopEditing(){
-  sketch.cancel()
-}
+// //Stop Editing by calling the sketch cancel() method.
+// export function stopEditing(){
+//   sketch.cancel()
+// }
 
-export function removeHighlight(){
-  let delHighlight = view.allLayerViews.items.filter(x => x.layer.type === 'feature' && x._highlightIds)
-  delHighlight[0]._highlightIds.delete(store.getters.getObjectid)
-}
+// export function removeHighlight(){
+//   let delHighlight = view.allLayerViews.items.filter(x => x.layer.type === 'feature' && x._highlightIds)
+//   delHighlight[0]._highlightIds.delete(store.getters.getObjectid)
+// }
 
 export function mouseHoverDfoDisplay(type){
   let pickRoute = {
@@ -361,10 +361,10 @@ export function sketchCompete(){
   sketch.complete()
 }
 
-//show verticies along line
-export function showVerticies(x){
-  sketch.update([x], {tool:'reshape'})
-}
+// //show verticies along line
+// export function showVerticies(x){
+//   sketch.update([x], {tool:'reshape'})
+// }
 
 export async function cancelEditStepper(){
   let returnData = await queryEditsLayer()
@@ -501,31 +501,31 @@ function updateGraphicsLayer(oid, length){
 }
 
 //hides feature roadbeds when converted to graphic
-function hideEditedRoads(graphicL, update){
-  let objectidList = [];
+// function hideEditedRoads(graphicL, update){
+//   let objectidList = [];
 
-  if(update === true){
-    if(objectidList.length){
-      objectidList.length = 0
-    }
+//   if(update === true){
+//     if(objectidList.length){
+//       objectidList.length = 0
+//     }
 
-    gLayer.graphics.items.forEach((x) => {
-      x.attributes.objectid === store.getters.getObjectid ? null : objectidList.push(x.attributes.objectid)
-    })
-    objectidList.length === 0 ? featLayer.definitionExpression = `CNTY_TYPE_NM = '${store.getters.getCntyName}'` : featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
-    return;
-  }
+//     gLayer.graphics.items.forEach((x) => {
+//       x.attributes.objectid === store.getters.getObjectid ? null : objectidList.push(x.attributes.objectid)
+//     })
+//     objectidList.length === 0 ? featLayer.definitionExpression = `CNTY_TYPE_NM = '${store.getters.getCntyName}'` : featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
+//     return;
+//   }
   
-  let items = !graphicL.graphics ? graphicL.features : graphicL.graphics.items 
+//   let items = !graphicL.graphics ? graphicL.features : graphicL.graphics.items 
   
-  for(let id in items){
-    if(items[id].attributes !== null){
-      let objectid = items[id].attributes.objectid || items[id].attributes.OBJECTID
-      objectidList.push(objectid)
-    }
-  }
-  featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
-}
+//   for(let id in items){
+//     if(items[id].attributes !== null){
+//       let objectid = items[id].attributes.objectid || items[id].attributes.OBJECTID
+//       objectidList.push(objectid)
+//     }
+//   }
+//   featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
+// }
 
 export function saveToEditsLayer(){
   let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === store.getters.getObjectid)

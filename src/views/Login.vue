@@ -34,9 +34,8 @@
 </template>
 
 <script>
-//import {autoDrawAsset} from '../components/Map/editFunc'
 import {countyOfficialInfo} from '../components/Map/map'
-import {goToMap} from '../components/Map/editFunc'
+import {goToMap} from '../components/Map/login'
 import {cntyNbrNm} from '../common/txCnt'
 import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
 import esriId from "@arcgis/core/identity/IdentityManager";

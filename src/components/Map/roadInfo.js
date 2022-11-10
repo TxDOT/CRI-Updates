@@ -1,7 +1,7 @@
 // import methods and functions into file
 import { sketch, sketchPoint, view, featLayer, gLayer, search,  rdbdAssetPt, rdbdAssetLine } from './map' 
 import { criConstants } from '../../common/cri_constants';
-import { highLightFeat, setDataToStore, queryFeatureTables, queryFeat } from './_helper';
+import { highLightFeat, setDataToStore, queryFeatureTables, queryFeat } from './helper';
 import { store } from '../../store'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
@@ -321,22 +321,12 @@ export function initLoadAssetGraphic(asset){
       }
     }
     catch{
+      console.warn("oh noooo...")
     }
 }
 
-// local functions (not exported)
-function assetCoverageCheck(x){
-    let beginEndArr = []
-  
-    x.forEach(function(y){
-      beginEndArr.push([y.ASSET_LN_BEGIN_DFO_MS, y.ASSET_LN_END_DFO_MS])
-    })
-  
-    store.commit('setAssetCoverage', beginEndArr)
-}
-
 //Getting new M-Value for new asset Point
-function getNewDfoDist(objectid, x, y, slide){
+export function getNewDfoDist(objectid, x, y, slide){
     objectid
     let objid = store.getters.getRoadGeom;
     let newDfo;
@@ -468,6 +458,17 @@ function getNewDfoDist(objectid, x, y, slide){
     return newDfo;
 }
 
+// local functions (not exported)
+function assetCoverageCheck(x){
+  let beginEndArr = []
+
+  x.forEach(function(y){
+    beginEndArr.push([y.ASSET_LN_BEGIN_DFO_MS, y.ASSET_LN_END_DFO_MS])
+  })
+
+  store.commit('setAssetCoverage', beginEndArr)
+}
+
 //Drawing the new Asset Graphics on the route
 function createAssetGraph(pathArr,y){
     let assetGeom = rdbdAssetLine.graphics.items
@@ -533,7 +534,7 @@ function createAssetGraph(pathArr,y){
 }
 
 //convert epoch time to Human readable. Date from AGOL is in Epoch.
-function epochToHumanTime(editTime, createTime){
+export function epochToHumanTime(editTime, createTime){
     let createTimestamp;
     let editTimestamp;
     if(createTime){

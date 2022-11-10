@@ -17,7 +17,7 @@
 </template>
 <script>
 
-import {retrieveFile} from '../Map/editFunc'
+import {retrieveFile} from '../Map/advanced'
 export default {
     name: 'dragndrop',
     data(){

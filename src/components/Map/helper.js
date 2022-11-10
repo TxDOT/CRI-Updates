@@ -2,13 +2,14 @@
 import { view, featLayer, gLayer, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map' //importing from ESRI API via map.js
 import { criConstants } from '../../common/cri_constants';
 import { store } from '../../store'
+import { showVerticies, hideEditedRoads} from './edit'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
 import Query from "@arcgis/core/rest/support/Query";
 
 
 //Sets Road Data in the data store. 
-function setDataToStore(surface, design, name, lane, objectid, comment, editInfo){
+export function setDataToStore(surface, design, name, lane, objectid, comment, editInfo){
     store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
     store.commit('setRoadbedDesign', design) 
     store.commit('setRoadbedName', name)

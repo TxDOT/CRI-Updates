@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import {countyInfo} from './components/Map/editFunc'
+import {countyInfo} from './components/Map/login'
 
 export default {
     name: 'App',

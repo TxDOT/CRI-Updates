@@ -20,7 +20,9 @@
 </template>
 
 <script>
-import {initLoadAssetGraphic, sketchCompete} from '../editFunc'
+
+import { sketchCompete } from '../edit'
+import { initLoadAssetGraphic } from '../roadInfo'
 import {criConstants} from '../../../common/cri_constants'
 import { gLayer } from '../map'
 
@@ -177,9 +179,6 @@ export default {
 }
 </script>
 <style>
-#input1{
-    
-}
 .v-input input{
     text-transform: uppercase;
 }

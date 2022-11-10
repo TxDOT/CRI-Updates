@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import {addRoadbed, stopEditing} from '../Map/editFunc';
+import {addRoadbed, stopEditing} from '../Map/edit';
 import esriId from "@arcgis/core/identity/IdentityManager";
 
 export default {

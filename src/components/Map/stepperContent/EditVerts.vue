@@ -15,7 +15,8 @@
 
 <script>
 
-import {stopEditing, delRoad, defineGraphic} from './../editFunc'
+import {stopEditing, delRoad} from './../edit'
+import { defineGraphic } from './../helper'
 export default {
     name: 'editVerts',
     data(){

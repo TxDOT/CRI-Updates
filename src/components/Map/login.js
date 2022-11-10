@@ -1,9 +1,56 @@
 // import methods and functions into file
-import { view, featLayer, txCounties, search, viewPoint, home } from './map'
+import { countyOfficialInfo, view, featLayer, txCounties, search, viewPoint, home } from './map'
 import { queryEditsLayer } from './crud'
-import { defineGraphic, geomToMiles, queryFeat } from './_helper';
+import { defineGraphic, geomToMiles, queryFeat } from './helper';
+import { cntyNbrNm } from '../../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query";
-import {store} from '../../store'
+import { store } from '../../store'
+import router from '../../router';
+// on successful login gets county name and road mileage totals. Filters county for map zoom and definition query
+export async function countyInfo(){
+  let countyInfoPromise =  new Promise(function(res){
+    let queryUrl = window.location.href
+    let regExUrl = /\/(?:.(?!\/))+$/
+    let crInfo = queryUrl.match(regExUrl)[0].split('/')[1]
+    if(crInfo === 'login#'){return router.push('/load')}
+    for (let j=0; j < cntyNbrNm.length; j++){
+      if(cntyNbrNm[j][crInfo]){
+        let whereStatement = `CNTY_NBR = '${crInfo}'`
+        // roadInfo.getcntyNmbr = crInfo
+        store.commit('setCntyNmbr', crInfo)
+        // roadInfo.getcntyName = cntyNbrNm[j][crInfo]
+        store.commit('setCntyName', cntyNbrNm[j][crInfo])
+        const query = new Query();
+        query.where = whereStatement
+        query.outFields = [ "*" ]
+        let newQuery = countyOfficialInfo.queryFeatures(query)
+        // query county extent for dynamic home button
+        const geomQuery = new Query();
+        geomQuery.where = `CNTY_NM = '${store.getters.getCntyName}'`;
+        geomQuery.outFields = [ "*" ];
+        geomQuery.returnGeometry = true;
+        let returnGeom = txCounties.queryFeatures(geomQuery);
+        //Dynamically adding County NBR to search definition expression via data store
+        let countyExtent = returnGeom;
+        countyExtent.then(function(result) {
+          viewPoint.targetGeometry = result.features[0].geometry.extent;
+          viewPoint.scale = 500000
+          //need to set a buffer on mapview zoom level
+          home.viewpoint = viewPoint;
+        });
+
+        res({response:true, nbr:parseInt(crInfo), query:newQuery, extent: returnGeom})
+      }
+      else{
+        res({response:false})
+      }
+    }
+    //let crValidation = /^[0-9]{1,3}$/
+  })
+  
+  let countyInfoReturn = await countyInfoPromise;
+  return countyInfoReturn
+}
 
 //reloads edits from EDITS Feature Service to Graphics Layer
 export async function reloadEdits(){
@@ -78,6 +125,3 @@ export async function goToMap(name, nbr){
     view.constraints.minZoom = 8;
     return;
 } 
-
-// import from _edit.js
-// defineGraphic

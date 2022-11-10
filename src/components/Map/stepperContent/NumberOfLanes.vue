@@ -84,7 +84,8 @@
 
 <script>
 
-import {mouseHoverDfoDisplay, getSelectedDFO, applyMToAsset, stopEditingPoint} from '../editFunc'
+import { getSelectedDFO, applyMToAsset } from '../roadInfo'
+import { mouseHoverDfoDisplay, stopEditingPoint } from '../edit'
 import {criConstants} from '../../../common/cri_constants'
 import {gLayer} from '../map'
 import assetAlert from '../stepperContent/assetAlert.vue'

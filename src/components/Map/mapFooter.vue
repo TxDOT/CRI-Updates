@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import {updateLength} from '../Map/editFunc'
+import {updateLength} from '../Map/edit'
 import { ccWidget } from './map'
 
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";

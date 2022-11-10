@@ -75,7 +75,7 @@
 <script>
 import confirmationAlert from './stepperContent/confirmationAlertsDEL.vue'
 import sketchAlert from '../Map/stepperContent/discardAlert.vue'
-import {stopEditing, removeGraphic, saveToEditsLayer, removeHighlight} from './editFunc'
+import {stopEditing, removeGraphic, saveToEditsLayer, removeHighlight} from './edit'
 import { gLayer } from '../Map/map'
 export default {
     name: 'editExistingRd',

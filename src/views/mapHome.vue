@@ -14,7 +14,6 @@
     <Legend v-if="displayLegend === true"/>
     <geomCheck v-if="isGeomCheck === true"/>
     <dragndrop/>
-    <mapValues v-if="isMapValues === true"/>
   </div>
 </template>
 
@@ -31,14 +30,11 @@ import about from '../components/Map/aboutApp.vue'
 import Legend from '../components/Map/mapLegend.vue'
 import geomCheck from '../components/Map/geomCheck.vue'
 import dragndrop from '../components/Map/dragNDrop.vue'
-import {hightlightFeat} from '../components/Map/editFunc'
+import { highLightFeat } from '../components/Map/helper'
 import { expandLegend } from '../components/Map/map'
-import mapValues from '../components/Map/mapUpload.vue'
-// import { criConstants } from '../common/cri_constants'
-//import esriId from "@arcgis/core/identity/IdentityManager";
 
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, mapValues},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop},
     props:["id"],
     name: 'MapHome',
     data(){
@@ -72,7 +68,7 @@ export default {
       //   curr.baseLayers.items[0].id === 'imagery' ? featLayer.renderer = criConstants.featLayerColorImagery : featLayer.renderer = criConstants.featLayerColorVector
       // });
 
-      hightlightFeat('pointer-move')
+      highLightFeat('pointer-move')
     },
     watch:{
       steppClose:{

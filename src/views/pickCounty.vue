@@ -24,7 +24,7 @@
 
 <script>
 import {countyOfficialInfo} from '../components/Map/map'
-import {goToMap} from '../components/Map/editFunc'
+import {goToMap} from '../components/Map/login'
 import {cntyNbrNm} from '../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query"
 import loader from '../components/Map/loader.vue'
