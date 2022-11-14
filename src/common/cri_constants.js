@@ -50,19 +50,5 @@ export const criConstants = {
       'delete': ['#E32636', 'DELETE', 4]
     },
 
-  //   featLayerColorVector:{ 
-  //       type: "simple",
-  //       symbol:{
-  //           type: "simple-line",
-  //           color:[255, 16, 240]
-  //       }
-  //   },
-    
-  //   featLayerColorImagery:{ 
-  //     type: "simple",
-  //     symbol:{
-  //         type: "simple-line",
-  //         color:[255, 16, 240]
-  //     }
-  // }
+    isCertAdvanced: false
 }

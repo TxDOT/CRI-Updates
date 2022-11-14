@@ -90,16 +90,23 @@
           </v-card-text>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="isCert">
+      <isCertAdvanced v-model="isCert"/>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
+
   import { downloadRdLog } from "./editFunc"
+  import isCertAdvanced from './certAdvanced.vue'
 
   export default {
+    components: { isCertAdvanced },
     name: 'aboutHelp',
     data (){
       return {
+        isCert: false,
         countyNm: null,
         isFileSuccess: false,
         isFileDwnload: false,
@@ -113,7 +120,8 @@
         iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github'],
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
-              this.display = true
+              this.isCert = true
+              //this.display = true
               this.clearEditBtn = true
               this.dragDropClick = false
               this.removeBtnFocus();

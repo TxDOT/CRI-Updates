@@ -15,6 +15,7 @@
     <geomCheck v-if="isGeomCheck === true"/>
     <dragndrop/>
     <mapValues v-if="isMapValues === true"/>
+    <!-- <isCertAdvanced/> -->
   </div>
 </template>
 
@@ -34,6 +35,7 @@ import dragndrop from '../components/Map/dragNDrop.vue'
 import {hightlightFeat} from '../components/Map/editFunc'
 import { expandLegend } from '../components/Map/map'
 import mapValues from '../components/Map/mapUpload.vue'
+//import isCertAdvanced from '../components/Map/certAdvanced.vue'
 // import { criConstants } from '../common/cri_constants'
 //import esriId from "@arcgis/core/identity/IdentityManager";
 
