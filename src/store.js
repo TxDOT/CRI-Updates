@@ -56,10 +56,18 @@ export const store = new Vuex.Store({
         isDragDrop: false,
         isDownload: false,
         editInfo: '',
-        uploadFields: []
+        uploadFields: [],
+        serverResp: false, //update
+        isCertified: false//update
 
     },
     getters:{
+        getCertifiedrCheck(state){
+            return state.isCertified
+        },//update
+        getServerCheck(state){
+            return state.serverResp
+        },//update
         getUploadFields(state){
             return state.uploadFields
         },
@@ -216,6 +224,12 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setCertifiedrCheck(state, certify){
+            state.isCertified = certify
+        },//update
+        setServerCheck(state, srverRes){
+            state.serverResp = srverRes
+        },//update
         setUploadFields(state, fieldNames){
             state.uploadFields = fieldNames
         },

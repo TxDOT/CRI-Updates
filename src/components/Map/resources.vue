@@ -99,6 +99,7 @@
 <script>
 
   import { downloadRdLog } from "./editFunc"
+  import { criConstants } from "../../common/cri_constants"
   import isCertAdvanced from './certAdvanced.vue'
 
   export default {
@@ -120,11 +121,12 @@
         iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github'],
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
-              this.isCert = true
-              //this.display = true
-              this.clearEditBtn = true
-              this.dragDropClick = false
-              this.removeBtnFocus();
+              criConstants.isCertAdvanced === false ? this.certifiedFalse() : this.certifiedTrue()
+              //this.isCert = true
+              // this.display = true
+              // this.clearEditBtn = true
+              // this.dragDropClick = false
+              // this.removeBtnFocus();
             }},
           { title: 'Criteria', icon: 'mdi-clipboard-text', action: ()=>{
               window.open('https://www.txdot.gov/data-maps/roadway-inventory/county-road-criteria.html', '_blank')
@@ -144,7 +146,19 @@
         ],
       }
     },
+    mounted(){
+      this.isUserCertify = criConstants.isCertAdvanced
+    },
     methods:{
+      certifiedTrue(){
+        this.display = true
+        this.clearEditBtn = true
+        this.dragDropClick = false
+        this.removeBtnFocus();
+      },
+      certifiedFalse(){
+        this.isCert = true
+      },
       openPage(event){
         console.log(event.explicitOriginalTarget)
         if(event.explicitOriginalTarget.textContent === 'Access Sandbox Environment'){
@@ -235,6 +249,14 @@
         },
         set(countyName){
           this.$store.commit('setCntyName',countyName)
+        }
+      },
+      isUserCertify:{
+        get(){
+          return this.$store.state.isCertified
+        },
+        set(bool){
+          this.$store.commit('setCertifiedrCheck',bool)
         }
       },
     }

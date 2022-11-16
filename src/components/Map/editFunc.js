@@ -1609,6 +1609,13 @@ function uploadPass(message){
   document.getElementById('output').style.border = '2px solid green'
   document.getElementById('text').innerText = `Succesfully uploaded your shapefile! ${message}`
   document.getElementById('text').style.color = 'green'
+  store.commit('setIsDragDrop', false)//update
+  store.commit('setServerCheck', true) //update
+  setTimeout(()=>{//update
+    serverResponse()//update
+  },3000)//update
+
+  
 }
 
 async function processUpload(upload){
@@ -1673,7 +1680,7 @@ async function uploadChecks(schemaFields, txdotSchema){
     schemaFields.layerDefinition.fields.forEach((x) => completeAttName.push(x.name))
     for(let i=0; i < txdotSchema.length; i++){
       let testField = completeAttName.includes(txdotSchema[i])
-      testField === true ? pass++ : fail ++
+      testField === true ? pass++ : fail++
     }
     if(fail > 0){
       res({valueFail: true, message: "Schema Failed. Check Shapefile matches TxDOT Schema"})
@@ -1687,3 +1694,10 @@ async function uploadChecks(schemaFields, txdotSchema){
   return await schemaPromise
 }
 
+async function serverResponse(){
+  //'https://gis-batch-dev.txdot.gov/fmedatastreaming/TPP/returnTestFile.fmw?', {headers:{'Authorization':'fmetoken token=7f4d809080c9161e0d5ea5708d5522a3fdd01119'},'Content-Type': 'text/plain'}
+  let dataReturn = await fetch('https://testportal.txdot.gov/fmejobsubmitter/TPP/returnTestFile.fmw?opt_showresult=false&opt_servicemode=sync', {headers:{'Authorization':'fmetoken token=b6aa89bdbe05b1ffaca36dc6562ae0770c71b9ab'},'Content-Type': 'text/plain'})
+  let text = await dataReturn.text()
+  console.log(text)
+  document.getElementById('fmeResp').innerText = `FME Server says...${text}`//update
+}//update
