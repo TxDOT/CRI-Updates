@@ -1695,9 +1695,12 @@ async function uploadChecks(schemaFields, txdotSchema){
 }
 
 async function serverResponse(){
-  //'https://gis-batch-dev.txdot.gov/fmedatastreaming/TPP/returnTestFile.fmw?', {headers:{'Authorization':'fmetoken token=7f4d809080c9161e0d5ea5708d5522a3fdd01119'},'Content-Type': 'text/plain'}
+  //let dataReturn = await fetch('https://gis-batch-dev.txdot.gov/fmedatastreaming/TPP/returnTestFile.fmw?', {headers:{'Authorization':'fmetoken token=7f4d809080c9161e0d5ea5708d5522a3fdd01119'},'Content-Type': 'text/plain'})
   let dataReturn = await fetch('https://testportal.txdot.gov/fmejobsubmitter/TPP/returnTestFile.fmw?opt_showresult=false&opt_servicemode=sync', {headers:{'Authorization':'fmetoken token=b6aa89bdbe05b1ffaca36dc6562ae0770c71b9ab'},'Content-Type': 'text/plain'})
   let text = await dataReturn.text()
   console.log(text)
   document.getElementById('fmeResp').innerText = `FME Server says...${text}`//update
+  setTimeout(()=>{
+    store.commit('setServerCheck', false)
+  },5000)
 }//update

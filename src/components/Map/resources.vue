@@ -78,7 +78,7 @@
                     <v-item>
                       <v-tooltip bottom max-width="200" color="#204E70" style="border-radius: 0px;"> 
                         <template v-slot:activator="{ on, attrs }">
-                          <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" width=600 @click="openPage($event)" color="green"><p style="position:absolute; text-align: left; top: 1rem; right: 3.1rem; padding-left: 1rem;">{{mediaType[n]}}</p><v-icon style="position:absolute; top:5rem; right: 4.2rem; font-size: 2.5rem;">{{iconType[n]}}</v-icon></v-card>
+                          <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" width=600 @click="openPage($event)" color="#15648C"><p style="position:absolute; text-align: left; top: 1rem; right: 3.1rem; padding-left: 1rem;">{{mediaType[n]}}</p><v-icon style="position:absolute; top:5rem; right: 4.2rem; font-size: 2.5rem;">{{iconType[n]}}</v-icon></v-card>
                         </template>
                         <span>{{tooltips[n]}}</span>
                       </v-tooltip>
