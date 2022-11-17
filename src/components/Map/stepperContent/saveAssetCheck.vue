@@ -1,3 +1,4 @@
+<!-- Alert user that Road Name is not filled out -->
 <template>
         <v-card id="finalCheck">
             <v-card-title class="surfaceTitle" >
@@ -9,7 +10,7 @@
             <v-card-text style="position:relative; text-align:left; padding: 0px; color: black; top:20px; left: .9rem;">
                 Road Name is Required.
             </v-card-text>
-            <v-btn tile @click="setFinalCheck()" style="poistion:relative; left: 4.3rem; top:2.0rem;" outlined color="#14375A"><u>close</u></v-btn>
+            <v-btn id="btnClose" tile @click="setFinalCheck()" outlined color="#14375A"><u>close</u></v-btn>
         </v-card>
 </template>
 
@@ -50,5 +51,10 @@ export default {
     left: 57rem;
     height: 8rem;
     border-radius: 0px;
+}
+#btnClose{
+    position:relative; 
+    left: 4.3rem; 
+    top:2.0rem;
 }
 </style>

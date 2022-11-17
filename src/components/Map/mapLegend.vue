@@ -1,4 +1,4 @@
-//Legend component
+<!-- Legend component -->
 <template >
     <v-card style="position: absolute; bottom: 8%; right: 2%; width: 10.5rem; height: 8rem;" tile>
         <v-card-title class="editRdTitle"><p style="position:absolute; top: 0.5%; left: 5%">Edit Types</p></v-card-title>

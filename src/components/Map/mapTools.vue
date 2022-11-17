@@ -1,4 +1,4 @@
-//tools in sidebar nav
+<!-- tools in sidebar nav -->
 <template>
   <v-list class="outlineColor" style="position: absolute; bottom: 39vh; width: 100%;" >
     <v-list-item-group v-model="clearEditBtn" color="#15648C">

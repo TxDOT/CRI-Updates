@@ -1,4 +1,4 @@
-//map header
+<!-- map header -->
 <template>
     <div class ="mapHeader flex" >
         <v-app-bar app color="#14375A" class="white--text" style="height:60px; top:0%; width:100%;" clipped-left>

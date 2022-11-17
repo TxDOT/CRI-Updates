@@ -1,4 +1,4 @@
-//map component
+<!-- component that holds mapView -->
 <template>
     <div id="viewDiv" class="main"></div>
 </template>

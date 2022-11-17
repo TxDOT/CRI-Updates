@@ -1,8 +1,6 @@
+<!-- loader component -->
 <template>
     <loader/>
-    <!-- <v-skeleton-loader type="list-item, card" :loading="loading">
-
-    </v-skeleton-loader> -->
 </template>
 <script>
 

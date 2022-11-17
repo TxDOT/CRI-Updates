@@ -1,3 +1,4 @@
+<!-- Road Surface asset card -->
 <template>
   <div class="totalDiv">
     <!-- each v-card has a property assigned to it. isAssetType, isAssetFullLen, isAssetStart, isAssetEnd or isAssetFinished  -->

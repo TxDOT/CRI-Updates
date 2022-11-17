@@ -17,7 +17,8 @@ export async function downloadRdLog(){
    
     await bulkAssetReturn(countyQuery)
 }
-  
+
+// split up query into chunks for processing
 async function bulkAssetReturn(countyQuery){
 //get length
 //base 5000, splice every 5000
@@ -90,7 +91,8 @@ while(iStart < ids.length){
 }
 await surfaceAsset(srfcAsset, dsgnAsset, laneAsset, useInfo) 
 }
-  
+
+// create fields for CSV file
 async function surfaceAsset(roadSrfc, roadDsgn, roadLane, cntyQ){
 let dataHolder = []
 
@@ -194,7 +196,8 @@ return await surfacePromise
   //     }
   //     console.log('complete')
   // }
-  
+
+// make the CSV file  
 async function buildCSV(csvString){
 let csvPromise = new Promise((res)=>{
     let createElement = document.createElement('a')
@@ -207,18 +210,20 @@ let csvPromise = new Promise((res)=>{
 })
 return await csvPromise
 }
-  
+
+// handles upload of shapefile
 export function retrieveFile(event){
     let name = event.target.value.toLowerCase().split('.')
     let fileName = name[0].replace('c:\\fakepath\\', '')
     createFeatures(fileName)
 }
-  
+
+// create feature collection from shapfile via generate method of REST API
 async function createFeatures(file){
 let fileParams = {
     name: file,
     targetSR: view.spatialReference,
-    maxRecordCount: 1000,
+    maxRecordCount: 4000,
     enforceInputFileSizeLimit: true,
     enforceOutputJsonSizeLimit: true,
     generalize: true,
@@ -248,7 +253,8 @@ convShpToGraphic
     uploadFail(fail.message)
     })
 }
-  
+
+// failure message
 function uploadFail(message){
 document.getElementById('progress').style.display = 'none'
 document.getElementById('text').style.display = "block"
@@ -257,7 +263,8 @@ document.getElementById('output').style.width = '27rem'
 document.getElementById('text').innerText = `Error! ${message}`
 document.getElementById('text').style.color = 'red'
 }
-  
+
+// successful upload message
 function uploadPass(message){
 document.getElementById('progress').style.display = 'none'
 document.getElementById('text').style.display = "block"
@@ -266,18 +273,14 @@ document.getElementById('output').style.width = '27rem'
 document.getElementById('text').innerText = `Succesfully uploaded your shapefile! ${message}`
 document.getElementById('text').style.color = 'green'
 }
-  
+
+// initial QA/QC check for file upload
 async function processUpload(upload){
 //populate store with array with upload attribute values. 
 const txdotSchema = ['EDIT_TYPE', 'GID', 'Id', 'ST_DEFN']
 let uploadSchemaCheck = await uploadChecks(upload.data.featureCollection.layers[0], txdotSchema)
 uploadSchemaCheck.valueFail === true ? uploadFail(uploadSchemaCheck.message) : uploadPass('File Passed.')
 return;
-
-// let attName = upload.data.featureCollection.layers[0].layerDefinition.fields
-// let completeAttName = []
-// attName.forEach((x) => completeAttName.push(x.name))
-// store.commit('setUploadFields', completeAttName)
 }
 
 //check uplaod for geometry issues
@@ -293,7 +296,7 @@ let geometryPromise = new Promise((res)=>{
 return await geometryPromise
 }
 
-//check values are filled in and have correct values
+// make sure required fields are present and have values
 async function uploadValueCheck(feat){
 let valueCheckPromise = new Promise((res)=>{
     let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Modify or Delete. Re-submit"
@@ -320,24 +323,24 @@ return await valueCheckPromise
 
 //check schema for uplaod Packet
 async function uploadChecks(schemaFields, txdotSchema){
-let schemaPromise = new Promise((res)=>{
-    let completeAttName = []
-    let pass = 0
-    let fail = 0
-    
-    schemaFields.layerDefinition.fields.forEach((x) => completeAttName.push(x.name))
-    for(let i=0; i < txdotSchema.length; i++){
-    let testField = completeAttName.includes(txdotSchema[i])
-    testField === true ? pass++ : fail ++
-    }
-    if(fail > 0){
-    res({valueFail: true, message: "Schema Failed. Check Shapefile matches TxDOT Schema"})
-    return;
-    }
-    else{
-    let returnValue = uploadValueCheck(schemaFields)
-    res(returnValue)
-    }
-})
-return await schemaPromise
+    let schemaPromise = new Promise((res)=>{
+        let completeAttName = []
+        let pass = 0
+        let fail = 0
+        
+        schemaFields.layerDefinition.fields.forEach((x) => completeAttName.push(x.name))
+        for(let i=0; i < txdotSchema.length; i++){
+            let testField = completeAttName.includes(txdotSchema[i])
+            testField === true ? pass++ : fail ++
+        }
+        if(fail > 0){
+            res({valueFail: true, message: "Schema Failed. Check Shapefile matches TxDOT Schema"})
+            return  ;
+        }
+        else{
+            let returnValue = uploadValueCheck(schemaFields)
+            res(returnValue)
+        }
+    })
+    return await schemaPromise
 }

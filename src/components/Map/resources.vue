@@ -1,3 +1,4 @@
+<!-- Resources component contains: Advanced, Citeria, Training, About -->
 <template>
   <v-container>
     <v-list class="outlineColor" style="position: absolute; bottom: 3vh; width: 98%">

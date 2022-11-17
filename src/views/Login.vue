@@ -1,3 +1,4 @@
+<!-- Login component -->
 <template>
     <v-dialog
       v-model="disagree"
@@ -19,7 +20,7 @@
             </v-card-text>
           </div>
             <div style="position:absolute ; right:4%; bottom:10%">
-              <v-btn id="loginButton" outlined tile @click="disagree = false; logMeIn();" color="#14375A"> <!-- goToMap() -->
+              <v-btn id="loginButton" outlined tile @click="disagree = false; logMeIn();" color="#14375A">
                 <u>Login</u>
               </v-btn>
             </div>
@@ -129,10 +130,7 @@ export default {
           });
       },
       async getCountyInfo(username){
-        //dprosack_anderson
         let county;
-        //let getCounty = username.split('_')[1]
-        //cntyNbrNm located /common/txCnt.js
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
           let userNameSplit = username.split('_')
           if(userNameSplit[1].toLowerCase().includes(cntyNbrNm[0][x].replace(/\s/,'').toLowerCase())){

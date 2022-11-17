@@ -1,5 +1,5 @@
+<!-- "About" content -->
 <template>
-    <!-- <v-dialog style="position:absolute; left: 50%; top: 50%;"> -->
     <v-dialog v-model="aboutClick" max-width="500" persistent style="overflow-y: hidden;">
         <v-card id="finalCheck" v-model="aboutClick" min-height="540">
         <v-card-title class="surfaceTitle"><span style="position: relative; bottom: 10px; right: 7px;">About the County Road Inventory Map</span></v-card-title>
@@ -12,8 +12,6 @@
                                                                                                         purpose of allocation of highway funds.</v-card-text>
         </div>
         <v-divider style="position: relative; bottom: 1.5rem; color:black;"></v-divider>
-        <!-- <v-card-text style="poistion: absolute; text-align: left; color: black;">Overview: this is a new version of the DUSA application. Refer to this section to review updates to the map.</v-card-text> -->
-
         <div style="position:inherit; top: 20rem;">
             <v-card-text style="text-align: left; color: black; margin-left: 1rem;" v-for="(i, index) in updateList" :key=index><ul style="position:relative; line-height: 1px; white-space: nowrap; padding: 0rem;"><li>{{updateList[index]}}</li></ul></v-card-text>
         </div>
@@ -22,7 +20,6 @@
         
       </v-card>
     </v-dialog>
-    <!-- </v-dialog> -->
 </template>
 
 <script>

@@ -1,3 +1,4 @@
+<!-- Number of Lanes asset card -->
 <template>
   <div class="scroller; totalDiv"> 
   <v-card class="card" v-if="isAssetType=== true" elevation="0" tile>
@@ -426,84 +427,7 @@ export default {
 </script>
 
 <style scoped>
-/* .card{
-  border-radius: 0px;
-  max-width: 99%;
-}
-.assetTitle{
-  background-color: #204E70;
-  color: white;
-  height:30px;
-  width: 100%;
-  font-size: 25px; 
-}
-.border{
-  border: #15648C solid 2px;
-}
 
-.enterMile{
-  width:100px;
-  top:38px;
-  left:150px;
-  height:160px;
-}
-
-.cancelButton{
-  bottom: 10px;
-  left: 295px;
-  padding:0px;    
-}
-.continueButton{
-  bottom: 9px;
-  padding:0px;
-  right:160px;
-}
-.cardText{
-  position:relative;
-  right: 18px;
-  bottom:27px;
-  font-size: 15px;
-  text-align: left;
-}
-.nextAssetBtns{
-  position: absolute;
-  right:0%;
-  top: 106%;
-  width: 100px;
-}
-.mileButton{
-  top:75px;
-}
-.chooseMapBtn{
-  top:120px;
-}
-#assetEnd{
-  font-weight: bold;
-  text-decoration: underline;
-  display: -moz-inline-stack;
-  display: inline-block;
-  animation: pulse-title 2s linear;
-}
-@keyframes pulse-title{
-  0%{
-    transform: scale(0);
-  }
-  50%{
-    transform: scale(1.3);
-  }
-  70%{
-    transform: scale(1);
-  }
-  80%{
-    transform: scale(.5);
-  }
-  90%{
-    transform: scale(.1);
-  }
-  100%{
-    transform: scale(.2)
-  }
-} */
 
 .scroller {
   width: auto;

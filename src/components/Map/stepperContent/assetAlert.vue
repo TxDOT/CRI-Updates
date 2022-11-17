@@ -1,4 +1,4 @@
-//display asset alerts i.e short, gap, long
+<!-- display asset alerts i.e short, gap, long -->
 <template>
   <div>
     <v-alert type="success" v-if="isAssetCoverage" height="44" dense outlined id="assetFullCvg">

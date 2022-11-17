@@ -1,4 +1,4 @@
-//map footer
+<!-- map footer -->
 <template>
     <v-footer app style="left: 190px; width: 100%; height:3.5vh; text-align: center;background: #4D4D4D">
       <div id="footerCard" style="color:white"><div style="position:fixed; right: 4vw; bottom: .7vh; font-size: .7vw;">{{x}}, {{y}}</div>

@@ -1,3 +1,4 @@
+<!-- Alert user when in stepper, cannot click on another road without saving first -->
 <template>
     <div>
         <v-card id="deny">
@@ -10,7 +11,7 @@
             <v-card-text style="text-align:left; padding-top: 10px; color:black">
                 Please save your work in the stepper, to edit the selected road.
             </v-card-text>
-            <v-btn tile @click="setDenyFalse()" style="poistion:relative; left: 6rem;" plain outlined color="#204E70"><u>close</u></v-btn>
+            <v-btn tile @click="setDenyFalse()" style="position:relative; left: 6rem;" plain outlined color="#204E70"><u>close</u></v-btn>
         </v-card>
     </div>
    

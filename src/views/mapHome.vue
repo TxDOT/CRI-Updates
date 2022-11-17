@@ -1,5 +1,4 @@
 <template>
-<!-- <Map/> -->
   <div class="MapHome">
     <mapHeader/>
     <Map/>

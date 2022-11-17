@@ -9,7 +9,6 @@ export const store = new Vuex.Store({
         roadbedDesign: null,
         roadbedSurface: null,
         numLane: null,
-        //addRoad: false,
         cntyName:'',
         cntyNmbr: 0,
         cntyMiles:0,
@@ -198,9 +197,6 @@ export const store = new Vuex.Store({
         getCntyName(state){
             return state.cntyName
         },
-        //  addRoad(state){
-        //     return state.addRoad
-        //  },
         getRoadbedName(state){
             return state.roadbedName
         },
@@ -380,7 +376,6 @@ export const store = new Vuex.Store({
 
                 
             }
-            // state.assetCoverage = assetDfos
         },
         setRoadInfoUpdate(state, roadInfo){
             state.roadInfoUpdate = roadInfo
@@ -461,9 +456,6 @@ export const store = new Vuex.Store({
         setCntyName(state, cntyName){
             state.cntyName = cntyName
         },
-        // setAddRoad(state, addRoad){
-        //     state.addRoad = addRoad
-        // },
         setRoadbedName(state, roadbedName){
             state.roadbedName = roadbedName
         },

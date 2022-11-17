@@ -1,4 +1,4 @@
-//displays dfo values as a user moves thier mouse
+<!-- displays dfo values as a user moves thier mouse -->
 <template>
     <div id="dfoBox">
         <v-card outlined height="55" tile style="border-color: #15648C;">
@@ -7,7 +7,6 @@
     </div>
 </template>
 <script>
-//import { mouseHoverDfoDisplay, returnDFO } from '../editFunc'
 export default{
     name: 'dfoBox',
     data(){

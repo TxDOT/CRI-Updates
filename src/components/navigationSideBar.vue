@@ -1,3 +1,4 @@
+<!-- Left Nav side bar component -->
 <template>
     <v-container style="height:100%">
       <v-navigation-drawer app disable-resize-watcher style="top:59px; height:100%; width: 12rem;"> 

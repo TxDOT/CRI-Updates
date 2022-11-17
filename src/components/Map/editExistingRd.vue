@@ -1,3 +1,4 @@
+<!-- User prompt when selecting Add, Edit, or Delete from left nav -->
 <template>
     <v-container>
         <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">

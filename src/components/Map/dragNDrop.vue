@@ -1,3 +1,4 @@
+<!-- Upload canvas for shapefile -->
 <template>
     <v-card tile id="dragNDrop" v-if="dragDropClick">
         <v-card-title class="cardTitle"><p id="titleText">Upload Files</p></v-card-title>

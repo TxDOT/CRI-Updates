@@ -1,4 +1,4 @@
-//displays loader circle
+<!-- displays loader circle -->
 <template>
     <v-progress-circular indeterminate color="primary" style="top:400px;"></v-progress-circular>     
 </template>
