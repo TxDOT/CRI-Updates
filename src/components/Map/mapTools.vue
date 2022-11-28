@@ -1,6 +1,6 @@
 <!-- tools in sidebar nav -->
 <template>
-  <v-list class="outlineColor" style="position: absolute; bottom: 39vh; width: 100%;" >
+  <v-list class="outlineColor" id="toolsList" >
     <v-list-item-group v-model="clearEditBtn" color="#15648C">
       <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="item.disabled">
         <v-list-item-icon>
@@ -106,5 +106,11 @@ import { jumpToGoogle, undoSketch, redoSketch } from './mapNav'
 
 .v-application--is-ltr .v-list-item__action:first-child, .v-application--is-ltr .v-list-item__icon:first-child{
   margin-right: 16px;
+}
+
+#toolsList{
+  position: absolute;
+  bottom: 39vh; 
+  width: 100%;
 }
 </style>

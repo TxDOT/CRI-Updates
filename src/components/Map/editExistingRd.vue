@@ -3,13 +3,13 @@
     <v-container>
         <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">
             <v-card-title class="editRdTitle" v-if="edit===true">
-                <v-card-text style="font-size:20px; text-align: left; padding-left: none; bottom: 2.7vh; right: 1rem; position: relative;">Edit Road</v-card-text>
+                <v-card-text class="editActionType">Edit Road</v-card-text>
              </v-card-title>
             <v-card-title class="editRdTitle" v-if="addR===true">
-                <v-card-text style="font-size:20px; text-align: left; padding-left: none; bottom: 2.7vh; right: 1rem; position: relative;">Add Road</v-card-text>
+                <v-card-text class="editActionType" >Add Road</v-card-text>
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="deleteR===true">
-                <v-card-text style="font-size:20px; text-align: left; padding-left: none; bottom: 2.7vh; right: 1rem; position: relative;">Delete Road</v-card-text>
+                <v-card-text class="editActionType">Delete Road</v-card-text>
             </v-card-title>
     
 
@@ -30,39 +30,39 @@
                 mdi-navigation
             </v-icon>Select a road from the map to delete it
         </v-card-text>
-        <v-btn tile outlined depressed style="right: 2%; top: 63%; position: absolute; border-color: black;" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false"><u>Cancel</u></v-btn>
+        <v-btn tile outlined depressed id="cancelBtn" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false"><u>Cancel</u></v-btn>
     </v-card>
     <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style="deleteClick ? {'height': '200px'} : {}"> <!-- //&& this.modifyR === false -->
         <v-card-title class="delRdTitle" style="width: 385px">
             Delete a Road
         </v-card-title>
-        <v-card-text style="text-align: left; top:5px; position: relative; flex-wrap: wrap; color:black" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
+        <v-card-text class="textSymb" id="bodyTxt" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
             <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> will be deleted.
         </v-card-text>
-        <v-alert color="orange" height="35" dense outlined style="width:91%; left:16px; text-align: left; font-size: 12.09px; border-radius: 0px;" v-if="!deleteClick" >
-            <v-icon color="orange" style="right:5px; bottom: 4px;">
+        <v-alert color="orange" height="35" dense outlined id="infoAlert" v-if="!deleteClick" >
+            <v-icon color="orange" id="icon">
                 mdi-information
             </v-icon>
             Edit may be discarded later if you change your mind
          </v-alert>
-         <a v-if="!deleteClick" @click="comment=true" style="position: absolute; left:1vw; bottom: 2vh; z-index:1">Comment</a>
-         <v-checkbox v-if="!deleteClick" style="position: absolute; left: 1rem" :label="'Is this deletion the result of a city annexation?'"></v-checkbox>
+         <a v-if="!deleteClick" @click="comment=true" id="comment">Comment</a>
+         <v-checkbox v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'"></v-checkbox>
          <v-dialog v-model="comment" persistent>
-            <v-card style="width:30%; left: 30%; height: 70%; border-radius: 0px;">
+            <v-card id="delRdComment">
                 <v-card-title class="surfaceTitle">
-                    <v-card-text style="bottom:28px; position: relative; font-size: 15px; text-align: left; left: -31px;">Comments</v-card-text>
+                    <v-card-text id="comment">Comments</v-card-text>
                 </v-card-title>
-                <v-textarea v-model="commentText" style="padding-left:10px; padding-right: 10px;padding-bottom: 5%;"></v-textarea>
-                <v-btn outlined tile color="#204E70" @click="comment=false" style="position: absolute; right:2%; bottom: 2%; border: 1px solid black"><u>Save</u></v-btn>
+                <v-textarea v-model="commentText" id="txtArea"></v-textarea>
+                <v-btn outlined tile color="#204E70" @click="comment=false" id="saveBtn"><u>Save</u></v-btn>
             </v-card>
         </v-dialog>
-        <v-btn v-if="!deleteClick" depressed text color="#14375A" style="left:69px;top:4.5rem" @click="deleteRoadClick(); deleteSecond=false"> 
+        <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=false"> 
           <u>Cancel</u>
         </v-btn>
         <v-btn :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'5rem', 'left':'2rem', 'border-color':'black'}:{'top':'4.5rem', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
           <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
-        <v-btn v-if="deleteClick" tile outlined depressed style="left: 2.5rem;top:5rem;" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
+        <v-btn v-if="deleteClick" tile outlined depressed style="" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
           <u>Discard Edit</u>
         </v-btn>
     </v-card>
@@ -326,5 +326,71 @@ export default {
         height:30px;
         width: 100%;
         font-size: 25px; 
+    }
+
+    #cancelBtn{
+        right: 2%;
+        top: 63%;
+        position: absolute;
+        border-color: black;
+    }
+    #bodyTxt{
+        top:5px;
+        position: relative;
+        flex-wrap: wrap;
+    }
+    #infoAlert{
+        width:91%; 
+        left:16px; 
+        text-align: left; 
+        font-size: 12.09px; 
+        border-radius: 0px;
+    }
+    #icon{
+        right:5px;
+        bottom: 4px;
+    }
+    #comment{
+        position: absolute;
+        left:1vw;
+        bottom: 2vh; 
+        z-index:1
+    }
+    #checkbox{
+        position: absolute;
+        left: 1rem
+    }
+    #delRdComment{
+        width:30%;
+        left: 30%;
+        height: 70%; 
+        border-radius: 0px;
+    }
+    #comment{
+        bottom:28px;
+        position: relative;
+        font-size: 15px;
+        text-align: left;
+        left: -31px;
+    }
+    #txtArea{
+        padding-left:10px;
+        padding-right: 10px;
+     
+        padding-bottom: 5%;
+    }
+    #saveBtn{
+        position: absolute;
+        right:2%;
+        bottom: 2%;
+        border: 1px solid black
+    }
+    #cnclBtn{
+        left:69px;
+        top:4.5rem
+    }
+    #discardBtn{
+        left: 2.5rem;
+        top:5rem;
     }
 </style>

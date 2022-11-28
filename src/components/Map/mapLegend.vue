@@ -1,8 +1,8 @@
 <!-- Legend component -->
 <template >
-    <v-card style="position: absolute; bottom: 8%; right: 2%; width: 10.5rem; height: 8rem;" tile>
-        <v-card-title class="editRdTitle"><p style="position:absolute; top: 0.5%; left: 5%">Edit Types</p></v-card-title>
-        <canvas id="legend" width="190" height="150" style="position: absolute; left: 5%;"></canvas>
+    <v-card id="legendPos" tile>
+        <v-card-title class="editRdTitle"><p id="legendTitleTxt">Edit Types</p></v-card-title>
+        <canvas id="legend" width="190" height="150"></canvas>
         <div id="add">
             <v-card-text class="editType">Add Road</v-card-text>
         </div>
@@ -62,7 +62,7 @@ export default {
 <style scoped>
     #legend{
         position: relative;
-        right: .5rem;
+        left: .7rem;
     }
     .editRdTitle{
         background: #14375A;
@@ -92,5 +92,17 @@ export default {
     .editType{
         font-size: .8rem;
         padding: 0%;
+    }
+    #legendPos{
+        position: absolute; 
+        bottom: 8%; 
+        right: 2%; 
+        width: 10.5rem; 
+        height: 8rem;
+    }
+    #legendTitleTxt{
+        position:absolute; 
+        top: 0.5%; 
+        left: 5%
     }
 </style>

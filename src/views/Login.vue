@@ -8,23 +8,23 @@
       >
       <v-card v-model="disagree" height="250" style="border-radius:0px">
         <v-card-actions>
-          <div style="position:absolute; top:0%; left: 0%; width:100%;" v-if="certify===false">
-            <v-alert color="#14375A" border="top" dark v-html="statusMessageFalse" style="border-radius: 0px; text-align: left;"></v-alert>
+          <div id="loginBannerPos" v-if="certify===false">
+            <v-alert color="#14375A" border="top" dark v-html="statusMessageFalse" id="loginBannerTxt"></v-alert>
           </div>
-          <div style="position:absolute; top:10%; left: 0%" v-if="certify===true">
+          <!-- <div style="position:absolute; top:10%; left: 0%" v-if="certify===true">
           <v-alert color="green" border="top" dark v-html="statusMessageTrue" class="black--text mb-3" >
           </v-alert>
-          </div>
-          <div style="position:absolute; top:15%; left: 5%; text-align: left;" class="black--text mb-3">
+          </div> -->
+          <div id="loginTxt" class="black--text mb-3">
             <v-card-text style="color:black;" v-html="disagreeTxt">
             </v-card-text>
           </div>
-            <div style="position:absolute ; right:4%; bottom:10%">
+            <div id="loginBtnPos">
               <v-btn id="loginButton" outlined tile @click="disagree = false; logMeIn();" color="#14375A">
                 <u>Login</u>
               </v-btn>
             </div>
-              <v-btn style="position:absolute; left:4%; bottom:13%" depressed text tile color="black" x-small onclick="window.open('https://www.txdot.gov/data-maps/roadway-inventory/cri-form.html','_blank')" >
+              <v-btn id="SignupBtnPos" depressed text tile color="black" x-small onclick="window.open('https://www.txdot.gov/data-maps/roadway-inventory/cri-form.html','_blank')" >
                 Sign-Up
               </v-btn>
          
@@ -211,5 +211,32 @@ export default {
 <style>
 .v-dialog {
   border-radius: 0px;
+}
+
+#loginBannerPos{
+  position:absolute; 
+  top:0%; 
+  left: 0%; 
+  width:100%;
+}
+#loginBannerTxt{
+  border-radius: 0px; 
+  text-align: left;
+}
+#loginTxt{
+  position:absolute; 
+  top:15%; 
+  left: 5%; 
+  text-align: left;
+}
+#loginBtnPos{
+  position:absolute; 
+  right:4%; 
+  bottom:10%
+}
+#SignupBtnPos{
+  position:absolute; 
+  left:4%; 
+  bottom:13%
 }
 </style>

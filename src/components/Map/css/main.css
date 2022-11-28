@@ -201,3 +201,15 @@
   color: white;
   height: 40px;
 }
+.textSymb{
+  color: black !important;
+  text-align: left;
+}
+.editActionType{
+  font-size: 1.23rem!important;
+  text-align: left;
+  padding-left: none;
+  bottom: 2.7vh;
+  right: 1rem;
+  position: relative;
+}

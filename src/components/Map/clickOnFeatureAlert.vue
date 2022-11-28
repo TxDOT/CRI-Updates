@@ -3,15 +3,15 @@
     <div>
         <v-card id="deny">
             <v-card-title class="surfaceTitle" >
-                <v-card-text style="bottom: 1.7rem; position:relative; font-size: 15px; text-align: left; right: 1.7rem">
-                    <v-icon color="white" style="position:relative; bottom: .1rem; left: 0rem;">mdi-alert-circle</v-icon>
+                <v-card-text id="cardText">
+                    <v-icon color="white" id="icon">mdi-alert-circle</v-icon>
                     Cannot Select Road
                 </v-card-text>
             </v-card-title>
-            <v-card-text style="text-align:left; padding-top: 10px; color:black">
+            <v-card-text class="textSymb" style="">
                 Please save your work in the stepper, to edit the selected road.
             </v-card-text>
-            <v-btn tile @click="setDenyFalse()" style="position:relative; left: 6rem;" plain outlined color="#204E70"><u>close</u></v-btn>
+            <v-btn tile @click="setDenyFalse()" style="" plain outlined color="#204E70"><u>close</u></v-btn>
         </v-card>
     </div>
    
@@ -62,5 +62,23 @@ export default {
   font-size: 25px;
   text-align: left;
 }
-
+#cardText{
+    bottom: 1.7rem;
+    position:relative;
+    font-size: 15px;
+    text-align: left;
+    right: 1.7rem
+}
+#icon{
+    position:relative;
+    bottom: .1rem;
+    left: 0rem;
+}
+#bodyText{
+    padding-top: 10px;
+}
+#btnClose{
+    position:relative;
+    left: 6rem;
+}
 </style>

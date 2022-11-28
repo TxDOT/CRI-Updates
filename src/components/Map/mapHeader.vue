@@ -1,12 +1,12 @@
 <!-- map header -->
 <template>
-    <div class ="mapHeader flex" >
-        <v-app-bar app color="#14375A" class="white--text" style="height:60px; top:0%; width:100%;" clipped-left>
-            <v-app-bar-title class="h1-text" style="text-align: left; top:8%; position: relative; width: 100%">
+    <div class="mapHeader flex" >
+        <v-app-bar app color="#14375A" class="white--text" id="headerPos" clipped-left>
+            <v-app-bar-title class="h1-text" id=headerTitle>
                 <p>TxDOT County Road Inventory Map</p>
             </v-app-bar-title>
-                <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" style="position: relative; left:.8rem; bottom: .1rem"><u>Save & Exit</u></v-btn>
-                <v-btn height="3vh" tile style="color:white; background-color: green; border: 1px solid white; left: .6rem; bottom: .1rem; position: relative;" class="mx-3" small @click="submitCertify=true"><u>Submit & Certify</u></v-btn>
+                <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" id="saveExitBtn"><u>Save & Exit</u></v-btn>
+                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitCertify=true"><u>Submit & Certify</u></v-btn>
         </v-app-bar>
 
         <div class="text-center">
@@ -18,12 +18,12 @@
             v-model="submitCertify"
             max-width="400"
             persistent>
-            <v-card v-model="submitCertify" height="150" style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
-                <v-card-title class="surfaceTitle"><p style="bottom: .7rem; position:relative; right: .5rem;">Temporarily Unavailable</p></v-card-title>
-                    <v-card-text style="text-align:left; color: black; top: 1rem; position: relative; right: .5rem;">
+            <v-card v-model="submitCertify" height="150" id="submitCertifyCd">
+                <v-card-title class="surfaceTitle"><p id="submitCertifyCdTitle">Temporarily Unavailable</p></v-card-title>
+                    <v-card-text class="textSymb" id="submitCertifyCdText">
                         This functionality is under development and temporarily unavailable.
                     </v-card-text>
-                    <v-btn outlined tile @click="submitCertify = false" color="#14375A" style="left: 9rem; top: 0rem; border: 1px solid black">
+                    <v-btn outlined tile @click="submitCertify = false" color="#14375A" id="btnClose">
                         <u>Close</u>
                     </v-btn>
             </v-card>
@@ -105,5 +105,49 @@ export default {
   padding-bottom: 1%;
   width: 100%;
   font-size: 16px;
+}
+#headerPos{
+    height:3.7rem !important;
+    top:0%;
+    width:100%;
+}
+#headerTitle{
+    text-align: left; 
+    top:8%; 
+    position: relative; 
+    width: 100%
+}
+#saveExitBtn{
+    position: relative;
+    left:.8rem;
+    bottom: .1rem
+}
+#submitCertifyBtn{
+    color:white; 
+    background-color: green; 
+    border: 1px solid white; 
+    left: .6rem; 
+    bottom: .1rem; 
+    position: relative;
+}
+#submitCertifyCd{
+    border-radius:0%; 
+    overflow-y: hidden; 
+    overflow-x: hidden;
+}
+#submitCertifyCdTitle{
+    bottom: .7rem;
+    position:relative; 
+    right: .5rem;
+} 
+#submitCertifyCdText{
+    top: 1rem; 
+    position: relative; 
+    right: .5rem;
+}
+#btnClose{
+    left: 9rem; 
+    top: 0rem; 
+    border: 1px solid black
 }
 </style>

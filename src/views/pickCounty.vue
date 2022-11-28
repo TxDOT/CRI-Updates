@@ -1,19 +1,19 @@
 <!-- dropdown menu for county -->
 <template>
     <v-container>
-        <v-dialog v-model="pick" persistent max-width="320" style="border-radius:0%;  ">
-        <v-card style="border-radius:0%" height=200 max-width="100%">
+        <v-dialog v-model="pick" persistent max-width="320" class="borderRadius">
+        <v-card class="borderRadius" height=200 max-width="100%">
             <v-card-title class="surfaceTitle">
-                <v-card-text style="position:relative; bottom: 27px; right: 20px; font-size: 15px; text-align: left; color:white; padding: none;">County Road Inventory Map</v-card-text>
+                <v-card-text id="pickerTitle">County Road Inventory Map</v-card-text>
             </v-card-title>
-            <v-card-text style="position: relative; color:black; text-align: left; top: 30px;">
+            <v-card-text class="textSymb" id="pickerTxt">
                 Select a county to begin work.
             </v-card-text>
-            <v-autocomplete id="pickCount" persistent-placeholder outlined dense tile v-model="pickCounty" :items="cntyNames" style="position: absolute; width: 48%; right: 8.9rem; top: 6rem; border-radius: 0%;" label="County Name"></v-autocomplete>
+            <v-autocomplete id="pickCount" class="countyPicker" persistent-placeholder outlined dense tile v-model="pickCounty" :items="cntyNames" label="County Name"></v-autocomplete>
 
             <div>
-              <v-btn :disabled="pickCounty.length === 0" outlined style="top:5rem; left: 9rem; width: 100px; border: 1px solid black" depressed color="#204E70" tile @click="getCountyInfo()"><u>Continue</u></v-btn>
-              <v-btn style="top:5rem; right: 3rem" depressed text color="#204E70" tile @click="cancel()"><u>Cancel</u></v-btn>
+              <v-btn :disabled="pickCounty.length === 0" outlined id="continueBtn" depressed color="#204E70" tile @click="getCountyInfo()"><u>Continue</u></v-btn>
+              <v-btn id="cancelBtn" depressed text color="#204E70" tile @click="cancel()"><u>Cancel</u></v-btn>
             </div>
         </v-card>
         
@@ -144,6 +144,13 @@ export default {
 }
 </script>
 <style scoped>
+.countyPicker{
+  position: absolute;
+  width: 48%; 
+  right: 8.9rem; 
+  top: 6rem; 
+  border-radius: 0%;
+}
 #pickCount input {
   cursor: pointer;
 }
@@ -161,5 +168,31 @@ export default {
   width: 100%;
   font-size: 25px; 
   border-radius: 0%;
+}
+.borderRadius{
+  border-radius:0%;
+}
+#pickerTitle{
+  position:relative; 
+  bottom: 27px; 
+  right: 20px; 
+  font-size: 15px; 
+  text-align: left;
+  color:white; 
+  padding: none;
+}
+#pickerTxt{
+  position: relative; 
+  top: 30px;
+}
+#continueBtn{
+  top:5rem; 
+  left: 9rem; 
+  width: 100px; 
+  border: 1px solid black
+}
+#cancelBtn{
+  top:5rem; 
+  right: 3rem
 }
 </style>

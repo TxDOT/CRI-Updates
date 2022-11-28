@@ -1,3 +1,4 @@
+<!-- The Parent of the map ui (or the map ui warehouse).  All the components inside the template tags are children.  -->
 <template>
   <div class="MapHome">
     <mapHeader/>

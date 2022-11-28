@@ -1,9 +1,9 @@
 <!-- Left Nav side bar component -->
 <template>
     <v-container style="height:100%">
-      <v-navigation-drawer app disable-resize-watcher style="top:59px; height:100%; width: 12rem;"> 
-        <v-card-title id="testTitle"><v-card-text style="position:relative; bottom:22px; font-size: 12.2px;">What Do You Want To Do?</v-card-text></v-card-title>
-          <v-list style="position: absolute; top: 4.5vh; width: 100%"> 
+      <v-navigation-drawer app disable-resize-watcher id="navSideBarPos"> 
+        <v-card-title id="testTitle"><v-card-text id="navTxPos">What Do You Want To Do?</v-card-text></v-card-title>
+          <v-list id="navList"> 
             <v-list-item-group id="tester" v-model="clearEditBtn" color="#15648C" active-class="border">
               <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple color="black">
                 <v-list-item-icon>
@@ -283,4 +283,19 @@ body.select{
   cursor: pointer
 }
 
+#navSideBarPos{
+  top:3.7rem !important;
+  height:100%;
+  width: 12rem !important;
+}
+#navTxPos{
+  position:relative; 
+  bottom:22px; 
+  font-size: 12.2px;
+}
+#navList{
+  position: absolute; 
+  top: 4.5vh; 
+  width: 100%
+}
 </style>

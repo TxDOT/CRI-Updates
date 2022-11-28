@@ -101,8 +101,8 @@
     <v-card id="discardSketch" v-model="discardAlertQuest" elevation="10">
       <v-card-title class="cardTitle"><p id="discardTitleTxt">Confirm Discard</p></v-card-title>
       <v-card-text id="discardTxt">Are you sure you want to discard this edit?</v-card-text>
-      <v-btn style="position: absolute; right: .5rem;" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
-      <v-btn style="position: absolute; right:5rem;" depressed tile text color="#14375A" @click="discardAlertQuest = false"><u>NO</u></v-btn>
+      <v-btn id="discardYesBtn" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
+      <v-btn id="discardNoBtn" depressed tile text color="#14375A" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card>
   </v-dialog>
   <confirmAlertSuccess v-if="successAlert"/>
@@ -685,7 +685,14 @@ export default {
   width: 100%;
   font-size: 25px; 
 }
-
+#discardYesBtn{
+  position: absolute; 
+  right: .5rem;
+}
+#discardNoBtn{
+  position: absolute; 
+  right:5rem;
+}
 </style>
 <style>
 .v-dialog{

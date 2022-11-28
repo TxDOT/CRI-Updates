@@ -1,7 +1,7 @@
 <!-- map footer -->
 <template>
-    <v-footer app style="left: 190px; width: 100%; height:3.5vh; text-align: center;background: #4D4D4D">
-      <div id="footerCard" style="color:white"><div style="position:fixed; right: 4vw; bottom: .7vh; font-size: .7vw;">{{x}}, {{y}}</div>
+    <v-footer app id="footerPos">
+      <div id="footerCard" style="color:white"><div id="coordsPos">{{x}}, {{y}}</div>
         County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(rdbdDeltaDist.toFixed(1)) ===0? {'color':'white'} : null]">{{Number(rdbdDeltaDist.toFixed(1))}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
       </div>
     </v-footer>
@@ -98,5 +98,18 @@ export default {
     right: 3%;
     text-align: center;
     font-size: .8vw;
+  }
+  #footerPos{
+    left: 12rem !important;
+    width: 100%; 
+    height:3.5vh; 
+    text-align: center;
+    background: #4D4D4D
+  }
+  #coordsPos{
+    position:fixed; 
+    right: 4vw; 
+    bottom: .7vh; 
+    font-size: .7vw;
   }
 </style>

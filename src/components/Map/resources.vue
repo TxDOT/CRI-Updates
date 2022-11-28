@@ -1,7 +1,7 @@
 <!-- Resources component contains: Advanced, Citeria, Training, About -->
 <template>
   <v-container>
-    <v-list class="outlineColor" style="position: absolute; bottom: 3vh; width: 98%">
+    <v-list class="outlineColor" id="advanceList">
       <v-list-item-group v-model="clearEditBtn" color="#15648C">
         <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="item.disabled" :id="item.id">
           <v-list-item-icon>
@@ -17,60 +17,60 @@
       v-model="display"
       max-width="700"
       persistent>
-      <v-card v-model="display" height="590" style="border-radius:0%; overflow-y: hidden; overflow-x: hidden;">
+      <v-card v-model="display" height="590" id="advancedCard">
         <v-card-title class="surfaceTitle">
-          <p style="bottom: .7rem; position:relative; right: .5rem;">Advanced Page</p>
+          <p id="advCardTitleTxt">Advanced Page</p>
         </v-card-title>
-        <v-icon style="position: relative; font-size: 2rem; top: 1.8rem; right: 18rem; color:black">mdi-table-large</v-icon>
-        <v-card-text style="text-align:left; color: black; bottom: 0.2rem; position: relative; left: 5rem;">
+        <v-icon id="tableIcon">mdi-table-large</v-icon>
+        <v-card-text class="textSymb" id="roadLogTxt">
           <b>DOWNLOAD ROAD LOG<br>
           Download a table of your county's road information.</b><br>
-          <p style="font-size: .8rem;">This is a CSV file that anyone can open using a spreadsheet software such as Microsoft Excel or<br>Google Sheets.</p>
+          <p class="itemText">This is a CSV file that anyone can open using a spreadsheet software such as Microsoft Excel or<br>Google Sheets.</p>
         </v-card-text>
-        <v-btn small outlined tile @click="display = false; downloadRoadLog(); isFileDwnload=true" color="#14375A" style="position: absolute; left: 6.5rem; top: 10rem; border: 1px solid black" >
+        <v-btn small outlined tile @click="display = false; downloadRoadLog(); isFileDwnload=true" color="#14375A" id="dwnloadBtn">
           <u>Download</u>
         </v-btn>
-        <v-divider style="width: 90%; position: relative; top: .8rem; left: 2rem; border-color:black"></v-divider>
-        <v-card-text style="text-align:left; color: red; top: 1.5rem; position: relative; left: 2rem;">
+        <v-divider id="divider"></v-divider>
+        <v-card-text id="disclaimer">
           <b>Disclaimer:</b> This section is for advanced GIS users.
         </v-card-text>
-        <v-icon style="position: relative; font-size: 2rem; top: 1rem; right: 18rem; color:black">mdi-layers</v-icon>
-        <v-card-text style="text-align:left; color: black; bottom: 1.1rem; position: relative; left: 5rem;">
+        <v-icon id="layerIcon">mdi-layers</v-icon>
+        <v-card-text class="textSymb" id="dwnldInvTxt">
           <b>DOWNLOAD INVENTORY<br>
           Download TxDOT's county road inventory for your county.</b><br>
-          <p style="font-size: .8rem;">This is GIS data which allows GIS professionals to compare TxDOT's CRI with their inventory for<br>discrepancies.</p>
+          <p class="itemText">This is GIS data which allows GIS professionals to compare TxDOT's CRI with their inventory for<br>discrepancies.</p>
         </v-card-text>
-        <v-btn outlined tile small @click="display = false; exitApp = true; cntyQueryTab()" color="#14375A" style="position: absolute; left: 6.5rem; top: 21.5rem; border: 1px solid black">
+        <v-btn outlined tile small @click="display = false; exitApp = true; cntyQueryTab()" color="#14375A" id="downloadBtn">
           <u>Download</u>
         </v-btn>
-        <v-icon style="position: relative; font-size: 2rem; top: .8rem; right: 18rem; color:black">mdi-upload</v-icon>
-        <v-card-text style="text-align:left; color: black; bottom: 1.3rem; position: relative; left: 5rem;">
+        <v-icon id="uploadIcon">mdi-upload</v-icon>
+        <v-card-text class="textSymb" id="uploadTxt">
           <b>UPLOAD GIS DATA<br>
           Drag and drop your suggested road edits.</b><br>
-          <p style="font-size: .8rem;">Acceptable file formats include shapefiles, and file geodatabases. Only submit<br>changes to your inventory with adds, removes, and updates. Please do not submit your<br>county's entire road inventory.</p>
+          <p class="itemText">Acceptable file formats include shapefiles, and file geodatabases. Only submit<br>changes to your inventory with adds, removes, and updates. Please do not submit your<br>county's entire road inventory.</p>
         </v-card-text>
-        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" style="position: absolute; left: 6.5rem; top: 32.5rem; border: 1px solid black">
+        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" id="uploadBtn">
           <u>Upload</u>
         </v-btn>
       </v-card>
     </v-dialog>
     <v-dialog v-model="isFileDwnload" width="500">
       <v-card tile>
-        <v-card-title style="background-color:#14375A; color:white;"><p style="position: relative; bottom: 0rem;">Downloading Road Log</p></v-card-title>
-        <v-progress-linear background-color="white" indeterminate color="green" style="position:absolute; bottom: .2rem;"></v-progress-linear>
+        <v-card-title class="titles"><p style="position: relative">Downloading Road Log</p></v-card-title>
+        <v-progress-linear background-color="white" indeterminate color="green" id="progressLoad"></v-progress-linear>
       </v-card>
     </v-dialog>
     <v-dialog v-model="isFileSuccess" max-width="350" >
       <v-card tile style="height:10rem;">
-        <v-card-title class="surfaceTitle" style="background-color:#14375A; color:white;"><p style="position:absolute; top: .4rem; left: 1rem;"><v-icon color="green" style="position:relative; bottom:.1rem;">mdi-check-bold</v-icon>  Road Log Success</p></v-card-title>
-        <v-card-text style="position:absolute; top: 4rem; text-align: left; color:black; right: .5rem;">
+        <v-card-title class="surfaceTitle titles"><p id="rdLogSucc"><v-icon color="green" id="rdLogIcon">mdi-check-bold</v-icon>Road Log Success</p></v-card-title>
+        <v-card-text class="textSymb" id="rdLogTxt">
           Road Log has Succesfully downloaded. Look in Downloads folder or user save location.
         </v-card-text>
       </v-card>
     </v-dialog>
     <v-dialog v-model="isHelpTraining" width="650">
       <v-card tile>
-        <v-card-title class="surfaceTitle"><p style="bottom: .7rem; position:relative; right: .5rem;">Help and Training</p></v-card-title>
+        <v-card-title class="surfaceTitle"><p id="helpTrainPos">Help and Training</p></v-card-title>
           <v-card-text>
             <v-item-group>
               <v-container>
@@ -79,7 +79,7 @@
                     <v-item>
                       <v-tooltip bottom max-width="200" color="#204E70" style="border-radius: 0px;"> 
                         <template v-slot:activator="{ on, attrs }">
-                          <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" width=600 @click="openPage($event)" color="green"><p style="position:absolute; text-align: left; top: 1rem; right: 3.1rem; padding-left: 1rem;">{{mediaType[n]}}</p><v-icon style="position:absolute; top:5rem; right: 4.2rem; font-size: 2.5rem;">{{iconType[n]}}</v-icon></v-card>
+                          <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" width=600 @click="openPage($event)" color="green"><p id="helpTrainContent">{{mediaType[n]}}</p><v-icon id="helpTrainIcon">{{iconType[n]}}</v-icon></v-card>
                         </template>
                         <span>{{tooltips[n]}}</span>
                       </v-tooltip>
@@ -256,5 +256,131 @@
   padding: none;
   width: 100%;
   font-size: 16px;
+}
+#advanceList{
+  position: absolute;
+  bottom: 3vh; 
+  width: 98%
+}
+#advancedCard{
+  border-radius:0%;
+  overflow-y: hidden; 
+  overflow-x: hidden;
+}
+#advCardTitleTxt{
+  bottom: .7rem; 
+  position:relative; 
+  right: .5rem;
+}
+#tableIcon{
+  position: relative; 
+  font-size: 2rem; 
+  top: 1.8rem; 
+  right: 18rem; 
+  color:black
+}
+#roadLogTxt{
+  bottom: 0.2rem; 
+  position: relative; 
+  left: 5rem;
+}
+.itemText{
+  font-size: .8rem;
+}
+#dwnloadBtn{
+  position: absolute; 
+  left: 6.5rem; 
+  top: 10rem; 
+  border: 1px solid black
+}
+#divider{
+  width: 90%;
+  position: relative;
+  top: .8rem;
+  left: 2rem;
+  border-color:black
+}
+#disclaimer{
+  text-align:left; 
+  color: red; 
+  top: 1.5rem; 
+  position: relative; 
+  left: 2rem;
+}
+#layerIcon{
+  position: relative; 
+  font-size: 2rem; 
+  top: 1rem; 
+  right: 18rem; 
+  color:black
+}
+#dwnldInvTxt{
+  bottom: 1.1rem; 
+  position: relative; 
+  left: 5rem;
+}
+#downloadBtn{
+  position: absolute; 
+  left: 6.5rem; 
+  top: 21.5rem; 
+  border: 1px solid black
+}
+#uploadIcon{
+  position: relative; 
+  font-size: 2rem; 
+  top: .8rem; 
+  right: 18rem; 
+  color:black
+}
+#uploadTxt{
+  bottom: 1.3rem; 
+  position: relative; 
+  left: 5rem;
+}
+#uploadBtn{
+  position: absolute; 
+  left: 6.5rem; 
+  top: 32.5rem; 
+  border: 1px solid black
+}
+.titles{
+  background-color:#14375A; 
+  color:white;
+}
+#progressLoad{
+  position:absolute;
+  bottom: .2rem;
+}
+#rdLogSucc{
+  position:absolute; 
+  top: .4rem; 
+  left: 1rem;
+}
+#rdLogIcon{
+  position:relative;
+  bottom:.1rem;
+}
+#rdLogTxt{
+  position:absolute; 
+  top: 4rem; 
+  right: .5rem;
+}
+#helpTrainPos{
+  bottom: .7rem; 
+  position:relative; 
+  right: .5rem;
+}
+#helpTrainContent{
+  position:absolute; 
+  text-align: left; 
+  top: 1rem; 
+  right: 3.1rem; 
+  padding-left: 1rem;
+}
+#helpTrainIcon{
+  position:absolute; 
+  top:5rem; 
+  right: 4.2rem; 
+  font-size: 2.5rem;
 }
 </style>
