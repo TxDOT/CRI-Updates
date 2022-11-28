@@ -26,10 +26,11 @@ export async function countyInfo(){
         let newQuery = countyOfficialInfo.queryFeatures(query)
         // query county extent for dynamic home button
         const geomQuery = new Query();
-        geomQuery.where = `CNTY_NM = '${store.getters.getCntyName}'`;
+        //geomQuery.where = `CNTY_NM = '${store.getters.getCntyName}'`;
         geomQuery.outFields = [ "*" ];
         geomQuery.returnGeometry = true;
         let returnGeom = txCounties.queryFeatures(geomQuery);
+        //localStorage.setItem('countyGeom', 'returnGeom')
         //Dynamically adding County NBR to search definition expression via data store
         let countyExtent = returnGeom;
         countyExtent.then(function(result) {
