@@ -91,16 +91,22 @@
           </v-card-text>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="isCert">
+      <isCertAdvanced v-model="isCert"/>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
   import { downloadRdLog } from "./advanced"
+  import isCertAdvanced from './certAdvanced.vue'
 
   export default {
+    components: { isCertAdvanced },
     name: 'aboutHelp',
     data (){
       return {
+        isCert: false,
         countyNm: null,
         isFileSuccess: false,
         isFileDwnload: false,
@@ -114,10 +120,11 @@
         iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github'],
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
-              this.display = true
-              this.clearEditBtn = true
-              this.dragDropClick = false
-              this.removeBtnFocus();
+              this.isUserCertify === false ? this.certifiedFalse() : this.certifiedTrue()
+              // this.display = true
+              // this.clearEditBtn = true
+              // this.dragDropClick = false
+              // this.removeBtnFocus();
             }},
           { title: 'Criteria', icon: 'mdi-clipboard-text', action: ()=>{
               window.open('https://www.txdot.gov/data-maps/roadway-inventory/county-road-criteria.html', '_blank')
@@ -138,6 +145,15 @@
       }
     },
     methods:{
+      certifiedTrue(){
+        this.display = true
+        this.clearEditBtn = true
+        this.dragDropClick = false
+        this.removeBtnFocus();
+      },
+      certifiedFalse(){
+        this.isCert = true
+      },
       openPage(event){
         console.log(event.explicitOriginalTarget)
         if(event.explicitOriginalTarget.textContent === 'Access Sandbox Environment'){
@@ -228,6 +244,14 @@
         },
         set(countyName){
           this.$store.commit('setCntyName',countyName)
+        }
+      },
+      isUserCertify:{
+        get(){
+          return this.$store.state.isCertified
+        },
+        set(bool){
+          this.$store.commit('setCertifiedrCheck',bool)
         }
       },
     }

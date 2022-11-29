@@ -272,6 +272,11 @@ document.getElementById('output').style.border = '2px solid green'
 document.getElementById('output').style.width = '27rem'
 document.getElementById('text').innerText = `Succesfully uploaded your shapefile! ${message}`
 document.getElementById('text').style.color = 'green'
+store.commit('setIsDragDrop', false)//update
+store.commit('setServerCheck', true) //update
+setTimeout(()=>{//update
+    serverResponse()//update
+  },3000)//update
 }
 
 // initial QA/QC check for file upload
@@ -344,3 +349,14 @@ async function uploadChecks(schemaFields, txdotSchema){
     })
     return await schemaPromise
 }
+
+async function serverResponse(){
+    //let dataReturn = await fetch('https://gis-batch-dev.txdot.gov/fmedatastreaming/TPP/returnTestFile.fmw?', {headers:{'Authorization':'fmetoken token=7f4d809080c9161e0d5ea5708d5522a3fdd01119'},'Content-Type': 'text/plain'})
+    let dataReturn = await fetch('https://testportal.txdot.gov/fmejobsubmitter/TPP/returnTestFile.fmw?opt_showresult=false&opt_servicemode=sync', {headers:{'Authorization':'fmetoken token=b6aa89bdbe05b1ffaca36dc6562ae0770c71b9ab'},'Content-Type': 'text/plain'})
+    let text = await dataReturn.text()
+    console.log(text)
+    document.getElementById('fmeResp').innerText = `FME Server says...${text}`//update
+    setTimeout(()=>{
+      store.commit('setServerCheck', false)
+    },5000)
+}//update

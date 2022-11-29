@@ -30,15 +30,14 @@ export async function countyInfo(){
         geomQuery.outFields = [ "*" ];
         geomQuery.returnGeometry = true;
         let returnGeom = txCounties.queryFeatures(geomQuery);
-        //localStorage.setItem('countyGeom', 'returnGeom')
         //Dynamically adding County NBR to search definition expression via data store
-        let countyExtent = returnGeom;
-        countyExtent.then(function(result) {
-          viewPoint.targetGeometry = result.features[0].geometry.extent;
-          viewPoint.scale = 500000
-          //need to set a buffer on mapview zoom level
-          home.viewpoint = viewPoint;
-        });
+        // let countyExtent = returnGeom;
+        // countyExtent.then(function(result) {
+        //   viewPoint.targetGeometry = result.features[0].geometry.extent;
+        //   viewPoint.scale = 500000
+        //   //need to set a buffer on mapview zoom level
+        //   home.viewpoint = viewPoint;
+        // });
 
         res({response:true, nbr:parseInt(crInfo), query:newQuery, extent: returnGeom})
       }
@@ -126,3 +125,16 @@ export async function goToMap(name, nbr){
     view.constraints.minZoom = 8;
     return;
 } 
+
+export function isTrainingAccess(groupsArr){
+  console.log(groupsArr)
+  groupsArr.then((x) => {
+    let isGroup = x.some(t => t.title === 'County Road Inventory Advanced')
+    store.commit('setCertifiedrCheck', isGroup)
+  })
+  
+  //check if user has the correct permsssions. user Portal library
+
+  //if User has correct permissions -> allow access to Advanced Button
+  //if user does not have correct permission -> A new Button to request permission to request training
+}

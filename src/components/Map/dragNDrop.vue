@@ -1,18 +1,22 @@
 <!-- Upload canvas for shapefile -->
 <template>
-    <v-card tile id="dragNDrop" v-if="dragDropClick">
-        <v-card-title class="cardTitle"><p id="titleText">Upload Files</p></v-card-title>
-        <v-card-text style="z-index: 2;">
-            <div class="fileContainer">
-                <form id="output" @dragover="dragOver()" @dragleave="dragLeave()" @drop="drop();">
-                    <input type="file" name="file" @change="dropItem($event)"/>
-                </form>
-            </div>
-        </v-card-text>
-        <v-card-text id="text"><v-icon id="dragNDropTxt">mdi-upload</v-icon>Drop Shapefiles here</v-card-text>
-        <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
-        <v-btn @click="dragDropClick = false" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
-    </v-card>
+    <v-container>
+        <v-card tile id="dragNDrop" v-if="dragDropClick">
+            <v-card-title class="cardTitle"><p id="titleText">Upload Files</p></v-card-title>
+            <v-card-text style="z-index: 2;">
+                <div class="fileContainer">
+                    <form id="output" @dragover="dragOver()" @dragleave="dragLeave()" @drop="drop();">
+                        <input type="file" name="file" @change="dropItem($event)"/>
+                    </form>
+                </div>
+            </v-card-text>
+            <v-card-text id="text"><v-icon id="dragNDropTxt">mdi-upload</v-icon>Drop Shapefiles here</v-card-text>
+            <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
+            <v-btn @click="dragDropClick = false" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
+        </v-card>
+        <v-alert id="fmeResp" color="primary" tile v-if="serverResponse" style="color:white">{{serverCheck}}</v-alert><!-- update -->
+    </v-container>
+
     
  
 </template>
@@ -23,7 +27,7 @@ export default {
     name: 'dragndrop',
     data(){
         return{
-
+            serverCheck: 'Waiting for Response from FME Server'//update
         }
     },
     methods:{
@@ -55,7 +59,16 @@ export default {
             set(isBool){
                 this.$store.commit('setIsDragDrop', isBool)
             }
-      },
+        },
+        serverResponse:{
+            get(){
+                return this.$store.state.serverResp
+            },
+            set(resp){
+                this.$store.commite('setServerCheck', resp)
+            }
+        }
+
     }
 
 }
