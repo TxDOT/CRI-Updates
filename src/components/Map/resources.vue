@@ -156,7 +156,7 @@
     methods:{
       downloadTemp(){
         let tempdwnl = document.createElement('a')
-        tempdwnl.href = '¶'
+        tempdwnl.href = 'https://raw.githubusercontent.com/dprosack/fileGDBTest/main/fileGDBTemp.gdb.zip'
         tempdwnl.click()
       },
       close(){
