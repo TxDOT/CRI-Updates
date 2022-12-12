@@ -45,24 +45,29 @@
             </v-icon>
             Edit may be discarded later if you change your mind
          </v-alert>
-         <a v-if="!deleteClick" @click="comment=true" id="comment">Comment</a>
-         <v-checkbox v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'"></v-checkbox>
+         <!-- <a v-if="!deleteClick"  id="comment">Comment</a> -->
+         <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox>
          <v-dialog v-model="comment" persistent>
             <v-card id="delRdComment">
+                
                 <v-card-title class="surfaceTitle">
-                    <v-card-text id="comment">Comments</v-card-text>
+                    <v-card-text id="comntText">Reason for road deletion</v-card-text>
                 </v-card-title>
-                <v-textarea v-model="commentText" id="txtArea"></v-textarea>
+                <v-select :items="cityAnnexReason" v-model="cityAnnexResp"></v-select>
+                <!-- <v-row id="txtArea">
+                    <v-textarea v-model="commentText" ></v-textarea>
+                </v-row> -->
+                
                 <v-btn outlined tile color="#204E70" @click="comment=false" id="saveBtn"><u>Save</u></v-btn>
             </v-card>
         </v-dialog>
         <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=false"> 
           <u>Cancel</u>
         </v-btn>
-        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'5rem', 'left':'2rem', 'border-color':'black'}:{'top':'4.5rem', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
+        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'5rem', 'left':'2rem', 'border-color':'black'}:{'top':'1.8rem', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
           <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
-        <v-btn v-if="deleteClick" tile outlined depressed style="" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
+        <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
           <u>Discard Edit</u>
         </v-btn>
     </v-card>
@@ -92,7 +97,9 @@ export default {
         deleteConfirm: false,
         discardEdits: false,
         comment: false,
-        commentText: ''
+        commentText: '',
+        cityAnnexReason: ["City owns it", "I dont like this road", "Revenge!!!!"],
+        cityAnnexResp: ''
       }
     },
     methods:{
@@ -350,44 +357,50 @@ export default {
         right:5px;
         bottom: 4px;
     }
-    #comment{
+    /* #comment{
         position: absolute;
         left:1vw;
         bottom: 2vh; 
         z-index:1
+    } */
+    #comntText{
+        bottom:28px;
+        position: relative; 
+        font-size: 15px; 
+        text-align: left; 
+        left: -31px;
     }
     #checkbox{
         position: absolute;
         left: 1rem
     }
     #delRdComment{
+        position: absolute;
         width:30%;
-        left: 30%;
-        height: 70%; 
+        left: 43rem;
+        height: 27%; 
         border-radius: 0px;
     }
     #comment{
-        bottom:28px;
-        position: relative;
+        bottom:1rem;
+        position: absolute;
         font-size: 15px;
         text-align: left;
-        left: -31px;
+        left: 1rem;
     }
     #txtArea{
-        padding-left:10px;
-        padding-right: 10px;
-     
-        padding-bottom: 5%;
+        padding-left:1.4rem;
+        padding-right: 1.4rem;
     }
     #saveBtn{
         position: absolute;
         right:2%;
-        bottom: 2%;
+        top: 13rem;
         border: 1px solid black
     }
     #cnclBtn{
-        left:69px;
-        top:4.5rem
+        left:4rem;
+        top:1.8rem
     }
     #discardBtn{
         left: 2.5rem;

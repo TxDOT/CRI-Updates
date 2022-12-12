@@ -13,6 +13,7 @@
     <about v-if="aboutClick === true"/>
     <Legend v-if="displayLegend === true"/>
     <geomCheck v-if="isGeomCheck === true"/>
+    <!-- <isCertAdvanced v-if="returnMapAttr"/> -->
     <dragndrop/>
   </div>
 </template>
@@ -30,6 +31,7 @@ import about from '../components/Map/aboutApp.vue'
 import Legend from '../components/Map/mapLegend.vue'
 import geomCheck from '../components/Map/geomCheck.vue'
 import dragndrop from '../components/Map/dragNDrop.vue'
+//import isCertAdvanced from '../components/Map/certAdvanced.vue'
 import { highLightFeat } from '../components/Map/helper'
 import { expandLegend } from '../components/Map/map'
 
@@ -182,7 +184,15 @@ export default {
         get(){ 
           return this.$store.state.uploadFields
         }
-      }
+      },
+      returnMapAttr:{
+        get(){
+          return this.$store.state.isMapAttr
+        },
+        set(bool){
+          this.$store.commit('setIsMapAttr',bool)
+        }
+      },
     }
 }
 </script>

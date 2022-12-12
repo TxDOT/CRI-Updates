@@ -23,10 +23,13 @@
 <script>
 
 import {retrieveFile} from '../Map/advanced'
+
 export default {
     name: 'dragndrop',
     data(){
         return{
+            display: true,
+            attrConv: false, 
             serverCheck: 'Waiting for Response from FME Server'//update
         }
     },

@@ -17,7 +17,7 @@
       v-model="display"
       max-width="700"
       persistent>
-      <v-card v-model="display" height="590" id="advancedCard">
+      <v-card v-model="display" height="810" id="advancedCard">
         <v-card-title class="surfaceTitle">
           <p id="advCardTitleTxt">Advanced Page</p>
         </v-card-title>
@@ -30,10 +30,6 @@
         <v-btn small outlined tile @click="display = false; downloadRoadLog(); isFileDwnload=true" color="#14375A" id="dwnloadBtn">
           <u>Download</u>
         </v-btn>
-        <v-divider id="divider"></v-divider>
-        <v-card-text id="disclaimer">
-          <b>Disclaimer:</b> This section is for advanced GIS users.
-        </v-card-text>
         <v-icon id="layerIcon">mdi-layers</v-icon>
         <v-card-text class="textSymb" id="dwnldInvTxt">
           <b>DOWNLOAD INVENTORY<br>
@@ -42,16 +38,32 @@
         </v-card-text>
         <v-btn outlined tile small @click="display = false; exitApp = true; cntyQueryTab()" color="#14375A" id="downloadBtn">
           <u>Download</u>
+        </v-btn> 
+        <v-divider id="divider"></v-divider>
+        <v-alert :id="isCert === false ? 'disclaimer' : 'disclaimerF'" tile>
+          <p id="disclaimerTxt" v-if="isCert === true">The optional features below are for advanced GIS users only.</p>
+          <p id="disclaimerTxt" v-if="isCert === false">The optional features below are for advanced GIS users only.<br>Training is required in order to access these features.</p>
+          <v-btn id="trainingBtn" :href="emailTag" tile outlined color="#14375A" @click="close()" small v-if="isCert === false">Request Training</v-btn>
+        </v-alert>
+        <v-icon id="uploadIcon" :disabled="isCert === false">mdi-download</v-icon>
+        <v-card-text id="uploadTxt" :class="isCert === false ? 'textSymbDisable' : 'textSymb'">
+          <b>DOWNLOAD TEMPLATE<br>
+          Download an empty feature class template.</b><br>
+          <p class="itemText">This file geodatabase contains an empty feature class formatted for uploading your GIS inventory<br>updates using the upload feature below.</p>
+        </v-card-text>
+        <v-btn outlined tile small @click="display = false; downloadTemp()" color="#14375A" :id="isCert === false ? 'dwnloadTempBtn' : 'dwnloadTempBtnF'" :disabled="isCert===false">
+          <u>Download</u>
         </v-btn>
-        <v-icon id="uploadIcon">mdi-upload</v-icon>
-        <v-card-text class="textSymb" id="uploadTxt">
+        <v-icon id="uploadIcon" :disabled="isCert===false">mdi-upload</v-icon>
+        <v-card-text id="uploadTxt" :class="isCert === false ? 'textSymbDisable' : 'textSymb'">
           <b>UPLOAD GIS DATA<br>
           Drag and drop your suggested road edits.</b><br>
-          <p class="itemText">Acceptable file formats include shapefiles, and file geodatabases. Only submit<br>changes to your inventory with adds, removes, and updates. Please do not submit your<br>county's entire road inventory.</p>
+          <p class="itemText">Upload inventory updates loaded into the template provided above. Only submit<br>changes to your inventory with adds, removes, and updates. Please do not submit your<br>county's entire road inventory.</p>
         </v-card-text>
-        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" id="uploadBtn">
+        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" :id="isCert === false ? 'uploadBtn' : 'uploadBtnF'" :disabled="isCert===false">
           <u>Upload</u>
         </v-btn>
+        <v-btn id="closeBtn" tile outlined color="#14375A" @click="display = false">Close</v-btn>
       </v-card>
     </v-dialog>
     <v-dialog v-model="isFileDwnload" width="500">
@@ -91,21 +103,18 @@
           </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="isCert">
-      <isCertAdvanced v-model="isCert"/>
-    </v-dialog>
   </v-container>
 </template>
 
 <script>
   import { downloadRdLog } from "./advanced"
-  import isCertAdvanced from './certAdvanced.vue'
 
   export default {
-    components: { isCertAdvanced },
     name: 'aboutHelp',
     data (){
       return {
+        emailBody: 'Hey CRI,%0D%0AI want to send an email to setup a schedule to get this out of the way.',
+        emailTag: `mailto:TPP_CRI@txdot.gov?subject=David Prosack wants Send an email to Jason&body=Hey CRI,%0D%0A%0D%0AI want to send an email to setup a schedule to get this out of the way.`,
         isCert: false,
         countyNm: null,
         isFileSuccess: false,
@@ -145,6 +154,14 @@
       }
     },
     methods:{
+      downloadTemp(){
+        let tempdwnl = document.createElement('a')
+        tempdwnl.href = '¶'
+        tempdwnl.click()
+      },
+      close(){
+            this.isUserCertify = false
+      },
       certifiedTrue(){
         this.display = true
         this.clearEditBtn = true
@@ -152,10 +169,13 @@
         this.removeBtnFocus();
       },
       certifiedFalse(){
-        this.isCert = true
+        this.display = true
+        this.clearEditBtn = true
+        this.dragDropClick = false
+        this.isUserCertify = false
+        this.removeBtnFocus();
       },
       openPage(event){
-        console.log(event.explicitOriginalTarget)
         if(event.explicitOriginalTarget.textContent === 'Access Sandbox Environment'){
           window.open('https://txdot.github.io/CRI-Updates/login')
         }
@@ -186,6 +206,13 @@
       }
     },
     watch:{
+      isUserCertify:{
+        handler: function(){
+          this.isCert = this.isUserCertify
+          console.log(this.isCert)
+        },
+        immediate: true
+      },
       isDownloadRoadLog:{
         handler: function(){
           if(this.isDownloadRoadLog === true){
@@ -251,7 +278,7 @@
           return this.$store.state.isCertified
         },
         set(bool){
-          this.$store.commit('setCertifiedrCheck',bool)
+          this.$store.commit('setCertifiedCheck',bool)
         }
       },
     }
@@ -320,16 +347,35 @@
 #divider{
   width: 90%;
   position: relative;
-  top: .8rem;
+  top: .1rem;
   left: 2rem;
   border-color:black
 }
 #disclaimer{
-  text-align:left; 
-  color: red; 
-  top: 1.5rem; 
+  width: 90%;
+  height: 7%;
+  text-align:left;
+  background-color: rgba(255,153,102,.4);
+  /* color: ; */
+  top: 1rem; 
   position: relative; 
   left: 2rem;
+}
+#disclaimerF{
+  width: 90%;
+  height: 4%;
+  text-align:left;
+  background-color: rgba(255,153,102,.4);
+  /* color: ; */
+  top: 1rem; 
+  position: relative; 
+  left: 2rem;
+}
+#disclaimerTxt{
+  position:relative;
+  bottom: .5rem;
+  font-size: .9rem;
+  color: rgba(150,75,0,1);
 }
 #layerIcon{
   position: relative; 
@@ -346,15 +392,25 @@
 #downloadBtn{
   position: absolute; 
   left: 6.5rem; 
-  top: 21.5rem; 
+  top: 18.8rem; 
   border: 1px solid black
+}
+#dwnloadTempBtn{
+  position: absolute; 
+  left: 6.5rem; 
+  top: 33rem; 
+}
+#dwnloadTempBtnF{
+  position: absolute; 
+  left: 6.5rem; 
+  top: 31.5rem; 
 }
 #uploadIcon{
   position: relative; 
   font-size: 2rem; 
   top: .8rem; 
   right: 18rem; 
-  color:black
+  color: black;
 }
 #uploadTxt{
   bottom: 1.3rem; 
@@ -364,8 +420,19 @@
 #uploadBtn{
   position: absolute; 
   left: 6.5rem; 
-  top: 32.5rem; 
-  border: 1px solid black
+  top: 44rem; 
+}
+#uploadBtnF{
+  position: absolute; 
+  left: 6.5rem; 
+  top: 42.5rem; 
+}
+#trainingBtn{
+  position: relative;
+  bottom: 3.8rem;
+  left: 27rem;
+  font-size: .7rem;
+  text-decoration: underline;
 }
 .titles{
   background-color:#14375A; 
@@ -406,5 +473,11 @@
   top:5rem; 
   right: 4.2rem; 
   font-size: 2.5rem;
+}
+#closeBtn{
+  position: absolute;
+  bottom: 1rem; 
+  right: 2rem;
+  text-decoration: underline;
 }
 </style>

@@ -1,7 +1,7 @@
 // import methods and functions into file
 import { countyOfficialInfo, view, featLayer, txCounties, search, viewPoint, home } from './map'
 import { queryEditsLayer } from './crud'
-import { defineGraphic, geomToMiles, queryFeat } from './helper';
+import { defineGraphic, geomToMiles, queryFeat, createEpoch } from './helper';
 import { cntyNbrNm } from '../../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query";
 import { store } from '../../store'
@@ -58,7 +58,6 @@ export async function reloadEdits(){
     let currentEditRoads = queryEditsLayer();
     
     let createGraphics = await currentEditRoads
-    console.log(createGraphics)
     //first add all Adds together
     //second query and and compare Ref layer length against add route length and apply to total length
     //finally subtract delete roads from total length 
@@ -125,12 +124,12 @@ export async function goToMap(name, nbr){
     view.constraints.minZoom = 8;
     return;
 } 
-
+//sets store for Advanced page Access
 export function isTrainingAccess(groupsArr){
-  console.log(groupsArr)
+  console.log(createEpoch())
   groupsArr.then((x) => {
     let isGroup = x.some(t => t.title === 'County Road Inventory Advanced')
-    store.commit('setCertifiedrCheck', isGroup)
+    store.commit('setCertifiedCheck', isGroup)
   })
   
   //check if user has the correct permsssions. user Portal library

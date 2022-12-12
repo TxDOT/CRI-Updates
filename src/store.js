@@ -57,11 +57,15 @@ export const store = new Vuex.Store({
         editInfo: '',
         uploadFields: [],
         serverResp: false, //update
-        isCertified: false//update
+        isCertified: false,//update
+        isMapAttr: true
 
 
     },
     getters:{
+        getIsMapAttr(state){
+            return state.isMapAttr
+        },//update
         getCertifiedrCheck(state){
             return state.isCertified
         },//update
@@ -221,7 +225,10 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
-        setCertifiedrCheck(state, certify){
+        setIsMapAttr(state, mapAttr){
+            state.isMapAttr = mapAttr
+        },//update 
+        setCertifiedCheck(state, certify){
             state.isCertified = certify
         },//update
         setServerCheck(state, srverRes){

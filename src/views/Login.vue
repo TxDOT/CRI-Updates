@@ -42,7 +42,6 @@ import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
 import esriId from "@arcgis/core/identity/IdentityManager";
 import Portal from "@arcgis/core/portal/Portal";
 import Query from "@arcgis/core/rest/support/Query"
-import PortalUser from "@arcgis/core/portal/PortalUser"
 
 export default {
     name: 'Login',
@@ -114,15 +113,11 @@ export default {
       handleSignedIn() {
         //TODO -- Remove LocalStorage and replace with ESRI OAUTH userId
         const portal = new Portal();
-        const portaluser = new PortalUser();
-        console.log(portal)
-        console.log(portaluser)
         
         this.loginToMap = true
         portal.load()
           .then( async () => {
             this.$router.push('/load')
-            console.log(portal)
             isTrainingAccess(portal.user.fetchGroups())
             this.userName = portal.user.username 
             let countyInfo = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed.

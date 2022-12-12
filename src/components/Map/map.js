@@ -198,6 +198,9 @@ export const rdbdLaneAsst = new FeatureLayer({
 export const editsLayer = new FeatureLayer({
     url: criConstants.editsLayer,
 })
+export const advanceLayer = new FeatureLayer({
+    url: criConstants.advanceUploadLayer
+})
 //county polyhon feature Layer
 export const txCounties = new FeatureLayer({
     url: criConstants.txCounties,

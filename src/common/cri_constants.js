@@ -7,6 +7,7 @@ export const criConstants = {
     assetLyrRdbDsgn: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/2',
     snapLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/Route_County/FeatureServer/1',
     assetLyrRdbLane: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/1',
+    advanceUploadLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_QAQC_dev/FeatureServer/0',
     txCounties: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/Texas_County_Boundaries/FeatureServer/0",
     geomTypeRd: "polyline",
     geomTypeCounty: "polygon",
@@ -47,5 +48,7 @@ export const criConstants = {
       'edit': ['#F8A307', 'EDIT', 5],
       'delete': ['#E32636', 'DELETE', 4]
     },
+
+    txdotSchema:['GID', 'EDIT_DESC', 'EDIT_TYPE', 'EDIT_STAT', 'ROAD_STAT', 'RTE_DEF_NM', 'ROAD_PRFX', 'ROAD_SFX', 'ROAD_TYPE', 'SURFACE', 'LANE', 'DESIGN', 'COMMENT']
 
   }

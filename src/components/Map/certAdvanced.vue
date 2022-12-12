@@ -1,10 +1,16 @@
 <template><!-- update -->
-    <v-card style="position:absolute; left:50%; top: 50%;" width="360" tile>
-        <v-card-title>Not Available</v-card-title>
-        <v-card-text>You have not been certified to access the advanced page.
+    <v-card id="tutorialTitle" width="560" height="flex" tile>
+        <v-card-title class="cardTitle"><p id="titleText">You Are Not Worthy</p></v-card-title>
+
+        <v-card-text id="cardTxt" class="textSymb" v-for="i in requiredFields" :key="i">{{i}}
         </v-card-text>
-        <a :href=emailTag>Request a tutorial</a>
-    </v-card>
+        <div id="idSelect">
+            <v-select  class="textSymb" v-for="i in userCertDisplay" :key="i" :items="userCertDisplay">{{i}}
+            </v-select>
+        </div>
+
+        <!-- <v-btn id="trainingBtn" :href="emailTag" tile outlined color="#14375A" @click="close()">Request Training</v-btn> -->
+    </v-card> 
 </template>
 
 <script>
@@ -13,13 +19,60 @@ export default {
     name: 'isCertAdvanced',
     data(){
         return{
-            emailBody: 'Hey CRI,%0D%0AI want to send an email to setup a schedule to get this out of the way.',
-            emailTag: `mailto:TPP_CRI@txdot.gov?subject=Send an email to Jason&body=Hey CRI,%0D%0A%0D%0AI want to send an email to setup a schedule to get this out of the way.`,
+            display: false,
+            requiredFields: ['EDIT_TYPE', 'GID', 'Id', 'ST_DEFN'],
+            userCertDisplay: ["FID", "EDIT_ID", "TASK_ID", "EDIT_TYPE_"],
         }
     },
+    methods:{
+        close(){
+            this.isMapAttr = false
+        }
+    },
+    watch:{
+        isMapAttr:{
+            handler: function(){
+                this.display = this.isMapAttr
+            },
+            immediate: true
+        }
+    },
+    computed:{
+        isMapAttr:{
+            get(){
+                return this.$store.state.isMapAttr
+            },
+            set(bool){
+                this.$store.commit('setIsMapAttr',bool)
+            }
+        },
+    }
 
 }
 </script>
 
 <style scoped>
+    #trainingBtn{
+        bottom: .5rem;
+        left: 4rem;
+        text-decoration: underline;
+    }
+    #tutorialTitle{
+        position:absolute;
+        left:50%;
+        top: 40%;
+    }
+    #titleText{
+        position: relative;
+        bottom: .7rem;
+    }
+    #cardTxt{
+        position: relative;
+        top: 1rem;
+    }
+    #idSelect{
+        position:absolute;
+        top: 1rem;
+        left: 19rem;
+    }
 </style>

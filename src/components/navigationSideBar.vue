@@ -1,7 +1,7 @@
 <!-- Left Nav side bar component -->
 <template>
-    <v-container style="height:100%">
-      <v-navigation-drawer app disable-resize-watcher id="navSideBarPos"> 
+    <v-container style="height:100% min-width: 50%;">
+      <v-navigation-drawer app disable-resize-watcher disable-route-watcher id="navSideBarPos" permanent> 
         <v-card-title id="testTitle"><v-card-text id="navTxPos">What Do You Want To Do?</v-card-text></v-card-title>
           <v-list id="navList"> 
             <v-list-item-group id="tester" v-model="clearEditBtn" color="#15648C" active-class="border">
@@ -287,6 +287,7 @@ body.select{
   top:3.7rem !important;
   height:100%;
   width: 12rem !important;
+  min-width: 12rem;
 }
 #navTxPos{
   position:relative; 

@@ -1,4 +1,4 @@
-import { editsLayer } from './map';
+import { editsLayer, advanceLayer } from './map';
 import {store} from '../../store'
 import Graphic from "@arcgis/core/Graphic";
 import { criConstants } from '../../common/cri_constants';
@@ -65,19 +65,24 @@ export function initGraphicCheck(editId, isRemove){
         }
         else{
             //add
-            isRemove ? null : addFeat(lineObj)
+            isRemove ? null : addFeat(lineObj, false)
             
         }
     })
 }
 
 //for adding to edits Layer
-function addFeat(editId){
-    editsLayer.applyEdits({
+export async function addFeat(editId, isAdvance){
+    let layer = isAdvance === false ? editsLayer : advanceLayer
+    let returnResp = layer.applyEdits({
         addFeatures: [editId]
     })
-    .then(result => result)
-    .catch(err => console.log(err))
+
+    let resp = await returnResp
+    console.log(resp)
+    return resp
+    // .then(result => result)
+    // .catch(err => console.log(err))
     //check to see if object objectid exists in featureClass
 }
 

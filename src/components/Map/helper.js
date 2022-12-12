@@ -210,4 +210,25 @@ export function geomToMiles(geometry, isNum, precision){
     }
 }
 
+//create epoch date
+export function createEpoch(){
+  let epochDate = Number((new Date().getTime()/1000).toFixed(0))
+  return epochDate
+}
 
+//data mapping from client fields to txdot fields
+export function submitListAttr(submit){
+
+  let objKeys = {GID: 'GID', RTE_DEFN_L: 'RTE_DEFN_LN_NM'}
+  let finalArr = []
+
+  for(let i=0; i<submit.featureSet.features.length; i++){
+    let a = Object.entries(submit.featureSet.features[i].attributes).reduce((acc, [key, value])=>{
+      acc[objKeys[key]] = (value)
+      return acc
+    },{})
+    finalArr.push(a)
+  }
+  
+  //take incoming fields and convert to our schema
+}

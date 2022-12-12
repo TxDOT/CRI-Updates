@@ -205,6 +205,10 @@
   color: black !important;
   text-align: left;
 }
+.textSymbDisable{
+  color: grey;
+  text-align: left
+}
 .editActionType{
   font-size: 1.23rem!important;
   text-align: left;
