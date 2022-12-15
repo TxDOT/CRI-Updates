@@ -250,7 +250,7 @@ async function createFeatures(file){
             processUpload(res)
         })
         .catch((fail)=>{
-            uploadFail(fail.message)
+            uploadFail([fail])
         })
 }
 
@@ -260,8 +260,19 @@ function uploadFail(message){
     document.getElementById('text').style.display = "block"
     document.getElementById('output').style.border = '2px solid red'
     document.getElementById('output').style.width = '27rem'
-    document.getElementById('text').innerText = `Error! ${message}`
+    document.getElementById('text').innerText = `Error! You have validation errors:`
+    
+    let bulletList = document.createElement('ul')
+    bulletList.style.paddingBottom = '2rem'
+    document.getElementById('text').appendChild(bulletList)
+    message.forEach((x) => {
+        let li = document.createElement('li')
+        li.appendChild(document.createTextNode(x.message))
+        li.style.textAlign= 'left'
+        bulletList.appendChild(li)
+    })
     document.getElementById('text').style.color = 'red'
+    document.getElementById('text').style.paddingBottom = '3rem'
 }
 
 // successful upload message
@@ -286,52 +297,66 @@ async function processUpload(upload){
     let uploadSchemaCheck = await uploadChecks(upload.data.featureCollection.layers[0], criConstants.txdotSchema)
     store.commit('setIsMapAttr', true)
     //submitListAttr(upload.data.featureCollection.layers[0])
-    uploadSchemaCheck.valueFail === true ? uploadFail(uploadSchemaCheck.message) : uploadPass('File Passed.',upload.data.featureCollection.layers[0].featureSet.features)
-
+    let uploadSchemaCheckResp = uploadSchemaCheck.filter(item => item.valueFail === true)
+    uploadSchemaCheckResp.length > 0 ? uploadFail(uploadSchemaCheckResp) : uploadPass('File Passed.',upload.data.featureCollection.layers[0].featureSet.features)
     return;
 }
 
 //check uplaod for geometry issues
-async function uploadGeometryCheck(featSet){
+async function uploadGeometryCheck(featSet, validali){
+    let valiArr = validali
     let geometryPromise = new Promise((res)=>{
         if(featSet.layerDefinition.geometryType !== 'esriGeometryPolyline'){
-        res({valueFail: true, message:'Other Geometries other than polylines are in your file.\nRevise and re-submit.'})
-        return;
+            valiArr.push({valueFail: true, message:'Other Geometries other than polylines are in your file.\nRevise and re-submit.'})
+            res(valiArr)
+            return;
         }
-        res({'valueFail': false})
+        valiArr.push({'valueFail': false})
+        res(valiArr)
     })
-
     return await geometryPromise
 }
 
 // make sure required fields are present and have values
-async function uploadValueCheck(feat){
+async function uploadValueCheck(feat, validali){
+    let validArr = validali
     let valueCheckPromise = new Promise((res)=>{
         let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Modify or Delete. Re-submit"
-        let lengthMessage = "Empty fields have been detected.\nPlease revise and re-submit"
-
+        let lengthMessage = "Empty or Null fields have been detected.\nPlease revise and re-submit"
+        let isCheckLength;
+        let editTypeMsg = [];
         for(let i=0; i < feat.featureSet.features.length; i++){
-        let item = Object.entries(feat.featureSet.features[i].attributes)
-        let isCheckLength = item.filter((x)=>x[1].toString().replace(/\s/g, "").length === 0)
-        isCheckLength.length ? res({valueFail: true, message: lengthMessage}) : ''
-        item.filter((x)=>{
-            if(x[0] === 'EDIT_TYPE'){
-            let removeWhiteSpace = x[1].toString().replace(/\s/g, "")
-            removeWhiteSpace === "MODIFY" || removeWhiteSpace === "ADD" || removeWhiteSpace === "DELETE" ? null : res({valueFail: true, message: editTypeMessage})
-            return;
-            }
-        })
+            let item = Object.entries(feat.featureSet.features[i].attributes)
+            isCheckLength = item.filter((x)=> {
+                if(x[1] != null){
+                    let rplcEmpty = x[1].toString().replace(/\s/g, "")
+                    return rplcEmpty.length === 0
+                }
+                
+            })
+            
+            item.filter((x)=>{
+                if(x[0] === 'EDIT_TYPE'){
+                    let removeWhiteSpace = x[1].toString().replace(/\s/g, "")
+                    removeWhiteSpace === "MODIFY" || removeWhiteSpace === "ADD" || removeWhiteSpace === "DELETE" ? null : editTypeMsg.push({valueFail: true, message: editTypeMessage})
+                    return;
+                }
+            })
+            
         }
-        let geometryReturn = uploadGeometryCheck(feat)
+        isCheckLength.length ? validArr.push({valueFail: true, message: lengthMessage}) : ''
+        editTypeMsg.length ? validArr.push({valueFail: true, message: editTypeMessage}) : ''
+        res(validArr)
+        let geometryReturn = uploadGeometryCheck(feat, validali)
         res(geometryReturn)
     }) 
-
     return await valueCheckPromise
 }
 
 //check schema for uplaod Packet
 async function uploadChecks(schemaFields, txdotSchema){
     let schemaPromise = new Promise((res)=>{
+        let validali = []
         let completeAttName = []
         let pass = 0
         let fail = 0
@@ -342,13 +367,12 @@ async function uploadChecks(schemaFields, txdotSchema){
             testField === true ? pass++ : fail++
         }
         if(fail > 0){
-            res({valueFail: true, message: "Schema Failed. Check Shapefile matches TxDOT Schema"})
-            return  ;
+            validali.push({valueFail: true, message: "Schema Failed. Check Shapefile matches TxDOT Schema"})
         }
-        else{
-            let returnValue = uploadValueCheck(schemaFields)
-            res(returnValue)
-        }
+        // else{
+        let returnValue = uploadValueCheck(schemaFields, validali)
+        res(returnValue)
+        // }
     })
     return await schemaPromise
 }
@@ -359,9 +383,9 @@ async function serverResponse(taskid){
     //let dataReturn = await fetch('https://gis-batch-dev.txdot.gov/fmedatastreaming/TPP/returnTestFile.fmw?', {headers:{'Authorization':'fmetoken token=7f4d809080c9161e0d5ea5708d5522a3fdd01119'},'Content-Type': 'text/plain'})
     //let dataReturn = await fetch('https://testportal.txdot.gov/fmejobsubmitter/TPP/returnTestFile.fmw?opt_showresult=false&opt_servicemode=sync', {headers:{'Authorization':'fmetoken token=b6aa89bdbe05b1ffaca36dc6562ae0770c71b9ab'},'Content-Type': 'text/plain'})
     let dataReturn = await fetch(`https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/CRI_QAQC_dev.fmw?TASK_ID=${taskid}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=58408fe1dba4b0b469faa9fa3ae0759426f8ad17'},'Content-Type': 'text/plain'})
-    let text = await dataReturn.text()
+    let text = await dataReturn.text() ? 'Process has completed, please check your email for validation.' : null
     //console.log(text)
-    document.getElementById('fmeResp').innerText = `FME Server says...${text}`//update
+    document.getElementById('fmeResp').innerText = `${text}`//update
     console.log(`end FME time: ${getTime()}`)
     setTimeout(()=>{
       store.commit('setServerCheck', false)

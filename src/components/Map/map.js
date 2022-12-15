@@ -269,14 +269,8 @@ view.on('double-click', (event)=>{
 
 view.ui.remove("zoom")  
 
-// view.watch('viewpoint', (curr)=>{
-//     if(curr.scale > 326328){
-//         sketch.on('update'||'create', (event)=>{
-//             event.stopPropagation()
-//         })
-//         return;
-//     } 
-//     console.log(curr.scale)
+// export let setScale = view.watch('viewpoint', (curr)=>{
+//     return curr.scale
 // })
 /**
  * Assigns the container element to the View

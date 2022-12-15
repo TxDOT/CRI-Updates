@@ -232,3 +232,15 @@ export function submitListAttr(submit){
   
   //take incoming fields and convert to our schema
 }
+
+//get upate featLayerURLs
+export async function getFeatLayURL(){
+  let urlFetch = await fetch('https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/Route_County/FeatureServer', {'method':'GET', 'Content-Type': 'text/plain'})
+  let respHTML = await urlFetch.text()
+  const initReg =  new RegExp(/(.*)Route_County<\/a>/g)
+  let getValue = initReg.exec(respHTML)
+  const re = new RegExp(/\/KTcxiTD9dsQw4r7Z\/ArcGIS\/rest\/services\/Route_County\/FeatureServer\/[0-9]{1}/g)
+  console.log(re.exec(getValue[1]))
+}
+
+//getFeatLayURL()

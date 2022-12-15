@@ -14,6 +14,7 @@ export async function queryEditsLayer(){
 //setup function that receives edited graphic and checks to see if currently has been edited
 //if not already in editsLayer then it will be added; else it will be updated
 export function initGraphicCheck(editId, isRemove){
+    console.log(editId)
     let returnQuery = queryEditsLayer();
     //create and map to new graphic available assets about road
     let lineObj = new Graphic({

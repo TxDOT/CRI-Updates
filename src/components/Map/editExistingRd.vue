@@ -46,25 +46,27 @@
             Edit may be discarded later if you change your mind
          </v-alert>
          <!-- <a v-if="!deleteClick"  id="comment">Comment</a> -->
-         <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox>
-         <v-dialog v-model="comment" persistent>
+         <!-- <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox> -->
+         <v-select @change="updateComment()" label="Why are you deleting this road?" v-if="!deleteClick" outlined :items="cityAnnexReason" v-model="commentText" class="rdDelSelc" dense></v-select>
+         <v-dialog persistent v-model="comment">
             <v-card id="delRdComment">
-                
                 <v-card-title class="surfaceTitle">
-                    <v-card-text id="comntText">Reason for road deletion</v-card-text>
+                    <v-card-text id="comntText" v-if="upldCity">Upload City Shapefile</v-card-text>
+                    <v-card-text id="comntText" v-else>Reason for Road Deletion</v-card-text>
                 </v-card-title>
-                <v-select :items="cityAnnexReason" v-model="cityAnnexResp"></v-select>
-                <!-- <v-row id="txtArea">
-                    <v-textarea v-model="commentText" ></v-textarea>
-                </v-row> -->
+        
+                 <v-row id="txtArea">
+                    <v-file-input prepend-icon="mdi-file" v-if="upldCity" label="Upload City Shapefile"></v-file-input>
+                    <v-textarea v-model="commentText" v-else></v-textarea>
+                </v-row>
                 
-                <v-btn outlined tile color="#204E70" @click="comment=false" id="saveBtn"><u>Save</u></v-btn>
+                <v-btn outlined tile color="#204E70" @click="comment=upldCity=false;" id="saveBtn"><u>Save</u></v-btn>
             </v-card>
         </v-dialog>
         <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=false"> 
           <u>Cancel</u>
         </v-btn>
-        <v-btn :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'5rem', 'left':'2rem', 'border-color':'black'}:{'top':'1.8rem', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
+        <v-btn :disabled="commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'5rem', 'left':'2rem', 'border-color':'black'}:{'top':'1.8rem', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
           <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
         <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
@@ -88,6 +90,7 @@ export default {
     components: {confirmationAlert, sketchAlert},
     data (){
       return {
+        upldCity: false,
         edit:false,
         deleteR: false,
         deleteSecond: false,
@@ -98,21 +101,35 @@ export default {
         discardEdits: false,
         comment: false,
         commentText: '',
-        cityAnnexReason: ["City owns it", "I dont like this road", "Revenge!!!!"],
+        cityAnnexReason: ["City Annexation", "Private Road", "Public Road", "Not a Road", "Other"],
         cityAnnexResp: ''
       }
     },
     methods:{
+        updateComment(){
+            if(this.commentText === 'City Annexation'){
+                //pop up upload city street shapefile
+                this.upldCity=this.comment = true
+                return;
+            }
+            else if(this.commentText === 'Other'){
+                this.comment = true
+                return
+            }
+        },
         setDeleteFalse(){
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
             editGraphic.attributes.comment = this.commentText
             this.deleteClick = false
+            this.commentText = null
+            this.comment = false
             saveToEditsLayer()
         },
         deleteRoadClick(){
             removeGraphic()
             removeHighlight()
             this.deleteClick = false
+            this.commentText = ''
         },
         cancelEditAction(){
             if(this.edit === true){
@@ -405,5 +422,10 @@ export default {
     #discardBtn{
         left: 2.5rem;
         top:5rem;
+    }
+    .rdDelSelc{
+        padding-right: 1rem;
+        padding-left : 1rem;
+        height: 3rem;
     }
 </style>
