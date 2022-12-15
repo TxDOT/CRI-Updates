@@ -3,7 +3,7 @@
     <v-dialog v-model="aboutClick" max-width="500" persistent style="overflow-y: hidden;">
         <v-card id="finalCheck" v-model="aboutClick" min-height="540">
         <v-card-title class="surfaceTitle"><span id="titleText">About the County Road Inventory Map</span></v-card-title>
-        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.5.4</u></v-card-text>
+        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.5.5</u></v-card-text>
         <div>
             <v-card-text class="textSymb" id="cardText">The County Road Inventory Map is a tool for county officials to verify and make updates to TxDOT’s 
                                                                                                         roadway inventory. <a id="hoverLink" href='https://capitol.texas.gov/tlodocs/74R/billtext/html/SB00971F.htm' target="_blank">
