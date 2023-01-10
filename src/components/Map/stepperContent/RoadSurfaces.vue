@@ -116,12 +116,10 @@
         <v-spacer></v-spacer>
       </v-col>
       <a v-if="!infoRoad"
-        @click="isAssetFinished = isAssetFullLen = false; isAssetType = true; addRoadSurface(); isAddNew = true;"
-        class="addSegment">
+        @click="isAssetFinished = isAssetFullLen = false; isAssetType = true; addRoadSurface(); isAddNew = true;" class="addSegment">
         <v-icon color="#204E70">mdi-plus-thick</v-icon><u class="addSegColor">Add another segment</u>
       </a>
-      <v-btn v-if="!infoRoad" outlined class="nextAssetBtns" tile @click="nextStep(4); initLoadAsset('design')"
-        color="#204E70" :disabled="!setAssetCover[0]">
+      <v-btn v-if="!infoRoad" outlined class="nextAssetBtns" tile @click="nextStep(4); initLoadAsset('design')" color="#204E70" :disabled="!setAssetCover[0]">
         <u>Next Step</u>
       </v-btn>
     </v-card>

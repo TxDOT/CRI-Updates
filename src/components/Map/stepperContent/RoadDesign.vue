@@ -70,7 +70,7 @@
     <v-card class="card" v-if="isAssetFinished === true" absolute left flat>
       <assetAlert/>
       <v-col  v-for="(item,index) in mileInfo" :key="index">
-        <v-row class="assetPosFinish" width="800px"> <!-- add for loop to display items; previous button should create an object, which can be displayed below info -->
+        <v-row class="assetPosFinish" width="100px"> <!-- add for loop to display items; previous button should create an object, which can be displayed below info -->
           <v-card-text class="assetTxtFinish">This road is <em style="color:white" :style="{backgroundColor:`${assetColorTable[item.SRFC_TYPE]}`}">{{item.SRFC_TYPE}}</em> between {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
           <v-btn v-if="!infoRoad" text color="#204E70" class="btnPencil" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
           <small v-if="!infoRoad" class="penciTxt">EDIT</small>
@@ -449,6 +449,18 @@ export default {
 }
 </script>
 <style scoped>
+v-card::-webkit-scrollbar {
+    width: 1em;
+}
+ 
+v-card::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+ 
+v-card::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
 /* .card{
   border-radius: 0px;
   max-width: 99%;

@@ -7,8 +7,8 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/:id(\\d{0,3})', //uses Path-to-RegExp (https://github.com/pillarjs/path-to-regexp/tree/v1.7.0)
-    name: 'MileSign',
-    component: () =>  import(/* webpackChunkName: "MileSign" */ "../views/mileSign.vue"),
+    name: 'JudgeIntro',
+    component: () =>  import(/* webpackChunkName: "MileSign" */ "../views/judgeIntro.vue"),
     props: true
   },
   {

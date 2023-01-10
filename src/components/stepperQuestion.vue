@@ -89,7 +89,8 @@
         <v-row no-gutters id="dialogCommentBox">
           <v-textarea v-model="comment"></v-textarea>
         </v-row>
-        <v-btn outlined tile color="#204E70" @click="dialog=false" id="dialogSaveBtn"><u>Save</u></v-btn>
+        <v-btn outlined tile color="#204E70" @click="dialog=false; saveComment()" id="dialogSaveBtn"><u>Save</u></v-btn>
+        <v-btn text tile color="#204E70" @click="dialog=false; cancelComment()" id="dialogCancelBtn"><u>Cancel</u></v-btn>
       </v-card>
     </v-dialog>
   </v-stepper>
@@ -155,7 +156,8 @@ export default {
         discardAlertQuest: false,
         discardAlert: false,
         dialog: false,
-        comment:'',
+        comment: '',
+        oldComment: '',
         fetchLength:0,
         fetchRoadName: null,
         fetchRoadSurface: null,
@@ -295,10 +297,16 @@ export default {
           this.geomChecks = this.isGeomCheck
         },
           immediate: true
-        }
+      },
     },
 
     methods:{
+      saveComment(){
+        this.oldComment = this.comment
+      },
+      cancelComment(){
+        this.comment = this.oldComment
+      },
       cancelStepper(){
         cancelEditStepper()
       },
@@ -579,11 +587,15 @@ export default {
 }
 #dialogSaveBtn{
   position: absolute;
-  right:2%;
+  right:1rem;
   bottom: .5rem;
   border: 1px solid black
 }
-
+#dialogCancelBtn{
+  position: absolute;
+  right: 6rem;
+  bottom: .5rem;
+}
 #commentTxt{
   font-size: .7rem;
   color:gray;
@@ -693,6 +705,8 @@ export default {
   position: absolute; 
   right:5rem;
 }
+
+
 </style>
 <style>
 .v-dialog{

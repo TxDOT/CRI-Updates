@@ -263,7 +263,6 @@ function uploadFail(message){
     document.getElementById('text').innerText = `Error! You have validation errors:`
     
     let bulletList = document.createElement('ul')
-    bulletList.style.paddingBottom = '2rem'
     document.getElementById('text').appendChild(bulletList)
     message.forEach((x) => {
         let li = document.createElement('li')
@@ -272,7 +271,6 @@ function uploadFail(message){
         bulletList.appendChild(li)
     })
     document.getElementById('text').style.color = 'red'
-    document.getElementById('text').style.paddingBottom = '3rem'
 }
 
 // successful upload message

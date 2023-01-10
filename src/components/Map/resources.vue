@@ -43,7 +43,7 @@
         <v-alert :id="isCert === false ? 'disclaimer' : 'disclaimerF'" tile>
           <p id="disclaimerTxt" v-if="isCert === true">The optional features below are for advanced GIS users only.</p>
           <p id="disclaimerTxt" v-if="isCert === false">The optional features below are for advanced GIS users only.<br>Training is required in order to access these features.</p>
-          <v-btn id="trainingBtn" :href="emailTag" tile outlined color="#14375A" @click="close()" small v-if="isCert === false">Request Training</v-btn>
+          <v-btn id="trainingBtn" :href="reqTrainingEmail()" tile outlined color="#14375A" @click="close('isUserCertify')" small v-if="isCert === false">Request Training</v-btn>
         </v-alert>
         <v-icon id="uploadIcon" :disabled="isCert === false">mdi-download</v-icon>
         <v-card-text id="uploadTxt" :class="isCert === false ? 'textSymbDisable' : 'textSymb'">
@@ -80,8 +80,8 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="isHelpTraining" width="650">
-      <v-card tile>
+    <v-dialog v-model="isHelpTraining" width="650" persistent>
+      <v-card tile height="315">
         <v-card-title class="surfaceTitle"><p id="helpTrainPos">Help and Training</p></v-card-title>
           <v-card-text>
             <v-item-group>
@@ -91,7 +91,7 @@
                     <v-item>
                       <v-tooltip bottom max-width="200" color="#204E70" style="border-radius: 0px;"> 
                         <template v-slot:activator="{ on, attrs }">
-                          <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" width=600 @click="openPage($event)" color="green"><p id="helpTrainContent">{{mediaType[n]}}</p><v-icon id="helpTrainIcon">{{iconType[n]}}</v-icon></v-card>
+                          <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" width=600 @click="openPage(mediaType[n])" color="green"><p id="helpTrainContent">{{mediaType[n]}}</p><v-icon id="helpTrainIcon">{{iconType[n]}}</v-icon></v-card>
                         </template>
                         <span>{{tooltips[n]}}</span>
                       </v-tooltip>
@@ -101,6 +101,7 @@
               </v-container>
             </v-item-group>
           </v-card-text>
+          <v-btn id="clseBtnHelp" outlined tile color="#204E70" @click="close('isHelpTraining')">close</v-btn>
       </v-card>
     </v-dialog>
   </v-container>
@@ -113,8 +114,6 @@
     name: 'aboutHelp',
     data (){
       return {
-        emailBody: 'Hey CRI,%0D%0AI want to send an email to setup a schedule to get this out of the way.',
-        emailTag: `mailto:TPP_CRI@txdot.gov?subject=David Prosack wants Send an email to Jason&body=Hey CRI,%0D%0A%0D%0AI want to send an email to setup a schedule to get this out of the way.`,
         isCert: false,
         countyNm: null,
         isFileSuccess: false,
@@ -124,7 +123,7 @@
         display:false,
         drawer: true,
         isHelpTraining: false,
-        tooltips: ['',"Click here to access TxDOT's County Inventory Youtube Channel", "Click here to access PDFs about CRI.", "Click here to access a Sandbox Enviornment. This allows you to practice making edits, without affecting your counties inventory"],
+        tooltips: ['',"Click here to access TxDOT's County Inventory YouTube Channel", "Click here to access PDFs about CRI.", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory"],
         mediaType: ['', 'TxDOT Youtube Channel', 'Go To PDFs','Access Sandbox Environment'],
         iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github'],
         items: [
@@ -154,13 +153,16 @@
       }
     },
     methods:{
+      reqTrainingEmail(){
+        return `mailto:TPP_CRI@txdot.gov?subject=Advanced Training Request from ${this.userName}, ${this.countyNm} County&body=Requesting training and access for the 'Advanced' features and functionality in the County Road Inventory Map.`
+      },
       downloadTemp(){
         let tempdwnl = document.createElement('a')
         tempdwnl.href = 'https://raw.githubusercontent.com/TxDOT/CRI/main/CRI_Template.gdb.zip'
         tempdwnl.click()
       },
-      close(){
-            this.isUserCertify = false
+      close(x){
+          x === 'isUserCertify' ? this.display = false : this.isHelpTraining = false
       },
       certifiedTrue(){
         this.display = true
@@ -176,13 +178,14 @@
         this.removeBtnFocus();
       },
       openPage(event){
-        if(event.explicitOriginalTarget.textContent === 'Access Sandbox Environment'){
+        console.log(event)
+        if(event === 'Access Sandbox Environment'){
           window.open('https://txdot.github.io/CRI-Updates/login')
         }
-        else if(event.explicitOriginalTarget.textContent === 'Go To PDFs'){
+        else if(event === 'Go To PDFs'){
           window.open('https://www.google.com')
         }
-        else if(event.explicitOriginalTarget.textContent === 'TxDOT Youtube Channel'){
+        else if(event === 'TxDOT Youtube Channel'){
           window.open('https://youtube.com/playlist?list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2')
         }
       },
@@ -280,6 +283,11 @@
         set(bool){
           this.$store.commit('setCertifiedCheck',bool)
         }
+      },
+      userName:{
+        get(){
+          return this.$store.state.username
+        },
       },
     }
   }
@@ -462,22 +470,28 @@
   right: .5rem;
 }
 #helpTrainContent{
-  position:absolute; 
+  position: relative; 
   text-align: left; 
   top: 1rem; 
-  right: 3.1rem; 
+  right: .3rem; 
   padding-left: 1rem;
 }
 #helpTrainIcon{
   position:absolute; 
   top:5rem; 
-  right: 4.2rem; 
-  font-size: 2.5rem;
+  right: 4rem; 
+  font-size: 3.5rem;
 }
 #closeBtn{
   position: absolute;
   bottom: 1rem; 
   right: 2rem;
+  text-decoration: underline;
+}
+#clseBtnHelp{
+  position: absolute;
+  bottom: .5rem;
+  right: 1rem;
   text-decoration: underline;
 }
 </style>

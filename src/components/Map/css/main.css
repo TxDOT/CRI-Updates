@@ -1,10 +1,17 @@
 /*-- begin stepper css --*/
+.v-input input {
+  text-transform: capitalize !important;
+}
+
 .totalDiv {
+  position: relative;
   min-height: 0vh;
   display: flex;
   flex-direction: column;
   height: 30vh;
-  overflow-y: auto;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width: auto;
 }
 
 .cardText {
@@ -64,8 +71,8 @@
 }
 
 .nextAssetBtns {
-  position: absolute;
-  left: 8.5rem;
+  position: relative;
+  left: 8.2rem;
   top: 2.5rem;
 }
 
@@ -150,6 +157,7 @@
 .assetPosFinish {
   border: 1px solid #204E70;
   height: 70px;
+  position: relative;
 }
 
 .assetTxtFinish {
@@ -195,6 +203,10 @@
 }
 
 /*-- end stepper css --*/
+.card{
+  width: 30rem;
+  position: absolute;
+}
 
 .cardTitle {
   background-color: #14375A;
@@ -216,4 +228,12 @@
   bottom: 2.7vh;
   right: 1rem;
   position: relative;
+}
+
+.closeBtnUnderline{
+  text-decoration: underline;
+}
+
+.v-dialog{
+  overflow-y: hidden !important;
 }

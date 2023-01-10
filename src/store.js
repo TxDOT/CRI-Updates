@@ -58,11 +58,21 @@ export const store = new Vuex.Store({
         uploadFields: [],
         serverResp: false, //update
         isCertified: false,//update
-        isMapAttr: true
-
-
+        isMapAttr: true,
+        isJudgeLtter: false,
+        judgeName: '',
+        judgeEmail:''
     },
     getters:{
+        getIsJudgeLtter(state){
+            return state.isJudgeLtter
+        },
+        getJudgeName(state){
+            return state.judgeName
+        },//update
+        getJudgeEmail(state){
+            return state.judgeEmail
+        },//update
         getIsMapAttr(state){
             return state.isMapAttr
         },//update
@@ -225,6 +235,17 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setJudgeName(state, jdgeName){
+            state.judgeName = jdgeName
+        },//update
+        setJudgeEmail(state, jdgeEmail){
+            state.judgeEmail = jdgeEmail
+        },//update
+        setIsJudgeLetter(state, judgeLetter){
+            console.log(state.isJudgeLtter, judgeLetter)
+            state.isJudgeLtter= judgeLetter
+            console.log(state.isJudgeLtter, judgeLetter)
+        },//update
         setIsMapAttr(state, mapAttr){
             state.isMapAttr = mapAttr
         },//update 
