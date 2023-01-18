@@ -56,7 +56,7 @@
 }
 
 .skipButton1 {
-  position: relative;
+  position: inherit;
   bottom: 10px;
   padding-left: 2px;
   right: 0rem;
