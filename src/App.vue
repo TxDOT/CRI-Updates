@@ -25,7 +25,7 @@ export default {
 </script>
 
 <style>
-@import './components/Map/css/main.css';
+/* @import './components/Map/css/main.css'; */
 
 #app {
   font-family: Roboto, Avenir, Helvetica, Arial, sans-serif;

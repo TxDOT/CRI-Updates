@@ -244,3 +244,26 @@ export async function getFeatLayURL(){
 }
 
 //getFeatLayURL()
+
+//send Judge Emails
+export function sendJudgeEmail(step, ccDelName, ccEmailList){
+  let theJson = {
+    "workflow":{
+        "step": step,
+        "countyInfo": {
+            "countyName": store.getters.getCntyName,
+            "countyMileage": store.getters.getCntyMiles
+        },
+        "judgeName": store.getters.getJudgeName,
+        "delegateName": ccDelName,
+        "email": [
+            "david.prosack@txdot.gov"                      
+        ],
+        "ccEmails": ccEmailList,
+      }
+  };
+  let params = encodeURIComponent(JSON.stringify(theJson));
+  let theService = criConstants.webhookUrl + params;
+  let a = fetch(theService, {headers:{'Authorization' : criConstants.headerValue},'Content-Type': 'text/plain'})
+  a.then(x=> console.log('Webhook fired! Check your email...',x))
+}

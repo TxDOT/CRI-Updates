@@ -242,9 +242,7 @@ export const store = new Vuex.Store({
             state.judgeEmail = jdgeEmail
         },//update
         setIsJudgeLetter(state, judgeLetter){
-            console.log(state.isJudgeLtter, judgeLetter)
             state.isJudgeLtter= judgeLetter
-            console.log(state.isJudgeLtter, judgeLetter)
         },//update
         setIsMapAttr(state, mapAttr){
             state.isMapAttr = mapAttr

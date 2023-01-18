@@ -18,7 +18,7 @@ export const criConstants = {
     postUpdateFeat:'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_EDITS_dev/FeatureServer/0/updateFeatures?f=json',
     postDeleteFeat:'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_EDITS_dev/FeatureServer/0/addFeatures?f=json',
     fmeurl: 'http://api.fmeserver.com/js/v3/FMEServer.js',
-    webhookUrl: "https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_DUSA2Email.fmw?params=",
+    webhookUrl: "https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_DUSA2Email.fmw?params=",
     headerName: "Authorization",
     headerValue: "fmetoken token=0f9f9976018726f7a4397a8e98294edc615a5512",
     

@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-main>
         <v-dialog persistent max-width="1000" v-model="judgeLetter" id="judgeDialog">
             <v-card id="judgeLetter">
                 <v-card-title><v-img :src="require('@/assets/txdotLogo.jpeg')" id="judgeLetterLogo"></v-img></v-card-title>
@@ -19,7 +19,7 @@
             <acceptCertify/>
         </v-dialog>
         
-    </v-container>
+    </v-main>
 </template>
 
 <script>
@@ -39,8 +39,6 @@ export default{
             judgeName: '',
             judgeEmail: '',
             countyNbr: '',
-            currentMiles: '',
-            county: '',
             sendData: '',
             assignDel: false,
             accptCertify: false,
@@ -118,6 +116,22 @@ export default{
             },
             set(email){
                 this.$store.commit('setJudgeEmail', email)
+            }
+        },
+        county:{
+            get(){
+                return this.$store.state.cntyName
+            },
+            set(name){
+                this.$store.commit('setCntyName', name)
+            }
+        },
+        currentMiles:{
+            get(){
+                return this.$store.state.cntyMiles
+            },
+            set(mile){
+                this.$store.commit('setCntyMiles', mile)
             }
         }
     }

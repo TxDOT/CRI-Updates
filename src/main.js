@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
 import '@arcgis/core/assets/esri/themes/light/main.css';
+import './components/Map/css/main.css';
 import vuetify from './plugins/vuetify'
 import router from './router'
 import {store} from './store'

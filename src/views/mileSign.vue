@@ -308,7 +308,7 @@ export default {
                     "David Interoperability"
                   ],
                   "email": [
-                      "TXDOT.SPM@gmail.com"                      
+                      "david.prosack@txdot.gov"                      
                   ],
                   "ccEmails": this.ccEmailList,
                 }

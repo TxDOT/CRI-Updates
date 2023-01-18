@@ -88,6 +88,7 @@ export default {
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find(x => cntyNbrNm[0][x] === this.pickCounty)
         console.log(getCountyNbr)
         let whereStatement = `CNTY_NBR = '${getCountyNbr}'`
+
         const query = new Query();
         query.where = whereStatement
         query.outFields = [ "*" ]
@@ -96,6 +97,8 @@ export default {
           this.countyNumber = getCountyNbr
           this.countyName = this.pickCounty
           this.countyMiles = result.features[0].attributes['TOT_MLGE']
+          this.judgeNameSend = result.features[0].attributes['JUDGE_NM']
+          this.judgeEmailSend = result.features[0].attributes['JUDGE_EML']
           this.loadData(this.pickCounty, getCountyNbr)
         })
       },
@@ -137,6 +140,22 @@ export default {
         },
         set(userName){
           this.$store.commit('setUserName', userName)
+        }
+      },
+      judgeNameSend:{
+        get(){
+          return this.$store.state.judgeName
+        },
+        set(name){
+          this.$store.commit('setJudgeName', name)
+        }
+      },
+      judgeEmailSend:{
+        get(){
+          return this.$store.state.judgeEmail
+        },
+        set(email){
+          this.$store.commit('setJudgeEmail', email)
         }
       },
     }

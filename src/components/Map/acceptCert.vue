@@ -32,7 +32,7 @@
         </div>
 
         <v-btn text color="#204E70" id="cancelBtn" @click="returnToLetter()">Cancel</v-btn>
-        <v-btn tile outlined color="#204E70" id="acceptBtn" :disabled="hideSubText === false || isCountyJudge === false" @click="accept()">Accept</v-btn>
+        <v-btn tile outlined color="#204E70" id="acceptBtn" :disabled="hideSubText === false || isCountyJudge === false" @click="submit('certify')">Accept</v-btn>
         
         
         
@@ -40,6 +40,9 @@
 </template>
 
 <script>
+
+import {sendJudgeEmail} from '../Map/helper'
+
 export default {
     name: 'acceptCertify',
     acceptCertify: true,
@@ -67,14 +70,20 @@ export default {
         toggleSubTxt(){
             this.signature.length >= 5 ? this.hideSubText = true : this.hideSubText = false
         },
-        accept(){
-            console.log(this.ccEmail)
-        },
         countyMileageTxt(){
-            return `The current mileage for ${this.countyName} is 1Billion`
+            return `The current mileage for ${this.countyName} is ${this.countyMileage}`
         },
         returnToLetter(){
             this.isJudgeLetter = !this.isJudgeLetter
+        },
+        submit(step){
+            let ccEmailList = []
+            let ccDelName = []
+            this.ccEmail.forEach((x) => {
+                ccEmailList.push(x.EmailAdd)
+                ccDelName.push(x.delUserName)
+            })
+            sendJudgeEmail(step, null, ccEmailList)
         }
 
     },
@@ -92,6 +101,11 @@ export default {
         countyName:{
             get(){
                 return this.$store.state.cntyName
+            }
+        },
+        countyMileage:{
+            get(){
+                return this.$store.state.cntyMiles
             }
         },
         isJudgeLetter:{

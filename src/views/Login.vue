@@ -140,7 +140,6 @@ export default {
             return cntyNbrNm[0]
           }
         })
-        
         if(getCountyNbr){
           let whereStatement = `CNTY_NBR = '${getCountyNbr}'`
           const query = new Query();
@@ -148,6 +147,8 @@ export default {
           query.outFields = [ "*" ]
           let queryResult = await countyOfficialInfo.queryFeatures(query)
           this.countyNumber = getCountyNbr
+          this.judgeNameSend = queryResult.features[0].attributes['JUDGE_NM']
+          this.judgeEmailSend = queryResult.features[0].attributes['JUDGE_EML']
           localStorage.setItem('county',JSON.stringify([county,getCountyNbr,queryResult.features[0].attributes['TOT_MLGE']]))
           return [county, Number(getCountyNbr), queryResult.features[0].attributes['TOT_MLGE']]
         }
@@ -205,7 +206,23 @@ export default {
         set(bool){
           this.$store.commit('setIsLoggedIn', bool)
         }
-      }
+      },
+      judgeNameSend:{
+        get(){
+          return this.$store.state.judgeName
+        },
+        set(name){
+          this.$store.commit('setJudgeName', name)
+        }
+      },
+      judgeEmailSend:{
+        get(){
+          return this.$store.state.judgeEmail
+        },
+        set(email){
+          this.$store.commit('setJudgeEmail', email)
+        }
+      },
     }
     
 }

@@ -11,13 +11,15 @@
         
         <a x-small @click="addEmail" id="addDelegate">Add additional delegate</a>
         <v-btn text color="#204E70" id="cancelBtn" @click="returnToLetter()">Cancel</v-btn>
-        <v-btn tile outlined color="#204E70" id="acceptBtn" @click="accept()"><u>Accept</u></v-btn>
+        <v-btn tile outlined color="#204E70" id="acceptBtn" @click="submit('delegate')"><u>Accept</u></v-btn>
 
     </v-card>
 
 </template>
 
 <script>
+import {sendJudgeEmail} from '../../components/Map/helper'
+
 export default {
     name: 'AssignDelegate',
     data(){
@@ -54,11 +56,21 @@ export default {
             console.log(this.emailCounter)
             this.emailCounter.splice(index, 1)
         },
-        accept(){
-            console.log(this.emailCounter)
-        },
+        // accept(){
+        //     console.log(this.emailCounter)
+        // },
         returnToLetter(){
             this.isJudgeLetter = !this.isJudgeLetter
+        },
+        submit(step){
+            let ccEmailList = []
+            let ccDelName = []
+            this.emailCounter.forEach((x) => {
+                ccEmailList.push(x.delEmail)
+                ccDelName.push(x.delUserName)
+            })
+
+            sendJudgeEmail(step, ccDelName, ccEmailList)
         }
     },
     computed:{
@@ -69,7 +81,7 @@ export default {
             set(bool){
                 this.$store.commit('setIsJudgeLetter', bool)
             }
-        }
+        },
     }
 }
 </script>

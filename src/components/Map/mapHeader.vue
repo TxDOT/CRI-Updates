@@ -6,7 +6,7 @@
                 <p>TxDOT County Road Inventory Map</p>
             </v-app-bar-title>
                 <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" id="saveExitBtn"><u>Save & Exit</u></v-btn>
-                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitCertify=true"><u>Submit & Certify</u></v-btn>
+                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitCertify=true; submit('submit')"><u>Submit & Certify</u></v-btn>
         </v-app-bar>
 
         <div class="text-center">
@@ -34,6 +34,7 @@
 <script>
 import {addRoadbed, stopEditing} from '../Map/edit';
 import esriId from "@arcgis/core/identity/IdentityManager";
+import {sendJudgeEmail} from '../Map/helper'
 
 export default {
     name:"mapHeader",
@@ -64,6 +65,9 @@ export default {
                 .catch(()=>{
                     this.$router.push('/login')
                 })
+        },
+        submit(step){
+            sendJudgeEmail(step, [], [])
         }
     },
     computed:{
