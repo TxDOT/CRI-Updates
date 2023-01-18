@@ -18,10 +18,19 @@
             v-model="submitCertify"
             max-width="400"
             persistent>
-            <v-card v-model="submitCertify" height="150" id="submitCertifyCd">
-                <v-card-title class="surfaceTitle"><p id="submitCertifyCdTitle">Temporarily Unavailable</p></v-card-title>
+            <v-card v-model="submitCertify" height="355" id="submitCertifyCd">
+                <v-card-title class="surfaceTitle"><v-icon color="green" id="checkBox">mdi-check</v-icon><p id="submitCertifyCdTitle">Submit and Certify</p></v-card-title>
                     <v-card-text class="textSymb" id="submitCertifyCdText">
-                        This functionality is under development and temporarily unavailable.
+                    <p>
+                        Thank you for submitting updates to your County Road Inventory.
+                    </p>
+                    <p>
+                        {{ this.judgeNameSend }} will be receiving an email confirmation of this submission, with instructions to certify the updates.
+                    </p>
+                    <p>
+                        <b>Note:</b> Edits in the app area still allowed up until August 31. However, any edits made after the judge has certified will need to
+                        be certified again by the judge in order for TxDOT to accept them.
+                    </p>
                     </v-card-text>
                     <v-btn outlined tile @click="submitCertify = false" color="#14375A" id="btnClose">
                         <u>Close</u>
@@ -94,6 +103,11 @@ export default {
                 this.$store.commit('setIsLoggedOut', bool)
             }
         },
+        judgeNameSend:{
+            get(){
+                return this.$store.state.judgeName
+            }
+      },
     }
 }    
 </script>
@@ -153,5 +167,10 @@ export default {
     left: 9rem; 
     top: 0rem; 
     border: 1px solid black
+}
+#checkBox{
+    position: relative;
+    bottom: 1.2rem;
+    right: 1rem;
 }
 </style>

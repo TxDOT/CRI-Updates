@@ -1,9 +1,9 @@
 <!-- "About" content -->
 <template>
-    <v-dialog v-model="aboutClick" max-width="500" persistent style="overflow-y: hidden;">
-        <v-card id="finalCheck" v-model="aboutClick" min-height="540">
-        <v-card-title class="surfaceTitle"><span id="titleText">About the County Road Inventory Map</span></v-card-title>
-        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.5.5</u></v-card-text>
+    <v-dialog v-model="aboutClick" max-width="600" persistent>
+        <v-card id="finalCheck" v-model="aboutClick">
+            <v-card-title class="surfaceTitle"><span id="titleText">About the County Road Inventory Map</span></v-card-title>
+        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.5.6</u></v-card-text>
         <div>
             <v-card-text class="textSymb" id="cardText">The County Road Inventory Map is a tool for county officials to verify and make updates to TxDOT’s 
                                                                                                         roadway inventory. <a id="hoverLink" href='https://capitol.texas.gov/tlodocs/74R/billtext/html/SB00971F.htm' target="_blank">
@@ -12,7 +12,7 @@
                                                                                                         purpose of allocation of highway funds.</v-card-text>
         </div>
         <v-divider class="textSymb" id="divider"></v-divider>
-        <div style="position:inherit; top: 20rem;">
+        <div>
             <v-card-text class="textSymb" id="updateTextRow" v-for="(i, index) in updateList" :key=index><ul id="updateText"><li>{{updateList[index]}}</li></ul></v-card-text>
         </div>
 
@@ -28,7 +28,7 @@ export default {
     data (){
       return {
         updateList:['Added Geometry Checks (Self-Intersection, Minimum geometry length)', 'Updated sign-up URL','Added link to training videos','Adjusted Action item Body text font', 'Disabled mile info after ending asset mileage is completed', 
-                    'Adjusted Missing Attributes/Discard Edit Popup']
+                    'Adjusted Missing Attributes/Discard Edit Popup', 'Judge Workflow Updated']
       }
     },
     methods:{
@@ -71,16 +71,18 @@ export default {
 }
 
 #finalCheck{
-    position: inherit;
+    position: relative;
     top:50%;
     width: 500px;
-    left: 50%;
+    left: 4rem;
+    min-height: 0vh;
+    max-height: 100rem;
     border-radius: 0px;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    overflow-y: auto;
 }
-
 
 #hoverLink{
     color: blue;
