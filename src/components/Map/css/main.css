@@ -41,7 +41,7 @@
 }
 
 .cnclBtnSrfc {
-  position: relative;
+  position: inherit;
   bottom: .5rem;
   right: 0rem;
   padding: 0px;
