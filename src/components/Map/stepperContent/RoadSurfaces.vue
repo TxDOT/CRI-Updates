@@ -66,7 +66,7 @@
         <u>Cancel</u>
       </v-btn>
       <!-- if Back is clicked all card display properties will be set to false, except for isAssetFullLen. and cancelDfoLocation() and resetAsset will execute-->
-      <v-btn class="contBtnSrfc" text tile color="#204E70"
+      <v-btn class="cancelButton1" text tile color="#204E70"
         @click="isAssetStart = isAssetEnd = isAssetFinished = isAssetType = false; isAssetFullLen = true; cancelDfoLocation()">
         Back
       </v-btn>
@@ -88,7 +88,7 @@
         <u>Cancel</u>
       </v-btn>
       <!-- if Back is clicked all card display properties will be set to false, except for isAssetStart. and cancelDfoLocation() and resetAsset will execute-->
-      <v-btn class="contBtnSrfc" text tile color="#204E70"
+      <v-btn class="cancelButton1" text tile color="#204E70"
         @click="isAssetEnd = isAssetFinished = isAssetType = isAssetFullLen = false; isAssetStart = true; cancelDfoLocation()">
         Back
       </v-btn>
