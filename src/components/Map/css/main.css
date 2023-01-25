@@ -237,3 +237,13 @@
 .v-dialog{
   overflow-y: hidden !important;
 }
+
+.radioBtn .v-icon{
+  font-size: 1.3rem !important;
+  color: black !important;
+}
+
+.radioBtn .v-label{
+  font-size: .8rem;
+  color: black !important;
+}

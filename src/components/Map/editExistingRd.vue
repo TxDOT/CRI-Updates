@@ -31,8 +31,8 @@
             </v-icon>Select a road from the map to delete it
         </v-card-text>
         <v-btn tile outlined depressed id="cancelBtn" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false"><u>Cancel</u></v-btn>
-    </v-card>
-    <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style="deleteClick ? {'height': '200px'} : {}"> <!-- //&& this.modifyR === false -->
+        </v-card>
+    <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style="deleteClick ? {} : {}"> <!-- //&& this.modifyR === false -->
         <v-card-title class="delRdTitle" style="width: 385px">
             Delete a Road
         </v-card-title>
@@ -44,11 +44,42 @@
                 mdi-information
             </v-icon>
             Edit may be discarded later if you change your mind
-         </v-alert>
+        </v-alert>
          <!-- <a v-if="!deleteClick"  id="comment">Comment</a> -->
          <!-- <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox> -->
-         <v-select @change="updateComment()" label="Why are you deleting this road?" v-if="!deleteClick" outlined :items="cityAnnexReason" v-model="commentText" class="rdDelSelc" dense></v-select>
-         <v-dialog persistent v-model="comment">
+        <v-row v-if="!deleteClick">
+            <v-select @change="updateComment()" label="Why are you deleting this road?" outlined v-model="commentText" class="rdDelSelc" dense :items="cityAnnexReason">
+                <template v-slot:item="data">
+                    <v-tooltip right max-width="200" color="#204E70">
+                        <template slot="activator" slot-scope="{ on }" id="tooltip">
+                            <v-list-item-content>
+                                <v-list-item-title  v-html="data.item.text" v-on="on"></v-list-item-title>
+                            </v-list-item-content>
+                        </template>
+                        <span>{{data.item.tooltip}}</span>
+                    </v-tooltip>
+                </template>
+            </v-select>
+        </v-row>
+        <!-- <v-radio-group v-if="upldCity" v-model="radioBtnSel"> -->
+        <div id="moveRadio">
+            <v-radio class="radioBtn" v-if="upldCity" @click="isUpldShapefile = true; isLinkExplain = false" v-model="radioBtnSel" label="I can provide documentation (e.g. Shapefile, PDF, etc.)" value="0"></v-radio>
+                <v-card v-if="isUpldShapefile" flat class="radioResponse">
+                    <v-card-text id="dragDrop">
+                        <div class="fileContainer">
+                            <form id="output">
+                                <input type="file" name="file" @change="dropItem($event)"/>
+                            </form>
+                        </div>
+                    </v-card-text>
+                </v-card>
+            <v-radio class="radioBtn"  v-if="upldCity" @click="isLinkExplain = true;isUpldShapefile = false" v-model="radioBtnSel" label="I have a link, or can explain" value="1"></v-radio>
+            <v-card v-if="isLinkExplain" flat class="radioResponse" id="explainTxt">
+                <v-textarea  outlined label="Explain Yourself"></v-textarea>
+            </v-card>
+        </div>
+        <!-- </v-radio-group> -->
+         <!-- <v-dialog persistent v-model="comment">
             <v-card id="delRdComment">
                 <v-card-title class="surfaceTitle">
                     <v-card-text id="comntText" v-if="upldCity">Upload City Shapefile</v-card-text>
@@ -62,11 +93,11 @@
                 
                 <v-btn outlined tile color="#204E70" @click="comment=upldCity=false;" id="saveBtn"><u>Save</u></v-btn>
             </v-card>
-        </v-dialog>
-        <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=false"> 
+        </v-dialog> -->
+        <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=upldCity=false; "> 
           <u>Cancel</u>
         </v-btn>
-        <v-btn :disabled="commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'5rem', 'left':'2rem', 'border-color':'black'}:{'top':'1.8rem', 'left':'73px', 'border-color':'black'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
+        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'6rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'16.7rem', 'border-color':'black', 'width':'6rem'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
           <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
         <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
@@ -91,6 +122,8 @@ export default {
     data (){
       return {
         upldCity: false,
+        isUpldShapefile: false,
+        isLinkExplain: false,
         edit:false,
         deleteR: false,
         deleteSecond: false,
@@ -101,27 +134,41 @@ export default {
         discardEdits: false,
         comment: false,
         commentText: '',
-        cityAnnexReason: ["City Annexation", "Private Road", "Public Road", "Not a Road", "Other"],
+        radioBtnSel: '',
+        radioBtns: [{value: 0, text: "I can provide documentation (e.g. Zipped Shapefile, PDF, etc.)"}, {value: 1, text: "I have a link, or can explain"}],
+        cityAnnexReason: [{value: 0, text: "City Annexation", tooltip: "A public road that is now physically located inside the city limits due to an annexation."},
+                          {value: 1, text: "Private Road", tooltip: "A private road will typically have a sign that says “No Trespassing”, “Private Property”, or “Do Not Enter”, etc. They may also be gated or locked."},
+                          {value: 2, text: "Federal Road", tooltip: "A public road that is physically located within the boundaries of federal lands (e.g. military reservation, national forest, national park) and owned by a federal agency."},
+                          {value: 3, text:"Not a Road", tooltip: "No road present or road was obliterated."}, {value: 4, text: "Other", tooltip: "Please provide an explanation."}],
         cityAnnexResp: ''
       }
     },
     methods:{
+        // radioBtnClick(){
+        //     this.radioBtnSel === 0 ? this.upldShapefile = true : this.upldShapefile = false
+        // },
         updateComment(){
-            if(this.commentText === 'City Annexation'){
+            
+            if(this.commentText === 0){
                 //pop up upload city street shapefile
                 this.upldCity=this.comment = true
+                this.isUpldShapefile = false
                 return;
             }
-            else if(this.commentText === 'Other'){
-                this.comment = true
-                return
+            else if(this.commentText === 4){
+                this.isLinkExplain = true
+                this.upldCity = false
+                this.isUpldShapefile = false
+                return;
             }
+            this.comment = this.upldCity = this.isLinkExplain = this.isUpldShapefile = false
+            return;
         },
         setDeleteFalse(){
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
             editGraphic.attributes.comment = this.commentText
             this.deleteClick = false
-            this.commentText = null
+            this.commentText = ''
             this.comment = false
             saveToEditsLayer()
         },
@@ -281,7 +328,7 @@ export default {
             get(){
                 return this.$store.state.objectid
             }
-      },
+        },
     }
 }
 </script>
@@ -337,10 +384,13 @@ export default {
     }
     #delWarn{
         position: absolute;
+        display: flex;
+        flex-direction: column;
+        min-height: 0vh;
+        max-height: 40rem;
         top:5rem;
         left: 13.4rem;
         width: 385px;
-        height: 250px;
         color: #204E70;
         border-radius: 0px;
     }
@@ -416,16 +466,32 @@ export default {
         border: 1px solid black
     }
     #cnclBtn{
-        left:4rem;
-        top:1.8rem
+        left: 11rem;
+        top:1.8rem;
+        width: 5rem;
     }
     #discardBtn{
-        left: 2.5rem;
-        top:5rem;
+        left: 12.5rem;
+        bottom:.2rem;
+        width: 10rem;
     }
     .rdDelSelc{
-        padding-right: 1rem;
-        padding-left : 1rem;
+        top: .4rem;
+        padding-right: 1.9rem;
+        padding-left : 1.7rem;
         height: 3rem;
+    }
+    .radioResponse{
+        position: relative;
+        top: .5rem;
+    }
+    #moveRadio{
+        position: relative;
+        top: 1rem;
+        padding-left: .6rem;
+    }
+    #explainTxt{
+        padding-left: .5rem;
+        padding-right: 1rem;
     }
 </style>

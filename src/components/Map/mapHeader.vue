@@ -28,7 +28,7 @@
                         {{ this.judgeNameSend }} will be receiving an email confirmation of this submission, with instructions to certify the updates.
                     </p>
                     <p>
-                        <b>Note:</b> Edits in the app area still allowed up until August 31. However, any edits made after the judge has certified will need to
+                        <b>Note:</b> Edits in the app are still allowed up until August 31. However, any edits made after the judge has certified will need to
                         be certified again by the judge in order for TxDOT to accept them.
                     </p>
                     </v-card-text>
@@ -76,7 +76,7 @@ export default {
                 })
         },
         submit(step){
-            sendJudgeEmail(step, [], [])
+            sendJudgeEmail(step, [this.delUsername], [])
         }
     },
     computed:{
@@ -107,7 +107,12 @@ export default {
             get(){
                 return this.$store.state.judgeName
             }
-      },
+        },
+        delUsername:{
+            get(){
+                return this.$store.state.username
+            }
+        }
     }
 }    
 </script>

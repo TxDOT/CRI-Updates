@@ -99,6 +99,7 @@ export default {
           this.countyMiles = result.features[0].attributes['TOT_MLGE']
           this.judgeNameSend = result.features[0].attributes['JUDGE_NM']
           this.judgeEmailSend = result.features[0].attributes['JUDGE_EML']
+          console.log(result.features[0].attributes['JUDGE_NM'])
           this.loadData(this.pickCounty, getCountyNbr)
         })
       },

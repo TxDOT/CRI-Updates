@@ -89,7 +89,7 @@
         <v-row no-gutters id="dialogCommentBox">
           <v-textarea v-model="comment"></v-textarea>
         </v-row>
-        <v-btn outlined tile color="#204E70" @click="dialog=false; saveComment()" id="dialogSaveBtn"><u>Save</u></v-btn>
+        <v-btn outlined tile color="#204E70" @click="dialog=false; saveComment()" :disabled="!forInfo" id="dialogSaveBtn"><u>Save</u></v-btn>
         <v-btn text tile color="#204E70" @click="dialog=false; cancelComment()" id="dialogCancelBtn"><u>Cancel</u></v-btn>
       </v-card>
     </v-dialog>
