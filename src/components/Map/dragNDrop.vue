@@ -33,7 +33,7 @@ export default {
             attrConv: false, 
             serverCheck: 'Additional Checks and Processing Upload',//update
             uploadText: 'Drop Shapefiles Here',
-            fmeProcess: 'Cannot Upload while FME Process is Running'
+            fmeProcess: 'Cannot Upload while Process is Running'
         }
     },
     methods:{

@@ -226,10 +226,10 @@ async function createFeatures(file){
         maxRecordCount: 4000,
         enforceInputFileSizeLimit: true,
         enforceOutputJsonSizeLimit: true,
-        generalize: true,
+        generalize: false,
         maxAllowableOffset: 10,
-        reducePrecision: true,
-        numberOfDigitsAfterDecimal: 0
+        reducePrecision: false,
+        numberOfDigitsAfterDecimal: 5
     }
 
     let content = {
