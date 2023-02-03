@@ -2,7 +2,7 @@
 <template>
     <v-footer app id="footerPos">
       <div id="footerCard" style="color:white"><div id="coordsPos">{{x}}, {{y}}</div>
-        County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(rdbdDeltaDist.toFixed(1)) ===0? {'color':'white'} : null]">{{Number(rdbdDeltaDist.toFixed(1))}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
+        County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Mileage Change: <b :style="[rdbdDeltaDist > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(rdbdDeltaDist) ===0? {'color':'white'} : null]">{{Number(mileageChange)}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
       </div>
     </v-footer>
 </template>
@@ -20,6 +20,7 @@ export default {
       previousTotal: 0,
       modifyLength: 0,
       modifyLine: 0,
+      mileageChange: 0,
       x:0,
       y:0
     }
@@ -44,9 +45,18 @@ export default {
     countyTots:{
       handler: function(){
         this.returnCountyTotal = Number(this.countyTotal) + Number(this.rdbdDeltaDist)
+
       },
       immediate: true, 
     },
+    rdbdDeltaDist:{
+      handler: function(){
+        let dist = this.rdbdDeltaDist > -0.02 && this.rdbdDeltaDist < 0.02 ? 0 : this.rdbdDeltaDist
+        this.mileageChange = dist
+
+      },
+      immediate:true
+    }
   },
   computed:{
     county:{
@@ -66,7 +76,7 @@ export default {
     },
     rdbdDeltaDist:{
       get(){
-        return this.$store.state.deltaDistance
+        return Math.floor(this.$store.state.deltaDistance *100)/100
       }
     },
     countyTots: function(){

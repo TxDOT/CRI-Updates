@@ -291,7 +291,7 @@ async function uploadPass(message, upldData){
 
 // initial QA/QC check for file upload
 async function processUpload(upload){
-    //populate store with array with upload attribute values. 
+    //populate store with array with upload attribute values.
     let uploadSchemaCheck = await uploadChecks(upload.data.featureCollection.layers[0], criConstants.txdotSchema)
     store.commit('setIsMapAttr', true)
     //submitListAttr(upload.data.featureCollection.layers[0])
@@ -326,7 +326,7 @@ async function uploadValueCheck(feat, validali){
         for(let i=0; i < feat.featureSet.features.length; i++){
             let item = Object.entries(feat.featureSet.features[i].attributes)
             isCheckLength = item.filter((x)=> {
-                if(x[1] != null){
+                if(x[1] != null && criConstants.txdotSchema.includes(x[1])){
                     let rplcEmpty = x[1].toString().replace(/\s/g, "")
                     return rplcEmpty.length === 0
                 }
@@ -335,8 +335,8 @@ async function uploadValueCheck(feat, validali){
             
             item.filter((x)=>{
                 if(x[0] === 'EDIT_TYPE'){
-                    let removeWhiteSpace = x[1].toString().replace(/\s/g, "")
-                    removeWhiteSpace === "MODIFY" || removeWhiteSpace === "ADD" || removeWhiteSpace === "DELETE" ? null : editTypeMsg.push({valueFail: true, message: editTypeMessage})
+                    let removeWhiteSpace = x[1]
+                    removeWhiteSpace === 5 || removeWhiteSpace === 1 || removeWhiteSpace === 4 ? null : editTypeMsg.push({valueFail: true, message: editTypeMessage})
                     return;
                 }
             })
@@ -358,7 +358,6 @@ async function uploadChecks(schemaFields, txdotSchema){
         let completeAttName = []
         let pass = 0
         let fail = 0
-        
         schemaFields.layerDefinition.fields.forEach((x) => completeAttName.push(x.name))
         for(let i=0; i < txdotSchema.length; i++){
             let testField = completeAttName.includes(txdotSchema[i])
@@ -375,16 +374,18 @@ async function uploadChecks(schemaFields, txdotSchema){
     return await schemaPromise
 }
 
-async function serverResponse(taskid){
+async function serverResponse(submitid){
     console.log(`start FME time: ${getTime()}`)
-    console.log(taskid)
+    store.commit('setIsFmeProcess', true)
+    console.log(submitid)
     //let dataReturn = await fetch('https://gis-batch-dev.txdot.gov/fmedatastreaming/TPP/returnTestFile.fmw?', {headers:{'Authorization':'fmetoken token=7f4d809080c9161e0d5ea5708d5522a3fdd01119'},'Content-Type': 'text/plain'})
     //let dataReturn = await fetch('https://testportal.txdot.gov/fmejobsubmitter/TPP/returnTestFile.fmw?opt_showresult=false&opt_servicemode=sync', {headers:{'Authorization':'fmetoken token=b6aa89bdbe05b1ffaca36dc6562ae0770c71b9ab'},'Content-Type': 'text/plain'})
-    let dataReturn = await fetch(`https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/CRI_QAQC_dev.fmw?TASK_ID=${taskid}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=58408fe1dba4b0b469faa9fa3ae0759426f8ad17'},'Content-Type': 'text/plain'})
+    let dataReturn = await fetch(`https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/CRI_QAQC_dev.fmw?TASK_ID=${submitid}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=58408fe1dba4b0b469faa9fa3ae0759426f8ad17'},'Content-Type': 'text/plain'})
     let text = await dataReturn.text() ? 'Process has completed, please check your email for validation.' : null
     //console.log(text)
     document.getElementById('fmeResp').innerText = `${text}`//update
     console.log(`end FME time: ${getTime()}`)
+    store.commit('setIsFmeProcess', false)
     setTimeout(()=>{
       store.commit('setServerCheck', false)
     },5000)
@@ -393,14 +394,14 @@ async function serverResponse(taskid){
 //upload attributes to advanced layer
 async function upldToAdvceFeatLyr(upldFile){
     let epoch = createEpoch()
-    let itemTaskId = `${store.getters.getCntyNmbr}-${epoch}`
+    let itemSubmitId = `${store.getters.getCntyNmbr}-${epoch}`
 
     for(let fi=0; fi < upldFile.length; fi++){
-        upldFile[fi].attributes.TASK_ID = itemTaskId
+        upldFile[fi].attributes.SUBMIT_ID = itemSubmitId
         upldFile[fi].geometry.type = "polyline"
         await addFeat(upldFile[fi], true)
     }
-    return itemTaskId
+    return itemSubmitId
 }
 
 ////////delete/////////////

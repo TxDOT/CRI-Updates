@@ -42,9 +42,10 @@
             this.editExistingRd = false;
             this.deleteRoad = false
             this.clearEditBtn = true
+            this.addRdBoolean = true
             this.addRoad();
             this.display=true;
-            this.addRdBoolean = true
+            
             this.modifyRoad = false
 
             }
@@ -89,16 +90,14 @@
       }
     },
     methods:{
-      async addRoad(){
+      addRoad(){
         addRoadbed()
           .then(() => {
             this.openStepper();
             this.addRdBoolean = false
             this.graphic = false;
           })
-      },
-      editRoad(){
-
+          .catch((x)=>console.log(x))
       },
       openStepper(){
         this.steppClose = true;

@@ -9,7 +9,7 @@ import Query from "@arcgis/core/rest/support/Query";
 
 
 //Sets Road Data in the data store. 
-export function setDataToStore(surface, design, name, lane, objectid, comment, editInfo){
+export async function setDataToStore(surface, design, name, lane, objectid, comment, editInfo){
     store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
     store.commit('setRoadbedDesign', design) 
     store.commit('setRoadbedName', name)
@@ -17,7 +17,7 @@ export function setDataToStore(surface, design, name, lane, objectid, comment, e
     store.commit('setObjectid', objectid)
     store.commit('setComment', comment)
     store.commit('setEditInfo', editInfo)
-  }
+}
 
 //querys the Refernce Layer table returns geometry/attributes
 export async function queryFeat(qry){
@@ -115,7 +115,6 @@ export async function defineGraphic(graphics, clickType, editType){
       document.body.style.cursor = 'context-menu'
       let graphicPromise = new Promise(function(res){
         const date = new Date();
-        console.log(date)
         let newGraphic = new Graphic({
           geometry: {
             type: "polyline",

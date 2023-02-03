@@ -80,7 +80,6 @@ export async function addFeat(editId, isAdvance){
     })
 
     let resp = await returnResp
-    console.log(resp)
     return resp
     // .then(result => result)
     // .catch(err => console.log(err))

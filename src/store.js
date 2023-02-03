@@ -19,6 +19,7 @@ export const store = new Vuex.Store({
         newTotalLength: 0,
         deltaDistance: 0,
         username: '',
+        userEmail: '',
         stepperClose: null,
         addRd:null,
         editExisting: null,
@@ -61,9 +62,13 @@ export const store = new Vuex.Store({
         isMapAttr: true,
         isJudgeLtter: false,
         judgeName: '',
-        judgeEmail:''
+        judgeEmail:'',
+        isFmeProcess: false,
     },
     getters:{
+        getIsFmeProcess(state){
+            return state.isFmeProcess
+        },
         getIsJudgeLtter(state){
             return state.isJudgeLtter
         },
@@ -196,6 +201,9 @@ export const store = new Vuex.Store({
         getUserName(state){
             return state.username
         },
+        getUserEmail(state){
+            return state.userEmail
+        },
         getOldLength(state){
             return state.oldLength
         },
@@ -235,6 +243,9 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsFmeProcess(state, boolFME){
+            state.isFmeProcess = boolFME
+        },
         setJudgeName(state, jdgeName){
             state.judgeName = jdgeName
         },//update
@@ -438,6 +449,9 @@ export const store = new Vuex.Store({
         },
         setUserName(state, userName){
             state.username = userName
+        },
+        setUserEmail(state, usrEmail){
+            state.userEmail = usrEmail
         },
         setDeltaDis(state, newLen){
             if(newLen[1] === "Add"){

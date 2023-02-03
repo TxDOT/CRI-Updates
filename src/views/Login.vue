@@ -113,10 +113,11 @@ export default {
       handleSignedIn() {
         //TODO -- Remove LocalStorage and replace with ESRI OAUTH userId
         const portal = new Portal();
-        
         this.loginToMap = true
         portal.load()
           .then( async () => {
+            console.log(portal.user.email)
+            this.usrEmail = portal.user.email
             this.$router.push('/load')
             isTrainingAccess(portal.user.fetchGroups())
             this.userName = portal.user.username 
@@ -197,6 +198,14 @@ export default {
         },
         set(userName){
           this.$store.commit('setUserName', userName)
+        }
+      },
+      usrEmail:{
+        get(){
+          return this.$store.state.userEmail
+        },
+        set(email){
+          this.$store.commit('setUserEmail', email)
         }
       },
       logIn:{

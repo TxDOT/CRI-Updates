@@ -30,14 +30,14 @@
                 mdi-navigation
             </v-icon>Select a road from the map to delete it
         </v-card-text>
-        <v-btn tile outlined depressed id="cancelBtn" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false"><u>Cancel</u></v-btn>
+        <v-btn tile outlined depressed id="cancelBtn" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false;"><u>Cancel</u></v-btn>
         </v-card>
     <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style="deleteClick ? {} : {}"> <!-- //&& this.modifyR === false -->
-        <v-card-title class="delRdTitle" style="width: 385px">
+        <v-card-title class="delRdTitle">
             Delete a Road
         </v-card-title>
         <v-card-text class="textSymb" id="bodyTxt" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
-            <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> will be deleted.
+            <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> {{ delTxt }}
         </v-card-text>
         <v-alert color="orange" height="35" dense outlined id="infoAlert" v-if="!deleteClick" >
             <v-icon color="orange" id="icon">
@@ -48,12 +48,12 @@
          <!-- <a v-if="!deleteClick"  id="comment">Comment</a> -->
          <!-- <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox> -->
         <v-row v-if="!deleteClick">
-            <v-select @change="updateComment()" label="Why are you deleting this road?" outlined v-model="commentText" class="rdDelSelc" dense :items="cityAnnexReason">
+            <v-select @change="updateComment()" label="Why are you deleting this road?" outlined class="rdDelSelc" v-model="delReason" dense :items="cityAnnexReason">
                 <template v-slot:item="data">
                     <v-tooltip right max-width="200" color="#204E70">
                         <template slot="activator" slot-scope="{ on }" id="tooltip">
                             <v-list-item-content>
-                                <v-list-item-title  v-html="data.item.text" v-on="on"></v-list-item-title>
+                                <v-list-item-title  v-html="data.item.text" v-on="on" ></v-list-item-title>
                             </v-list-item-content>
                         </template>
                         <span>{{data.item.tooltip}}</span>
@@ -61,43 +61,29 @@
                 </template>
             </v-select>
         </v-row>
-        <!-- <v-radio-group v-if="upldCity" v-model="radioBtnSel"> -->
+    
         <div id="moveRadio">
-            <v-radio class="radioBtn" v-if="upldCity" @click="isUpldShapefile = true; isLinkExplain = false" v-model="radioBtnSel" label="I can provide documentation (e.g. Shapefile, PDF, etc.)" value="0"></v-radio>
+            <v-radio-group v-model="radioBtnSel">
+            <v-radio class="radioBtn" v-if="upldCity" @click="isUpldShapefile = true; isLinkExplain = false"  label="I can provide documentation (e.g. Shapefile, PDF, etc.)" value="0"></v-radio>
                 <v-card v-if="isUpldShapefile" flat class="radioResponse">
-                    <v-card-text id="dragDrop">
+                    <v-card-text id="dragDrop" v-if="upldCity">
                         <div class="fileContainer">
-                            <form id="output">
-                                <input type="file" name="file" @change="dropItem($event)"/>
-                            </form>
+                            <label id="output">
+                                <input type="file" name="file" @change="dropItem($event)"/>Upload Document
+                            </label>
                         </div>
                     </v-card-text>
                 </v-card>
-            <v-radio class="radioBtn"  v-if="upldCity" @click="isLinkExplain = true;isUpldShapefile = false" v-model="radioBtnSel" label="I have a link, or can explain" value="1"></v-radio>
+            <v-radio class="radioBtn" v-if="upldCity" @click="isLinkExplain = true;isUpldShapefile = false"  label="I have a link, or can explain" value="1"></v-radio>
             <v-card v-if="isLinkExplain" flat class="radioResponse" id="explainTxt">
-                <v-textarea  outlined label="Explain Yourself"></v-textarea>
+                <v-textarea  outlined label="Please Explain" v-model="commentText">{{ commentText }}</v-textarea>
             </v-card>
+        </v-radio-group>
         </div>
-        <!-- </v-radio-group> -->
-         <!-- <v-dialog persistent v-model="comment">
-            <v-card id="delRdComment">
-                <v-card-title class="surfaceTitle">
-                    <v-card-text id="comntText" v-if="upldCity">Upload City Shapefile</v-card-text>
-                    <v-card-text id="comntText" v-else>Reason for Road Deletion</v-card-text>
-                </v-card-title>
-        
-                 <v-row id="txtArea">
-                    <v-file-input prepend-icon="mdi-file" v-if="upldCity" label="Upload City Shapefile"></v-file-input>
-                    <v-textarea v-model="commentText" v-else></v-textarea>
-                </v-row>
-                
-                <v-btn outlined tile color="#204E70" @click="comment=upldCity=false;" id="saveBtn"><u>Save</u></v-btn>
-            </v-card>
-        </v-dialog> -->
-        <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=upldCity=false; "> 
+        <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=upldCity=isLinkExplain=false; delReason=null"> 
           <u>Cancel</u>
         </v-btn>
-        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'6rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'16.7rem', 'border-color':'black', 'width':'6rem'}" tile elevation="0" @click="deleteSecond=false; deleteConfirm=true; setDeleteFalse()"> 
+        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'12rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'22.5rem', 'border-color':'black', 'width':'6rem'}" tile elevation="0" @click="deleteSecond = upldCity = isLinkExplain = isUpldShapefile = false; deleteConfirm=true; setDeleteFalse(); delReason=null;"> 
           <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
         <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
@@ -127,6 +113,8 @@ export default {
         edit:false,
         deleteR: false,
         deleteSecond: false,
+        delReason: '',
+        delTxt: '',
         modifyR: false,
         addR: false,
         stepper: false,
@@ -148,20 +136,20 @@ export default {
         //     this.radioBtnSel === 0 ? this.upldShapefile = true : this.upldShapefile = false
         // },
         updateComment(){
-            
-            if(this.commentText === 0){
+            this.commentText = this.cityAnnexReason.find(x=> x.value === this.delReason).text
+            if(this.delReason === 0 || this.delReason === 2){
                 //pop up upload city street shapefile
-                this.upldCity=this.comment = true
+                this.upldCity = true
                 this.isUpldShapefile = false
                 return;
             }
-            else if(this.commentText === 4){
+            else if(this.delReason === 4){
                 this.isLinkExplain = true
                 this.upldCity = false
                 this.isUpldShapefile = false
                 return;
             }
-            this.comment = this.upldCity = this.isLinkExplain = this.isUpldShapefile = false
+            this.upldCity = this.isLinkExplain = this.isUpldShapefile = false
             return;
         },
         setDeleteFalse(){
@@ -173,6 +161,7 @@ export default {
             saveToEditsLayer()
         },
         deleteRoadClick(){
+            this.radioBtnSel = false
             removeGraphic()
             removeHighlight()
             this.deleteClick = false
@@ -197,6 +186,7 @@ export default {
                 this.getDfoBool = false
                 stopEditing();
                 this.addRdBoolean = false
+                this.returnDFOValue=0
             }
         }
     },
@@ -245,6 +235,16 @@ export default {
             },
             immediate:true,
         },
+        deleteClick:{
+            handler: function(){
+                if(this.deleteClick){
+                    this.delTxt = 'is marked for deletion.'
+                    return;
+                }
+                this.delTxt = 'will be delete.'
+            },  
+            immediate: true
+        }
     },
     computed:{
         getDfoBool:{
@@ -265,6 +265,7 @@ export default {
         },
         roadName:{
             get(){
+                console.log(this.$store.state.roadbedName)
                 return JSON.parse(this.$store.state.roadbedName)
             }
         },
@@ -329,6 +330,14 @@ export default {
                 return this.$store.state.objectid
             }
         },
+        returnDFOValue:{
+            get(){
+                return this.$store.state.dfoReturn
+            },
+            set(x){
+                this.$store.commit('setDfoReturn', x)
+            }
+        },
     }
 }
 </script>
@@ -390,7 +399,7 @@ export default {
         max-height: 40rem;
         top:5rem;
         left: 13.4rem;
-        width: 385px;
+        width: 25.3vw;
         color: #204E70;
         border-radius: 0px;
     }
@@ -466,32 +475,43 @@ export default {
         border: 1px solid black
     }
     #cnclBtn{
-        left: 11rem;
+        left: 17rem;
         top:1.8rem;
         width: 5rem;
     }
     #discardBtn{
-        left: 12.5rem;
+        left: 18.5rem;
         bottom:.2rem;
         width: 10rem;
     }
     .rdDelSelc{
-        top: .4rem;
-        padding-right: 1.9rem;
+        position: inherit;
+        padding-top: .5rem;
+        padding-right: 2.43rem;
         padding-left : 1.7rem;
         height: 3rem;
     }
     .radioResponse{
         position: relative;
-        top: .5rem;
+        bottom: .1rem;
     }
     #moveRadio{
         position: relative;
-        top: 1rem;
+        top: .3rem;
         padding-left: .6rem;
     }
     #explainTxt{
         padding-left: .5rem;
         padding-right: 1rem;
+    }
+    input[type=file]{
+        display: none;
+    }
+    #output{
+        border: 1.5px solid #204E70;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        color: black
     }
 </style>

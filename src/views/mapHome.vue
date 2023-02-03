@@ -26,7 +26,7 @@ import navSideBar from '../components/navigationSideBar.vue'
 import stepper from '../components/stepperQuestion.vue'
 import editExistingRd from "../components/Map/editExistingRd.vue"
 import denyClickFeat from '../components/Map/clickOnFeatureAlert.vue'
-import dfoBox from '../components/Map/stepperContent/dfoBoxMap.vue'
+import dfoBox from '../components/Map/dfoBoxMap.vue'
 import about from '../components/Map/aboutApp.vue'
 import Legend from '../components/Map/mapLegend.vue'
 import geomCheck from '../components/Map/geomCheck.vue'

@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import {addRoadbed, stopEditing} from '../Map/edit';
+import {stopEditing} from '../Map/edit';
 import esriId from "@arcgis/core/identity/IdentityManager";
 import {sendJudgeEmail} from '../Map/helper'
 
@@ -55,11 +55,6 @@ export default {
       }
     },
     methods:{
-        addRoad() {
-            addRoadbed().then(result=>{
-                this.previousTotal += Number(parseFloat(result.toFixed(3)))     
-            })            
-        },
         cancelEditing(){
             stopEditing()
         },

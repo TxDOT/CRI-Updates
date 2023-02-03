@@ -5,12 +5,13 @@
             <v-card-title class="cardTitle"><p id="titleText">Upload Files</p></v-card-title>
             <v-card-text style="z-index: 2;">
                 <div class="fileContainer">
-                    <form id="output" @dragover="dragOver()" @dragleave="dragLeave()" @drop="drop();">
-                        <input type="file" name="file" @change="dropItem($event)"/>
+                    <form id="output" @dragover="dragOver()" @dragleave="dragLeave()" @drop="drop();" :disabled="this.isFmeRun">
+                        <input :disabled="this.isFmeRun" type="file" name="file" @change="dropItem($event)"/>
                     </form>
                 </div>
             </v-card-text>
-            <v-card-text id="text"><v-icon id="dragNDropTxt">mdi-upload</v-icon>Drop Shapefiles here</v-card-text>
+            <v-card-text id="text" v-if="this.isFmeRun"><v-icon id="dragNDropTxt">mdi-upload</v-icon>{{fmeProcess}}</v-card-text>
+            <v-card-text id="text" v-else><v-icon id="dragNDropTxt">mdi-upload</v-icon>{{uploadText}}</v-card-text>
             <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
             <v-btn @click="dragDropClick = false" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
         </v-card>
@@ -30,7 +31,9 @@ export default {
         return{
             display: true,
             attrConv: false, 
-            serverCheck: 'Waiting for Response from FME Server'//update
+            serverCheck: 'Additional Checks and Processing Upload',//update
+            uploadText: 'Drop Shapefiles Here',
+            fmeProcess: 'Cannot Upload while FME Process is Running'
         }
     },
     methods:{
@@ -68,7 +71,15 @@ export default {
                 return this.$store.state.serverResp
             },
             set(resp){
-                this.$store.commite('setServerCheck', resp)
+                this.$store.commit('setServerCheck', resp)
+            }
+        },
+        isFmeRun:{
+            get(){
+                return this.$store.state.isFmeProcess
+            },
+            set(bool){
+                this.$store.commit('setIsFmeProcess', bool)
             }
         }
 

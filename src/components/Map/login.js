@@ -4,6 +4,7 @@ import { queryEditsLayer } from './crud'
 import { defineGraphic, geomToMiles, queryFeat, createEpoch } from './helper';
 import { cntyNbrNm } from '../../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query";
+import { criConstants } from '../../common/cri_constants';
 import { store } from '../../store'
 import router from '../../router';
 // on successful login gets county name and road mileage totals. Filters county for map zoom and definition query
@@ -52,11 +53,13 @@ export async function countyInfo(){
   return countyInfoReturn
 }
 
+
+
 //reloads edits from EDITS Feature Service to Graphics Layer
 export async function reloadEdits(){
     //while user is logging in, query edits service and display currents from count
     let currentEditRoads = queryEditsLayer();
-    
+    console.log(currentEditRoads)
     let createGraphics = await currentEditRoads
     //first add all Adds together
     //second query and and compare Ref layer length against add route length and apply to total length
@@ -67,6 +70,24 @@ export async function reloadEdits(){
       //reset Edit TYPE_ID to add/edit/delete so that criConstants.editType can be used in defineGraphic func
       if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 1){
         mileSetUp += length
+        let parseAdd = JSON.parse(createGraphics.features[i].attributes.ASSET_ST_DEFN_NM)
+        parseAdd.forEach((x) => {
+          if(typeof x.prefix === 'number'){
+            let preDir = criConstants.suffixPrefixNum[0][x.prefix]
+            x.prefix = preDir
+          }
+
+          if(typeof x.suffix === 'number'){
+            let sufDir = criConstants.suffixPrefixNum[0][x.suffix]
+            x.suffix = sufDir
+          }
+
+          if(typeof x.streetType === 'number'){
+            let strType = criConstants.rdNameType.find(z => z[x.streetType])
+            x.streetType = Object.values(strType)[0]
+          }
+        })
+        createGraphics.features[i].attributes.ASSET_ST_DEFN_NM = JSON.stringify(parseAdd)
         createGraphics.features[i].attributes.EDIT_TYPE_ID = 'add'
       }
       else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 5){
@@ -74,6 +95,24 @@ export async function reloadEdits(){
         let oldLength = geomToMiles(returnRoad.features[0].geometry,true,3)
         let diff = length - oldLength
         mileSetUp += diff
+        let parseEdit = JSON.parse(createGraphics.features[i].attributes.ASSET_ST_DEFN_NM)
+        parseEdit.forEach((x) => {
+          if(typeof x.prefix === 'number'){
+            let preDir = criConstants.suffixPrefixNum[0][x.prefix]
+            x.prefix = preDir
+          }
+
+          if(typeof x.suffix === 'number'){
+            let sufDir = criConstants.suffixPrefixNum[0][x.suffix]
+            x.suffix = sufDir
+          }
+
+          if(typeof x.streetType === 'number'){
+            let strType = criConstants.rdNameType.find(z => z[x.streetType])
+            x.streetType = Object.values(strType)[0]
+          }
+        })
+        createGraphics.features[i].attributes.ASSET_ST_DEFN_NM = JSON.stringify(parseEdit)
         createGraphics.features[i].attributes.oldLength = oldLength
         createGraphics.features[i].attributes.EDIT_TYPE_ID = 'edit'
       }

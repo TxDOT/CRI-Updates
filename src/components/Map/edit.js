@@ -9,57 +9,72 @@ import Graphic from "@arcgis/core/Graphic";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils"
 import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
 
-
 export async function addRoadbed(){
-    let addNewRoad = new Promise(function(res){
-      sketch.create("polyline",{mode:"click", hasZ: false})
-      sketch.on('create', (event) => {
-        let lengthMiles;
-        if(event.state === "start"){
-          mouseHoverDfoDisplay('addRoad');
-        }
-        else if(event.state === "active"){
-          let seglengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
-          geomCheck(event.graphic.geometry)
-          store.commit('setDfoReturn', seglengthMiles)
-        }
-  
-        if(event.state === "complete"){
-          store.commit('setIsDfoReturn', false)
-          store.commit('setIsInitAdd', true)
-          //creating the length of road in miles for user
-          lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
-          res([lengthMiles, event.graphic.geometry, 'add']);
-          sketchCompete();
-        }
-      });
+  try{
+    let addNewRoad = new Promise(function(res,rej){
+        sketch.create("polyline",{mode:"click", hasZ: false})
+        sketch.on('create', (event) => {
+          let lengthMiles;
+          if(event.state === "start"){
+            mouseHoverDfoDisplay('addRoad');
+          }
+          else if(event.state === "active"){
+            let seglengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
+            store.commit('setDfoReturn', seglengthMiles)
+            geomCheck(event.graphic.geometry, true)
+          }
+    
+          if(event.state === "complete"){
+            store.commit('setIsDfoReturn', false)
+            store.commit('setDfoReturn', 0)
+            store.commit('setIsInitAdd', true)
+            //creating the length of road in miles for user
+            
+            lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
+            res([lengthMiles, event.graphic.geometry, 'add']);
+            rej('cancel')
+            sketchCompete();
+          }
+
+        });
     })
+
     let returnAddNewRoad = await addNewRoad
+    createInfoSendToStore(returnAddNewRoad)
+  }
+  catch(Error){
+    console.log(Error)
+  }
     //retreiving latest edit in the sketch array
-    sketch.layer.graphics.items.at(-1).geometry.hasM = true
+    
+    return;
+}
+
+function createInfoSendToStore(newRoad){
+  sketch.layer.graphics.items.at(-1).geometry.hasM = true
     const date = new Date();
     //applying values to sketch attributes and assets
     sketch.layer.graphics.items.at(-1).attributes = {
-      editType: criConstants.editType[`${returnAddNewRoad[2]}`][1],
+      editType: criConstants.editType[`${newRoad[2]}`][1],
       gid: 9999,
       objectid: Number(date.getTime().toFixed(7)),
       roadbedName: JSON.stringify(null),
       roadbedDesign: JSON.stringify([{
         SRFC_TYPE_ID: "Two-way",
         ASSET_LN_BEGIN_DFO_MS: 0,
-        ASSET_LN_END_DFO_MS: Number(returnAddNewRoad[0].toFixed(3))
+        ASSET_LN_END_DFO_MS: Number(newRoad[0].toFixed(3))
       }]),
       roadbedSurface: JSON.stringify([{
         SRFC_TYPE_ID: "Paved",
         ASSET_LN_BEGIN_DFO_MS: 0,
-        ASSET_LN_END_DFO_MS: Number(returnAddNewRoad[0].toFixed(3))
+        ASSET_LN_END_DFO_MS: Number(newRoad[0].toFixed(3))
       }]),
       numLane: JSON.stringify([{
         SRFC_TYPE_ID: "2",
         ASSET_LN_BEGIN_DFO_MS: 0,
-        ASSET_LN_END_DFO_MS: Number(returnAddNewRoad[0].toFixed(3))
+        ASSET_LN_END_DFO_MS: Number(newRoad[0].toFixed(3))
       }]),
-      originalLength: Number(returnAddNewRoad[0].toFixed(3)),
+      originalLength: Number(newRoad[0].toFixed(3)),
       createDt: date,
       createNm: store.getters.getUserName,
       isCreatedAssets: false,
@@ -67,7 +82,7 @@ export async function addRoadbed(){
     //setting add graphic symbol
     sketch.layer.graphics.items.at(-1).symbol = {
       type: "simple-line",
-      color: criConstants.editType[`${returnAddNewRoad[2]}`][0],
+      color: criConstants.editType[`${newRoad[2]}`][0],
       width: 2,
       style: "dash"
     }
@@ -76,8 +91,7 @@ export async function addRoadbed(){
     //Apply M Measures function
     reapplyM(gLayer.graphics.items.at(-1))
     //commiting add road values to the store
-    store.commit('setOldLength',Number(returnAddNewRoad[0].toFixed(3)))
-    store.commit('setDeltaDis',[Number(returnAddNewRoad[0].toFixed(5)), 'Add'])
+    store.commit('setOldLength',Number(newRoad[0].toFixed(3)))
     store.commit('setRoadGeom', gLayer.graphics.items.at(-1).geometry.clone())
     store.commit('setModifyRd', false)
     store.commit('setEditInfo' ,[null, null, store.getters.getUserName, timestamp[1]])
@@ -88,7 +102,6 @@ export async function addRoadbed(){
                    sketch.layer.graphics.items.at(-1).attributes.numLane,
                    sketch.layer.graphics.items.at(-1).attributes.objectid,
                    '')
-    return;
 }
 
 export async function modifyRoadbed(clickType, editType){
@@ -157,17 +170,18 @@ export function updateLength(){
     sketch.on('update', (event)=>{
       if(event.state === 'active'){
         if(event.toolEventInfo.type === 'reshape-stop'){
-          geomCheck(event.graphics[0].geometry)
+          geomCheck(event.graphics[0].geometry, false)
           //controls undo/redo edtis
           sketch['_operationHandle'].history.redo.length ?  store.commit('setIsRedoDisable', false) : store.commit('setIsRedoDisable', true)
           sketch['_operationHandle'].history.undo.length ?  store.commit('setIsUndoDisable', false) : store.commit('setIsUndoDisable', true)
         }
         else if(event.toolEventInfo.type === 'vertex-remove'){
-          geomCheck(event.graphics[0].geometry)
+          geomCheck(event.graphics[0].geometry, false)
         }
       }
   
       if(event.state === 'complete'){
+        geomCheck(event.graphics[0].geometry, false)
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
         if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){
          //store.commit('setDeltaDis',[newLengths, 'Add'])
@@ -236,7 +250,12 @@ export function removeGraphic(){
   hideEditedRoads(null,true)
   //sending length to recalculate mileage change in footer
   let length = Number(geometryEngine.geodesicLength(graphicR[0].geometry, "miles").toFixed(5))
+  console.log(store.getters.getAddRd)
   if(graphicR[0].attributes.editType === 'ADD'){
+    // if(store.getters.getIsInitAdd === true){
+    //   store.commit('setIsInitAdd', false)
+    //   return;
+    // }
     store.commit('setDeltaDis',[length, 'Delete'])
   }
   else if(graphicR[0].attributes.editType === 'DELETE'){
@@ -278,6 +297,7 @@ export function mouseHoverDfoDisplay(type){
               }
               else{
                 store.commit('setIsDfoReturn', false)
+                store.commit('setDfoReturn', 0)
                 return;
               }
             }
@@ -308,11 +328,13 @@ export function mouseHoverDfoDisplay(type){
 }
 
 //editing geometry check
-export function geomCheck(polyline){
+export function geomCheck(polyline, isEditing){
   //check for less than a specific length
   let isLength = geometryEngine.geodesicLength(polyline, 'miles')
   if(isLength < 0.007){
-    store.commit('setGeomCheck', 1) //road is less than .007 length
+    if(isEditing === false){
+      store.commit('setGeomCheck', 1) //road is less than .007 length
+    }
     return;
   }
   //check for self interesecting lines
@@ -355,16 +377,12 @@ export function geomCheck(polyline){
     }
   }
   store.commit('setGeomCheck', 0)
+  splitGeom.length = 0
 }
 
 export function sketchCompete(){
   sketch.complete()
 }
-
-// //show verticies along line
-// export function showVerticies(x){
-//   sketch.update([x], {tool:'reshape'})
-// }
 
 export async function cancelEditStepper(){
   let returnData = await queryEditsLayer()

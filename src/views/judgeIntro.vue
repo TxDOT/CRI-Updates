@@ -72,7 +72,7 @@ export default{
           Transportation Planning and Programming Division<br>  
           Director of Data Management<br>  
           TPP-GIS@txdot.gov<br>  
-          (512) 486-5054<br><br></p>`
+          (512) 851-9039<br><br></p>`
           this.subTxt = `<br><p align="justify">If you would like to review your inventory using the Review & Edit button above, but have not yet created an account for yourself, you can <a href='https://www.txdot.gov/data-maps/roadway-inventory/cri-form.html' target='_blank'><u>register here</u></a>.</p>
                          <p align="justify">TxDOT reports county road mileage to the Texas State Comptroller and Department of Motor Vehicles. That data is used to calculate funds to be distributed to each county. 
                          Your participation in the County Road Inventory program is essential for ensuring an accurate and complete inventory.</p>`

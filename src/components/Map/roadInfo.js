@@ -1,7 +1,7 @@
 // import methods and functions into file
-import { sketch, sketchPoint, view, featLayer, gLayer, search,  rdbdAssetPt, rdbdAssetLine } from './map' 
+import {sketchPoint, view, gLayer, search, featLayer, sketch, rdbdAssetPt, rdbdAssetLine } from './map' 
 import { criConstants } from '../../common/cri_constants';
-import { highLightFeat, setDataToStore, queryFeatureTables, queryFeat } from './helper';
+import { highLightFeat, queryFeatureTables, queryFeat,setDataToStore} from './helper'; //setDataToStore
 import { store } from '../../store'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
@@ -63,14 +63,16 @@ export async function getGraphic(){
                   //sketch.update([response.results[0].graphic], {tool:"reshape"});
                   store.commit('setStepperClose', true)
                   store.commit('setInfoRd', false)
-  
                   setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
                                 response.results[0].graphic.attributes['roadbedDesign'],
                                 response.results[0].graphic.attributes['roadbedName'],
                                 response.results[0].graphic.attributes['numLane'],
                                 response.results[0].graphic.attributes['objectid'],
                                 response.results[0].graphic.attributes['comment'],
-                                [response.results[0].graphic.attributes['editNm'], timestamp[1], response.results[0].graphic.attributes['createNm'], timestamp[0]]
+                                [response.results[0].graphic.attributes['editNm'], 
+                                timestamp[1], 
+                                response.results[0].graphic.attributes['createNm'], 
+                                timestamp[0]]
                                 )
                   resp(response.results[0].graphic)
                 }
@@ -81,12 +83,15 @@ export async function getGraphic(){
                                 response.results[0].graphic.attributes['numLane'],
                                 response.results[0].graphic.attributes['objectid'],
                                 response.results[0].graphic.attributes['comment'],
-                                [response.results[0].graphic.attributes['editNm'], timestamp[1], response.results[0].graphic.attributes['createNm'], timestamp[0]])
+                                [response.results[0].graphic.attributes['editNm'], 
+                                timestamp[1], 
+                                response.results[0].graphic.attributes['createNm'], 
+                                timestamp[0]])
                   store.commit('setdeleteGraphClick', true)
                 }
-              }
-            })
+            }
           })
+        })
       });
     });
     let returnGetGraph = await getGraphPromise;
@@ -538,16 +543,16 @@ export function epochToHumanTime(editTime, createTime){
     let createTimestamp;
     let editTimestamp;
     if(createTime){
-      const createHour = new Date(createTime).getHours();
+      const createHour = Number(new Date(createTime).getHours());
       const createMins = new Date(createTime).getMinutes();
-      createTimestamp = `${new Date(createTime).toLocaleDateString()} ${createHour}:${String(createMins).padStart(2, '0')}`
+      createTimestamp = [new Date(createTime).toLocaleDateString(), createHour, createMins]
     }
   
     if(editTime){
-      console.log(editTime)
-      const editHour = new Date(editTime).getHours();
+      const editHour = Number(new Date(editTime).getHours());
       const editMins = new Date(editTime).getMinutes();
-      editTimestamp = `${new Date(editTime).toLocaleDateString()} ${editHour}:${String(editMins).padStart(2, '0')}`
+      editTimestamp = [new Date(editTime).toLocaleDateString(), editHour, editMins]
     }
     return [createTimestamp, editTimestamp]
 }
+//`${new Date(editTime).toLocaleDateString()} ${editHour}:${String(editMins).padStart(2, '0')}`

@@ -89,12 +89,17 @@
         <v-row no-gutters id="dialogCommentBox">
           <v-textarea v-model="comment"></v-textarea>
         </v-row>
-        <v-btn outlined tile color="#204E70" @click="dialog=false; saveComment()" :disabled="!forInfo" id="dialogSaveBtn"><u>Save</u></v-btn>
+        <v-btn outlined tile color="#204E70" @click="dialog=false; saveComment()" id="dialogSaveBtn"><u>Save</u></v-btn>
         <v-btn text tile color="#204E70" @click="dialog=false; cancelComment()" id="dialogCancelBtn"><u>Cancel</u></v-btn>
       </v-card>
     </v-dialog>
   </v-stepper>
-  
+
+  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 3%; width: 97%;">
+    <p style="color: white; font-size: .8rem; position:relative; bottom: .6vh; left: .4rem;">Editor Name: {{editName}}</p>
+    <p style="color: white; font-size: .8rem; position:relative; bottom: .6vh; left: 5rem;">Edit Date: {{editDt}}</p>
+  </v-footer>
+
   </div>
   <!-- alert used to confirm that the sketch has been removed -->
   <sketchAlert v-if="discardAlert"/>
@@ -114,10 +119,11 @@
 
 <script>
 //importing functions
-import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, sketchCompete, cancelEditStepper, saveToEditsLayer} from './Map/edit'
+import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, sketchCompete, cancelEditStepper, saveToEditsLayer, geomCheck} from './Map/edit'
 import { removeAsstPoints, initLoadAssetGraphic } from './Map/roadInfo'
 import { geomToMiles } from './Map/helper'
 import { gLayer } from './Map/map'
+import * as geometryEngine from '@arcgis/core/geometry/geometryEngine'
 //importing vue components
 import roadName from '../components/Map/stepperContent/RoadName.vue'
 import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
@@ -165,6 +171,8 @@ export default {
         fetchNumLanes: null,
         scrollInvoked: 0,
         geomChecks: 0,
+        editName: null,
+        editDt: null,
          
         dfoRules:{
           DFO: value => !!value || 'Required',
@@ -244,8 +252,9 @@ export default {
           
             this.fetchRoadName = `${prfx} ${name} ${type} ${sfx}`
           }
+          
           function reformatName (attr){
-              if (attr === "NOT APPLICABLE" || attr === "OTHER" || attr === null) {
+              if (attr === "NOT APPLICABLE" || attr === "OTHER" || attr === null || attr === '') {
                 return '';
               }
               return attr;
@@ -277,6 +286,23 @@ export default {
         },
         immediate: true
       },
+      editorInfo: {
+        handler: function(){
+          if(!this.editorInfo) return;
+          if(!this.editorInfo[1]){
+            this.editName = this.editorInfo[2]
+            let ampm = this.editorInfo[3][1] >= 12 ? 'pm' : 'am'
+            let editHour = this.editorInfo[3][1] > 12 ? this.editorInfo[3][1] - 12 : this.editorInfo[3][1]
+            this.editDt = `${this.editorInfo[3][0]} ${editHour}:${String(this.editorInfo[3][2]).padStart(2,'0')} ${ampm}`
+            return
+          }
+          let ampm = this.editorInfo[1][1] > 12 ? 'pm' : 'am'
+          let editHour = this.editorInfo[1][1] > 12 ? this.editorInfo[1][1] - 12 : this.editorInfo[1][1]
+          this.editName = this.editorInfo[0]
+          this.editDt = `${this.editorInfo[1][0]} ${editHour}:${String(this.editorInfo[1][2]).padStart(2,'0')} ${ampm}`
+        },
+        immediate: true
+      },
 
       newDfo(){
         this.emptyMileArr()
@@ -298,9 +324,22 @@ export default {
         },
           immediate: true
       },
+      steppClose:{
+        handler: function(){
+          if(this.steppClose === true && this.firstAddToMap === true && !this.forMod && !this.forInfo){
+            let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
+            let getLength = geometryEngine.geodesicLength(editGraphic.geometry, "miles")
+            this.deltaDis = [Number(getLength.toFixed(3)), 'Add']
+            return;
+          }
+        }
+      }
     },
 
     methods:{
+      geometryChecks(){
+        geomCheck()
+      },
       saveComment(){
         this.oldComment = this.comment
       },
@@ -347,15 +386,27 @@ export default {
         removeAsstPoints();
         this.getDfoBool = false;
         removeHighlight()
+        this.comment = ""
       },
       saveAttri(){
         let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
-        editGraphic.attributes.comment = this.comment
-        this.getComment = this.comment
         if(editGraphic.attributes.roadbedName === 'null' || JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
           this.finalCheck = true
           return;
         }
+        // if(!this.forMod && !this.forInfo){
+        //   let getLength = geometryEngine.geodesicLength(editGraphic.geometry, "miles")
+        //   this.deltaDis = [Number(getLength.toFixed(3)), 'Add']
+        // }
+
+        //add a field to Graphic to determine if graphic has been saved or not
+        let timestamp = new Date().getTime()
+      
+        editGraphic.attributes.editDt = timestamp
+        editGraphic.attributes.comment = this.comment
+        editGraphic.attributes.editNm = this.userName
+        this.getComment = this.comment
+        
         this.firstAddToMap = false
         this.successAlert=true;
         saveToEditsLayer()
@@ -524,6 +575,30 @@ export default {
         set(check){
           this.$store.commit('setGeomCheck', check)
         }
+      },
+      editorInfo:{
+        get(){
+          return this.$store.state.editInfo
+        },
+        set(editIn){
+          this.$store.commit('setEditInfo', editIn)
+        }
+      },
+      userName:{
+        get(){
+          return this.$store.state.username
+        },
+        set(userName){
+          this.$store.commit('setUserName', userName)
+        }
+      },
+      deltaDis:{
+        get(){
+          return this.$store.state.deltaDistance
+        },
+        set(len){
+          this.$store.commit('setDeltaDis', len)
+        }
       }
     }
 }
@@ -622,7 +697,7 @@ export default {
   left: 13.5rem;
   padding-bottom: 0%;
   font-size: 16px;
-  z-index: 2
+  z-index: 2;
 }
 .scroller {
   width: auto;
@@ -639,7 +714,7 @@ export default {
 .stepHead{
   padding-top:0.5%;
   padding-left:3%;
-  background: #204E70;
+  background: #14375A;
   color: white;
   font-size: 20px;
   height: 35px;
@@ -659,7 +734,7 @@ export default {
 }
 
 .v-stepper__step--active{
-  outline: #204E70 solid 2px;
+  outline: #14375A solid 2px;
   background-color: rgba(32, 78, 112, .3)
 }
 .v-stepper__step{
