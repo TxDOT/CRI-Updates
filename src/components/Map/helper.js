@@ -23,8 +23,11 @@ export async function setDataToStore(surface, design, name, lane, objectid, comm
 
 //querys the Refernce Layer table returns geometry/attributes
 export async function queryFeat(qry){
+    console.log(qry)
     let queryFeat = await clientSideGeoJson.queryFeatures({
-      objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : [qry.attributes.OBJECTID],
+      objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : null,
+      where: qry.results ? null : `RDBD_GMTRY_LN_ID = ${qry.attributes.GID}`,
+      
       outFields: ["*"],
       returnGeometry: true,
       returnM: true,

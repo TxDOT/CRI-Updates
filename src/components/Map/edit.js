@@ -394,11 +394,12 @@ export async function cancelEditStepper(){
   if(filterEdits.length){
     let returnRoad = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? filterEdits[0] : await queryFeat(filterEdits[0])
     console.log(returnRoad)
-    let convGeom;
-    if(filterEdits[0].attributes.EDIT_TYPE_ID != 1){
-      convGeom = webMercatorUtils.geographicToWebMercator(returnRoad.features[0].geometry)
-    }
-    let oldLength = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? geomToMiles(returnRoad.features[0].geometry,true,3) : geomToMiles(convGeom,true,3)
+    //let convGeom;
+    console.log(filterEdits[0])
+    // if(filterEdits[0].attributes.EDIT_TYPE_ID != 1){
+    //   convGeom = webMercatorUtils.geographicToWebMercator(returnRoad.features[0].geometry)
+    // }
+    let oldLength = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? geomToMiles(returnRoad.geometry,true,3) : geomToMiles(returnRoad.features[0].geometry,true,3)
     let getGraphicsLayer = gLayer.graphics.items.filter(x=> x.attributes.objectid === store.getters.getObjectid)
     let graphicLength = geomToMiles(getGraphicsLayer[0].geometry, true, 3) 
     let editsLength = geomToMiles(filterEdits[0].geometry, true, 3)
