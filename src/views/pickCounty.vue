@@ -94,8 +94,10 @@ export default {
         query.outFields = [ "*" ]
         let queryResult = countyOfficialInfo.queryFeatures(query)
         queryResult.then((result)=>{
+          console.log(result)
           this.countyNumber = getCountyNbr
           this.countyName = this.pickCounty
+          this.judgeCntyOid = result.features[0].attributes['OBJECTID_1']
           this.countyMiles = result.features[0].attributes['TOT_MLGE']
           this.judgeNameSend = result.features[0].attributes['JUDGE_NM']
           this.judgeEmailSend = result.features[0].attributes['JUDGE_EML']
@@ -159,6 +161,14 @@ export default {
           this.$store.commit('setJudgeEmail', email)
         }
       },
+      judgeCntyOid:{
+        get(){
+          return this.$store.state.judgeObjectId
+        },
+        set(oid){
+          this.$store.commit('setJudgeObjectId', oid)
+        }
+      }
     }
     
 }

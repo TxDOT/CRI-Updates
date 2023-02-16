@@ -1,5 +1,5 @@
 // import methods and functions into file
-import {sketchPoint, view, gLayer, search, featLayer, sketch, rdbdAssetPt, rdbdAssetLine } from './map' 
+import {sketchPoint, view, gLayer, search, clientSideGeoJson, sketch, rdbdAssetPt, rdbdAssetLine } from './map' 
 import { criConstants } from '../../common/cri_constants';
 import { highLightFeat, queryFeatureTables, queryFeat,setDataToStore} from './helper'; //setDataToStore
 import { store } from '../../store'
@@ -31,7 +31,7 @@ export async function popUpData(res){
 export async function getGraphic(){
     let getGraphPromise = new Promise(function(resp){
       view.on("click", function(event){
-        let option = {include: [featLayer,gLayer]}
+        let option = {include: [clientSideGeoJson,gLayer]}
         if (sketch.state === "active") {
           return;
         }
@@ -56,7 +56,6 @@ export async function getGraphic(){
                   popUpData(response)
                   return;
                 }
-  
                 let timestamp = epochToHumanTime(response.results[0].graphic.attributes['editDt'], response.results[0].graphic.attributes['createDt'])
                 if(response.results[0].graphic.attributes['editType'] === 'ADD' || response.results[0].graphic.attributes['editType'] === 'EDIT'){
                   response.results[0].graphic.attributes['editType'] === 'ADD' ? store.commit('setModifyRd', false) : store.commit('setModifyRd', true)

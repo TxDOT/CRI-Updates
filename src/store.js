@@ -5,6 +5,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
     state:{
         objectid: 0,
+        judgeObjectId: 0,
         roadbedName: null,
         roadbedDesign: null,
         roadbedSurface: null,
@@ -66,6 +67,9 @@ export const store = new Vuex.Store({
         isFmeProcess: false,
     },
     getters:{
+        getJudgeObjectId(state){
+            return state.judgeObjectId
+        },
         getIsFmeProcess(state){
             return state.isFmeProcess
         },
@@ -243,6 +247,9 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setJudgeObjectId(state, jdgeObjectId){
+            state.judgeObjectId = jdgeObjectId
+        },
         setIsFmeProcess(state, boolFME){
             state.isFmeProcess = boolFME
         },

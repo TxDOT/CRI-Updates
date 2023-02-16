@@ -4,6 +4,7 @@ import Map from '@arcgis/core/Map';
 import SketchViewModel from "@arcgis/core/widgets/Sketch/SketchViewModel";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer";
 import FeatureLayer from "@arcgis/core/layers/FeatureLayer";
+import GeoJSONLayer from "@arcgis/core/layers/GeoJSONLayer";
 import * as watchUtils from "@arcgis/core/core/watchUtils";
 import VectorTileLayer from "@arcgis/core/layers/VectorTileLayer";
 import WMTSLayer from "@arcgis/core/layers/WMTSLayer";
@@ -163,11 +164,11 @@ view.ui.add([
 export const featLayer = new FeatureLayer({
     url: criConstants.refernceLayer,
     opacity: 1,
-    editingEnabled: true,
     returnM: true,
     returnZ: true,
     hasM: true,
     visible: true,
+    outFields: ["CNTY_TYPE_NM", "RDBD_GMTRY_LN_ID"],
     renderer:{
         type: "simple",
         symbol:{
@@ -176,6 +177,19 @@ export const featLayer = new FeatureLayer({
         }
     }
   });
+
+export const clientSideGeoJson = new GeoJSONLayer({
+    url: '',
+    renderer:{
+        type: "simple",
+        symbol:{
+            type: "simple-line",
+            color:[0,127,255]
+        }
+    }
+  });
+
+
 //all other roadbeds that need to be snappable. i.e Highways
 export const snapLayer = new FeatureLayer({
     url: criConstants.snapLayer,
@@ -207,9 +221,10 @@ export const txCounties = new FeatureLayer({
     //definitionExpression: "CNTY_NM= 'Travis'"
     //effect: "blur(8px) brightness(1.2) grayscale(0.8)"
 })
+
 //county information feature layer
 export const countyOfficialInfo = new FeatureLayer({
-    url: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_CNTY_INFO/FeatureServer/0'
+    url: criConstants.judgeInfoTable,
 })
 //sketch model used when modifying a new road.
 export const sketch = new SketchViewModel({
@@ -232,7 +247,7 @@ export const sketch = new SketchViewModel({
     },
     snappingOptions:{
         enabled: true,
-        featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true}, { layer: featLayer, enabled: true, featureEnabled: true }, { layer: snapLayer, enabled: true, featureEnabled: true }],
+        featureSources:[{ layer: gLayer, enabled: true, featureEnabled: true}, { layer: clientSideGeoJson, enabled: true, featureEnabled: true }, { layer: snapLayer, enabled: true, featureEnabled: true }],
         selfEnabled: false
     }
 });
@@ -259,7 +274,7 @@ export const sketchPoint = new SketchViewModel({
 //watching the view until the state is set to Ready. Then stepper is set to close and add in featLayer and countyPolygons.
 watchUtils.whenOnce(view,"ready").then(()=>{
     document.getElementById('stepper').style.width = '0px'
-    map.addMany([featLayer,txCounties])
+    map.addMany([clientSideGeoJson,txCounties])
 });
 
 //prevent users from double clicking

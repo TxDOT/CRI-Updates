@@ -97,10 +97,11 @@ function updateFeat(editId){
 
 //remove existing items from editsLayer
 function deleteFeat(editId){
+    console.log(editId)
     editsLayer.applyEdits({
         deleteFeatures: [editId]
     })
-    .then(result=>result)
+    .then(result=>console.log(`done ${result}`))
     .catch(err => console.log(err))
 
 }

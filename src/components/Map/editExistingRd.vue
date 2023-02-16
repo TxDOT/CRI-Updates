@@ -4,7 +4,7 @@
         <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">
             <v-card-title class="editRdTitle" v-if="edit===true">
                 <v-card-text class="editActionType">Edit Road</v-card-text>
-             </v-card-title>
+            </v-card-title>
             <v-card-title class="editRdTitle" v-if="addR===true">
                 <v-card-text class="editActionType" >Add Road</v-card-text>
             </v-card-title>
@@ -53,7 +53,7 @@
                     <v-tooltip right max-width="200" color="#204E70">
                         <template slot="activator" slot-scope="{ on }" id="tooltip">
                             <v-list-item-content>
-                                <v-list-item-title  v-html="data.item.text" v-on="on" ></v-list-item-title>
+                                <v-list-item-title v-html="data.item.text" v-on="on" ></v-list-item-title>
                             </v-list-item-content>
                         </template>
                         <span>{{data.item.tooltip}}</span>
@@ -76,7 +76,7 @@
                 </v-card>
             <v-radio class="radioBtn" v-if="upldCity" @click="isLinkExplain = true;isUpldShapefile = false"  label="I have a link, or can explain" value="1"></v-radio>
             <v-card v-if="isLinkExplain" flat class="radioResponse" id="explainTxt">
-                <v-textarea  outlined label="Please Explain" v-model="commentText">{{ commentText }}</v-textarea>
+                <v-textarea outlined label="Please Explain" v-model="commentText">{{ commentText }}</v-textarea>
             </v-card>
         </v-radio-group>
         </div>
@@ -136,7 +136,6 @@ export default {
         //     this.radioBtnSel === 0 ? this.upldShapefile = true : this.upldShapefile = false
         // },
         updateComment(){
-            this.commentText = this.cityAnnexReason.find(x=> x.value === this.delReason).text
             if(this.delReason === 0 || this.delReason === 2){
                 //pop up upload city street shapefile
                 this.upldCity = true
@@ -154,7 +153,8 @@ export default {
         },
         setDeleteFalse(){
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
-            editGraphic.attributes.comment = this.commentText
+            let deleteReason = this.cityAnnexReason.find(x=> x.value === this.delReason).text
+            editGraphic.attributes.comment = `${this.commentText} - ${deleteReason}`
             this.deleteClick = false
             this.commentText = ''
             this.comment = false

@@ -1,4 +1,4 @@
-import { sketch, sketchPoint, view, featLayer, gLayer } from './map'
+import { sketch, sketchPoint, view, gLayer, clientSideGeoJson } from './map' //featLayer
 import { criConstants } from '../../common/cri_constants';
 import {initGraphicCheck, queryEditsLayer} from './crud'
 import {store} from '../../store'
@@ -113,7 +113,7 @@ export async function modifyRoadbed(clickType, editType){
           rej('cancel')
           return;
         }
-        let opts = { include: featLayer }
+        let opts = { include: clientSideGeoJson }
         view.hitTest(event, opts)
         .then(function(response){
           for(let i=0; i < response.results.length; i++){
@@ -146,9 +146,11 @@ export async function hideEditedRoads(graphicL, update){
       }
   
       gLayer.graphics.items.forEach((x) => {
-        x.attributes.objectid === store.getters.getObjectid ? null : objectidList.push(x.attributes.objectid)
+        x.attributes.objectid === store.getters.getObjectid ? null : objectidList.push(x.attributes.gid)
       })
-      objectidList.length === 0 ? featLayer.definitionExpression = `CNTY_TYPE_NM = '${store.getters.getCntyName}'` : featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
+      console.log("hide roads 1")
+      objectidList.length === 0 ? clientSideGeoJson.definitionExpression = `CNTY_TYPE_NM = '${store.getters.getCntyName}'` : clientSideGeoJson.definitionExpression = `RDBD_GMTRY_LN_ID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
+      console.log(clientSideGeoJson)
       return;
     }
     
@@ -156,12 +158,14 @@ export async function hideEditedRoads(graphicL, update){
     
     for(let id in items){
       if(items[id].attributes !== null){
-        let objectid = items[id].attributes.objectid || items[id].attributes.OBJECTID
-        objectidList.push(objectid)
+        let gids = items[id].attributes.gid || items[id].attributes.RDBD_GMTRY_LN_ID
+        objectidList.push(gids)
       }
     }
-    featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
-}
+    clientSideGeoJson.definitionExpression = `RDBD_GMTRY_LN_ID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
+    
+  }
+
 
 //updateLength() gets new length of selected graphic and sends new length to store
 export function updateLength(){

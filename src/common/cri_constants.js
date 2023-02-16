@@ -9,6 +9,7 @@ export const criConstants = {
     assetLyrRdbLane: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/1',
     advanceUploadLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_QAQC_dev/FeatureServer/0',
     txCounties: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/Texas_County_Boundaries/FeatureServer/0",
+    judgeInfoTable: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CNTY_INFO_dev/FeatureServer/0",
     geomTypeRd: "polyline",
     geomTypeCounty: "polygon",
     basemap: "topo-vector",
@@ -47,7 +48,7 @@ export const criConstants = {
     {170 : 'STATION'},{171 : 'STRAVENUE'},{172 : 'STREAM'},{173 : 'STREET'},{174 : 'STREETS'},{175 : 'SUMMIT'},{176 : 'TERRACE'},{177 : 'THROUGHWAY'},{178 : 'TRACE'},
     {179 : 'TRACK'},{180 : 'TRAFFICWAY'},{181 : 'TRAIL'},{182 : 'TRAILER'},{183 : 'TUNNEL'},{184 : 'TURNPIKE'},{185 : 'UNDERPASS'},{186 : 'UNION'},{187 : 'UNIONS'},
     {188 : 'VALLEY'},{189 : 'VALLEYS'},{190 : 'VIADUCT'},{191 : 'VIEW'},{192 : 'VIEWS'},{193 : 'VILLAGE'},{194 : 'VILLAGES'},{195 : 'VILLE'},{196 : 'VISTA'},{197 : 'WALKS'},
-    {198 : 'WALL'},{199 : 'WAY'},{200 : 'WAYS'},{201 : 'WELL'},{202 : 'WELLS'},{203 : 'OTHER'},{204 : 'NOT APPLICABLE'}],
+    {198 : 'WALL'},{199 : 'WAY'},{200 : 'WAYS'},{201 : 'WELL'},{202 : 'WELLS'},{203 : 'OTHER'},{204 : 'NOT APPLICABLE'},{0 : 'NOT APPLICABLE'}],
     
     colorTable: {
       'Paved': "#FF6700",

@@ -70,7 +70,7 @@ export default {
                 ccDelName.push(x.delUserName)
             })
 
-            sendJudgeEmail(step, ccDelName, ccEmailList)
+            sendJudgeEmail(step, ccDelName, ccEmailList, null, null, null)
         }
     },
     computed:{

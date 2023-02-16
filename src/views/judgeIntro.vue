@@ -42,6 +42,7 @@ export default{
             sendData: '',
             assignDel: false,
             accptCertify: false,
+            mileageTxt: ''
         }
     },
     async mounted(){
@@ -52,9 +53,11 @@ export default{
         this.judgeEmail = getCntyInfoQuery.features[0].attributes['JUDGE_EML']
         this.judgeEmailSend = getCntyInfoQuery.features[0].attributes['JUDGE_EML']
         this.countyNbr = getCntyInfoQuery.features[0].attributes['CNTY_NBR']
-        this.currentMiles = getCntyInfoQuery.features[0].attributes['TOT_MLGE']
+        this.currentMiles = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE'] ? getCntyInfoQuery.features[0].attributes['UPDATED_MLGE'] : getCntyInfoQuery.features[0].attributes['TOT_MLGE']
+        let updatedMileage = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE']
         this.county = getCntyInfoQuery.features[0].attributes['CNTY_NM']
         this.sendData = parseInt(this.currentMiles)
+        this.updateMileage(getCntyInfoQuery.features[0].attributes['TOT_MLGE'], updatedMileage)
         localStorage.setItem('county',JSON.stringify([this.county,this.countyNbr,this.currentMiles]))
         //this.sendCountyName();
           //this.sendCountyName(Number(getCntyInfoQuery.features[0].attributes['Total_Mileage']))
@@ -63,8 +66,8 @@ export default{
           <p align="justify">Dear ${this.judgeName},</p>
           <p align="justify">The Texas Department of Transportation (TxDOT) is soliciting updates to the County Road Inventory (CRI) from your county.  The deadline for the ${new Date().getFullYear()} submission is <u>August 31</u>.<br><br>
             
-          Your ${new Date().getFullYear()} certified mileage is: <b><u>${this.currentMiles}</b></u><br><br>
-            
+          Your ${new Date().getFullYear()} certified mileage is: <b><u>${this.currentMiles}.</b></u> ${this.mileageTxt}<br><br>
+          
           If you agree with this mileage, please click the AGREE & CERTIFY button below.  To review your CRI and make edits, please click the REVIEW & EDIT button below.  To delegate the responsibility of making updates to a trusted partner, please click the ASSIGN DELEGATE button below.<br><br>
           Thank you for your assistance in keeping the county road inventory up to date. If you have any questions or need clarification, please contact us by email or phone. <br><br>
           Sincerely,<br><br> 
@@ -81,6 +84,16 @@ export default{
         logMeIn(){
              this.$router.push('/login')
            },
+        updateMileage(curr, upd){
+            if(upd){
+                let delta = curr - upd
+                this.mileageTxt = upd > curr ? `Edits were made in the CRI Map for a net change in total mileage of +${Math.abs(delta).toFixed(2)} miles.` : `Edits were made in the CRI Map for a net change in total mileage of -${Math.abs(delta).toFixed(2)} miles.`
+                return
+            }
+            
+            this.mileageTxt = 'No edits have been made.'
+
+        }
     },
     watch:{
         isJdgeLetter:{

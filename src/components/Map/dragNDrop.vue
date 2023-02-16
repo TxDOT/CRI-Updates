@@ -113,7 +113,7 @@ export default {
         color:#14375A;
         background-color: white;
         min-height: 200px;
-        max-width: 32rem; 
+        max-width: 27rem; 
         white-space: pre; 
         position: absolute; 
         left: 0rem; 
@@ -135,6 +135,7 @@ export default {
     #output:-moz-drag-over{
         border: 2px dashed green;
         color:#14375A;
+        padding: 60px 0px 100px 180px;
         background-color: white;
     }
 

@@ -43,7 +43,7 @@
 <script>
 import {stopEditing} from '../Map/edit';
 import esriId from "@arcgis/core/identity/IdentityManager";
-import {sendJudgeEmail} from '../Map/helper'
+import {sendJudgeEmail, updateTotalMileage} from '../Map/helper'
 
 export default {
     name:"mapHeader",
@@ -71,7 +71,8 @@ export default {
                 })
         },
         submit(step){
-            sendJudgeEmail(step, [this.delUsername], [])
+            let totalMile = updateTotalMileage()
+            sendJudgeEmail(step, [this.delUsername], [this.userEmail], null, this.judgeCntyOid, totalMile)
         }
     },
     computed:{
@@ -106,6 +107,16 @@ export default {
         delUsername:{
             get(){
                 return this.$store.state.username
+            }
+        },
+        userEmail:{
+            get(){
+                return this.$store.state.userEmail
+            }
+        },
+        judgeCntyOid:{
+            get(){
+                return this.$store.state.judgeObjectId
             }
         }
     }

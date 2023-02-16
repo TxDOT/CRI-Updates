@@ -1,11 +1,13 @@
 // import methods and functions into file
-import { view, featLayer, gLayer, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map' //importing from ESRI API via map.js
+import { view, clientSideGeoJson, gLayer, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map' //importing from ESRI API via map.js
 import { criConstants } from '../../common/cri_constants';
 import { store } from '../../store'
+import { getTime } from '../Map/advanced'
 import { showVerticies, hideEditedRoads} from './edit'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
 import Query from "@arcgis/core/rest/support/Query";
+import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
 
 
 //Sets Road Data in the data store. 
@@ -21,7 +23,7 @@ export async function setDataToStore(surface, design, name, lane, objectid, comm
 
 //querys the Refernce Layer table returns geometry/attributes
 export async function queryFeat(qry){
-    let queryFeat = await featLayer.queryFeatures({
+    let queryFeat = await clientSideGeoJson.queryFeatures({
       objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : [qry.attributes.OBJECTID],
       outFields: ["*"],
       returnGeometry: true,
@@ -109,16 +111,24 @@ export async function defineGraphic(graphics, clickType, editType){
     if(exist.length){
       return;
     }
-  
+
+    let graphicGeom;
+
+    if(graphics.features){
+      graphicGeom = webMercatorUtils.geographicToWebMercator(graphics.features[0].geometry)
+    }
+    
+
     if (clickType === "click"){
       let oldLength = graphics.features ? Number(geometryEngine.geodesicLength(graphics.features[0].geometry, "miles").toFixed(3)) :  graphics.attributes.oldLength
       document.body.style.cursor = 'context-menu'
+
       let graphicPromise = new Promise(function(res){
         const date = new Date();
         let newGraphic = new Graphic({
           geometry: {
             type: "polyline",
-            paths: graphics.features ? graphics.features[0].geometry.paths[0] : graphics.geometry.paths[0],
+            paths: graphics.features ? graphicGeom.paths[0] : graphics.geometry.paths[0],
             hasM: true,
             spatialReference: {
               wkid: 3857
@@ -135,7 +145,7 @@ export async function defineGraphic(graphics, clickType, editType){
             numLane: graphics.features ? store.getters.getNumLane : graphics.attributes.ASSET_NBR_THRU_LANE_CNT,
             originalLength: oldLength,
             isCreatedAssets: true,
-            createDt: graphics.features ? date : graphics.attributes.RTE_DEFN_LN_CREATE_DT ,
+            createDt: graphics.features ? date : graphics.attributes.RTE_DEFN_LN_CREATE_DT,
             createNm: graphics.features ? store.getters.getUserName : graphics.attributes.RTE_DEFN_LN_CREATE_USER_NM, //replace with user login info. TODO,
             editNm: graphics.features ? null: graphics.attributes.RTE_DEFN_LN_EDIT_USER_NM,
             editDt: graphics.features ? null: graphics.attributes.RTE_DEFN_LN_EDIT_DT,
@@ -174,7 +184,7 @@ export function highLightFeat(eventType){
       .then(()=>{
         view.on(eventType, (event)=>{
           const opts = {
-            include: [gLayer, featLayer]
+            include: [gLayer, clientSideGeoJson]
           }
           view.hitTest(event, opts).then((response)=>{
             if(response.results.length){
@@ -245,7 +255,8 @@ export async function getFeatLayURL(){
 //getFeatLayURL()
 
 //send Judge Emails
-export function sendJudgeEmail(step, ccDelName, ccEmailList){
+export function sendJudgeEmail(step, ccDelName, ccEmailList, jdgeSign, jdgeCntyObj, updMileage){ 
+  let dateTime = getTime()
   let theJson = {
     "workflow":{
         "step": step,
@@ -255,14 +266,27 @@ export function sendJudgeEmail(step, ccDelName, ccEmailList){
         },
         "judgeName": store.getters.getJudgeName,
         "delegateName": ccDelName,
-        "email": [
-            "david.prosack@txdot.gov"                      
-        ],
+        "email": [store.getters.getJudgeEmail],
         "ccEmails": ccEmailList,
+        "timestamp" : `${dateTime[1]} ${dateTime[0]}`,
+        "judgeSign" : jdgeSign,
+        "jdgeCntyObj": jdgeCntyObj,
+        "updMileage": updMileage
       }
   };
+  console.log(JSON.stringify(theJson))
   let params = encodeURIComponent(JSON.stringify(theJson));
-  let theService = criConstants.webhookUrl + params;
-  let a = fetch(theService, {headers:{'Authorization' : criConstants.headerValue},'Content-Type': 'text/plain'})
-  a.then(x=> console.log('Webhook fired! Check your email...',x))
+  let theService = `https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/TPP_Email_Dev.fmw?params=${params}&opt_showresult=false&opt_servicemode=sync`;
+  console.log(theService)
+  let resp = fetch(theService, {headers:{'Authorization' : 'fmetoken token=baa7b875b9c229d397fb91661280ccb894559885'},'Content-Type': 'text/plain'})
+  resp.then(x=> console.log('Webhook fired! Check your email...',x))
 }
+
+export function updateTotalMileage(){
+  let totalMileage = Number(Math.floor(store.getters.getDeltaDistance *100)/100) + Number(store.getters.getCntyMiles)
+  //still need -- get county name object from countyOfficialInfo
+  return totalMileage;
+}
+
+
+

@@ -78,12 +78,10 @@ export default {
         },
         submit(step){
             let ccEmailList = []
-            let ccDelName = []
             this.ccEmail.forEach((x) => {
                 ccEmailList.push(x.EmailAdd)
-                ccDelName.push(x.delUserName)
             })
-            sendJudgeEmail(step, null, ccEmailList)
+            sendJudgeEmail(step, [], ccEmailList, this.signature, null, null)
         }
 
     },

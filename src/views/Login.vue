@@ -147,7 +147,9 @@ export default {
           query.where = whereStatement
           query.outFields = [ "*" ]
           let queryResult = await countyOfficialInfo.queryFeatures(query)
+          console.log(queryResult)
           this.countyNumber = getCountyNbr
+          this.judgeCntyOid = queryResult.features[0].attributes['OBJECTID_1']
           this.judgeNameSend = queryResult.features[0].attributes['JUDGE_NM']
           this.judgeEmailSend = queryResult.features[0].attributes['JUDGE_EML']
           localStorage.setItem('county',JSON.stringify([county,getCountyNbr,queryResult.features[0].attributes['TOT_MLGE']]))
@@ -232,6 +234,14 @@ export default {
           this.$store.commit('setJudgeEmail', email)
         }
       },
+      judgeCntyOid:{
+        get(){
+          return this.$store.state.judgeObjectId
+        },
+        set(oid){
+          this.$store.commit('setJudgeObjectId', oid)
+        }
+      }
     }
     
 }

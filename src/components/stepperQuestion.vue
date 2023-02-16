@@ -355,7 +355,7 @@ export default {
       delGraphic(){
         this.firstAddToMap = false
         removeGraphic();
-        removeHighlight()
+        // removeHighlight()
       },
       showGIDVerts(){
         let getGraphic = gLayer.graphics.items.filter(x=> x.attributes.objectid === this.objid)
@@ -470,6 +470,7 @@ export default {
       },
       numLane:{
         get(){
+          console.log(this.$store.state.numLane)
           return JSON.parse(this.$store.state.numLane)
         }
       },

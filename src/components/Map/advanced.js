@@ -1,5 +1,5 @@
 // import methods and functions into file
-import { view, featLayer, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map'
+import { view, clientSideGeoJson, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map'
 import {createEpoch} from '../Map/helper'
 import { criConstants } from '../../common/cri_constants';
 import {store} from '../../store'
@@ -13,7 +13,7 @@ export async function downloadRdLog(){
     featQuery.where = `CNTY_TYPE_NM = '${store.getters.getCntyName}'`
     featQuery.outFields = [ "*" ]
   
-    let countyQuery = await featLayer.queryFeatures(featQuery)
+    let countyQuery = await clientSideGeoJson.queryFeatures(featQuery)
    
     await bulkAssetReturn(countyQuery)
 }
@@ -271,6 +271,7 @@ function uploadFail(message){
         bulletList.appendChild(li)
     })
     document.getElementById('text').style.color = 'red'
+    document.getElementById('text').style.left = '1rem'
 }
 
 // successful upload message
@@ -375,16 +376,16 @@ async function uploadChecks(schemaFields, txdotSchema){
 }
 
 async function serverResponse(submitid){
-    console.log(`start FME time: ${getTime()}`)
+    console.log(`start FME time: ${getTime()[0]}`)
     store.commit('setIsFmeProcess', true)
     console.log(submitid)
     //let dataReturn = await fetch('https://gis-batch-dev.txdot.gov/fmedatastreaming/TPP/returnTestFile.fmw?', {headers:{'Authorization':'fmetoken token=7f4d809080c9161e0d5ea5708d5522a3fdd01119'},'Content-Type': 'text/plain'})
     //let dataReturn = await fetch('https://testportal.txdot.gov/fmejobsubmitter/TPP/returnTestFile.fmw?opt_showresult=false&opt_servicemode=sync', {headers:{'Authorization':'fmetoken token=b6aa89bdbe05b1ffaca36dc6562ae0770c71b9ab'},'Content-Type': 'text/plain'})
-    let dataReturn = await fetch(`https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/CRI_QAQC_dev.fmw?TASK_ID=${submitid}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=58408fe1dba4b0b469faa9fa3ae0759426f8ad17'},'Content-Type': 'text/plain'})
+    let dataReturn = await fetch(`https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=ef92b878734df046a715c1e39d46cb40f1f321fd'},'Content-Type': 'text/plain'})
     let text = await dataReturn.text() ? 'Process has completed, please check your email for validation.' : null
     //console.log(text)
     document.getElementById('fmeResp').innerText = `${text}`//update
-    console.log(`end FME time: ${getTime()}`)
+    console.log(`end FME time: ${getTime()[0]}`)
     store.commit('setIsFmeProcess', false)
     setTimeout(()=>{
       store.commit('setServerCheck', false)
@@ -405,8 +406,16 @@ async function upldToAdvceFeatLyr(upldFile){
 }
 
 ////////delete/////////////
-function getTime(){
+export function getTime(){
     let currentDate = new Date();
-    let time = currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();
-    return time
+    let ampm = currentDate.getHours() >= 12 ? 'pm' : 'am'
+    let hours = ampm === 'am' ? currentDate.getHours() : currentDate.getHours()-12
+    let time = `${hours}:${currentDate.getMinutes()}:${currentDate.getSeconds()} ${ampm}`;
+
+    let year = currentDate.getFullYear().toString()
+    let month = (currentDate.getMonth()+1).toString()
+    let day = currentDate.getDate().toString()
+    let timestamp = `${month}/${day}/${year}`
+
+    return [time, timestamp]
 }
