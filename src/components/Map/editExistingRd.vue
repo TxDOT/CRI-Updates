@@ -138,16 +138,20 @@ export default {
         updateComment(){
             if(this.delReason === 0 || this.delReason === 2){
                 //pop up upload city street shapefile
+                this.commentText = ''
                 this.upldCity = true
                 this.isUpldShapefile = false
                 return;
             }
             else if(this.delReason === 4){
+                this.commentText = ''
                 this.isLinkExplain = true
                 this.upldCity = false
                 this.isUpldShapefile = false
+                
                 return;
             }
+            this.commentText = ' '
             this.upldCity = this.isLinkExplain = this.isUpldShapefile = false
             return;
         },
