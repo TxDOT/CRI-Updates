@@ -17,7 +17,7 @@
       v-model="display"
       max-width="700"
       persistent>
-      <v-card v-model="display" height="810" id="advancedCard">
+      <v-card v-model="display" height="810px" id="advancedCard">
         <v-card-title class="surfaceTitle">
           <p id="advCardTitleTxt">Advanced Page</p>
         </v-card-title>
@@ -123,7 +123,7 @@
         display:false,
         drawer: true,
         isHelpTraining: false,
-        tooltips: ['',"Click here to access TxDOT's County Inventory YouTube Channel", "Click here to access PDFs about CRI.", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory"],
+        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access PDFs about CRI.", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory"],
         mediaType: ['', 'TxDOT Youtube Channel', 'Go To PDFs','Access Sandbox Environment'],
         iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github'],
         items: [
@@ -323,7 +323,11 @@
 }
 #advancedCard{
   border-radius:0%;
-  overflow-y: hidden; 
+  display:flex;
+  min-height: 20vw;
+  max-height: 41vw;
+  flex-direction: column;
+  overflow-y: auto; 
   overflow-x: hidden;
 }
 #advCardTitleTxt{
@@ -483,9 +487,10 @@
   font-size: 3.5rem;
 }
 #closeBtn{
-  position: absolute;
-  bottom: 1rem; 
-  right: 2rem;
+  position: relative;
+  bottom: .8rem; 
+  left: 36rem;
+  width: 5rem;
   text-decoration: underline;
 }
 #clseBtnHelp{

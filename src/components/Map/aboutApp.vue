@@ -1,9 +1,8 @@
 <!-- "About" content -->
 <template>
-    <v-dialog v-model="aboutClick" max-width="600" persistent>
+    <v-dialog v-model="aboutClick" max-width="600" persistent id="aboutApp">
         <v-card id="finalCheck" v-model="aboutClick">
             <v-card-title class="surfaceTitle"><span id="titleText">About the County Road Inventory Map</span></v-card-title>
-        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.5.7</u></v-card-text>
         <div>
             <v-card-text class="textSymb" id="cardText">The County Road Inventory Map is a tool for county officials to verify and make updates to TxDOT’s 
                                                                                                         roadway inventory. <a id="hoverLink" href='https://capitol.texas.gov/tlodocs/74R/billtext/html/SB00971F.htm' target="_blank">
@@ -12,12 +11,15 @@
                                                                                                         purpose of allocation of highway funds.</v-card-text>
         </div>
         <v-divider class="textSymb" id="divider"></v-divider>
-        <div>
+        <div id="moveItem">
             <v-card-text class="textSymb" id="updateTextRow" v-for="(i, index) in updateList" :key=index><ul id="updateText"><li>{{updateList[index]}}</li></ul></v-card-text>
         </div>
 
         <div id="btnPosition"><v-btn underline tile color="#14375A" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
-        
+
+        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.5.7</u></v-card-text>
+
+            
       </v-card>
     </v-dialog>
 </template>
@@ -57,6 +59,16 @@ export default {
 }
 </script>
 <style scoped>
+#aboutApp{
+    position: relative;
+    min-height: 0px;
+    display: flex;
+    flex-direction: column;
+}
+#moveItem{
+    position: relative;
+    bottom: 0rem;
+}
 .surfaceTitle{
   position: inherit;
   background-color: #14375A;
@@ -71,17 +83,17 @@ export default {
 }
 
 #finalCheck{
-    position: relative;
+    position: inherit;
     top:50%;
     width: 500px;
     left: 4rem;
     min-height: 0vh;
-    max-height: 100rem;
+    max-height: 50rem;
     border-radius: 0px;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 #hoverLink{
@@ -98,18 +110,19 @@ export default {
 }
 #buildNm{
     position: relative; 
-    top: 28.5rem; 
+    bottom: 0rem; 
     left: 0%; 
     font-size: 10px; 
+    width: 10rem;
 }
 #cardText{
     position: relative; 
-    bottom:2.5rem; 
+    bottom:.5rem; 
     left: 0%; 
 }
 #divider{
     position: relative;
-    bottom: 1.5rem;
+    bottom: .5rem;
 }
 #updateTextRow{
    margin-left: 1rem;
@@ -122,8 +135,9 @@ export default {
 }
 #btnPosition{
     position: relative;
-    left: 12rem;
-    top: 4rem;
+    left: 11.5rem;
+    top: 2rem;
+    
 }
 #btnClose{
     border:1px solid black;

@@ -71,6 +71,7 @@
                             <label id="output">
                                 <input type="file" name="file" @change="dropItem($event)"/>Upload Document
                             </label>
+                            <label>&nbsp;&nbsp;&nbsp;{{ fileName }}</label>
                         </div>
                     </v-card-text>
                 </v-card>
@@ -83,7 +84,7 @@
         <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=upldCity=isLinkExplain=false; delReason=null"> 
           <u>Cancel</u>
         </v-btn>
-        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'8rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'18.2rem', 'border-color':'black', 'width':'6rem'}" tile elevation="0" @click="deleteSecond = upldCity = isLinkExplain = isUpldShapefile = false; deleteConfirm=true; setDeleteFalse(); delReason=null;"> 
+        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'12rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'18.5vw', 'border-color':'black', 'width':'6vw'}" tile elevation="0" @click="deleteSecond = upldCity = isLinkExplain = isUpldShapefile = false; deleteConfirm=true; setDeleteFalse(); delReason=null;"> 
           <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
         <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
@@ -128,10 +129,15 @@ export default {
                           {value: 1, text: "Private Road", tooltip: "A private road will typically have a sign that says “No Trespassing”, “Private Property”, or “Do Not Enter”, etc. They may also be gated or locked."},
                           {value: 2, text: "Federal Road", tooltip: "A public road that is physically located within the boundaries of federal lands (e.g. military reservation, national forest, national park) and owned by a federal agency."},
                           {value: 3, text:"Not a Road", tooltip: "No road present or road was obliterated."}, {value: 4, text: "Other", tooltip: "Please provide an explanation."}],
-        cityAnnexResp: ''
+        cityAnnexResp: '',
+        fileName:''
       }
     },
     methods:{
+        dropItem(x){
+            console.log(x.explicitOriginalTarget.files[0].name)
+            this.fileName = x.explicitOriginalTarget.files[0].name
+        },
         // radioBtnClick(){
         //     this.radioBtnSel === 0 ? this.upldShapefile = true : this.upldShapefile = false
         // },
@@ -139,12 +145,14 @@ export default {
             if(this.delReason === 0 || this.delReason === 2){
                 //pop up upload city street shapefile
                 this.commentText = ''
+                this.fileName = ''
                 this.upldCity = true
                 this.isUpldShapefile = false
                 return;
             }
             else if(this.delReason === 4){
                 this.commentText = ''
+                this.fileName = ''
                 this.isLinkExplain = true
                 this.upldCity = false
                 this.isUpldShapefile = false
@@ -427,15 +435,15 @@ export default {
         flex-wrap: wrap;
     }
     #infoAlert{
-        width:91%; 
-        left:16px; 
+        width: 23.4vw;
+        left: .8vw; 
         text-align: left; 
-        font-size: 12.09px; 
+        font-size: 1.23vh; 
         border-radius: 0px;
     }
     #icon{
         right:5px;
-        bottom: 4px;
+        bottom: 3px;
     }
     /* #comment{
         position: absolute;
@@ -479,20 +487,20 @@ export default {
         border: 1px solid black
     }
     #cnclBtn{
-        left: 12.5rem;
-        top:1.8rem;
-        width: 5rem;
+        left: 12.5vw;
+        top: 1.8rem;
+        width: 5vw;
     }
     #discardBtn{
-        left: 14rem;
+        left: 19rem;
         bottom:.2rem;
         width: 10rem;
     }
     .rdDelSelc{
         position: inherit;
         padding-top: .5rem;
-        padding-right: 2rem;
-        padding-left : 1.7rem;
+        padding-right: 1.8vw;
+        padding-left : 1.5vw;
         height: 3rem;
     }
     .radioResponse{
