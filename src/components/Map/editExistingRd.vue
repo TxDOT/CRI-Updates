@@ -137,6 +137,7 @@ export default {
         dropItem(x){
             console.log(x.explicitOriginalTarget.files[0].name)
             this.fileName = x.explicitOriginalTarget.files[0].name
+            this.commentText = ' '
         },
         // radioBtnClick(){
         //     this.radioBtnSel === 0 ? this.upldShapefile = true : this.upldShapefile = false
