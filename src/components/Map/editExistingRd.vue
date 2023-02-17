@@ -135,8 +135,8 @@ export default {
     },
     methods:{
         dropItem(x){
-            console.log(x.explicitOriginalTarget.files[0].name)
-            this.fileName = x.explicitOriginalTarget.files[0].name
+            console.log(x)
+            this.fileName = x.target.files[0].name
             this.commentText = ' '
         },
         // radioBtnClick(){
