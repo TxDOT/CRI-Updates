@@ -244,7 +244,6 @@ async function createFeatures(file){
         responseType: "json",
         method: "post"
     })
-
     convShpToGraphic
         .then((res)=>{
             processUpload(res)
@@ -293,6 +292,7 @@ async function uploadPass(message, upldData){
 // initial QA/QC check for file upload
 async function processUpload(upload){
     //populate store with array with upload attribute values.
+    console.log(upload.data.featureCollection)
     let uploadSchemaCheck = await uploadChecks(upload.data.featureCollection.layers[0], criConstants.txdotSchema)
     store.commit('setIsMapAttr', true)
     //submitListAttr(upload.data.featureCollection.layers[0])

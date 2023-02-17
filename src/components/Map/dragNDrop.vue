@@ -15,7 +15,7 @@
             <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
             <v-btn @click="dragDropClick = false" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
         </v-card>
-        <v-alert id="fmeResp" color="primary" tile v-if="serverResponse" style="color:white">{{serverCheck}}</v-alert><!-- update -->
+        <v-alert id="fmeResp" color="#cc7b29" tile v-if="serverResponse" style="color:white">{{serverCheck}}</v-alert><!-- update -->
     </v-container>
 
     
@@ -54,6 +54,7 @@ export default {
             event.preventDefault();
         },
         dropItem(event){
+            console.log(event)
             retrieveFile(event)
         }
     },
@@ -88,6 +89,11 @@ export default {
 }
 </script>
 <style scoped>
+    #fmeResp{
+        position: relative;
+        bottom: .1rem;
+        width: 70rem;
+    }
     .fileContainer{
         position: absolute;
         top: 4rem;

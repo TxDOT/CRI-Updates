@@ -166,10 +166,10 @@ export default {
         },
         setDeleteFalse(){
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
-            let deleteReason = this.cityAnnexReason.find(x=> x.value === this.delReason).text
-            editGraphic.attributes.comment = `${this.commentText} - ${deleteReason}`
+            let deleteReason = this.cityAnnexReason.find(x=> x.value === this.delReason)
+            editGraphic.attributes.comment = deleteReason ? `${this.commentText} - ${deleteReason.text}` : editGraphic.attributes.comment
             this.deleteClick = false
-            this.commentText = ''
+            //this.commentText = ''
             this.comment = false
             saveToEditsLayer()
         },

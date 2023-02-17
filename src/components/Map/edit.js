@@ -146,11 +146,11 @@ export async function hideEditedRoads(graphicL, update){
       }
   
       gLayer.graphics.items.forEach((x) => {
-        x.attributes.objectid === store.getters.getObjectid ? null : objectidList.push(x.attributes.gid)
+        if(x.attributes.gid !== 9999){
+          x.attributes.objectid === store.getters.getObjectid ? null : objectidList.push(x.attributes.gid)
+        }
       })
-      console.log("hide roads 1")
       objectidList.length === 0 ? clientSideGeoJson.definitionExpression = `CNTY_TYPE_NM = '${store.getters.getCntyName}'` : clientSideGeoJson.definitionExpression = `RDBD_GMTRY_LN_ID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
-      console.log(clientSideGeoJson)
       return;
     }
     
@@ -159,7 +159,9 @@ export async function hideEditedRoads(graphicL, update){
     for(let id in items){
       if(items[id].attributes !== null){
         let gids = items[id].attributes.gid || items[id].attributes.RDBD_GMTRY_LN_ID
-        objectidList.push(gids)
+        if(items[id].attributes.gid !== 9999){
+          objectidList.push(gids)
+        }
       }
     }
     clientSideGeoJson.definitionExpression = `RDBD_GMTRY_LN_ID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
@@ -254,7 +256,6 @@ export function removeGraphic(){
   hideEditedRoads(null,true)
   //sending length to recalculate mileage change in footer
   let length = Number(geometryEngine.geodesicLength(graphicR[0].geometry, "miles").toFixed(5))
-  console.log(store.getters.getAddRd)
   if(graphicR[0].attributes.editType === 'ADD'){
     // if(store.getters.getIsInitAdd === true){
     //   store.commit('setIsInitAdd', false)
@@ -393,9 +394,7 @@ export async function cancelEditStepper(){
   let filterEdits = returnData.features.filter(x => x.attributes.OBJECTID === store.getters.getObjectid)
   if(filterEdits.length){
     let returnRoad = filterEdits[0].attributes.EDIT_TYPE_ID === 1 ? filterEdits[0] : await queryFeat(filterEdits[0])
-    console.log(returnRoad)
     //let convGeom;
-    console.log(filterEdits[0])
     // if(filterEdits[0].attributes.EDIT_TYPE_ID != 1){
     //   convGeom = webMercatorUtils.geographicToWebMercator(returnRoad.features[0].geometry)
     // }
@@ -469,9 +468,10 @@ function reapplyM(arr){
 //setUpGraphic() gets old length of selected graphic and send old length to store
 function setUpGraphic(){
   view.on('click',(event)=>{
-    if(sketch.state === 'active'){
-      return;
-    }
+    console.log(sketch.state)
+    // if(sketch.state === 'active'){
+    //   return;
+    // }
     let opts = [gLayer]
     store.commit('setIsDfoReturn', false)
     view.hitTest(event,opts).then((response)=>{

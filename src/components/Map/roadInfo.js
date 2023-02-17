@@ -31,11 +31,13 @@ export async function popUpData(res){
 export async function getGraphic(){
     let getGraphPromise = new Promise(function(resp){
       view.on("click", function(event){
-        let option = {include: [clientSideGeoJson,gLayer]}
-        if (sketch.state === "active") {
-          return;
-        }
-        view.when(function(){
+        let option = {include: [clientSideGeoJson, gLayer]}
+        console.log(sketch.state)
+        // if (sketch.state === "active") {
+        //   console.log('return?')
+        //   return;
+        // }
+        view.when(()=>{
           //get response from graphics and set getters in store.js
           view.hitTest(event,option)
             .then(async function(response){

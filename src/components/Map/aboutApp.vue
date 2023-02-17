@@ -11,6 +11,7 @@
                                                                                                         purpose of allocation of highway funds.</v-card-text>
         </div>
         <v-divider class="textSymb" id="divider"></v-divider>
+        <v-card-text id="releaseNotes">Release Notes:</v-card-text>
         <div id="moveItem">
             <v-card-text class="textSymb" id="updateTextRow" v-for="(i, index) in updateList" :key=index><ul id="updateText"><li>{{updateList[index]}}</li></ul></v-card-text>
         </div>
@@ -59,6 +60,12 @@ export default {
 }
 </script>
 <style scoped>
+#releaseNotes{
+    text-align: left;
+    padding-bottom: 1rem;
+    color: black;
+    text-decoration: underline;
+}
 #aboutApp{
     position: relative;
     min-height: 0px;

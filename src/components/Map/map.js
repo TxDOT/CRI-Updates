@@ -74,6 +74,7 @@ export const expandLegend = new Expand({
 
 export const viewPoint = new Viewpoint();
 //home button
+
 export const home = new Home({
     view: view,
 });
@@ -215,7 +216,7 @@ export const editsLayer = new FeatureLayer({
 export const advanceLayer = new FeatureLayer({
     url: criConstants.advanceUploadLayer
 })
-//county polyhon feature Layer
+//county polygon feature Layer
 export const txCounties = new FeatureLayer({
     url: criConstants.txCounties,
     //definitionExpression: "CNTY_NM= 'Travis'"

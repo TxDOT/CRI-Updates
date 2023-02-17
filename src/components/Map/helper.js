@@ -23,7 +23,6 @@ export async function setDataToStore(surface, design, name, lane, objectid, comm
 
 //querys the Refernce Layer table returns geometry/attributes
 export async function queryFeat(qry){
-    console.log(qry)
     let queryFeat = await clientSideGeoJson.queryFeatures({
       objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : null,
       where: qry.results ? null : `RDBD_GMTRY_LN_ID = ${qry.attributes.GID}`,
@@ -278,12 +277,10 @@ export function sendJudgeEmail(step, ccDelName, ccEmailList, jdgeSign, jdgeCntyO
         "updMileage": updMileage
       }
   };
-  console.log(JSON.stringify(theJson))
   let params = encodeURIComponent(JSON.stringify(theJson));
   let theService = `https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/TPP_Email_Dev.fmw?params=${params}&opt_showresult=false&opt_servicemode=sync`;
-  console.log(theService)
-  //let resp = fetch(theService, {headers:{'Authorization' : 'fmetoken token=baa7b875b9c229d397fb91661280ccb894559885'},'Content-Type': 'text/plain'})
-  //resp.then(x=> console.log('Webhook fired! Check your email...',x))
+  let resp = fetch(theService, {headers:{'Authorization' : 'fmetoken token=baa7b875b9c229d397fb91661280ccb894559885'},'Content-Type': 'text/plain'})
+  resp.then(x=> console.log('Webhook fired! Check your email...',x))
 }
 
 export function updateTotalMileage(){

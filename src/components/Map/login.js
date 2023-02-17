@@ -78,7 +78,7 @@ export async function reloadEdits(){
         createGraphics.features[i].attributes.ASSET_ST_DEFN_NM = JSON.stringify(replaceItem[0])
         createGraphics.features[i].attributes.ASSET_SRFC_TYPE_DSCR = JSON.stringify(replaceItem[2])
         createGraphics.features[i].attributes.ASSET_RDWAY_DSGN_TYPE_DSCR = JSON.stringify(replaceItem[1])
-
+        createGraphics.features[i].attributes.GID = 9999
         createGraphics.features[i].attributes.EDIT_TYPE_ID = 'add'
       }
       else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 5){
