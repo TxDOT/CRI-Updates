@@ -92,7 +92,8 @@ export default {
     #fmeResp{
         position: relative;
         bottom: .1rem;
-        width: 70rem;
+        left: 19vw;
+        width: 50vw;
     }
     .fileContainer{
         position: absolute;

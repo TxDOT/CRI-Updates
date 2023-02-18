@@ -324,8 +324,8 @@
 #advancedCard{
   border-radius:0%;
   display:flex;
-  min-height: 20vw;
-  max-height: 41vw;
+  min-height: 20vh;
+  max-height: 90vh;
   flex-direction: column;
   overflow-y: auto; 
   overflow-x: hidden;
