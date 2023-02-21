@@ -65,8 +65,12 @@ export const store = new Vuex.Store({
         judgeName: '',
         judgeEmail:'',
         isFmeProcess: false,
+        totalReloadPer:0,
     },
     getters:{
+        getTotalReloadPer(state){
+            return state.totalReloadPer
+        },
         getJudgeObjectId(state){
             return state.judgeObjectId
         },
@@ -247,6 +251,9 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setTotalReloadPer(state, per){
+            state.totalReloadPer = per
+        },
         setJudgeObjectId(state, jdgeObjectId){
             state.judgeObjectId = jdgeObjectId
         },
