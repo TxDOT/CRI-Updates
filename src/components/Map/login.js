@@ -26,7 +26,6 @@ export async function countyInfo(){
         query.where = whereStatement
         query.outFields = [ "*" ]
         let newQuery = countyOfficialInfo.queryFeatures(query)
-        console.log(newQuery)
         // query county extent for dynamic home button
         const geomQuery = new Query();
         //geomQuery.where = `CNTY_NM = '${store.getters.getCntyName}'`;
@@ -124,11 +123,13 @@ export async function createGeoJson(cntyName){
   let query = new Query()
   query.where = `CNTY_TYPE_NM = '${cntyName}'`
   query.outFields = [ "*" ]
+  query.returnM = true
+  // query.hasM = true
+  query.hasZ = true
   query.returnGeometry = true
 
   let roads = featLayer.queryFeatures(query)
   let cntyRoad = await roads
-  console.log(cntyRoad)
   for(let i=0; i < cntyRoad.features.length; i++){
     let convertToGeo = webMercatorUtils.webMercatorToGeographic(cntyRoad.features[i].geometry)
     let geojson = {

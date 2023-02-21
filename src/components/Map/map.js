@@ -168,7 +168,7 @@ export const featLayer = new FeatureLayer({
     returnM: true,
     returnZ: true,
     hasM: true,
-    visible: true,
+    visible: false,
     outFields: ["CNTY_TYPE_NM", "RDBD_GMTRY_LN_ID"],
     renderer:{
         type: "simple",
@@ -181,6 +181,7 @@ export const featLayer = new FeatureLayer({
 
 export const clientSideGeoJson = new GeoJSONLayer({
     url: '',
+    hasZ: true,
     renderer:{
         type: "simple",
         symbol:{

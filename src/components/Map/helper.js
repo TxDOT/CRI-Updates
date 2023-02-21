@@ -26,10 +26,10 @@ export async function queryFeat(qry){
     let queryFeat = await clientSideGeoJson.queryFeatures({
       objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : null,
       where: qry.results ? null : `RDBD_GMTRY_LN_ID = ${qry.attributes.GID}`,
-      
+      returnM: true,
       outFields: ["*"],
       returnGeometry: true,
-      returnM: true,
+
     })
     return queryFeat
   }
@@ -55,6 +55,8 @@ export async function queryFeatureTables(tblqry){
     if(rdbdSrfArry.length){
       rdbdSrfArry.length = 0
     }
+    //auto extend assets
+    let lengthRd = geometryEngine.geodesicLength(tblqry.features[0].geometry, "miles")
     // looping through Roadbed Surface items and replacing with coded values, located in cri_constants.js
     for(let srf in rdbdSrfcAtt.features){
       let surface = criConstants.surface
@@ -101,7 +103,11 @@ export async function queryFeatureTables(tblqry){
       suffix: tblqry.features[0].attributes.ST_SFX_TYPE_DSCR ? tblqry.features[0].attributes.ST_SFX_TYPE_DSCR.toUpperCase() : null,
       streetType: tblqry.features[0].attributes.ST_TYPE_DSCR,
     }
-  
+    //auto extend Asset Lengths
+    rdbdSrfArry.at(-1).ASSET_LN_END_DFO_MS = Number((rdbdSrfArry.at(0).ASSET_LN_BEGIN_DFO_MS + lengthRd).toFixed(3))
+    rdbdDsgnArry.at(-1).ASSET_LN_END_DFO_MS = Number((rdbdDsgnArry.at(0).ASSET_LN_BEGIN_DFO_MS + lengthRd).toFixed(3))
+    rdbdNumLnArry.at(-1).ASSET_LN_END_DFO_MS = Number((rdbdNumLnArry.at(0).ASSET_LN_BEGIN_DFO_MS + lengthRd).toFixed(3))
+
     setDataToStore(JSON.stringify(rdbdSrfArry), JSON.stringify(rdbdDsgnArry), JSON.stringify([roadNameObj]), JSON.stringify(rdbdNumLnArry), tblqry.features[0].attributes.OBJECTID)
     return;
 }
@@ -109,6 +115,7 @@ export async function queryFeatureTables(tblqry){
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
 export async function defineGraphic(graphics, clickType, editType){
+
     let exist = graphics.features ? gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.features[0].attributes.OBJECTID) : gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.attributes.OBJECTID)
     if(exist.length){
       return;

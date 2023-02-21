@@ -397,8 +397,14 @@ export const store = new Vuex.Store({
         },
         setAssetCoverage(state, assetDfos){
             let sumArr = []
+
             assetDfos.forEach(function(x){
-                sumArr.push(x[0]+x[1])
+                if(assetDfos.length > 1){
+                    sumArr.push(x[0]+x[1])
+                    return;
+                }
+                sumArr.push(x[0], x[1])
+                return;
             })
             let initValue = 0
             let diff = sumArr.reduce((prevValue, currentValue) => 

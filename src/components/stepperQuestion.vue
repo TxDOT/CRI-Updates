@@ -470,7 +470,6 @@ export default {
       },
       numLane:{
         get(){
-          console.log(this.$store.state.numLane)
           return JSON.parse(this.$store.state.numLane)
         }
       },

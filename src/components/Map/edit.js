@@ -426,11 +426,11 @@ export async function cancelEditStepper(){
 //setting M-Vaules on geometry changes
 function reapplyM(arr){
   let gl = gLayer.graphics.items.filter(x => x.objectid = arr.attributes.objectid).at(-1)
+  let getFirstAsset = JSON.parse(gl.attributes.roadbedSurface)
   let applyM = [];
-  
   try{
-    let segMil = arr.geometry.paths[0][0][2] ? arr.geometry.paths[0][0][2] : 0;
-    arr.geometry.paths[0][0][2] ? applyM.push(arr.geometry.paths[0][0][2]) : applyM.push(0);
+    let segMil = getFirstAsset.at(0).ASSET_LN_BEGIN_DFO_MS;
+    arr.geometry.paths[0][0][2] ? applyM.push(arr.geometry.paths[0][0][2]) : applyM.push(segMil);
     for(let i=0; i < arr.geometry.paths[0].length; i++){
       
       let pointA = new Graphic({
@@ -501,14 +501,16 @@ function setUpGraphic(){
 }
 
 function updateGraphicsLayer(oid, length){
+  length;
   for(let i=0; i < gLayer.graphics.items.length; i++){
     let assetArr = ['roadbedDesign', 'roadbedSurface', 'numLane']
     if(gLayer.graphics.items[i].attributes.objectid === oid){
       for(let x=0; x < assetArr.length; x++){
-
         let asset = JSON.parse(gLayer.graphics.items[i].attributes[assetArr[x]])
+        let endDFO = gLayer.graphics.items[i].geometry.paths.at(-1)[0][0][2]
         if(!asset) return;
-        asset.at(-1).ASSET_LN_END_DFO_MS = Number(length.toFixed(3))
+        if(!endDFO) return;
+        asset.at(-1).ASSET_LN_END_DFO_MS = Number(endDFO.toFixed(3))
         gLayer.graphics.items[i].attributes[assetArr[x]] = JSON.stringify(asset)
         
         let commitToStore = {

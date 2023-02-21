@@ -471,7 +471,6 @@ function assetCoverageCheck(x){
   x.forEach(function(y){
     beginEndArr.push([y.ASSET_LN_BEGIN_DFO_MS, y.ASSET_LN_END_DFO_MS])
   })
-
   store.commit('setAssetCoverage', beginEndArr)
 }
 
