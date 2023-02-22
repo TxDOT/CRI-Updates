@@ -70,6 +70,7 @@ export async function reloadEdits(){
     let mileSetUp = 0;
     for(let i=0; i < createGraphics.features.length; i++){
       let length = geomToMiles(createGraphics.features[i].geometry,true,3)
+      console.log(length)
       //reset Edit TYPE_ID to add/edit/delete so that criConstants.editType can be used in defineGraphic func
       if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 1){
         mileSetUp += length
@@ -115,6 +116,7 @@ export async function reloadEdits(){
     return currentEditRoads
 }
 
+//convert REF layer service (i.e County) to GeoJSON layer. Client side querying.
 export async function createGeoJson(cntyName){
   let geoJSONArr = {
     type: "FeatureCollection",
@@ -162,20 +164,6 @@ export async function createGeoJson(cntyName){
             ST_TYPE_DSCR: cntyRoad.features[i].attributes.ST_TYPE_DSCR,
           }
         }
-    // const blob = new Blob([geojson],{
-    //   type: "application/json"
-    // })
-    // const url = URL.createObjectURL(blob)
-    // map.add(new GeoJSONLayer({
-    //   url, 
-    //   renderer:{
-    //       type: "simple",
-    //       symbol:{
-    //           type: "simple-line",
-    //           color:[0,127,255]
-    //       }
-    //   }
-    // }))
 
     geoJSONArr.features.push(geojson)
   }

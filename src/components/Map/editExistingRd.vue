@@ -84,7 +84,7 @@
         <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=upldCity=isLinkExplain=false; delReason=null"> 
           <u>Cancel</u>
         </v-btn>
-        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'12rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'18.5vw', 'border-color':'black', 'width':'6vw'}" tile elevation="0" @click="deleteSecond = upldCity = isLinkExplain = isUpldShapefile = false; deleteConfirm=true; setDeleteFalse(); delReason=null;"> 
+        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'8.5vw', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'18.5vw', 'border-color':'black', 'width':'6vw'}" tile elevation="0" @click="deleteSecond = upldCity = isLinkExplain = isUpldShapefile = false; deleteConfirm=true; setDeleteFalse(); delReason=null;"> 
           <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
         <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
@@ -493,7 +493,7 @@ export default {
         width: 5vw;
     }
     #discardBtn{
-        left: 19rem;
+        left: 14.5vw;
         bottom:.2rem;
         width: 10rem;
     }

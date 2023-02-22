@@ -405,8 +405,8 @@ export default {
           for (let i = 0; i < this.rdbdSurf.length; i++) {
             this.mileInfo.push({
               SRFC_TYPE: this.rdbdSurf[i].SRFC_TYPE_ID,
-              ASSET_LN_BEGIN: this.rdbdSurf[i].ASSET_LN_BEGIN_DFO_MS,
-              ASSET_LN_END: this.rdbdSurf[i].ASSET_LN_END_DFO_MS,
+              ASSET_LN_BEGIN: Number(this.rdbdSurf[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3)),
+              ASSET_LN_END: Number(this.rdbdSurf[i].ASSET_LN_END_DFO_MS.toFixed(3)),
               EDIT: true,
               OBJECTID: this.objid
             })

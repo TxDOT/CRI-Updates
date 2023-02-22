@@ -151,6 +151,7 @@ export async function hideEditedRoads(graphicL, update){
         }
       })
       objectidList.length === 0 ? clientSideGeoJson.definitionExpression = `CNTY_TYPE_NM = '${store.getters.getCntyName}'` : clientSideGeoJson.definitionExpression = `RDBD_GMTRY_LN_ID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
+      console.log('hit')
       return;
     }
     
@@ -159,7 +160,7 @@ export async function hideEditedRoads(graphicL, update){
     for(let id in items){
       if(items[id].attributes !== null){
         let gids = items[id].attributes.gid || items[id].attributes.RDBD_GMTRY_LN_ID
-        if(items[id].attributes.gid !== 9999){
+        if(items[id].attributes.editType !== 'ADD'){
           objectidList.push(gids)
         }
       }

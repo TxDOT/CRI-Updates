@@ -47,7 +47,7 @@ export default {
           this.reset();
           this.isAssetCoverage = this.sendAssetCoverage[0]
           this.shortLong = this.sendAssetCoverage[1]
-          this.dfoValue = this.sendAssetCoverage[2]
+          this.dfoValue = this.sendAssetCoverage[2] ? this.sendAssetCoverage[2].toFixed(3) : this.sendAssetCoverage[2]
           this.lineEndValue = this.sendAssetCoverage[3]  
           }
         },

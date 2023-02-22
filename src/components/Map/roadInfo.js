@@ -188,7 +188,7 @@ export function getCoordsRange(y){
             weight: "normal"
           },
           labelPlacement:"above-center",
-          text: `${y[d].ASSET_LN_END}`
+          text: `${y[d].ASSET_LN_END.toFixed(3)}`
         }
   
         let assetPoint = new Graphic({
