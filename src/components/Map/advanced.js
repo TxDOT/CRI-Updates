@@ -6,6 +6,7 @@ import {store} from '../../store'
 import Query from "@arcgis/core/rest/support/Query";
 import esriRequest from "@arcgis/core/request";
 import { addFeat } from './crud';
+import { reloadEdits } from './login';
 
 //downlaod road log csv
 export async function downloadRdLog(){
@@ -322,19 +323,18 @@ async function uploadValueCheck(feat, validali){
     let valueCheckPromise = new Promise((res)=>{
         let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Modify or Delete. Re-submit"
         let lengthMessage = "Empty or Null fields have been detected.\nPlease revise and re-submit"
-        let isCheckLength;
+        let isCheckLength = [];
         let editTypeMsg = [];
         for(let i=0; i < feat.featureSet.features.length; i++){
             let item = Object.entries(feat.featureSet.features[i].attributes)
-            isCheckLength = item.filter((x)=> {
-                console.log(x[0], x[1])
-                if(x[1] != null && criConstants.txdotSchema.includes(x[1])){
-                    let rplcEmpty = x[1].toString().replace(/\s/g, "")
-                    return rplcEmpty.length === 0
+            let ah = item.filter((x)=> {
+                if(criConstants.txdotRequired.includes(x[0])){
+                    let rdbInfo = x[0] === 'ROAD_NM' ? x[1].toString().replace(/\s/g, "").length === 0 : x[1] === 0
+                    return rdbInfo === true
                 }
-                
             })
-            
+            ah.length ? isCheckLength.push(ah) : null
+
             item.filter((x)=>{
                 if(x[0] === 'EDIT_TYPE'){
                     let removeWhiteSpace = x[1]
@@ -344,6 +344,7 @@ async function uploadValueCheck(feat, validali){
             })
             
         }
+        console.log(isCheckLength)
         isCheckLength.length ? validArr.push({valueFail: true, message: lengthMessage}) : ''
         editTypeMsg.length ? validArr.push({valueFail: true, message: editTypeMessage}) : ''
         res(validArr)
@@ -384,12 +385,13 @@ async function serverResponse(submitid){
     //let dataReturn = await fetch('https://testportal.txdot.gov/fmejobsubmitter/TPP/returnTestFile.fmw?opt_showresult=false&opt_servicemode=sync', {headers:{'Authorization':'fmetoken token=b6aa89bdbe05b1ffaca36dc6562ae0770c71b9ab'},'Content-Type': 'text/plain'})
     let dataReturn = await fetch(`https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=ef92b878734df046a715c1e39d46cb40f1f321fd'},'Content-Type': 'text/plain'})
     let text = await dataReturn.text() ? 'Process has completed, please check your email for validation.' : null
-    //console.log(text)
+    console.log(text)
     document.getElementById('fmeResp').innerText = `${text}`//update
     console.log(`end FME time: ${getTime()[0]}`)
     store.commit('setIsFmeProcess', false)
+    
     setTimeout(()=>{
-        location.reload()
+        reloadEdits()
         store.commit('setServerCheck', false)
     },5000)
 }//update

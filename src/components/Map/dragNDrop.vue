@@ -90,10 +90,11 @@ export default {
 </script>
 <style scoped>
     #fmeResp{
-        position: relative;
-        bottom: .1rem;
-        left: 19vw;
-        width: 50vw;
+        position: fixed;
+        top: 3.7rem;
+        left: 75vh;
+        width: 52vh;
+        
     }
     .fileContainer{
         position: absolute;

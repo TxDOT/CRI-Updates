@@ -70,7 +70,6 @@ export async function reloadEdits(){
     let mileSetUp = 0;
     for(let i=0; i < createGraphics.features.length; i++){
       let length = geomToMiles(createGraphics.features[i].geometry,true,3)
-      console.log(length)
       //reset Edit TYPE_ID to add/edit/delete so that criConstants.editType can be used in defineGraphic func
       if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 1){
         mileSetUp += length
@@ -178,7 +177,6 @@ export async function createGeoJson(cntyName){
   const url = URL.createObjectURL(blob);
   // create new geojson layer using the blob url
   clientSideGeoJson.url = url
-  console.log(geoJSONArr)
 }
 
 //function to query ref table by OID and COUNTY NAME and go and load map

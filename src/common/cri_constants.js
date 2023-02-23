@@ -73,6 +73,6 @@ export const criConstants = {
       'delete': ['#E32636', 'DELETE', 4]
     },
 
-    txdotSchema:['EDIT_TYPE', 'GID', 'RTE_DEF_NM', 'ROAD_PRFX', 'ROAD_SFX', 'ROAD_TYPE', 'ROAD_NM', 'SURFACE', 'LANE', 'DESIGN']
-
+    txdotSchema:['EDIT_TYPE', 'GID', 'RTE_DEF_NM', 'ROAD_PRFX', 'ROAD_SFX', 'ROAD_TYPE', 'ROAD_NM', 'SURFACE', 'LANE', 'DESIGN'],
+    txdotRequired: ['EDIT_TYPE','SURFACE', 'LANE', 'DESIGN', 'ROAD_TYPE', 'ROAD_NM']
   }
