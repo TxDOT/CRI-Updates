@@ -66,8 +66,16 @@ export const store = new Vuex.Store({
         judgeEmail:'',
         isFmeProcess: false,
         totalReloadPer:0,
+        cntyCentroid: [0,0],
+        isDocumentUploaded: null
     },
     getters:{
+        getIsDocumentUploaded(state){
+            return state.isDocumentUploaded
+        },
+        getCntyCentroid(state){
+            return state.cntyCentroid
+        },
         getTotalReloadPer(state){
             return state.totalReloadPer
         },
@@ -251,6 +259,12 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsDocumentUploaded(state, bool){
+            state.isDocumentUploaded = bool
+        },
+        setCntyCentroid(state, cntyCent){
+            state.cntyCentroid = cntyCent
+        },
         setTotalReloadPer(state, per){
             state.totalReloadPer = per
         },

@@ -5,7 +5,7 @@
                 <v-card-title><v-img :src="require('@/assets/txdotLogo.jpeg')" id="judgeLetterLogo"></v-img></v-card-title>
                 <v-card-text justify="left" v-html="mainTxt" class="letterTxt" id="mainTxt"></v-card-text>
                 
-                <v-btn small tile color="green" class="buttonColor" id="acceptCert" @click="judgeLetter=false; assignDel=false; accptCertify=true"><v-icon left color="white" >mdi-certificate</v-icon>Accept & Certify</v-btn>
+                <v-btn small tile color="green" class="buttonColor" id="acceptCert" @click="judgeLetter=false; assignDel=false; accptCertify=true"><v-icon left color="white" >mdi-certificate</v-icon>Agree & Certify</v-btn>
                 <v-btn small tile color="blue" class="buttonColor" @click="logMeIn()"><v-icon left color="white">mdi-vector-polyline-edit</v-icon>Review & Edit</v-btn>
                 <v-btn small tile color="black" class="buttonColor" id="assignDelegate" @click="judgeLetter=false; accptCertify=false; assignDel=true;"><v-icon left color="white">mdi-account-multiple-plus</v-icon>Assign Delegate</v-btn>
 

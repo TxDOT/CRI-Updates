@@ -1,5 +1,6 @@
 <template>
-    <v-card tile id="acceptCard">
+    <v-container>
+    <v-card tile id="acceptCard" v-if="test1">
         <v-card-title class="cardTitle"><v-icon color="white" id="certIcon">mdi-certificate</v-icon><p id="certTitle">Mileage Certification</p></v-card-title>
         <v-card-text class="textSymb" id="countyMileTxt">Sign below to certify your county's mileage.</v-card-text>
         <v-card-text class="textSymb" v-html="countyMileageTxt()"></v-card-text>
@@ -14,7 +15,7 @@
         </v-row>
        <v-row v-for="(i, index) in ccEmail" :key="index">
             <v-col cols="12" md="5" id="emailCC">
-                <v-text-field dense outlined label="CC Email" v-model="i.EmailAdd"></v-text-field>
+                <v-text-field dense :rules="ccEmailRules" outlined label="CC Email" v-model="i.EmailAdd"></v-text-field>
             </v-col>
             <v-col><v-icon @click="deleteEmail(index)" id="trashIcon">mdi-delete</v-icon></v-col>
         </v-row>
@@ -32,11 +33,18 @@
         </div>
 
         <v-btn text color="#204E70" id="cancelBtn" @click="returnToLetter()">Cancel</v-btn>
-        <v-btn tile outlined color="#204E70" id="acceptBtn" :disabled="hideSubText === false || isCountyJudge === false" @click="submit('certify')">Accept</v-btn>
-        
-        
-        
+        <v-btn tile outlined color="#204E70" id="acceptBtn" :disabled="hideSubText === false || isCountyJudge === false" @click="submit('certify'); test1=false; test2=true;">Accept</v-btn>
     </v-card>
+    <v-dialog v-model="test2" max-width="600px" persistent>
+        <v-card>
+      <v-icon style="left: 0%" color="green">
+        mdi-check
+      </v-icon>
+    Thank you for certifing your mileage! Be on the lookout for an email confirming your certification.
+    </v-card>
+    </v-dialog>
+</v-container>
+
 </template>
 
 <script>
@@ -49,8 +57,12 @@ export default {
     data(){
         return{
             date: '',
+            test1: true,
+            test2: false,
             ccEmailAdd: '',
+            disableAddCCBtn: false,
             ccEmail: [],
+            ccEmailRules : [y => !!y || 'CC Email is required'],
             sigRules: [x => !!x || 'Signature is required',
             x => (x && x.length >= 5) || 'Name must be greater than 5 characters'],
             signature: '',
@@ -83,8 +95,8 @@ export default {
             })
             sendJudgeEmail(step, [], ccEmailList, this.signature, null, null)
         }
-
     },
+
     computed:{
         judgeNameSend:{
             get(){
@@ -185,16 +197,17 @@ export default {
     #cancelBtn{
         position: relative;
         width: 2rem;
-        left: 19.5rem;
+        left: 18.5rem;
         padding: none;
         top: 1.2rem;
     }
     #acceptBtn{
         position: relative;
-        width: 2rem;
-        left: 24.5rem;
+        width: 5rem;
+        left: 23.5rem;
         bottom: 1.2rem;
-        padding: none;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
         text-decoration: underline;
     }
     #acceptCard{
@@ -202,9 +215,13 @@ export default {
         display: flex;
         flex-direction: column;
         min-height: 0rem;
-        max-height: 40rem;
+        max-height: 90vh;
         overflow-x: hidden;
         overflow-y: auto;
+        border-radius: 0%;
+    }
+    .container{
+        padding: 0% !important;
     }
     .acceptCheckbox{
         position: relative;
@@ -214,5 +231,10 @@ export default {
     }
     #countyMileTxt{
         padding-top: 1rem;
+    }
+    #test2{
+        position: relative;
+        bottom: 3rem;
+        width: 20rem;
     }
 </style>

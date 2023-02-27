@@ -64,27 +64,34 @@
     
         <div id="moveRadio">
             <v-radio-group v-model="radioBtnSel">
-            <v-radio class="radioBtn" v-if="upldCity" @click="isUpldShapefile = true; isLinkExplain = false"  label="I can provide documentation (e.g. Shapefile, PDF, etc.)" value="0"></v-radio>
+            <v-radio class="radioBtn" v-if="upldCity" @click="isUpldShapefile = true; isLinkExplain = false" label="I can provide documentation (e.g. Shapefile, PDF, etc.)" value="0"></v-radio>
                 <v-card v-if="isUpldShapefile" flat class="radioResponse">
                     <v-card-text id="dragDrop" v-if="upldCity">
                         <div class="fileContainer">
                             <label id="output">
-                                <input type="file" name="file" @change="dropItem($event)"/>Upload Document
+                                <form id="attachedForm">
+                                    <input type="file" name="attachment" @change="dropItem($event)"/>Upload Document
+                                </form>
+                                
                             </label>
                             <label>&nbsp;&nbsp;&nbsp;{{ fileName }}</label>
+                            <p v-if="upldDocSpinner === true"><v-progress-circular id="upldDocSpin" :value="10" indeterminate></v-progress-circular></p>
+                            <p v-if="isDocUpload !== null" :style="isDocUpload === true ? {'color':'green'} : {'color' : 'red'}">
+                                {{ upldDocStatus }}
+                            </p>
                         </div>
                     </v-card-text>
                 </v-card>
-            <v-radio class="radioBtn" v-if="upldCity" @click="isLinkExplain = true;isUpldShapefile = false"  label="I have a link, or can explain" value="1"></v-radio>
+            <v-radio class="radioBtn" v-if="upldCity" @click="isLinkExplain = true; isUpldShapefile = false;" label="I have a link, or can explain" value="1"></v-radio>
             <v-card v-if="isLinkExplain" flat class="radioResponse" id="explainTxt">
                 <v-textarea outlined label="Please Explain" v-model="commentText">{{ commentText }}</v-textarea>
             </v-card>
         </v-radio-group>
         </div>
-        <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=upldCity=isLinkExplain=false; delReason=null"> 
+        <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=upldCity=isLinkExplain=false; delReason=null; isDocUpload=null;"> 
           <u>Cancel</u>
         </v-btn>
-        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'8.5vw', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'18.5vw', 'border-color':'black', 'width':'6vw'}" tile elevation="0" @click="deleteSecond = upldCity = isLinkExplain = isUpldShapefile = false; deleteConfirm=true; setDeleteFalse(); delReason=null;"> 
+        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'8.5vw', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'18.5vw', 'border-color':'black', 'width':'6vw'}" tile elevation="0" @click="deleteSecond = upldCity = isLinkExplain = isUpldShapefile = false; deleteConfirm=true; setDeleteFalse(); delReason=null; isDocUpload=null;"> 
           <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
         </v-btn>
         <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
@@ -103,11 +110,14 @@ import confirmationAlert from './stepperContent/confirmationAlertsDEL.vue'
 import sketchAlert from '../Map/stepperContent/discardAlert.vue'
 import {stopEditing, removeGraphic, saveToEditsLayer, removeHighlight} from './edit'
 import { gLayer } from '../Map/map'
+import {addAttachment} from '../Map/crud'
+
 export default {
     name: 'editExistingRd',
     components: {confirmationAlert, sketchAlert},
     data (){
       return {
+        radioSelect: false,
         upldCity: false,
         isUpldShapefile: false,
         isLinkExplain: false,
@@ -130,19 +140,34 @@ export default {
                           {value: 2, text: "Federal Road", tooltip: "A public road that is physically located within the boundaries of federal lands (e.g. military reservation, national forest, national park) and owned by a federal agency."},
                           {value: 3, text:"Not a Road", tooltip: "No road present or road was obliterated."}, {value: 4, text: "Other", tooltip: "Please provide an explanation."}],
         cityAnnexResp: '',
-        fileName:''
+        fileName:'',
+        upldDocStatus: '',
+        upldDocSpinner: false
       }
     },
     methods:{
-        dropItem(x){
+        test(x){
             console.log(x)
+            console.log(this.radioBtnSel)
+        },
+        getDeleteReason(){
+            return this.cityAnnexReason.find(x=> x.value === this.delReason)
+        },
+        dropItem(x){
+            //this.delReason = null
+            console.log(x)
+            this.upldDocSpinner = true
             this.fileName = x.target.files[0].name
+            let reason = this.getDeleteReason().text
+            addAttachment(reason)
             this.commentText = ' '
         },
         // radioBtnClick(){
         //     this.radioBtnSel === 0 ? this.upldShapefile = true : this.upldShapefile = false
         // },
         updateComment(){
+            this.radioBtnSel = null
+            this.isDocUpload = null
             if(this.delReason === 0 || this.delReason === 2){
                 //pop up upload city street shapefile
                 this.commentText = ''
@@ -166,7 +191,7 @@ export default {
         },
         setDeleteFalse(){
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
-            let deleteReason = this.cityAnnexReason.find(x=> x.value === this.delReason)
+            let deleteReason = this.getDeleteReason()
             editGraphic.attributes.comment = deleteReason ? `${this.commentText} - ${deleteReason.text}` : editGraphic.attributes.comment
             this.deleteClick = false
             //this.commentText = ''
@@ -256,7 +281,25 @@ export default {
                 }
                 this.delTxt = 'will be delete.'
             },  
-            immediate: true
+            immediate: true 
+        },
+        isDocUpload:{
+            handler: function(){
+                if(this.isDocUpload === null){
+                    return;
+                }
+                else if(this.isDocUpload === true){
+                    this.upldDocSpinner = false
+                    this.upldDocStatus = 'Document Uploaded!'
+                    return;
+                }
+                this.upldDocSpinner = false
+                this.upldDocStatus = 'Issue with uploading! Try again.'
+                return
+       
+                
+            },  
+            immediate: true 
         }
     },
     computed:{
@@ -349,6 +392,15 @@ export default {
             },
             set(x){
                 this.$store.commit('setDfoReturn', x)
+            }
+        },
+        isDocUpload:{
+            get(){
+                console.log(this.$store.state.isDocumentUploaded)
+                return this.$store.state.isDocumentUploaded
+            },
+            set(x){
+                this.$store.commit('setIsDocumentUploaded', x)
             }
         },
     }
@@ -526,5 +578,10 @@ export default {
         padding: 6px 12px;
         cursor: pointer;
         color: black
+    }
+    #upldDocSpin{
+        position: relative;
+        top: 1rem;
+        left: 2rem;
     }
 </style>

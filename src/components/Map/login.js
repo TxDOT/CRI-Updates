@@ -1,7 +1,7 @@
 // import methods and functions into file
 import { countyOfficialInfo, view, txCounties, search, viewPoint, home, featLayer, clientSideGeoJson} from './map'
 import { queryEditsLayer } from './crud'
-import { defineGraphic, geomToMiles, createEpoch } from './helper';
+import { defineGraphic, geomToMiles, createEpoch, getCentroid } from './helper';
 import { cntyNbrNm } from '../../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query";
 import { criConstants } from '../../common/cri_constants';
@@ -201,8 +201,11 @@ export async function goToMap(name, nbr){
     query.where = `CNTY_NM = '${name}'`
     query.outFields = [ "*" ]
     query.returnGeometry = true
+
     let countyQuery = txCounties.queryFeatures(query)
+    
     let returnCountyObj = await countyQuery
+    getCentroid(returnCountyObj.features[0].geometry)
     store.commit('setDistrict', returnCountyObj.features[0].attributes.TXDOT_DIST_NBR)
     //set search sources to selected county
     search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${nbr}`;

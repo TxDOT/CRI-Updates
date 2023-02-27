@@ -1,4 +1,4 @@
-import { editsLayer, advanceLayer } from './map';
+import { editsLayer, advanceLayer, addAttach } from './map';
 import {store} from '../../store'
 import Graphic from "@arcgis/core/Graphic";
 import { criConstants } from '../../common/cri_constants';
@@ -103,5 +103,49 @@ function deleteFeat(editId){
     })
     .then(result=>console.log(`done ${result}`))
     .catch(err => console.log(err))
+}
+
+export function addAttachment(reason){
+    let polyAttach = new Graphic({
+        attributes:{
+            CNTY_NM: store.getters.getCntyName,
+            CNTY_NUM: store.getters.getCntyNmbr,
+            DEL_REASON: reason,
+            SUBMIT_USERNAME: store.getters.getUserName,
+            SUBMIT_DATE: new Date
+        },
+        geometry: {
+            type: "point",
+            longitude: store.getters.getCntyCentroid[0],
+            latitude: store.getters.getCntyCentroid[1]
+        }
+    })
+
+    let options= {
+        globalIdUsed: true,
+        rollbackOnFailureEnabled: true
+    }
+
+    let add = {
+        addFeatures: [polyAttach],
+        options: options
+    }
+    addAttach.applyEdits(add)
+    .then((x) => {
+        console.log(x.addFeatureResults[0].globalId)
+        console.log(x.addFeatureResults[0].objectId)
+        polyAttach.attributes.OBJECTID = x.addFeatureResults[0].objectId
+        
+        addAttach.addAttachment(polyAttach, document.getElementById('attachedForm'))
+            .then((x)=>{
+                console.log(x)
+                store.commit('setIsDocumentUploaded', true)
+            })
+            .catch((x)=>{
+                console.log(x)
+                store.commit('setIsDocumentUploaded', false)
+            })
+    })
+    .catch(()=>store.commit('setIsDocumentUploaded', false))
 
 }

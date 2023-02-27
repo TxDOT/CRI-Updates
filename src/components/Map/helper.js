@@ -290,6 +290,7 @@ export function sendJudgeEmail(step, ccDelName, ccEmailList, jdgeSign, jdgeCntyO
   resp.then(x=> console.log('Webhook fired! Check your email...',x))
 }
 
+//get total mileage
 export function updateTotalMileage(){
   let totalMileage = Number(Math.floor(store.getters.getDeltaDistance *100)/100) + Number(store.getters.getCntyMiles)
   //still need -- get county name object from countyOfficialInfo
@@ -297,4 +298,19 @@ export function updateTotalMileage(){
 }
 
 
+export function getCentroid(cntyPoly){
+  let n = cntyPoly.rings[0].length
+  let xSum = 0
+  let ySum = 0
+  let centroid = []
+  for(let i=0; i < cntyPoly.rings[0].length; i++){
+    xSum += cntyPoly.rings[0][i][0]
+    ySum += cntyPoly.rings[0][i][1]
+  }
 
+  centroid.push(xSum/n)
+  centroid.push(ySum/n)
+  store.commit('setCntyCentroid', centroid)
+  return;
+  
+}

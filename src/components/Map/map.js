@@ -179,6 +179,7 @@ export const featLayer = new FeatureLayer({
     }
   });
 
+//client side querying
 export const clientSideGeoJson = new GeoJSONLayer({
     url: '',
     hasZ: true,
@@ -191,7 +192,9 @@ export const clientSideGeoJson = new GeoJSONLayer({
     }
   });
 
-
+export const addAttach = new FeatureLayer({
+    url: criConstants.deleteDocumentFL
+})
 //all other roadbeds that need to be snappable. i.e Highways
 export const snapLayer = new FeatureLayer({
     url: criConstants.snapLayer,
