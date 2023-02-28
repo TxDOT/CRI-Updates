@@ -32,11 +32,11 @@
         </v-card-text>
         <v-btn tile outlined depressed id="cancelBtn" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false;"><u>Cancel</u></v-btn>
         </v-card>
-    <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style="deleteClick ? {} : {}"> <!-- //&& this.modifyR === false -->
+    <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style = "deleteClick ? {'height' : '11rem'} : {}"> <!-- //&& this.modifyR === false -->
         <v-card-title class="delRdTitle">
             Delete a Road
         </v-card-title>
-        <v-card-text class="textSymb" id="bodyTxt" :style="deleteClick ? {'text-align': 'left', 'top':'45px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
+        <v-card-text class="textSymb" id="bodyTxt" :style="deleteClick ? {'text-align': 'left', 'top':'35px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
             <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> {{ delTxt }}
         </v-card-text>
         <v-alert color="orange" height="35" dense outlined id="infoAlert" v-if="!deleteClick" >
@@ -88,12 +88,13 @@
             </v-card>
         </v-radio-group>
         </div>
-        <v-btn v-if="!deleteClick" depressed text color="#14375A" id="cnclBtn" @click="deleteRoadClick(); deleteSecond=upldCity=isLinkExplain=false; delReason=null; isDocUpload=null;"> 
-          <u>Cancel</u>
+        <v-btn depressed text color="#14375A" @click="deleteClick ? keepDelete() : cancelDelete()" :style="deleteClick ? {'top':'.4rem', 'left':'.5rem', 'border-color':'black', 'width':'5rem'} : {'top':'1.3rem', 'left':'15.5rem', 'border-color':'black', 'width':'5rem', 'text-decoration':'underline'}"> 
+          Cancel
         </v-btn>
-        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'top':'2rem', 'left':'8.5vw', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'18.5vw', 'border-color':'black', 'width':'6vw'}" tile elevation="0" @click="deleteSecond = upldCity = isLinkExplain = isUpldShapefile = false; deleteConfirm=true; setDeleteFalse(); delReason=null; isDocUpload=null;"> 
-          <u :style="deleteClick ? {'text-decoration': 'underline'} :{'text-decoration': 'underline'}">Continue</u>
+        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'bottom':'1.8rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'1rem', 'left':'21.7rem', 'border-color':'black', 'width':'6vw'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : keepDelete()"> 
+          <u>Continue</u>
         </v-btn>
+
         <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
           <u>Discard Edit</u>
         </v-btn>
@@ -146,25 +147,36 @@ export default {
       }
     },
     methods:{
-        test(x){
-            console.log(x)
-            console.log(this.radioBtnSel)
+        restartDeleteSeq(){
+            this.deleteSecond = true
+            this.deleteClick = false;
+        },
+        cancelDelete(){
+            this.deleteRoadClick();
+            this.deleteSecond=this.upldCity=this.isLinkExplain=false;
+            this.delReason=null;
+            this.isDocUpload=null;
+        },
+        keepDelete(){
+            this.deleteSecond =this.upldCity =this.isLinkExplain =this.isUpldShapefile = false;
+            this.deleteConfirm=true;
+            this.setDeleteFalse();
+            this.delReason=null;
+            this.isDocUpload=null;
         },
         getDeleteReason(){
             return this.cityAnnexReason.find(x=> x.value === this.delReason)
         },
         dropItem(x){
+            this.upldDocSpinner = false
+            this.isDocUpload = null
             //this.delReason = null
-            console.log(x)
             this.upldDocSpinner = true
             this.fileName = x.target.files[0].name
             let reason = this.getDeleteReason().text
             addAttachment(reason)
             this.commentText = ' '
         },
-        // radioBtnClick(){
-        //     this.radioBtnSel === 0 ? this.upldShapefile = true : this.upldShapefile = false
-        // },
         updateComment(){
             this.radioBtnSel = null
             this.isDocUpload = null
@@ -190,6 +202,8 @@ export default {
             return;
         },
         setDeleteFalse(){
+            this.radioBtnSel = null
+            this.isDocUpload = null
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
             let deleteReason = this.getDeleteReason()
             editGraphic.attributes.comment = deleteReason ? `${this.commentText} - ${deleteReason.text}` : editGraphic.attributes.comment
@@ -279,7 +293,7 @@ export default {
                     this.delTxt = 'is marked for deletion.'
                     return;
                 }
-                this.delTxt = 'will be delete.'
+                this.delTxt = 'will be deleted.'
             },  
             immediate: true 
         },
@@ -321,7 +335,6 @@ export default {
         },
         roadName:{
             get(){
-                console.log(this.$store.state.roadbedName)
                 return JSON.parse(this.$store.state.roadbedName)
             }
         },
@@ -396,7 +409,6 @@ export default {
         },
         isDocUpload:{
             get(){
-                console.log(this.$store.state.isDocumentUploaded)
                 return this.$store.state.isDocumentUploaded
             },
             set(x){
@@ -456,18 +468,26 @@ export default {
         border-radius: 0px;
         height: 15vh;
     }
+
+    /* @media only screen and (max-width: 500px){
+        #delWarn{
+        left: 9.4rem;
+
+        }
+    } */
     #delWarn{
-        position: absolute;
+        position: fixed;
         display: flex;
         flex-direction: column;
-        min-height: 0vh;
-        max-height: 40rem;
+        min-height: 0rem;
+        max-height: 34rem;
         top:5rem;
         left: 13.4rem;
-        width: 25.3vw;
+        width: 30.4rem;
         color: #204E70;
         border-radius: 0px;
-    }
+        }
+    
     .surfaceTitle{
         background-color: #14375A;
         color: white;
@@ -488,7 +508,7 @@ export default {
         flex-wrap: wrap;
     }
     #infoAlert{
-        width: 23.4vw;
+        width: 28rem;
         left: .8vw; 
         text-align: left; 
         font-size: 1.23vh; 
@@ -545,8 +565,9 @@ export default {
         width: 5vw;
     }
     #discardBtn{
-        left: 14.5vw;
-        bottom:.2rem;
+        position: relative;
+        left: 19rem;
+        bottom:4rem;
         width: 10rem;
     }
     .rdDelSelc{

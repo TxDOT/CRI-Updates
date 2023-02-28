@@ -178,7 +178,6 @@
         this.removeBtnFocus();
       },
       openPage(event){
-        console.log(event)
         if(event === 'Access Sandbox Environment'){
           window.open('https://txdot.github.io/CRI-Updates/login')
         }
@@ -212,7 +211,6 @@
       isUserCertify:{
         handler: function(){
           this.isCert = this.isUserCertify
-          console.log(this.isCert)
         },
         immediate: true
       },

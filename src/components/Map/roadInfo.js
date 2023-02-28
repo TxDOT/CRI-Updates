@@ -32,7 +32,6 @@ export async function getGraphic(){
     let getGraphPromise = new Promise(function(resp){
       view.on("click", function(event){
         let option = {include: [clientSideGeoJson, gLayer]}
-        console.log(sketch.state)
         // if (sketch.state === "active") {
         //   console.log('return?')
         //   return;

@@ -14,7 +14,6 @@ export async function queryEditsLayer(){
 //setup function that receives edited graphic and checks to see if currently has been edited
 //if not already in editsLayer then it will be added; else it will be updated
 export function initGraphicCheck(editId, isRemove){
-    console.log(editId)
     let returnQuery = queryEditsLayer();
     //create and map to new graphic available assets about road
     let lineObj = new Graphic({
@@ -97,7 +96,6 @@ function updateFeat(editId){
 
 //remove existing items from editsLayer
 function deleteFeat(editId){
-    console.log(editId)
     editsLayer.applyEdits({
         deleteFeatures: [editId]
     })
@@ -132,17 +130,13 @@ export function addAttachment(reason){
     }
     addAttach.applyEdits(add)
     .then((x) => {
-        console.log(x.addFeatureResults[0].globalId)
-        console.log(x.addFeatureResults[0].objectId)
         polyAttach.attributes.OBJECTID = x.addFeatureResults[0].objectId
         
         addAttach.addAttachment(polyAttach, document.getElementById('attachedForm'))
-            .then((x)=>{
-                console.log(x)
+            .then(()=>{
                 store.commit('setIsDocumentUploaded', true)
             })
-            .catch((x)=>{
-                console.log(x)
+            .catch(()=>{
                 store.commit('setIsDocumentUploaded', false)
             })
     })
