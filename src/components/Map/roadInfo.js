@@ -1,5 +1,5 @@
 // import methods and functions into file
-import {sketchPoint, view, gLayer, search, clientSideGeoJson, sketch, rdbdAssetPt, rdbdAssetLine } from './map' 
+import {sketchPoint, view, gLayer, search, clientSideGeoJson, rdbdAssetPt, rdbdAssetLine } from './map' 
 import { criConstants } from '../../common/cri_constants';
 import { highLightFeat, queryFeatureTables, queryFeat,setDataToStore} from './helper'; //setDataToStore
 import { store } from '../../store'
