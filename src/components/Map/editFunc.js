@@ -390,10 +390,10 @@ async function hideEditedRoads(graphicL, update){
         //
       }
       else{
-        objectidList.push(x.attributes.objectid)
+        objectidList.push(x.attributes.gid) // changed from object to gid
       }
     })
-    objectidList.length === 0 ? featLayer.definitionExpression = `CNTY_TYPE_NM = '${store.getters.getCntyName}'` : featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
+    objectidList.length === 0 ? featLayer.definitionExpression = `CNTY_TYPE_NM = '${store.getters.getCntyName}'` : featLayer.definitionExpression = `RDBD_GMTRY_LN_ID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'` //changed from OBJECT ID to RDBD_GMTRY_LN_ID 
     return;
   }
   
@@ -401,7 +401,7 @@ async function hideEditedRoads(graphicL, update){
   
   for(let id in items){
     if(items[id].attributes !== null){
-      let objectid = items[id].attributes.objectid || items[id].attributes.OBJECTID
+      let objectid = items[id].attributes.gid || items[id].attributes.GID //changed from object to gid
       objectidList.push(objectid)
     }
   }
@@ -413,7 +413,7 @@ async function hideEditedRoads(graphicL, update){
   //   }
   // }
  // editsLayer.definitionExpression = `OBJECTID not in (${objectidEdits}) and CNTY_TYPE_NBR = '${store.getters.getCntyNmbr}'`
-  featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
+  featLayer.definitionExpression = `RDBD_GMTRY_LN_ID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'` //changed from object to RDBD_GMTRY_LN_ID
 }
 //updateLength() gets new length of selected graphic and sends new length to store
 export function updateLength(){
@@ -1274,12 +1274,12 @@ export async function goToMap(name, nbr){
     let objectidList = [];
       for(let id in road.features){
         if(road.features[id].attributes !== null){
-          let objectid = road.features[id].attributes.objectid || road.features[id].attributes.OBJECTID
+          let objectid = road.features[id].attributes.gid || road.features[id].attributes.GID //changed from OBJECTID to RDBD_GMTRY_LN_ID
           objectidList.push(objectid)
         }
       }
       // need to adjust objectid to asset id
-      featLayer.definitionExpression = objectidList.length ? `OBJECTID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'`
+      featLayer.definitionExpression = objectidList.length ? `RDBD_GMTRY_LN_ID not in (${objectidList}) and CNTY_TYPE_NM = '${name}'`: `CNTY_TYPE_NM = '${name}'` //changed from OBJECTID to RDBD_GMTRY_LN_ID
       txCounties.definitionExpression=`CNTY_NM='${name}'`
         
       const query = new Query();
