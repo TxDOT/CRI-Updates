@@ -109,9 +109,11 @@ export async function countyInfo(){
     let regExUrl = /\/(?:.(?!\/))+$/
     //let crInfo = queryUrl.split('http://localhost:8080/')[1]
     let crInfo = queryUrl.match(regExUrl)[0].split('/')[1]
+    console.log(crInfo)
     if(crInfo === 'login#'){return router.push('/load')}
     for (let j=0; j < cntyNbrNm.length; j++){
       if(cntyNbrNm[j][crInfo]){
+        console.log(cntyNbrNm[j][crInfo])
         let whereStatement = `CNTY_NBR = '${crInfo}'`
         // roadInfo.getcntyNmbr = crInfo
         store.commit('setCntyNmbr', crInfo)
@@ -135,7 +137,7 @@ export async function countyInfo(){
           //need to set a buffer on mapview zoom level
           home.viewpoint = viewPoint;
         });
-
+        console.log(newQuery)
         res({response:true, nbr:parseInt(crInfo), query:newQuery, extent: returnGeom})
       }
       else{
@@ -1286,8 +1288,10 @@ export async function goToMap(name, nbr){
       query.where = `CNTY_NM = '${name}'`
       query.outFields = [ "*" ]
       query.returnGeometry = true
+      console.log(query)
       let countyQuery = txCounties.queryFeatures(query)
       let returnCountyObj = await countyQuery
+      console.log(returnCountyObj)
       //set search sources to selected county
       search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${nbr}`;
       // zoom to selected county geometry      

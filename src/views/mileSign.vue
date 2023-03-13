@@ -231,11 +231,12 @@ export default {
           this.certify = false;
           let readCntyInfo = await countyInfo()
           let getCntyInfoQuery = await readCntyInfo['query']
-          this.judgeName = getCntyInfoQuery.features[0].attributes['Judge_Name']
-          this.judgeEmail = getCntyInfoQuery.features[0].attributes['Judge_Email']
+          console.log(getCntyInfoQuery)
+          this.judgeName = getCntyInfoQuery.features[0].attributes['JUDGE_NM']
+          this.judgeEmail = getCntyInfoQuery.features[0].attributes['JUDGE_EML']
           this.countyNbr = getCntyInfoQuery.features[0].attributes['County_NBR']
-          this.currentMiles = getCntyInfoQuery.features[0].attributes['Total_Mileage']
-          this.county = getCntyInfoQuery.features[0].attributes['County_Name']
+          this.currentMiles = getCntyInfoQuery.features[0].attributes['TOT_MLGE']
+          this.county = getCntyInfoQuery.features[0].attributes['CNTY_NM']
           this.sendData = parseInt(this.currentMiles)
           localStorage.setItem('county',JSON.stringify([this.county,this.countyNbr,this.currentMiles]))
           this.sendCountyName();
