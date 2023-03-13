@@ -234,7 +234,7 @@ export default {
           console.log(getCntyInfoQuery)
           this.judgeName = getCntyInfoQuery.features[0].attributes['JUDGE_NM']
           this.judgeEmail = getCntyInfoQuery.features[0].attributes['JUDGE_EML']
-          this.countyNbr = getCntyInfoQuery.features[0].attributes['County_NBR']
+          this.countyNbr = getCntyInfoQuery.features[0].attributes['CNTY_NBR']
           this.currentMiles = getCntyInfoQuery.features[0].attributes['TOT_MLGE']
           this.county = getCntyInfoQuery.features[0].attributes['CNTY_NM']
           this.sendData = parseInt(this.currentMiles)
