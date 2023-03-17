@@ -222,7 +222,7 @@ export default {
     }
     #acceptCard{
         position: fixed;
-        top: 10rem;
+        top: 5rem;
         width: 30rem;
         display: flex;
         flex-direction: column;

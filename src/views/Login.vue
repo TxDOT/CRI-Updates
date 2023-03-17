@@ -97,12 +97,32 @@ export default {
       // this.statusMessageTrue =`As of today, ${todayDate.toDateString().substring(4,15)}, ${this.countyName} County mileage has been certified`
     },
     methods:{
+      async getCountyJudge(cntyNum){
+        let whereStatement = `CNTY_NBR = '${cntyNum}'`
+        const query = new Query();
+        query.where = whereStatement
+        query.outFields = [ "*" ]
+        
+        let queryResult = await countyOfficialInfo.queryFeatures(query)
+        console.log(queryResult)
+        this.countyNumber = cntyNum
+        this.judgeCntyOid = queryResult.features[0].attributes['OBJECTID_1']
+        this.judgeNameSend = queryResult.features[0].attributes['JUDGE_NM']
+        this.judgeEmailSend = queryResult.features[0].attributes['JUDGE_EML']
+
+        return queryResult.features[0].attributes['TOT_MLGE']
+      },      
+
+      checkLocalStorage(){
+        let cntyNum = JSON.parse(localStorage.getItem('county'))
+        this.getCountyJudge(cntyNum)
+        return cntyNum
+      },
       logMeIn(){
         esriId.getCredential(this.auth.portalUrl + "/sharing")
         console.log('logging in')
         
       },
-
       async loadMap(name, nbr){
         await goToMap(name, nbr)
         this.$router.push('/map')
@@ -121,7 +141,7 @@ export default {
             this.$router.push('/load')
             isTrainingAccess(portal.user.fetchGroups())
             this.userName = portal.user.username 
-            let countyInfo = localStorage.getItem('county') ? JSON.parse(localStorage.getItem('county')) : await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed.
+            let countyInfo = localStorage.getItem('county') ? this.checkLocalStorage() : await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed.
             if(!countyInfo){return;}
             let cntyNumber = countyInfo[1]
             let cntyName = countyInfo[0]
@@ -142,18 +162,9 @@ export default {
           }
         })
         if(getCountyNbr){
-          let whereStatement = `CNTY_NBR = '${getCountyNbr}'`
-          const query = new Query();
-          query.where = whereStatement
-          query.outFields = [ "*" ]
-          let queryResult = await countyOfficialInfo.queryFeatures(query)
-          console.log(queryResult)
-          this.countyNumber = getCountyNbr
-          this.judgeCntyOid = queryResult.features[0].attributes['OBJECTID_1']
-          this.judgeNameSend = queryResult.features[0].attributes['JUDGE_NM']
-          this.judgeEmailSend = queryResult.features[0].attributes['JUDGE_EML']
-          localStorage.setItem('county',JSON.stringify([county,getCountyNbr,queryResult.features[0].attributes['TOT_MLGE']]))
-          return [county, Number(getCountyNbr), queryResult.features[0].attributes['TOT_MLGE']]
+          let totalMileage = this.getCountyJudge(getCountyNbr)
+          localStorage.setItem('county',JSON.stringify([county,getCountyNbr, totalMileage]))
+          return [county, Number(getCountyNbr), totalMileage]
         }
         else{
           this.$router.push({ name: 'PickCounty'})
