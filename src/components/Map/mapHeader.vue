@@ -1,4 +1,4 @@
-<!-- map header -->
+<!-- map header -->ubmitCertifyCd
 <template>
     <div class="mapHeader flex" >
         <v-app-bar app color="#14375A" class="white--text" id="headerPos" clipped-left>
@@ -6,7 +6,7 @@
                 <p>TxDOT County Road Inventory Map</p>
             </v-app-bar-title>
                 <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" id="saveExitBtn"><u>Save & Exit</u></v-btn>
-                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitCertify=true; submit('submit')"><u>Submit & Certify</u></v-btn>
+                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitStepOne();"><u>Submit & Certify</u></v-btn>
         </v-app-bar>
 
         <div class="text-center">
@@ -18,7 +18,25 @@
             v-model="submitCertify"
             max-width="400"
             persistent>
-            <v-card v-model="submitCertify" height="355" id="submitCertifyCd">
+            <v-card v-if="cancelSubmit" height="300" class="submitCertifyCd">
+                <v-card-title class="surfaceTitle"><v-icon color="white" id="checkBox">mdi-email-send-outline</v-icon><p id="submitCertifyCdTitle">Submit and Certify</p></v-card-title>
+                    <v-card-text class="textSymb" id="submitCertifyCdText">
+                    <p>
+                        Click Submit to send your updates to {{ this.judgeNameSend }} for certification.
+                    </p>
+                    </v-card-text>
+                    <v-btn depressed tile @click="cancelSubmit = false; submitCertify = false" id="btnCloseCancelStep" text color="#14375A">
+                        Close
+                    </v-btn>
+                    <v-btn outlined tile @click="cancelSubmit = false; submitCertifySuccess = true; submit('submit')" color="#14375A" id="btnNextStep">
+                        <u>Submit</u>
+                    </v-btn>
+                    <v-alert id="cancelSubmitAlert" color="rgba(255,153,102,.4)">
+                            <b>Note:</b> Edits in the app are still allowed up until August 31. However, any edits made after the judge has certified will need
+                                         to be certified again by the judge in order for TxDOT to accept them.
+                    </v-alert>
+            </v-card>
+            <v-card v-if="submitCertifySuccess" height="355" class="submitCertifyCd">
                 <v-card-title class="surfaceTitle"><v-icon color="green" id="checkBox">mdi-check</v-icon><p id="submitCertifyCdTitle">Submit and Certify</p></v-card-title>
                     <v-card-text class="textSymb" id="submitCertifyCdText">
                     <p>
@@ -52,9 +70,15 @@ export default {
         submitCertify:false,
         previousTotal: 0,
         snackbar: false,
+        cancelSubmit: false,
+        submitCertifySuccess: false
       }
     },
     methods:{
+        submitStepOne(){
+            this.submitCertify = true
+            this.cancelSubmit = true
+        },
         cancelEditing(){
             stopEditing()
         },
@@ -159,7 +183,7 @@ export default {
     bottom: .1rem; 
     position: relative;
 }
-#submitCertifyCd{
+.submitCertifyCd{
     border-radius:0%; 
     overflow-y: hidden; 
     overflow-x: hidden;
@@ -170,12 +194,12 @@ export default {
     right: .5rem;
 } 
 #submitCertifyCdText{
-    top: 1rem; 
+    top: 2rem; 
     position: relative; 
-    right: .5rem;
+    right: .3rem;
 }
 #btnClose{
-    left: 9rem; 
+    left: 8.5rem; 
     top: 0rem; 
     border: 1px solid black
 }
@@ -183,5 +207,24 @@ export default {
     position: relative;
     bottom: 1.2rem;
     right: 1rem;
+}
+#btnCloseCancelStep{
+    position: relative;
+    top: 2rem;
+    left: 6rem;
+}
+#btnNextStep{
+    position: relative;
+    top: 2rem;
+    left: 6rem;
+}
+#cancelSubmitAlert{
+    position: relative;
+    top: 3.3rem;
+    left: 1.1rem;
+    font-size: .7rem;
+    text-align: left;
+    width: 91.2%;
+    border-radius: 0%;
 }
 </style>

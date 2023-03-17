@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <v-container tile>
     <v-card tile id="acceptCard" v-if="test1">
         <v-card-title class="cardTitle"><v-icon color="white" id="certIcon">mdi-certificate</v-icon><p id="certTitle">Mileage Certification</p></v-card-title>
         <v-card-text class="textSymb" id="countyMileTxt">Sign below to certify your county's mileage.</v-card-text>
@@ -15,7 +15,7 @@
         </v-row>
        <v-row v-for="(i, index) in ccEmail" :key="index">
             <v-col cols="12" md="5" id="emailCC">
-                <v-text-field dense :rules="ccEmailRules" outlined label="CC Email" v-model="i.EmailAdd"></v-text-field>
+                <v-text-field dense :rules="ccEmailRules" outlined label="CC Email" type="email" v-model="i.EmailAdd" @input="i.EmailAdd = i.EmailAdd.toLowerCase()"></v-text-field>
             </v-col>
             <v-col><v-icon @click="deleteEmail(index)" id="trashIcon">mdi-delete</v-icon></v-col>
         </v-row>
@@ -24,16 +24,27 @@
 
         <p id="signature">Signature: {{signature}}</p>
 
-        <v-text-field class="signatureBox" :rules="sigRules" v-model="signature" outlined placeholder="Gimme your John Hancock" :v-if="toggleSubTxt()"></v-text-field>
+        <v-text-field class="signatureBox" :rules="sigRules" v-model="signature" outlined placeholder="Please Sign Here" :v-if="toggleSubTxt()"></v-text-field>
     
         
         <div v-if="hideSubText">
             <p id="signNote" v-html="signatureNote"></p>
-            <v-checkbox v-model="isCountyJudge" label="I am the county judge listed above." class="acceptCheckbox"></v-checkbox>
+            <v-checkbox v-model="isCountyJudge" class="acceptCheckbox">
+                <template v-slot:label>
+                    <p id="acceptCheckbox">I am the county judge listed above.</p>
+                </template>
+            </v-checkbox>
         </div>
 
         <v-btn text color="#204E70" id="cancelBtn" @click="returnToLetter()">Cancel</v-btn>
         <v-btn tile outlined color="#204E70" id="acceptBtn" :disabled="hideSubText === false || isCountyJudge === false" @click="submit('certify'); test1=false; test2=true;">Accept</v-btn>
+        
+        <div v-if="hideSubText">
+            <v-alert id="mileageAlert" color="rgba(255,153,102,.4)" dense>
+                <b>Note:</b><br>Any subsequent edits made in the CRI Map up until August 31 will need to be recertified.
+            </v-alert>
+        </div>
+
     </v-card>
     <v-dialog v-model="test2" max-width="600px" persistent>
         <v-card>
@@ -66,8 +77,7 @@ export default {
             sigRules: [x => !!x || 'Signature is required',
             x => (x && x.length >= 5) || 'Name must be greater than 5 characters'],
             signature: '',
-            signatureNote: `By clicking submit, you are certifying the mileage for your county and completing the process for ${new Date().getFullYear()}.
-                            <br><br> <b>Note</b>: any subsequent edits made in the CRI Map up until August 31 will need to be recertified.`,
+            signatureNote: `By clicking submit, you are certifying the mileage for your county and completing the process for ${new Date().getFullYear()}.`,
             hideSubText: false,
             isCountyJudge: false,
         }
@@ -192,7 +202,7 @@ export default {
         bottom: 2rem;
         font-size: .7rem;
         padding-right: 2.5rem;
-        color:#CC5500;
+        color:Black;
     }
     #cancelBtn{
         position: relative;
@@ -211,14 +221,16 @@ export default {
         text-decoration: underline;
     }
     #acceptCard{
-        position: relative;
+        position: fixed;
+        top: 10rem;
+        width: 30rem;
         display: flex;
         flex-direction: column;
         min-height: 0rem;
         max-height: 90vh;
         overflow-x: hidden;
         overflow-y: auto;
-        border-radius: 0%;
+        border-radius: 0% !important;
     }
     .container{
         padding: 0% !important;
@@ -227,8 +239,15 @@ export default {
         position: relative;
         bottom: 1rem;
         left: 1.3rem;
-        color: black;
+        color: black !important;
     }
+    #acceptCheckbox{
+        position: relative;
+        top: .5rem;
+        left: .1rem;
+        font-size: .8rem;
+        color: black !important;
+    } 
     #countyMileTxt{
         padding-top: 1rem;
     }
@@ -236,5 +255,15 @@ export default {
         position: relative;
         bottom: 3rem;
         width: 20rem;
+    }
+    #mileageAlert{
+        font-size: .7rem;
+        text-align: left;
+        position: relative;
+        top: .5rem;
+        width: 88%;
+        border-radius: 0%;
+        left: 1.6rem;
+        
     }
 </style>

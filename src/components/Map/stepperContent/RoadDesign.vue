@@ -118,7 +118,7 @@ export default {
         isAssetStartDisable: false,
         assetTypeOpt: [{
           types:[{text: 'One Way'},
-                 {text: 'Two-way'},
+                 {text: 'Two Way'},
                  {text: 'Boulevard'}]
         }],
         emptyValues:[v => !!v || 'Road Design is required'],

@@ -88,10 +88,10 @@
             </v-card>
         </v-radio-group>
         </div>
-        <v-btn depressed text color="#14375A" @click="deleteClick ? keepDelete() : cancelDelete()" :style="deleteClick ? {'top':'.4rem', 'left':'.5rem', 'border-color':'black', 'width':'5rem'} : {'top':'1.3rem', 'left':'15.5rem', 'border-color':'black', 'width':'5rem', 'text-decoration':'underline'}"> 
+        <v-btn depressed text color="#14375A" @click="deleteClick ? keepDelete() : cancelDelete()" :style="deleteClick ? {'top':'.2rem', 'left':'.5rem', 'border-color':'black', 'width':'5rem'} : {'bottom':'.92rem', 'left':'55.5%', 'border-color':'black', 'width':'5rem', 'text-decoration':'underline'}"> 
           Cancel
         </v-btn>
-        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'bottom':'1.8rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'1rem', 'left':'21.7rem', 'border-color':'black', 'width':'6vw'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : keepDelete()"> 
+        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'bottom':'1rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'1rem', 'left':'76%', 'border-color':'black'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : keepDelete()" class="continueBtn"> 
           <u>Continue</u>
         </v-btn>
 
@@ -508,10 +508,10 @@ export default {
         flex-wrap: wrap;
     }
     #infoAlert{
-        width: 28rem;
-        left: .8vw; 
+        width: 91%;
+        left: 3.6%; 
         text-align: left; 
-        font-size: 1.23vh; 
+        font-size: 84%; 
         border-radius: 0px;
     }
     #icon{
@@ -567,14 +567,14 @@ export default {
     #discardBtn{
         position: relative;
         left: 19rem;
-        bottom:4rem;
+        bottom:2rem;
         width: 10rem;
     }
     .rdDelSelc{
         position: inherit;
         padding-top: .5rem;
-        padding-right: 1.8vw;
-        padding-left : 1.5vw;
+        padding-right: 7.3%;
+        padding-left : 5.8%;
         height: 3rem;
     }
     .radioResponse{
@@ -604,5 +604,10 @@ export default {
         position: relative;
         top: 1rem;
         left: 2rem;
+    }
+    .continueBtn{
+        position: absolute;
+        padding-left: 1% !important;
+        padding-right: 1% !important;
     }
 </style>

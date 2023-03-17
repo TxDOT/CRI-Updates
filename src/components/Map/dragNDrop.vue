@@ -15,7 +15,9 @@
             <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
             <v-btn @click="dragDropClick = false" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
         </v-card>
-        <v-alert id="fmeResp" color="#cc7b29" tile v-if="serverResponse" style="color:white">{{serverCheck}}</v-alert><!-- update -->
+        <v-alert id="fmeResp" color="#cc7b29" tile v-if="serverResponse" style="color:white">{{serverCheck}}
+            <v-progress-circular id="processIcon" indeterminate size="22"></v-progress-circular>
+        </v-alert><!-- update -->
     </v-container>
 
     
@@ -31,7 +33,7 @@ export default {
         return{
             display: true,
             attrConv: false, 
-            serverCheck: 'Additional Checks and Processing Upload',//update
+            serverCheck: 'Processing upload and performing additional checks.',//update
             uploadText: 'Drop Shapefiles Here',
             fmeProcess: 'Cannot Upload while Process is Running'
         }
@@ -54,7 +56,6 @@ export default {
             event.preventDefault();
         },
         dropItem(event){
-            console.log(event)
             retrieveFile(event)
         }
     },
@@ -92,7 +93,7 @@ export default {
     #fmeResp{
         position: fixed;
         top: 3.7rem;
-        left: 75vh;
+        left: 65vh;
         width: 52vh;
         
     }
@@ -108,7 +109,7 @@ export default {
     }
     #text{
         position: absolute;
-        top: 7rem;
+        top: 5rem;
         z-index: 0;
     }
     #btnClose{
@@ -159,5 +160,9 @@ export default {
         left: 40%;
         top: 35%;
         height: 20rem;
+    }
+    #processIcon{
+        position: relative;
+        left: 1rem;
     }
 </style>

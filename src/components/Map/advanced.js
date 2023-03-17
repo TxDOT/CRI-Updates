@@ -270,8 +270,9 @@ function uploadFail(message){
         li.style.textAlign= 'left'
         bulletList.appendChild(li)
     })
+    document.getElementById('text').style.bottom = '3rem'
     document.getElementById('text').style.color = 'red'
-    document.getElementById('text').style.left = '1rem'
+    document.getElementById('text').style.left = '.5rem'
 }
 
 // successful upload message
@@ -293,7 +294,6 @@ async function uploadPass(message, upldData){
 // initial QA/QC check for file upload
 async function processUpload(upload){
     //populate store with array with upload attribute values.
-    console.log(upload.data.featureCollection)
     let uploadSchemaCheck = await uploadChecks(upload.data.featureCollection.layers[0], criConstants.txdotSchema)
     store.commit('setIsMapAttr', true)
     //submitListAttr(upload.data.featureCollection.layers[0])
@@ -322,7 +322,7 @@ async function uploadValueCheck(feat, validali){
     let validArr = validali
     let valueCheckPromise = new Promise((res)=>{
         let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Modify or Delete. Re-submit"
-        let lengthMessage = "Empty or Null fields have been detected.\nPlease revise and re-submit"
+        let lengthMessage = "Empty or Null fields have been detected.\nReview required fields [EDIT_TYPE, SURFACE, LANE, DESIGN, ROAD_TYPE, ROAD_NM] have a value and re-submit"
         let isCheckLength = [];
         let editTypeMsg = [];
         for(let i=0; i < feat.featureSet.features.length; i++){
@@ -344,7 +344,6 @@ async function uploadValueCheck(feat, validali){
             })
             
         }
-        console.log(isCheckLength)
         isCheckLength.length ? validArr.push({valueFail: true, message: lengthMessage}) : ''
         editTypeMsg.length ? validArr.push({valueFail: true, message: editTypeMessage}) : ''
         res(validArr)

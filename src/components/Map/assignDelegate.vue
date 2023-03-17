@@ -5,7 +5,7 @@
         
         <v-row v-for="(i,item) in emailCounter" :key="item">
             <v-col cols="12" md="4" id="txtFieldName"><v-text-field dense required outlined label="Delegate Name" v-model="i.delUserName"></v-text-field></v-col>
-            <v-col cols="12" md="8" id="txtFieldEmail"><v-text-field dense :rules="emailRules" label="Delegate email address" v-model="i.delEmail" required outlined style="width:60%; left:20%"></v-text-field></v-col>
+            <v-col cols="12" md="8" id="txtFieldEmail"><v-text-field type="email" dense :rules="emailRules" label="Delegate email address" v-model="i.delEmail" required outlined style="width:60%; left:20%;" @input="i.delEmail = i.delEmail.toLowerCase()"></v-text-field></v-col>
             <v-col id="trashIcon"><v-icon color="red" @click="deleteEmail(item)" :disabled="emailCounter.length === 1">mdi-delete</v-icon></v-col>
         </v-row>
         
@@ -30,18 +30,21 @@ export default {
             emailCounter: [{"counter": 0, "delEmail": "", "delUserName":""}],
             emailRules: [
               v => !!v || 'E-mail is required',
-              v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+              v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
             ],
         }
     },
     mounted(){
-        this.delTxt = `<p align="justify">Use this form to assign delegates to make edits to the ${this.countyNm} County Road Inventory.</p>
-                       <p align="justify">Delegates will receive an email stating that you, ${this.countyJudgeNm}, have granted them authority
+        this.delTxt = `<p align="justify">Use this form to assign delegates to make edits to the ${this.county} County Road Inventory.</p>
+                       <p align="justify">Delegates will receive an email stating that you, ${this.judgeNameSend}, have granted them authority
                         to make edits to the County Road Inventory on your behalf. Delegating others to assist with review and edits
                         does not preclude you from making edits yourself. Furthermore, as county judge, you will have to certify changes
                         made by your delegate(s) upon their completion and submittal of edits.`
     },
     methods:{
+        testFile(event){
+            console.log(event)
+        },
         addEmail(){
             let count= this.counter++
             this.emailCounter.push({
@@ -82,6 +85,22 @@ export default {
                 this.$store.commit('setIsJudgeLetter', bool)
             }
         },
+        judgeNameSend:{
+            get(){
+                return this.$store.state.judgeName
+            },
+            set(name){
+                this.$store.commit('setJudgeName', name)
+            }
+        },
+        county:{
+            get(){
+                return this.$store.state.cntyName
+            },
+            set(name){
+                this.$store.commit('setCntyName', name)
+            }
+        },
     }
 }
 </script>
@@ -108,40 +127,44 @@ export default {
     position: absolute;
     left: 1rem;
 }
-#txtFieldEmail{
+#txtFieldEmail {
     position: relative;
     /* width: 3rem; */
-    left: 15rem;
+    left: 11rem;
 }
 #addDelegate{
     position: relative;
-    right: 14.6rem;
+    right: 10.6rem;
 }
 #trashIcon{
     position: relative;
     top: .4rem;
-    left: 4rem;
+    left: 1.5rem;
 }
 #assignDelCard{
     position: relative;
     min-height: 0vh;
     max-height: 40rem;
+    width: 35rem;
     flex-direction: column;
     display: flex;
     overflow-x: hidden;
     overflow-y: auto;
+    border-radius: 0%;
 
 }
 #cancelBtn{
     position: relative;
     width: 2rem;
-    left: 33rem;
+    left: 23rem;
     top: 1.3rem;
 }
 #acceptBtn{
     position: relative;
     width: 2rem;
-    left: 38rem;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
+    left: 28.3rem;
     bottom: 1rem;
 }
 </style>

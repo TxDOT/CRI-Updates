@@ -488,6 +488,10 @@ export const store = new Vuex.Store({
             state.userEmail = usrEmail
         },
         setDeltaDis(state, newLen){
+            if(newLen[1] === 'Reset'){
+                    state.deltaDistance -= state.deltaDistance
+                    return;
+            }
             if(newLen[1] === "Add"){
                 state.deltaDistance += newLen[0]
                 return;

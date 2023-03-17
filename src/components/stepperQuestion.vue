@@ -387,6 +387,7 @@ export default {
         this.getDfoBool = false;
         removeHighlight()
         this.comment = ""
+        this.closeSelectRoad = false
       },
       saveAttri(){
         let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
@@ -598,6 +599,14 @@ export default {
         },
         set(len){
           this.$store.commit('setDeltaDis', len)
+        }
+      },
+      closeSelectRoad:{
+        get(){
+          return this.$store.state.denyFeatClick
+        },
+        set(bool){
+          this.$store.commit('setdenyFeatClick', bool)
         }
       }
     }

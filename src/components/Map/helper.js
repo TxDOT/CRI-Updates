@@ -115,7 +115,6 @@ export async function queryFeatureTables(tblqry){
 //creating roadbed graphic and setting attributes to graphics layer (gLayer)
 //called in modifyRoadbed function
 export async function defineGraphic(graphics, clickType, editType){
-
     let exist = graphics.features ? gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.features[0].attributes.OBJECTID) : gLayer.graphics.items.filter(x => x.attributes.objectid === graphics.attributes.OBJECTID)
     if(exist.length){
       return;

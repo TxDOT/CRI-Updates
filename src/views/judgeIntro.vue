@@ -12,7 +12,7 @@
                 <v-card-text v-html="subTxt" class="letterTxt" id="subTxt"></v-card-text>
             </v-card>
         </v-dialog >
-        <v-dialog width="700" v-model="assignDel" persistent>
+        <v-dialog width="560" v-model="assignDel" persistent>
             <AssignDelegate />
         </v-dialog>
         <v-dialog width="490" v-model="accptCertify" persistent>
@@ -49,9 +49,9 @@ export default{
         let readCntyInfo = await countyInfo()
         let getCntyInfoQuery = await readCntyInfo['query']
         this.judgeName = getCntyInfoQuery.features[0].attributes['JUDGE_NM']
-        this.judgeNameSend = getCntyInfoQuery.features[0].attributes['JUDGE_NM']
-        this.judgeEmail = getCntyInfoQuery.features[0].attributes['JUDGE_EML']
-        this.judgeEmailSend = getCntyInfoQuery.features[0].attributes['JUDGE_EML']
+        this.judgeNameSend = this.judgeName
+        this.judgeEmail = getCntyInfoQuery.features[0].attributes['JUDGE_EML'].toLowerCase()
+        this.judgeEmailSend = this.judgeEmail
         this.countyNbr = getCntyInfoQuery.features[0].attributes['CNTY_NBR']
         this.currentMiles = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE'] ? getCntyInfoQuery.features[0].attributes['UPDATED_MLGE'] : getCntyInfoQuery.features[0].attributes['TOT_MLGE']
         let updatedMileage = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE']
@@ -74,7 +74,7 @@ export default{
           Michael Chamberlain<br>  
           Transportation Planning and Programming Division<br>  
           Director of Data Management<br>  
-          TPP-GIS@txdot.gov<br>  
+          TPP-CRI@txdot.gov<br>  
           (512) 851-9039<br><br></p>`
           this.subTxt = `<br><p align="justify">If you would like to review your inventory using the Review & Edit button above, but have not yet created an account for yourself, you can <a href='https://www.txdot.gov/data-maps/roadway-inventory/cri-form.html' target='_blank'><u>register here</u></a>.</p>
                          <p align="justify">TxDOT reports county road mileage to the Texas State Comptroller and Department of Motor Vehicles. That data is used to calculate funds to be distributed to each county. 
@@ -86,11 +86,11 @@ export default{
            },
         updateMileage(curr, upd){
             if(upd){
-                let delta = curr - upd
-                this.mileageTxt = upd > curr ? `Edits were made in the CRI Map for a net change in total mileage of +${Math.abs(delta).toFixed(2)} miles.` : `Edits were made in the CRI Map for a net change in total mileage of -${Math.abs(delta).toFixed(2)} miles.`
+                console.log(curr,upd)
+                let delta = curr - upd    
+                this.mileageTxt = Number(Math.abs(delta).toFixed(2)) === 0.00 ? `Edits were made in the CRI Map for a net change in total mileage of 0.00 miles.` : upd > curr ? `Edits were made in the CRI Map for a net change in total mileage of +${Math.abs(delta).toFixed(2)} miles.`:`Edits were made in the CRI Map for a net change in total mileage of -${Math.abs(delta).toFixed(2)} miles.`
                 return
             }
-            
             this.mileageTxt = 'No edits have been made.'
 
         }
@@ -166,7 +166,7 @@ export default{
     width: 70rem;
     overflow-y: auto !important;
     min-height: 0vh;
-    max-height: 100vh;
+    max-height: 90vh;
 }
 .buttonColor{
     color: white;

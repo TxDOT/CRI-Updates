@@ -57,7 +57,7 @@ export const criConstants = {
       'Gravel': "#E700FF",
       'Concrete': "#47BF40",
       'One Way': "#FFBF00",
-      'Two-way': "#00FFBF",
+      'Two Way': "#00FFBF",
       'Boulevard': "#BF00FF",
       '1': "#FF00C6",
       '2': "#FFB900",
