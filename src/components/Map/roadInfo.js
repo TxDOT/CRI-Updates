@@ -167,7 +167,7 @@ export function getCoordsRange(y){
         const pointDFO = Number(geom[1][2].toFixed(3)) === y[d].ASSET_LN_END ? {x:b.x, y:b.y} : geodesicUtils.pointFromDistance(a, radius,findAzmith.azimuth)
         webMercatorUtils.geographicToWebMercator(pointDFO)
     
-        let assetType = y[d].SRFC_TYPE
+        let assetType = y[d].SRFC_TYPE === 'Two-way' ? 'Two Way' : y[d].SRFC_TYPE
     
         const assetSym = {
           type: "simple-marker",
@@ -506,7 +506,7 @@ function createAssetGraph(pathArr,y){
       let geom = mArr.findIndex(endstart) === -1 ? densUpdate.slice(mArr.findIndex(getstart),) : densUpdate.slice(mArr.findIndex(getstart),mArr.findIndex(endstart)+1)
       //let geom = densUpdate.slice(mArr.findIndex(endstart)-1,mArr.findIndex(endstart)+1)
       //convert to points to graphic and plot on route
-      let assetLineType = y[d].SRFC_TYPE
+      let assetLineType = y[d].SRFC_TYPE === 'Two-way' ? 'Two Way' : y[d].SRFC_TYPE
   
   
       const assetLineSym = {

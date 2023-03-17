@@ -115,7 +115,7 @@ export default {
 
       checkLocalStorage(){
         let cntyNum = JSON.parse(localStorage.getItem('county'))
-        this.getCountyJudge(cntyNum)
+        this.getCountyJudge(cntyNum[1])
         return cntyNum
       },
       logMeIn(){

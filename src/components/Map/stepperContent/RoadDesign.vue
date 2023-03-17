@@ -362,7 +362,7 @@ export default {
           if(this.rdbdDesign){
             for(let i=0; i < this.rdbdDesign.length; i++){
               this.mileInfo.push({
-                SRFC_TYPE: this.rdbdDesign[i].SRFC_TYPE_ID,
+                SRFC_TYPE: this.rdbdDesign[i].SRFC_TYPE_ID === 'Two-way' ? 'Two Way' : this.rdbdDesign[i].SRFC_TYPE_ID,
                 ASSET_LN_BEGIN: Number(this.rdbdDesign[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3)),
                 ASSET_LN_END: Number(this.rdbdDesign[i].ASSET_LN_END_DFO_MS.toFixed(3)),
                 EDIT: true,

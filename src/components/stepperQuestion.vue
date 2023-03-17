@@ -273,7 +273,7 @@ export default {
       roadDesign: {
         handler: function(){
           if(!this.roadDesign) return
-          let dsgn = this.roadDesign[0].SRFC_TYPE_ID
+          let dsgn = this.roadDesign[0].SRFC_TYPE_ID === 'Two-way' ? 'Two Way' : this.roadDesign[0].SRFC_TYPE_ID
           this.fetchRoadDesign = this.roadDesign.length > 1 ? "MULTIPLE" : `${dsgn}`
         },
         immediate: true
