@@ -9,11 +9,11 @@
                 <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitStepOne();"><u>Submit & Certify</u></v-btn>
         </v-app-bar>
 
-        <div class="text-center">
+        <!-- <div class="text-center">
             <v-snackbar style="bottom:50px;" v-model = snackbar timeout=-1>
                 <v-btn dark color="pink" text @click="snackbar = false; cancelEditing()" width=600> Stop Editing </v-btn>
             </v-snackbar>
-        </div>
+        </div> -->
         <v-dialog
             v-model="submitCertify"
             max-width="400"
@@ -36,7 +36,7 @@
                                          to be certified again by the judge in order for TxDOT to accept them.
                     </v-alert>
             </v-card>
-            <v-card v-if="submitCertifySuccess" height="355" class="submitCertifyCd">
+            <v-card v-if="submitCertifySuccess" height="260" class="submitCertifyCd">
                 <v-card-title class="surfaceTitle"><v-icon color="green" id="checkBox">mdi-check</v-icon><p id="submitCertifyCdTitle">Submit and Certify</p></v-card-title>
                     <v-card-text class="textSymb" id="submitCertifyCdText">
                     <p>
@@ -45,12 +45,8 @@
                     <p>
                         {{ this.judgeNameSend }} will be receiving an email confirmation of this submission, with instructions to certify the updates.
                     </p>
-                    <p>
-                        <b>Note:</b> Edits in the app are still allowed up until August 31. However, any edits made after the judge has certified will need to
-                        be certified again by the judge in order for TxDOT to accept them.
-                    </p>
                     </v-card-text>
-                    <v-btn outlined tile @click="submitCertify = false" color="#14375A" id="btnClose">
+                    <v-btn outlined tile @click="submitCertify = false; submitCertifySuccess = false" color="#14375A" text id="btnClose">
                         <u>Close</u>
                     </v-btn>
             </v-card>
@@ -226,5 +222,6 @@ export default {
     text-align: left;
     width: 91.2%;
     border-radius: 0%;
+    color: rgba(150,75,0,1)
 }
 </style>

@@ -53,7 +53,7 @@
                     <v-tooltip right max-width="200" color="#204E70">
                         <template slot="activator" slot-scope="{ on }" id="tooltip">
                             <v-list-item-content>
-                                <v-list-item-title v-html="data.item.text" v-on="on" ></v-list-item-title>
+                                <v-list-item-title v-html="data.item.text" v-on="on"></v-list-item-title>
                             </v-list-item-content>
                         </template>
                         <span>{{data.item.tooltip}}</span>
@@ -143,19 +143,38 @@ export default {
         cityAnnexResp: '',
         fileName:'',
         upldDocStatus: '',
-        upldDocSpinner: false
+        upldDocSpinner: false,
+        restartSeq: false,
+        prevComment: []
       }
     },
     methods:{
         restartDeleteSeq(){
+            this.restartSeq = true
             this.deleteSecond = true
-            this.deleteClick = false;
+            this.deleteClick = false
+
+            let splitNm = this.getComment ? this.getComment.split("Delete Reason:"): ["Not a Road"]
+            this.prevComment = splitNm
+            let txt = splitNm.length > 1 ? this.cityAnnexReason.find(x => x.text === splitNm[1].trim()) : this.cityAnnexReason.find(x => x.text === splitNm[0]) ? this.cityAnnexReason.find(x => x.text === splitNm[0]) : {value: 3, text:"Not a Road"}
+
+            this.delReason = txt.value
+            this.commentText = splitNm[0]
+            this.updateComment()
+            return;
+
         },
         cancelDelete(){
+            if(this.restartSeq){
+                this.keepDelete()
+                this.restartSeq = false;
+                return;
+            }
             this.deleteRoadClick();
-            this.deleteSecond=this.upldCity=this.isLinkExplain=false;
+            this.deleteSecond=this.upldCity=this.isLinkExplain=this.deleteClick=false;
             this.delReason=null;
             this.isDocUpload=null;
+            return;
         },
         keepDelete(){
             this.deleteSecond =this.upldCity =this.isLinkExplain =this.isUpldShapefile = false;
@@ -182,14 +201,14 @@ export default {
             this.isDocUpload = null
             if(this.delReason === 0 || this.delReason === 2){
                 //pop up upload city street shapefile
-                this.commentText = ''
+                this.commentText = this.restartSeq ? this.prevComment[0] : ''
                 this.fileName = ''
                 this.upldCity = true
                 this.isUpldShapefile = false
                 return;
             }
             else if(this.delReason === 4){
-                this.commentText = ''
+                this.commentText = this.restartSeq ? this.prevComment[0] : ''
                 this.fileName = ''
                 this.isLinkExplain = true
                 this.upldCity = false
@@ -197,7 +216,7 @@ export default {
                 
                 return;
             }
-            this.commentText = ' '
+            this.commentText = this.restartSeq ? this.prevComment[0] : ' '
             this.upldCity = this.isLinkExplain = this.isUpldShapefile = false
             return;
         },
@@ -206,7 +225,8 @@ export default {
             this.isDocUpload = null
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
             let deleteReason = this.getDeleteReason()
-            editGraphic.attributes.comment = deleteReason ? `${this.commentText} - ${deleteReason.text}` : editGraphic.attributes.comment
+
+            editGraphic.attributes.comment = deleteReason ? `${this.commentText} Delete Reason:${deleteReason.text}` : editGraphic.attributes.comment
             this.deleteClick = false
             //this.commentText = ''
             this.comment = false
@@ -253,19 +273,19 @@ export default {
         },
         steppClose:{
             handler: function(){
-                this.stepper =  this.steppClose
+                this.stepper = this.steppClose
             },
             immediate:true,
         },
         editStatus:{
             handler: function(){
-                this.edit =  this.editStatus
+                this.edit = this.editStatus
             },
             immediate:true,
         },
         deleteRoad:{
             handler: function(){
-                this.deleteR =  this.deleteRoad
+                this.deleteR = this.deleteRoad
             },
             immediate:true,
         },
@@ -314,6 +334,27 @@ export default {
                 
             },  
             immediate: true 
+        },
+        getComment:{
+            handler: function(){
+                if(!this.getComment){
+                    this.commentText = ''
+                    return;
+                }
+                this.commentText = this.getComment
+                // if(this.deleteClick){
+                //     console.log(this.getComment)
+                //     let splitNm = this.getComment.split("Delete Reason:")[1] ? this.getComment.split("Delete Reason:")[1] : "Not a Road"
+                //     console.log(splitNm)
+                //     let txt = this.cityAnnexReason.find(x => x.text === splitNm) 
+                //     console.log(txt)
+                //     this.delReason = txt.value
+                //     this.commentText = this.getComment
+                //     return;
+                // }
+                return;
+            },
+            immediate: true
         }
     },
     computed:{
@@ -415,6 +456,14 @@ export default {
                 this.$store.commit('setIsDocumentUploaded', x)
             }
         },
+        getComment:{
+            get(){
+                return this.$store.state.comment
+            },
+            set(comm){
+                this.$store.commit('setComment', comm)
+            }
+      },
     }
 }
 </script>

@@ -69,7 +69,6 @@ export async function reloadEdits(){
     let mileSetUp = 0;
     for(let i=0; i < createGraphics.features.length; i++){
       let length = geomToMiles(createGraphics.features[i].geometry,true,3)
-      console.log(length)
       //reset Edit TYPE_ID to add/edit/delete so that criConstants.editType can be used in defineGraphic func
       if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 1){
         mileSetUp += length
@@ -111,7 +110,6 @@ export async function reloadEdits(){
     }
     
     //reloadItemsQuick(createGraphics.features)
-    console.log(mileSetUp)
     store.commit('setDeltaDis',[mileSetUp, 'Add'])
     return currentEditRoads
 }
