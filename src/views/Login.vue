@@ -84,7 +84,7 @@ export default {
           this.handleSignedIn()
         })
         .catch((err) => {
-          console.log(err)
+          console.warn("logged out", err)
           return;
         })
 
