@@ -26,7 +26,7 @@
                     </p>
                     </v-card-text>
                     <v-btn depressed tile @click="cancelSubmit = false; submitCertify = false" id="btnCloseCancelStep" text color="#14375A">
-                        Close
+                        Cancel
                     </v-btn>
                     <v-btn outlined tile @click="cancelSubmit = false; submitCertifySuccess = true; submit('submit')" color="#14375A" id="btnNextStep">
                         <u>Submit</u>

@@ -159,8 +159,15 @@ export default {
             let txt = splitNm.length > 1 ? this.cityAnnexReason.find(x => x.text === splitNm[1].trim()) : this.cityAnnexReason.find(x => x.text === splitNm[0]) ? this.cityAnnexReason.find(x => x.text === splitNm[0]) : {value: 3, text:"Not a Road"}
 
             this.delReason = txt.value
+            
             this.commentText = splitNm[0]
             this.updateComment()
+            if(this.delReason === 0 || this.delReason ===2){
+                this.radioBtnSel = "1"
+                this.isLinkExplain = true
+                return;
+            }
+
             return;
 
         },
@@ -263,6 +270,12 @@ export default {
         }
     },
     watch:{
+        radioBtnSel:{
+            handler: function(){
+                console.log(this.radioBtnSel)
+            },
+            immediate:true,
+        },
         discardEdits(del){
             if(!del) return;
             setTimeout(()=>{ this.discardEdits = false},3000)

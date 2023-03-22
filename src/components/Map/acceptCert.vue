@@ -245,7 +245,7 @@ export default {
         position: relative;
         top: .5rem;
         left: .1rem;
-        font-size: .8rem;
+        font-size: 14px;
         color: black !important;
     } 
     #countyMileTxt{
@@ -264,6 +264,7 @@ export default {
         width: 88%;
         border-radius: 0%;
         left: 1.6rem;
+        color: rgba(150,75,0,1)
         
     }
 </style>
