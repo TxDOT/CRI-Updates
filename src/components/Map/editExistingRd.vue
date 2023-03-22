@@ -342,16 +342,6 @@ export default {
                     return;
                 }
                 this.commentText = this.getComment
-                // if(this.deleteClick){
-                //     console.log(this.getComment)
-                //     let splitNm = this.getComment.split("Delete Reason:")[1] ? this.getComment.split("Delete Reason:")[1] : "Not a Road"
-                //     console.log(splitNm)
-                //     let txt = this.cityAnnexReason.find(x => x.text === splitNm) 
-                //     console.log(txt)
-                //     this.delReason = txt.value
-                //     this.commentText = this.getComment
-                //     return;
-                // }
                 return;
             },
             immediate: true
