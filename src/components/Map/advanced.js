@@ -1,10 +1,9 @@
 // import methods and functions into file
-import { view, clientSideGeoJson, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map'
+import { clientSideGeoJson, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map'
 import {createEpoch} from '../Map/helper'
 import { criConstants } from '../../common/cri_constants';
 import {store} from '../../store'
 import Query from "@arcgis/core/rest/support/Query";
-import esriRequest from "@arcgis/core/request";
 import { addFeat } from './crud';
 import { reloadEdits } from './login';
 
@@ -216,46 +215,49 @@ async function buildCSV(csvString){
 export function retrieveFile(event){
     let name = event.target.value.toLowerCase().split('.')
     let fileName = name[0].replace('c:\\fakepath\\', '')
-    createFeatures(fileName)
+    return fileName
+    // createFeatures(fileName)
 }
 
 // create feature collection from shapfile via generate method of REST API
-async function createFeatures(file){
-    let fileParams = {
-        name: file,
-        targetSR: view.spatialReference,
-        maxRecordCount: 4000,
-        enforceInputFileSizeLimit: true,
-        enforceOutputJsonSizeLimit: true,
-        generalize: false,
-        maxAllowableOffset: 10,
-        reducePrecision: false,
-        numberOfDigitsAfterDecimal: 5
-    }
 
-    let content = {
-        filetype: "shapefile",
-        publishParameters: JSON.stringify(fileParams),
-        f: "json"
-    }
+// async function createFeatures(file){
+//     let fileParams = {
+//         name: file,
+//         targetSR: view.spatialReference,
+//         maxRecordCount: 4000,
+//         enforceInputFileSizeLimit: true,
+//         enforceOutputJsonSizeLimit: true,
+//         generalize: false,
+//         maxAllowableOffset: 10,
+//         reducePrecision: false,
+//         numberOfDigitsAfterDecimal: 5
+//     }
 
-    const convShpToGraphic = esriRequest("https://www.arcgis.com/sharing/rest/content/features/generate",{
-        query: content,
-        body: document.getElementById('output'),
-        responseType: "json",
-        method: "post"
-    })
-    convShpToGraphic
-        .then((res)=>{
-            processUpload(res)
-        })
-        .catch((fail)=>{
-            uploadFail([fail])
-        })
-}
+//     let content = {
+//         filetype: "shapefile",
+//         publishParameters: JSON.stringify(fileParams),
+//         f: "json"
+//     }
+
+//     const convShpToGraphic = esriRequest("https://www.arcgis.com/sharing/rest/content/features/generate",{
+//         query: content,
+//         body: document.getElementById('output'),
+//         responseType: "json",
+//         method: "post"
+//     })
+//     convShpToGraphic
+//         .then((res)=>{
+//             console.log(res)
+//             processUpload(res)
+//         })
+//         .catch((fail)=>{
+//             uploadFail([fail])
+//         })
+// }
 
 // failure message
-function uploadFail(message){
+export function uploadFail(message){
     document.getElementById('progress').style.display = 'none'
     document.getElementById('text').style.display = "block"
     document.getElementById('output').style.border = '2px solid red'
@@ -276,7 +278,7 @@ function uploadFail(message){
 }
 
 // successful upload message
-async function uploadPass(message, upldData){
+export async function uploadPass(message, upldData){
     document.getElementById('progress').style.display = 'none'
     document.getElementById('text').style.display = "block"
     document.getElementById('output').style.border = '2px solid green'
@@ -292,7 +294,7 @@ async function uploadPass(message, upldData){
 }
 
 // initial QA/QC check for file upload
-async function processUpload(upload){
+export async function processUpload(upload){
     //populate store with array with upload attribute values.
     let uploadSchemaCheck = await uploadChecks(upload.data.featureCollection.layers[0], criConstants.txdotSchema)
     store.commit('setIsMapAttr', true)
@@ -385,16 +387,17 @@ async function serverResponse(submitid){
     //https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync
     let dataReturn = await fetch(`https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=ef92b878734df046a715c1e39d46cb40f1f321fd', 'Content-Type': 'text/plain', 'Access-Control-Allow-Private-Network': true}})
     //https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/CRI_QAQC_dev_CORS.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync
-    let text = await dataReturn.text() ? 'Process has completed, please check your email for validation.' : null
+    let text = await dataReturn.text() ? 'Process completed. Please check your email for a validation report.' : null
     console.log(text)
-    document.getElementById('fmeResp').innerText = `${text}`//update
+    // document.getElementById('fmeResp').innerText = `${text}`//update
     console.log(`end FME time: ${getTime()[0]}`)
     store.commit('setIsFmeProcess', false)
-
-    setTimeout(()=>{
-        reloadEdits()
-        store.commit('setServerCheck', false)
-    },5000)
+    reloadEdits()
+    //store.commit('setServerCheck', false)
+    // setTimeout(()=>{
+    //     reloadEdits()
+    //     store.commit('setServerCheck', false)
+    // },5000)
 }//update
 
 //upload attributes to advanced layer

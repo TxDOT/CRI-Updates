@@ -272,7 +272,9 @@ export const store = new Vuex.Store({
             state.judgeObjectId = jdgeObjectId
         },
         setIsFmeProcess(state, boolFME){
+            console.log(boolFME)
             state.isFmeProcess = boolFME
+            console.log(`this is is ${state.isFmeProcess}`)
         },
         setJudgeName(state, jdgeName){
             state.judgeName = jdgeName
@@ -489,10 +491,13 @@ export const store = new Vuex.Store({
         },
         setDeltaDis(state, newLen){
             if(newLen[1] === 'Reset'){
-                    state.deltaDistance -= state.deltaDistance
-                    return;
+                console.log(state.deltaDistance)
+                state.deltaDistance -= state.deltaDistance
+                console.log(state.deltaDistance)
+                return;
             }
             if(newLen[1] === "Add"){
+                console.log(state.deltaDistance, newLen[0])
                 state.deltaDistance += newLen[0]
                 return;
             }

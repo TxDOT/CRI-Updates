@@ -172,7 +172,7 @@ export async function defineGraphic(graphics, clickType, editType){
   
         store.commit('setOldLength',oldLength)
         store.commit('setModifyRd', true)
-        newGraphic.attributes.editType === 'DELETE' ? store.commit('setDeltaDis',[oldLength, 'Delete']) : null
+        // newGraphic.attributes.editType === 'DELETE' ? store.commit('setDeltaDis',[oldLength, 'Delete']) : null
         res(gLayer)
       })
   

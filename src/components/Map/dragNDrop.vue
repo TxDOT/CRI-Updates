@@ -15,27 +15,41 @@
             <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
             <v-btn @click="dragDropClick = false" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
         </v-card>
-        <v-alert id="fmeResp" color="#cc7b29" tile v-if="serverResponse" style="color:white">{{serverCheck}}
-            <v-progress-circular id="processIcon" indeterminate size="22"></v-progress-circular>
+        <v-alert id="fmeResp" :color="this.isFmeRun === true ? '#cc7b29' : 'green'" tile v-if="serverResponse" style="color:white" :dismissible="this.isFmeRun === true ? false : true">{{serverCheck}}
+            <v-progress-circular id="processIcon" indeterminate size="22" v-if="this.isFmeRun === true "></v-progress-circular>
         </v-alert><!-- update -->
+
+        <v-alert v-if="isProcessUpload" class="cardTitle" id="continueUpload" border="left" color="#14375A">
+            <p id="alertTxt">You are uploading {{ this.totalCount}} records. To proceed click Continue.</p>
+            <v-btn class="btn" depressed id="ctnUpldBtn" @click="isAgree"><u>Continue</u></v-btn>
+            <v-btn class="btn" depressed id="cnclUpldBtn" @click="isDisagree">Cancel</v-btn>
+        </v-alert>
     </v-container>
 
     
- 
 </template>
 <script>
 
-import {retrieveFile} from '../Map/advanced'
+import {retrieveFile, processUpload, uploadFail} from '../Map/advanced'
+import {view} from './map'
+import esriRequest from "@arcgis/core/request";
+
 
 export default {
     name: 'dragndrop',
     data(){
         return{
             display: true,
-            attrConv: false, 
-            serverCheck: 'Processing upload and performing additional checks.',//update
+            attrConv: false,
+            serverCheck: '',
+            serverChecks: 'Processing upload and performing additional checks.',//update
+            serverDone: 'Process completed. Please check your email for a validation report.',
             uploadText: 'Drop Shapefiles Here',
-            fmeProcess: 'Cannot Upload while Process is Running'
+            fmeProcess: 'Cannot Upload while Process is Running',
+            isProcessUpload: false,
+            fileName: '',
+            totalCount: 0,
+            fileObj : null
         }
     },
     methods:{
@@ -56,7 +70,68 @@ export default {
             event.preventDefault();
         },
         dropItem(event){
-            retrieveFile(event)
+            this.fileName = retrieveFile(event)
+            this.processUploadFile(this.fileName)
+            this.isFmeRun = true
+        },
+
+        processUploadFile(file){
+            let fileParams = {
+                name: file,
+                targetSR: view.spatialReference,
+                maxRecordCount: 4000,
+                enforceInputFileSizeLimit: true,
+                enforceOutputJsonSizeLimit: true,
+                generalize: false,
+                maxAllowableOffset: 10,
+                reducePrecision: false,
+                numberOfDigitsAfterDecimal: 5
+            }
+
+            let content = {
+                filetype: "shapefile",
+                publishParameters: JSON.stringify(fileParams),
+                f: "json"
+            }
+
+            const convShpToGraphic = esriRequest("https://www.arcgis.com/sharing/rest/content/features/generate",{
+                query: content,
+                body: document.getElementById('output'),
+                responseType: "json",
+                method: "post"
+            })
+            convShpToGraphic
+                .then((res)=>{
+                    this.totalCount =res.data.featureCollection.layers[0].featureSet.features.length
+                    this.fileObj = res
+                    this.dragDropClick = false
+                    this.isProcessUpload = true
+                })
+                .catch((fail)=>{
+                    uploadFail([fail])
+                })
+
+        },
+
+        isAgree(){
+            processUpload(this.fileObj)
+            this.isProcessUpload = false
+            this.dragDropClick = true
+            this.drop()
+        },
+        isDisagree(){
+            this.isProcessUpload = false
+            this.isFmeRun = false
+        }
+    },
+    watch:{
+        isFmeRun:{
+           handler: function(){
+            this.serverCheck = this.isFmeRun === true ? this.serverChecks : this.serverDone
+            this.display = this.isFmeRun
+            console.log(this.display)
+           },
+           immediate: true,
         }
     },
     computed:{
@@ -91,10 +166,10 @@ export default {
 </script>
 <style scoped>
     #fmeResp{
-        position: fixed;
-        top: 3.7rem;
-        left: 65vh;
-        width: 52vh;
+        position: relative;
+        top: 0rem;
+        left: 35%;
+        width: 58vh;
         
     }
     .fileContainer{
@@ -164,5 +239,31 @@ export default {
     #processIcon{
         position: relative;
         left: 1rem;
+    }
+
+    #continueUpload{
+        position: relative;
+        top: 20rem;
+        border-radius: 0%;
+        color: white;
+        width: 40%;
+        left: 30%;
+        height: 6.5rem;
+    }
+    .btn{
+        border-radius: 0%;
+    }
+
+    #ctnUpldBtn{
+        left: 12.5rem;
+        color:#14375A;
+    }
+
+    #cnclUpldBtn{
+        right: 1.3rem;
+        color:#14375A;
+    }
+    #alertTxt{
+        text-align: left;
     }
 </style>

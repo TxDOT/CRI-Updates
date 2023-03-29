@@ -25,6 +25,8 @@
   import {search} from './Map/map.js'
   import mapTools from "../components/Map/mapTools.vue"
   import aboutHelp from "../components/Map/resources.vue"
+  import {gLayer} from './Map/map'
+  import {store} from '../store'
 
   export default {
     name: 'navSideBar',
@@ -84,6 +86,9 @@
               this.editExistingRd = false
               this.deleteRoad = false
               this.nextDeleteRoadForm = true
+              let lastDelRd = gLayer.graphics.items.at(-1)
+              store.commit('setDeltaDis',[lastDelRd.attributes.originalLength, 'Delete'])
+              console.log(lastDelRd.attributes.originalLength)
             }
           }},
         ],

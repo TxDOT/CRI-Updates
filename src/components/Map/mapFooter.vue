@@ -52,6 +52,7 @@ export default {
     rdbdDeltaDist:{
       handler: function(){
         let dist = this.rdbdDeltaDist > -0.02 && this.rdbdDeltaDist < 0.02 ? 0 : this.rdbdDeltaDist
+        console.log(this.rdbdDeltaDist)
         this.mileageChange = dist
 
       },
@@ -76,6 +77,7 @@ export default {
     },
     rdbdDeltaDist:{
       get(){
+        console.log(this.$store.state.deltaDistance)
         return Math.floor(this.$store.state.deltaDistance *100)/100
       }
     },
@@ -96,13 +98,9 @@ export default {
 </script>
 
 <style scoped>
-  #googleBtn {
-    bottom: 20px;
-    left: 600px;
-  }
   #footerCard{
     position: relative;
-    bottom: .1vh;
+    top: 5%;
     width:90%;
     height:100%;
     right: 3%;
@@ -112,14 +110,13 @@ export default {
   #footerPos{
     left: 12rem !important;
     width: 100%; 
-    height:3.5vh; 
+    height:2.05vw; 
     text-align: center;
     background: #4D4D4D
   }
   #coordsPos{
     position:fixed; 
-    right: 4vw; 
-    bottom: .7vh; 
-    font-size: .7vw;
+    right: 4vw;  
+    font-size: .8vw;
   }
 </style>

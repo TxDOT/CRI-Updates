@@ -386,7 +386,7 @@ export default {
         removeAsstPoints();
         this.getDfoBool = false;
         removeHighlight()
-        this.comment = ""
+        //this.comment = ""
         this.closeSelectRoad = false
       },
       saveAttri(){

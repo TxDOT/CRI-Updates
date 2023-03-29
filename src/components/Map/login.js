@@ -1,7 +1,7 @@
 // import methods and functions into file
 import { countyOfficialInfo, view, txCounties, search, viewPoint, home, featLayer, clientSideGeoJson} from './map'
 import { queryEditsLayer } from './crud'
-import { defineGraphic, geomToMiles, createEpoch, getCentroid } from './helper';
+import { defineGraphic, geomToMiles, createEpoch, getCentroid, queryFeat } from './helper';
 import { cntyNbrNm } from '../../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query";
 // import { criConstants } from '../../common/cri_constants';
@@ -68,9 +68,11 @@ export async function reloadEdits(){
     //finally subtract delete roads from total length 
     let mileSetUp = 0;
     for(let i=0; i < createGraphics.features.length; i++){
+      
       let length = geomToMiles(createGraphics.features[i].geometry,true,3)
       //reset Edit TYPE_ID to add/edit/delete so that criConstants.editType can be used in defineGraphic func
       if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 1){
+        console.log('Add',length)
         mileSetUp += length
         // let replaceItem = parseNReplace(createGraphics.features[i].attributes.ASSET_ST_DEFN_NM, createGraphics.features[i].attributes.ASSET_SRFC_TYPE_DSCR, createGraphics.features[i].attributes.ASSET_RDWAY_DSGN_TYPE_DSCR)
         // createGraphics.features[i].attributes.ASSET_ST_DEFN_NM = JSON.stringify(replaceItem[0])
@@ -80,10 +82,12 @@ export async function reloadEdits(){
         createGraphics.features[i].attributes.EDIT_TYPE_ID = 'add'
       }
       else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 5){
-        //let returnRoad = await queryFeat(createGraphics.features[i])
-        let oldLength = geomToMiles(createGraphics.features[i].geometry,true,3)
+        let returnRoad = await queryFeat(createGraphics.features[i])
+        console.log(returnRoad)
+        let oldLength = geomToMiles(returnRoad.features[0].geometry,true,3)
         let diff = length - oldLength
         mileSetUp += diff
+        console.log('edit',diff, oldLength)
         //detlete
         createGraphics.features[i].attributes.RTE_DEFN_LN_CREATE_DT = new Date()
         // let replaceItem = parseNReplace(createGraphics.features[i].attributes.ASSET_ST_DEFN_NM, createGraphics.features[i].attributes.ASSET_SRFC_TYPE_DSCR, createGraphics.features[i].attributes.ASSET_RDWAY_DSGN_TYPE_DSCR)
@@ -96,6 +100,8 @@ export async function reloadEdits(){
       }
       else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 4){
         //delete
+        mileSetUp -= length
+        console.log('delete', length)
         createGraphics.features[i].attributes.RTE_DEFN_LN_CREATE_DT = new Date()
         // let replaceItem = parseNReplace(createGraphics.features[i].attributes.ASSET_ST_DEFN_NM, createGraphics.features[i].attributes.ASSET_SRFC_TYPE_DSCR, createGraphics.features[i].attributes.ASSET_RDWAY_DSGN_TYPE_DSCR)
         // createGraphics.features[i].attributes.ASSET_ST_DEFN_NM = JSON.stringify(replaceItem[0])
@@ -108,7 +114,7 @@ export async function reloadEdits(){
       defineGraphic(createGraphics.features[i], 'click')
 
     }
-    
+    console.log(mileSetUp)
     //reloadItemsQuick(createGraphics.features)
     store.commit('setDeltaDis',[mileSetUp, 'Add'])
     return currentEditRoads
