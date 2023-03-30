@@ -230,7 +230,7 @@ export default {
                 
                 return;
             }
-            this.commentText = this.restartSeq ? this.prevComment[0] : ''
+            this.commentText = ' '
             this.upldCity = this.isLinkExplain = this.isUpldShapefile = false
             return;
         },
