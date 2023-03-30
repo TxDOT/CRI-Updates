@@ -48,7 +48,7 @@
          <!-- <a v-if="!deleteClick"  id="comment">Comment</a> -->
          <!-- <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox> -->
         <v-row v-if="!deleteClick">
-            <v-select @change="updateComment()" label="Why are you deleting this road?" outlined class="rdDelSelc" v-model="delReason" dense :items="cityAnnexReason">
+            <v-select @change="updateComment($event)" label="Why are you deleting this road?" outlined class="rdDelSelc" v-model="delReason" dense :items="cityAnnexReason">
                 <template v-slot:item="data">
                     <v-tooltip right max-width="200" color="#204E70">
                         <template slot="activator" slot-scope="{ on }" id="tooltip">
@@ -91,7 +91,7 @@
         <v-btn depressed text color="#14375A" @click="deleteClick ? keepDelete() : cancelDelete()" :style="deleteClick ? {'top':'.2rem', 'left':'.5rem', 'border-color':'black', 'width':'5rem'} : {'bottom':'.92rem', 'left':'55.5%', 'border-color':'black', 'width':'5rem', 'text-decoration':'underline'}"> 
           Cancel
         </v-btn>
-        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'bottom':'1rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'1rem', 'left':'76%', 'border-color':'black'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : keepDelete()" class="continueBtn"> 
+        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'bottom':'1rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'1rem', 'left':'76%', 'border-color':'black'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : continueEdit()" class="continueBtn"> 
           <u>Continue</u>
         </v-btn>
 
@@ -145,7 +145,8 @@ export default {
         upldDocStatus: '',
         upldDocSpinner: false,
         restartSeq: false,
-        prevComment: []
+        prevComment: [],
+        initialVal: null
       }
     },
     methods:{
@@ -153,12 +154,16 @@ export default {
             this.restartSeq = true
             this.deleteSecond = true
             this.deleteClick = false
-
-            let splitNm = this.getComment ? this.getComment.split("Delete Reason:"): ["Not a Road"]
+            console.log(this.commentText)
+            
+            let splitNm = this.commentText ? this.commentText.split("Delete Reason:"): ["Not a Road"]
+            
+            
             this.prevComment = splitNm
+            console.log(this.prevComment)
             let txt = splitNm.length > 1 ? this.cityAnnexReason.find(x => x.text === splitNm[1].trim()) : this.cityAnnexReason.find(x => x.text === splitNm[0]) ? this.cityAnnexReason.find(x => x.text === splitNm[0]) : {value: 3, text:"Not a Road"}
 
-            this.delReason = txt.value
+            this.delReason = this.initialVal = txt.value
             
             this.commentText = splitNm[0]
             this.updateComment()
@@ -174,7 +179,6 @@ export default {
         cancelDelete(){
             if(this.restartSeq){
                 this.keepDelete()
-                this.restartSeq = false;
                 return;
             }
             this.deleteRoadClick();
@@ -184,12 +188,13 @@ export default {
             return;
         },
         keepDelete(){
-            this.deleteSecond =this.upldCity =this.isLinkExplain =this.isUpldShapefile = false;
-            this.deleteConfirm=true;
-            this.setDeleteFalse();
-            this.delReason=null;
-            this.isDocUpload=null;
+            console.log('heyyyyyy')
+            this.updateGraphicComment(this.prevComment[0], this.prevComment[1])
+            this.resetDefault();
+            //this.commentText = this.prevComment[0]
+            //this.delReason = this.initialVal
         },
+
         getDeleteReason(){
             return this.cityAnnexReason.find(x=> x.value === this.delReason)
         },
@@ -201,21 +206,23 @@ export default {
             this.fileName = x.target.files[0].name
             let reason = this.getDeleteReason().text
             addAttachment(reason)
-            this.commentText = ' '
+            this.commentText = `${this.fileName} uploaded.`
         },
-        updateComment(){
+        updateComment(x){
+            console.log(x)
             this.radioBtnSel = null
             this.isDocUpload = null
+            this.isLinkExplain = false
             if(this.delReason === 0 || this.delReason === 2){
                 //pop up upload city street shapefile
-                this.commentText = this.restartSeq ? this.prevComment[0] : ''
+                this.commentText = x === undefined ? this.prevComment[0] : ''
                 this.fileName = ''
                 this.upldCity = true
                 this.isUpldShapefile = false
                 return;
             }
             else if(this.delReason === 4){
-                this.commentText = this.restartSeq ? this.prevComment[0] : ''
+                this.commentText = x === undefined ? this.prevComment[0] : ''
                 this.fileName = ''
                 this.isLinkExplain = true
                 this.upldCity = false
@@ -223,23 +230,41 @@ export default {
                 
                 return;
             }
-            this.commentText = this.restartSeq ? this.prevComment[0] : ' '
+            this.commentText = this.restartSeq ? this.prevComment[0] : ''
             this.upldCity = this.isLinkExplain = this.isUpldShapefile = false
             return;
         },
-        setDeleteFalse(){
+        //create anothor function - one for Keeping Delete and one for Continue (all when restartSeq is true). 
+        //seperate items being reset back to default into function
+        //
+        resetDefault(){
             this.radioBtnSel = null
             this.isDocUpload = null
-            let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
-            let deleteReason = this.getDeleteReason()
-
-            editGraphic.attributes.comment = deleteReason ? `${this.commentText} Delete Reason:${deleteReason.text}` : editGraphic.attributes.comment
             this.deleteClick = false
             //this.commentText = ''
             this.comment = false
+            this.restartSeq = false
+            this.prevComment = []
+            this.deleteSecond =this.upldCity =this.isLinkExplain =this.isUpldShapefile = false;
+            this.deleteConfirm=true;
+            this.delReason=null;
+            this.isDocUpload=null;
+        },
+        updateGraphicComment(cmnt, delReason){
+            let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
+            
+            console.log(this.commentText, this.restartSeq)
+            editGraphic.attributes.comment = `${cmnt} Delete Reason:${delReason}`
+            console.log(editGraphic.attributes.comment)
+        },
+        continueEdit(){
+            console.log('heyyyy1')
+            this.updateGraphicComment(this.commentText, this.getDeleteReason().text)
+            this.resetDefault()
             saveToEditsLayer()
         },
         deleteRoadClick(){
+            console.log('test')
             this.radioBtnSel = false
             removeGraphic()
             removeHighlight()
@@ -354,7 +379,10 @@ export default {
                     this.commentText = ''
                     return;
                 }
-                this.commentText = this.getComment
+                let beginWhitespaceCheck = /^\s*/g 
+                let s = this.getComment.replace(beginWhitespaceCheck, '')
+                console.log(s)
+                this.commentText = s
                 return;
             },
             immediate: true

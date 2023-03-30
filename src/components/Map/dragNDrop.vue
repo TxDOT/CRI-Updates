@@ -19,7 +19,7 @@
             <v-progress-circular id="processIcon" indeterminate size="22" v-if="this.isFmeRun === true "></v-progress-circular>
         </v-alert><!-- update -->
 
-        <v-alert v-if="isProcessUpload" class="cardTitle" id="continueUpload" border="left" color="#14375A">
+        <v-alert v-if="isProcessUpload" id="continueUpload" border="left" color="#14375A">
             <p id="alertTxt">You are uploading {{ this.totalCount}} records. To proceed click Continue.</p>
             <v-btn class="btn" depressed id="ctnUpldBtn" @click="isAgree"><u>Continue</u></v-btn>
             <v-btn class="btn" depressed id="cnclUpldBtn" @click="isDisagree">Cancel</v-btn>
@@ -243,11 +243,11 @@ export default {
 
     #continueUpload{
         position: relative;
-        top: 20rem;
+        top: 17rem;
         border-radius: 0%;
         color: white;
-        width: 40%;
-        left: 30%;
+        width: 29rem;
+        left: 37%;
         height: 6.5rem;
     }
     .btn{
