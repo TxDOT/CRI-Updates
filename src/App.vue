@@ -55,4 +55,8 @@ export default {
   font-size: 14px !important;
 }
 
+.esri-basemap-toggle__container{
+  height: 30.5px !important;
+  width: 32px !important;
+}
 </style>

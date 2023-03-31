@@ -65,7 +65,6 @@ export default {
       expandLegend.watch('expanded',(curr)=>{
           curr === false ? this.displayLegend = false : this.displayLegend = true
       });
-        
       // basemapToggle.watch('activeBasemap',(curr)=>{
       //   curr.baseLayers.items[0].id === 'imagery' ? featLayer.renderer = criConstants.featLayerColorImagery : featLayer.renderer = criConstants.featLayerColorVector
       // });
@@ -218,4 +217,5 @@ export default {
   height:100%;
   background-color:rgba(0,0,0,0.65);
 } */
+
 </style>

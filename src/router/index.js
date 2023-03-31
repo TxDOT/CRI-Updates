@@ -19,6 +19,10 @@ const routes = [
     meta:{requiresAuth: true}
   },
   {
+    path:'/index#',
+    redirect: {name: '/login'}
+  },
+  {
     path:'/login',
     name:'Login',
     component: () =>  import(/* webpackChunkName: "Login" */ "../views/Login.vue"),

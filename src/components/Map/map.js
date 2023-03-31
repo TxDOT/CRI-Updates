@@ -161,6 +161,7 @@ view.ui.add([
   },
 ]);
 
+
 //referenceLayer feature Layer
 export const featLayer = new FeatureLayer({
     url: criConstants.refernceLayer,
@@ -177,7 +178,7 @@ export const featLayer = new FeatureLayer({
             color:[0,127,255]
         }
     }
-  });
+});
 
 //client side querying
 export const clientSideGeoJson = new GeoJSONLayer({
