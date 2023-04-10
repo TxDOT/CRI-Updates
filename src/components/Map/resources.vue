@@ -556,7 +556,7 @@
   position: relative;
   display: flex;
   width: 40rem;
-  left: 40%;
+  left: 35%;
   min-height: 5vh;
   flex-direction: column;
   max-height: 82vh;
