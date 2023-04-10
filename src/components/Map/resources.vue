@@ -172,7 +172,7 @@
         exitApp: false,
         display:false,
         drawer: true,
-        faqs: true,
+        faqs: false,
         isHelpTraining: false,
         tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory"],
         mediaType: ['', 'TxDOT Youtube Channel', 'FAQs','Access Sandbox Environment'],
