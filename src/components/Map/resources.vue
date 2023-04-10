@@ -104,6 +104,56 @@
           <v-btn id="clseBtnHelp" outlined tile color="#204E70" @click="close('isHelpTraining')">close</v-btn>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="faqs" id="faqDialog" persistent>
+      <v-card class="card" id="dialogWidth" >
+        <v-card-title class="cardTitle" id="faqTitle">
+          <p id="faqsName">FAQs</p>
+        </v-card-title>
+        <v-card-text>
+          <dl class="faqHead">
+            <dt>
+              <li class="textColor"><b>Can I add a county road that’s inside a city boundary?</b></li>
+            </dt>
+              <ul class="textColor">No. Roads inside a city boundary are considered city streets, regardless of maintenance agreements. 
+                  Exceptions may include small stretches of county roads that begin or end inside a city limit, or 
+                  cross through a corner or small portion of the boundary (e.g. less than ~150’).
+              </ul>
+            <dt>
+              <br>
+              <li><b class="textColor">Can I add a county road that’s outside of my county boundary?</b></li>
+            </dt>
+              <ul class="textColor">No, not generally. Although, exceptions may include small stretches of county roads that begin or 
+                  end inside another county, or cross through a corner or small portion of the boundary.
+              </ul>
+            <dt>
+              <br>
+              <li class="textColor"><b>Should I remove a road that the county does not maintain?</b></li>
+            </dt>
+              <ul class="textColor">No. A county road that is maintained by another entity is still considered a public road and must be included.
+                  However, if the road is owned by another entity such as the federal government or private home owners association, etc., 
+                  it can be removed from the county road inventory.
+              </ul>
+            <dt>
+              <br>
+              <li class="textColor"><b>A new subdivision was built, but the county commission has not accepted the roads from the developer. Should I add these roads?</b></li>
+            </dt>
+              <ul class="textColor">Yes, any such road that is open to public travel should be added to the inventory, regardless of whether or not the county commission 
+                  has formally accepted the road. If TxDOT has already added the road, do not mark it for removal, as we will not remove it.
+                  TxDOT has a federal mandate to include such roads in the inventory. Often such roads are platted as public right of way.
+              </ul>
+            <dt>
+              <br>
+              <li class="textColor"><b>Is a road that is closed during certain hours or times of the year still considered a county road?</b></li>
+            </dt>
+              <ul class="textColor">Yes, as long as the hours are posted, certain public roads, such as park roads or roads that provide access to landfills, 
+                  may be closed during certain times of the day or parts of the year. Public roads may also be closed temporarily due to extreme weather
+                  or emergency conditions.
+              </ul>
+          </dl>
+          <v-btn class="closeBtnUnderline" id="faqBtn" depressed outlined color="#14375A" tile @click="closeFaqBtn()"><u>Close</u></v-btn>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -122,9 +172,10 @@
         exitApp: false,
         display:false,
         drawer: true,
+        faqs: true,
         isHelpTraining: false,
-        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access PDFs about CRI.", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory"],
-        mediaType: ['', 'TxDOT Youtube Channel', 'Go To PDFs','Access Sandbox Environment'],
+        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory"],
+        mediaType: ['', 'TxDOT Youtube Channel', 'FAQs','Access Sandbox Environment'],
         iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github'],
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
@@ -153,6 +204,9 @@
       }
     },
     methods:{
+      closeFaqBtn(){
+        this.faqs = false;
+      },
       reqTrainingEmail(){
         return `mailto:TPP_CRI@txdot.gov?subject=Advanced Training Request from ${this.userName}, ${this.countyNm} County&body=Requesting training and access for the 'Advanced' features and functionality in the County Road Inventory Map.`
       },
@@ -181,8 +235,9 @@
         if(event === 'Access Sandbox Environment'){
           window.open('https://txdot.github.io/CRI-Updates/login')
         }
-        else if(event === 'Go To PDFs'){
-          window.open('https://www.google.com')
+        else if(event === 'FAQs'){
+          this.isHelpTraining = false;
+          this.faqs = true;
         }
         else if(event === 'TxDOT Youtube Channel'){
           window.open('https://youtube.com/playlist?list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2')
@@ -496,5 +551,47 @@
   bottom: .5rem;
   right: 1rem;
   text-decoration: underline;
+}
+#dialogWidth{
+  position: relative;
+  display: flex;
+  width: 40rem;
+  left: 40%;
+  min-height: 5vh;
+  flex-direction: column;
+  max-height: 82vh;
+  overflow-y: auto;
+  border-radius: 0%;
+}
+.faqHead{
+  position: relative;
+  top: 1rem;
+  text-align: left;
+}
+
+#faqTitle{
+  position: relative;
+  text-align: left;
+}
+
+#faqsName{
+  position: relative;
+  bottom: .7rem;
+}
+
+#faqDialog{
+  position: relative;
+  height: 11rem;
+  flex-direction: column;
+  max-height: 30rem;
+}
+
+.textColor{
+  color:black
+}
+#faqBtn{
+  position: relative;
+  top: .6rem;
+  left: 15rem;
 }
 </style>
