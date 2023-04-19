@@ -5,7 +5,7 @@
             <v-card-title class="cardTitle"><p id="titleText">Upload Files</p></v-card-title>
             <v-card-text style="z-index: 2;">
                 <div class="fileContainer">
-                    <form id="output" @dragover="dragOver()" @dragleave="dragLeave()" @drop="drop();" :disabled="this.isFmeRun">
+                    <form id="output" @dragover="dragOver()" @dragleave="dragLeave()" :disabled="this.isFmeRun">
                         <input :disabled="this.isFmeRun" type="file" name="file" @change="dropItem($event)"/>
                     </form>
                 </div>
@@ -13,7 +13,7 @@
             <v-card-text id="text" v-if="this.isFmeRun"><v-icon id="dragNDropTxt">mdi-upload</v-icon>{{fmeProcess}}</v-card-text>
             <v-card-text id="text" v-else><v-icon id="dragNDropTxt">mdi-upload</v-icon>{{uploadText}}</v-card-text>
             <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
-            <v-btn @click="dragDropClick = false" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
+            <v-btn @click="closeDialog()" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
         </v-card>
         <v-alert id="fmeResp" :color="this.isFmeRun === true ? '#cc7b29' : 'green'" tile v-if="serverResponse" style="color:white" :dismissible="this.isFmeRun === true ? false : true">{{serverCheck}}
             <v-progress-circular id="processIcon" indeterminate size="22" v-if="this.isFmeRun === true "></v-progress-circular>
@@ -43,7 +43,7 @@ export default {
             attrConv: false,
             serverCheck: '',
             serverChecks: 'Processing upload and performing additional checks.',//update
-            serverDone: 'Process completed. Please check your email for a validation report.',
+            serverDone: 'Process completed. If QC errors has been detected, be on the lookout for an email.',
             uploadText: 'Drop Shapefiles Here',
             fmeProcess: 'Cannot Upload while Process is Running',
             isProcessUpload: false,
@@ -53,17 +53,17 @@ export default {
         }
     },
     methods:{
+        closeDialog(){
+            this.dragDropClick = false;
+            this.isFmeRun = false;
+
+        },
         dragOver(){
             //console.log(event)
             document.getElementById('output').style.border = '2px dashed green'
         },
         dragLeave(){
             document.getElementById('output').style.border = '2px dashed #14375A'
-        },
-        drop(){
-            document.getElementById('text').style.display = 'none'
-            document.getElementById('progress').style.display = 'block'
-            document.getElementById('output').style.width = '27rem'
         },
         drag(event){
             event.stopPropagation();
@@ -117,7 +117,6 @@ export default {
             processUpload(this.fileObj)
             this.isProcessUpload = false
             this.dragDropClick = true
-            this.drop()
         },
         isDisagree(){
             this.isProcessUpload = false
@@ -129,7 +128,6 @@ export default {
            handler: function(){
             this.serverCheck = this.isFmeRun === true ? this.serverChecks : this.serverDone
             this.display = this.isFmeRun
-            console.log(this.display)
            },
            immediate: true,
         }

@@ -110,46 +110,38 @@
           <p id="faqsName">FAQs</p>
         </v-card-title>
         <v-card-text>
-          <dl class="faqHead">
-            <dt>
-              <li class="textColor"><b>Can I add a county road that’s inside a city boundary?</b></li>
-            </dt>
-              <ul class="textColor">No. Roads inside a city boundary are considered city streets, regardless of maintenance agreements. 
-                  Exceptions may include small stretches of county roads that begin or end inside a city limit, or 
-                  cross through a corner or small portion of the boundary (e.g. less than ~150’).
-              </ul>
-            <dt>
-              <br>
-              <li><b class="textColor">Can I add a county road that’s outside of my county boundary?</b></li>
-            </dt>
-              <ul class="textColor">No, not generally. Although, exceptions may include small stretches of county roads that begin or 
-                  end inside another county, or cross through a corner or small portion of the boundary.
-              </ul>
-            <dt>
-              <br>
-              <li class="textColor"><b>Should I remove a road that the county does not maintain?</b></li>
-            </dt>
-              <ul class="textColor">No. A county road that is maintained by another entity is still considered a public road and must be included.
-                  However, if the road is owned by another entity such as the federal government or private home owners association, etc., 
-                  it can be removed from the county road inventory.
-              </ul>
-            <dt>
-              <br>
-              <li class="textColor"><b>A new subdivision was built, but the county commission has not accepted the roads from the developer. Should I add these roads?</b></li>
-            </dt>
-              <ul class="textColor">Yes, any such road that is open to public travel should be added to the inventory, regardless of whether or not the county commission 
-                  has formally accepted the road. If TxDOT has already added the road, do not mark it for removal, as we will not remove it.
-                  TxDOT has a federal mandate to include such roads in the inventory. Often such roads are platted as public right of way.
-              </ul>
-            <dt>
-              <br>
-              <li class="textColor"><b>Is a road that is closed during certain hours or times of the year still considered a county road?</b></li>
-            </dt>
-              <ul class="textColor">Yes, as long as the hours are posted, certain public roads, such as park roads or roads that provide access to landfills, 
-                  may be closed during certain times of the day or parts of the year. Public roads may also be closed temporarily due to extreme weather
-                  or emergency conditions.
-              </ul>
-          </dl>
+          <v-expansion-panels accordion flat>
+            <v-expansion-panel>
+              <v-expansion-panel-header>Can I add a county road that’s inside a city boundary?</v-expansion-panel-header>
+              <v-expansion-panel-content class="expandPanelContent">
+                No. Roads inside a city boundary are considered city streets, regardless of maintenance agreements. Exceptions may include small stretches of county roads that begin or end inside a city limit, or cross through a corner or small portion of the boundary (e.g. less than ~150’).
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-header>Can I add a county road that’s outside of my county boundary?</v-expansion-panel-header>
+              <v-expansion-panel-content class="expandPanelContent">
+                No, not generally. Although, exceptions may include small stretches of county roads that begin or end inside another county, or cross through a corner or small portion of the boundary.
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-header>Should I remove a road that the county does not maintain?</v-expansion-panel-header>
+              <v-expansion-panel-content class="expandPanelContent">
+                No. A county road that is maintained by another entity is still considered a public road and must be included. However, if the road is owned by another entity such as the federal government or private home owners association, etc., it can be removed from the county road inventory.
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-header>A new subdivision was built, but the county commission has not accepted the roads from the developer. Should I add these roads?</v-expansion-panel-header>
+              <v-expansion-panel-content class="expandPanelContent">
+                Yes, any such road that is open to public travel should be added to the inventory, regardless of whether or not the county commission has formally accepted the road. If TxDOT has already added the road, do not mark it for removal, as we will not remove it. TxDOT has a federal mandate to include such roads in the inventory. Often such roads are platted as public right of way.
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+            <v-expansion-panel>
+              <v-expansion-panel-header>Is a road that is closed during certain hours or times of the year still considered a county road?</v-expansion-panel-header>
+              <v-expansion-panel-content class="expandPanelContent">
+                Yes, as long as the hours are posted, certain public roads, such as park roads or roads that provide access to landfills, may be closed during certain times of the day or parts of the year. Public roads may also be closed temporarily due to extreme weather or emergency conditions.
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
           <v-btn class="closeBtnUnderline" id="faqBtn" depressed outlined color="#14375A" tile @click="closeFaqBtn()"><u>Close</u></v-btn>
         </v-card-text>
       </v-card>
@@ -593,5 +585,10 @@
   position: relative;
   top: .6rem;
   left: 15rem;
+}
+.expandPanelContent{
+  text-align: left;
+  color: #14375A;
+  padding-left: 1rem;
 }
 </style>
