@@ -323,7 +323,7 @@ async function uploadGeometryCheck(featSet, validali){
 async function uploadValueCheck(feat, validali){
     let validArr = validali
     let valueCheckPromise = new Promise((res)=>{
-        let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Modify or Delete. Re-submit"
+        let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Edit or Delete. Re-submit"
         let lengthMessage = "Empty or Null fields have been detected.\nReview required fields [EDIT_TYPE, SURFACE, LANE, DESIGN, ROAD_TYPE, ROAD_NM] have a value and re-submit"
         let isCheckLength = [];
         let editTypeMsg = [];
@@ -382,11 +382,9 @@ async function serverResponse(submitid){
     console.log(`start FME time: ${getTime()[0]}`)
     store.commit('setIsFmeProcess', true)
     console.log(submitid)
-    //let dataReturn = await fetch('https://gis-batch-dev.txdot.gov/fmedatastreaming/TPP/returnTestFile.fmw?', {headers:{'Authorization':'fmetoken token=7f4d809080c9161e0d5ea5708d5522a3fdd01119'},'Content-Type': 'text/plain'})
-    //let dataReturn = await fetch('https://testportal.txdot.gov/fmejobsubmitter/TPP/returnTestFile.fmw?opt_showresult=false&opt_servicemode=sync', {headers:{'Authorization':'fmetoken token=b6aa89bdbe05b1ffaca36dc6562ae0770c71b9ab'},'Content-Type': 'text/plain'})
-    //https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync
-    let dataReturn = await fetch(`https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=ef92b878734df046a715c1e39d46cb40f1f321fd', 'Content-Type': 'text/plain', 'Access-Control-Allow-Private-Network': true}})
+    // --Current -- let dataReturn = await fetch(`https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=ef92b878734df046a715c1e39d46cb40f1f321fd', 'Content-Type': 'text/plain', 'Access-Control-Allow-Private-Network': true}})
     //https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/CRI_QAQC_dev_CORS.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync
+    let dataReturn = await fetch(`https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_QAQC.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=f1cdc75a1b3ddd13167fb0e4cb6e6301b0373889', 'Content-Type': 'text/plain', 'Access-Control-Allow-Private-Network': true}})
     let text = await dataReturn.text() ? 'Process completed. Please check your email for a validation report.' : null
     console.log(text)
     // document.getElementById('fmeResp').innerText = `${text}`//update
@@ -407,6 +405,7 @@ async function upldToAdvceFeatLyr(upldFile){
 
     for(let fi=0; fi < upldFile.length; fi++){
         upldFile[fi].attributes.SUBMIT_ID = itemSubmitId
+        upldFile[fi].attributes.TESTFIELD = 'Test ME'
         upldFile[fi].geometry.type = "polyline"
         await addFeat(upldFile[fi], true)
     }
