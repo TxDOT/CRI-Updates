@@ -60,8 +60,8 @@
           Drag and drop your suggested road edits.</b><br>
           <p class="itemText">Upload inventory updates loaded into the template provided above. Only submit<br>changes to your inventory with adds, removes, and updates. Please do not submit your<br>county's entire road inventory.</p>
         </v-card-text>
-        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" :id="isCert === false ? 'uploadBtn' : 'uploadBtnF'" :disabled="isCert===false">
-          <u>Upload</u>
+        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" :id="isCert === false ? 'uploadBtn' : 'uploadBtnF'" :disabled="isCert===false || isFmeRun === true">
+          <u>{{ uploadGISData }}</u>
         </v-btn>
         <v-btn id="closeBtn" tile outlined color="#14375A" @click="display = false">Close</v-btn>
       </v-card>
@@ -160,6 +160,7 @@
         countyNm: null,
         isFileSuccess: false,
         isFileDwnload: false,
+        uploadGISData: "Upload",
         disclaimer: false,
         exitApp: false,
         display:false,
@@ -236,7 +237,7 @@
         }
       },
       cntyQueryTab(){
-        window.open('https://txdot.maps.arcgis.com/home/item.html?id=7fffa75557a84c869bbbb38f6c4f6dcc')
+        window.open('https://txdot.maps.arcgis.com/home/item.html?id=8c07970b38c5471c9b862ca411cc3841')
         this.exitApp = false
       },
       async downloadRoadLog(){
@@ -255,6 +256,12 @@
       }
     },
     watch:{
+      isFmeRun:{
+        handler: function(){
+          this.uploadGISData = this.isFmeRun === true ? "Running" : "Upload"
+        },
+        immediate: true
+      },
       isUserCertify:{
         handler: function(){
           this.isCert = this.isUserCertify
@@ -334,6 +341,14 @@
           return this.$store.state.username
         },
       },
+      isFmeRun:{
+        get(){
+          return this.$store.state.isFmeProcess
+        },
+        set(bool){
+          this.$store.commit('setIsFmeProcess', bool)
+        }
+      }
     }
   }
 </script>

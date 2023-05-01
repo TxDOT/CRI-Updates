@@ -17,6 +17,9 @@
         </v-card>
         <v-alert id="fmeResp" :color="this.isFmeRun === true ? '#cc7b29' : 'green'" tile v-if="serverResponse" style="color:white" :dismissible="this.isFmeRun === true ? false : true">{{serverCheck}}
             <v-progress-circular id="processIcon" indeterminate size="22" v-if="this.isFmeRun === true "></v-progress-circular>
+            <template v-slot:close="{ toggle }" v-if="this.isFmeRun === false">
+                <v-icon @click="closeAlert(toggle)" depressed tile outlined id="closeAlertBtn">mdi-close-circle</v-icon>
+            </template>
         </v-alert><!-- update -->
 
         <v-alert v-if="isProcessUpload" id="continueUpload" border="left" color="#14375A">
@@ -53,6 +56,10 @@ export default {
         }
     },
     methods:{
+        closeAlert(toggle){
+            toggle()
+            this.serverResponse = false
+        },
         closeDialog(){
             this.dragDropClick = false;
             this.isFmeRun = false;
@@ -106,6 +113,7 @@ export default {
                     this.fileObj = res
                     this.dragDropClick = false
                     this.isProcessUpload = true
+                    
                 })
                 .catch((fail)=>{
                     uploadFail([fail])
@@ -168,7 +176,8 @@ export default {
         top: 0rem;
         left: 35%;
         width: 58vh;
-        
+        text-align: left;
+        padding-right: 2rem;
     }
     .fileContainer{
         position: absolute;
@@ -263,5 +272,10 @@ export default {
     }
     #alertTxt{
         text-align: left;
+    }
+    #closeAlertBtn{
+        position: relative;
+        bottom: 1rem;
+        left: 1rem;
     }
 </style>
