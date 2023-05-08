@@ -67,6 +67,7 @@ export default {
     },
     countyTotal:{
       get(){
+        console.log(this.$store.state.cntyMiles)
         return this.$store.state.cntyMiles
       }
     },

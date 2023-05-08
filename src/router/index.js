@@ -42,6 +42,7 @@ const routes = [
   },
   {
     path: "/catchAll(.*)",
+    name: "error",
     component: errorPage
   }
 ]

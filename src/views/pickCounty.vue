@@ -106,9 +106,15 @@ export default {
         })
       },
       async loadData(name, nbr){
-        await goToMap(name, nbr)
-        this.$router.push('/map')
-        this.load=false
+        goToMap(name, nbr)
+          .then(() =>{
+            this.$router.push('/map')
+            this.load=false
+          })
+          .catch(()=>{
+            this.$router.push({name: "error"})
+          })
+
       }
 
     },

@@ -150,8 +150,8 @@ export default {
             this.countyNumber = cntyNumber
             this.countyMiles = countyInfo[2]
             this.loadMap(cntyName,cntyNumber)
-          });
-      },
+          })
+      },  
       async getCountyInfo(username){
         let county;
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
@@ -162,7 +162,7 @@ export default {
           }
         })
         if(getCountyNbr){
-          let totalMileage = this.getCountyJudge(getCountyNbr)
+          let totalMileage = await this.getCountyJudge(getCountyNbr)
           localStorage.setItem('county',JSON.stringify([county,getCountyNbr, totalMileage]))
           return [county, Number(getCountyNbr), totalMileage]
         }

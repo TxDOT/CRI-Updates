@@ -95,9 +95,9 @@
     </v-dialog>
   </v-stepper>
 
-  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 3%; width: 97%;">
-    <p style="color: white; font-size: .8rem; position:relative; bottom: .6vh; left: .4rem;">Editor Name: {{editName}}</p>
-    <p style="color: white; font-size: .8rem; position:relative; bottom: .6vh; left: 5rem;">Edit Date: {{editDt}}</p>
+  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 3%; width: 97.1%;">
+    <p style="color: white; font-size: .8rem; position:relative; bottom: .4vh; left: .1rem;">Editor Name: {{editName}}</p>
+    <p style="color: white; font-size: .8rem; position:absolute; top: .2vh; right: 0.6rem;">Edit Date: {{editDt}}</p>
   </v-footer>
 
   </div>
@@ -296,7 +296,7 @@ export default {
             this.editDt = `${this.editorInfo[3][0]} ${editHour}:${String(this.editorInfo[3][2]).padStart(2,'0')} ${ampm}`
             return
           }
-          let ampm = this.editorInfo[1][1] > 12 ? 'pm' : 'am'
+          let ampm = this.editorInfo[1][1] >= 12 ? 'pm' : 'am'
           let editHour = this.editorInfo[1][1] > 12 ? this.editorInfo[1][1] - 12 : this.editorInfo[1][1]
           this.editName = this.editorInfo[0]
           this.editDt = `${this.editorInfo[1][0]} ${editHour}:${String(this.editorInfo[1][2]).padStart(2,'0')} ${ampm}`

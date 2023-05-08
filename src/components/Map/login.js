@@ -1,7 +1,7 @@
 // import methods and functions into file
 import { countyOfficialInfo, view, txCounties, search, viewPoint, home, featLayer, clientSideGeoJson} from './map'
 import { queryEditsLayer } from './crud'
-import { defineGraphic, geomToMiles, createEpoch, getCentroid, queryFeat } from './helper';
+import { defineGraphic, geomToMiles, getCentroid, queryFeat } from './helper';
 import { cntyNbrNm } from '../../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query";
 // import { criConstants } from '../../common/cri_constants';
@@ -81,6 +81,7 @@ export async function reloadEdits(){
         createGraphics.features[i].attributes.EDIT_TYPE_ID = 'add'
       }
       else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 5){
+        
         let returnRoad = await queryFeat(createGraphics.features[i])
       
         let oldLength = geomToMiles(returnRoad.features[0].geometry,true,3)
@@ -184,7 +185,6 @@ export async function createGeoJson(cntyName){
     geoJSONArr.features.push(geojson)
   }
   
-  
   // create a new blob from geojson featurecollection
   const blob = new Blob([JSON.stringify(geoJSONArr)], {
     type: "application/json"
@@ -194,6 +194,8 @@ export async function createGeoJson(cntyName){
   const url = URL.createObjectURL(blob);
   // create new geojson layer using the blob url
   clientSideGeoJson.url = url
+
+  return;
 }
 
 //function to query ref table by OID and COUNTY NAME and go and load map
@@ -240,12 +242,20 @@ export async function goToMap(name, nbr){
     return;
 } 
 //sets store for Advanced page Access
-export function isTrainingAccess(groupsArr){
-  console.log(createEpoch())
-  groupsArr.then((x) => {
-    let isGroup = x.some(t => t.title === 'County Road Inventory Advanced')
+export async function isTrainingAccess(groupsArr){
+  let esriGroups = await groupsArr
+  const belongCRI = esriGroups.some(x => x.title === "County Road Inventory")
+  if(belongCRI){
+    let isGroup = esriGroups.some(t => t.title === 'County Road Inventory Advanced')
     store.commit('setCertifiedCheck', isGroup)
-  })
+    return;
+  }
+
+  router.push({name: "errors"})
+  // groupsArr.then((x) => {
+  //   let isGroup = x.some(t => t.title === 'County Road Inventory Advanced')
+  //   store.commit('setCertifiedCheck', isGroup)
+  // })
   
   //check if user has the correct permsssions. user Portal library
 

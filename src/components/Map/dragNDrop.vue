@@ -177,7 +177,6 @@ export default {
         left: 35%;
         width: 58vh;
         text-align: left;
-        padding-right: 2rem;
     }
     .fileContainer{
         position: absolute;
@@ -245,7 +244,7 @@ export default {
     }
     #processIcon{
         position: relative;
-        left: 1rem;
+        left: 7rem;
     }
 
     #continueUpload{
@@ -275,7 +274,7 @@ export default {
     }
     #closeAlertBtn{
         position: relative;
-        bottom: 1rem;
-        left: 1rem;
+        bottom: .7rem;
+        left: .4rem;
     }
 </style>
