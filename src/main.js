@@ -14,8 +14,8 @@ new Vue({
   render: h => h(App),
   created(){
 
-    if(performance.navigation.type === 1){
-      this.$router.push('/login')
-    }
+    // if(performance.navigation.type === 1){
+    //   this.$router.push('/login')
+    // }
   }
 }).$mount('#app')

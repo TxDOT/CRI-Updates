@@ -52,7 +52,6 @@ export default {
     rdbdDeltaDist:{
       handler: function(){
         let dist = this.rdbdDeltaDist > -0.02 && this.rdbdDeltaDist < 0.02 ? 0 : this.rdbdDeltaDist
-        console.log(this.rdbdDeltaDist)
         this.mileageChange = dist
 
       },
@@ -67,7 +66,6 @@ export default {
     },
     countyTotal:{
       get(){
-        console.log(this.$store.state.cntyMiles)
         return this.$store.state.cntyMiles
       }
     },
@@ -78,7 +76,6 @@ export default {
     },
     rdbdDeltaDist:{
       get(){
-        console.log(this.$store.state.deltaDistance)
         return Math.floor(this.$store.state.deltaDistance *100)/100
       }
     },

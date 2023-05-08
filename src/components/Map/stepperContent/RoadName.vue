@@ -3,11 +3,11 @@
     <v-card height="230" elevation="0">
         <v-text-field autofocus id="input1" v-model="streetNames" solo flat disabled></v-text-field>
         <span>
-            <v-text-field :disabled="infoRoad" persistent-placeholder dense outlined id="input1" :rules="emptyValues" label="Road Name" v-model="streetName" style="font-size: 15px; left: 87px; bottom: 16px; width: 100px; position: relative;"></v-text-field>
+            <v-text-field :disabled="infoRoad" persistent-placeholder dense outlined id="input1" :rules="emptyValues" label="Road Name" v-model="streetName" @keyup="rdNameTransform()" style="font-size: 15px; left: 87px; bottom: 16px; width: 100px; position: relative;"></v-text-field>
         </span>
                 
         <v-card-text>
-            <v-autocomplete :disabled="infoRoad" persistent-placeholder dense outlined v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;" @change="updateGraphic()"></v-autocomplete>
+            <v-autocomplete :disabled="infoRoad" persistent-placeholder dense outlined :rules="emptyValues" v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;" @change="updateGraphic()"></v-autocomplete>
         </v-card-text>
                 
         <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width: 83px; left: 0%; bottom:180px; position: relative" @change="updateGraphic()"></v-select>
@@ -49,21 +49,20 @@ export default {
                    'STATION','STRAVENUE','STREAM','STREET','STREETS','SUMMIT','TERRACE','THROUGHWAY','TRACE','TRACK','TRAFFICWAY','TRAIL',
                    'TRAILER','TUNNEL','TURNPIKE','UNDERPASS','UNION','UNIONS','VALLEY','VALLEYS','VIADUCT','VIEW','VIEWS','VILLAGE','VILLAGES',
                    'VILLE','VISTA','WALKS','WALL','WAY','WAYS','WELL','WELLS'],
-        streetName: ' ',
-        roadNameType: ' ',
+        streetName: '',
+        roadNameType: '',
         prefixSuffixList: ['', 'E','N','NE','NW','S','SE','SW','W'],
         prefix: false,
         suffix: false,
         prefixStreet: '',
         suffixStreet: '',
-        emptyValues:[v => !!v || '',
-                     v => !!v || this.updateError()],
+        emptyValues:[ v=> !!v || "Required Field"],
         timeout: ''
       }
     },
     methods:{
-        updateError(){
-            this.error = true
+        rdNameTransform(){
+            this.streetName = this.streetName.toUpperCase()
         },
         updateGraphic(){
             let updateG = [{
@@ -100,13 +99,13 @@ export default {
         streetName:{
             handler: function(){
                 if(this.streetName.length > 1){
-                    this.error = false
                     clearTimeout(this.timeout)
 
                     this.timeout = setTimeout(()=>{
                         this.updateGraphic()
                     },1000)
                 }
+                return
             },
             immediate: true,
         },
@@ -127,8 +126,9 @@ export default {
                         this.prefixStreet ? this.prefix = true : this.prefix = false
                         this.suffixStreet ? this.suffix = true : this.suffix = false
                     }
+                    return
                 }
-
+                return
             }, 
           immediate: true,
         },
@@ -155,9 +155,8 @@ export default {
                 if(typeof(this.$store.state.roadbedName) === 'string'){
                   return JSON.parse(this.$store.state.roadbedName) 
                 }
-                else{
-                  return this.$store.state.roadbedName
-                }
+                
+                return this.$store.state.roadbedName
             },
             set(name){
                 this.$store.commit('setRoadbedName', JSON.stringify(name))
