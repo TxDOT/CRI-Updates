@@ -7,7 +7,7 @@
         </span>
                 
         <v-card-text>
-            <v-autocomplete :disabled="infoRoad" persistent-placeholder dense outlined :rules="emptyValues" v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;" @change="updateGraphic()"></v-autocomplete>
+            <v-autocomplete :disabled="infoRoad" persistent-placeholder dense outlined v-model="roadNameType" :items="roadType" label="Type" style="font-size: 15px; left: 175px; bottom: 98px; width:113px; position: relative;" @change="updateGraphic()"></v-autocomplete>
         </v-card-text>
                 
         <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Prefix" v-model="prefixStreet" :items="prefixSuffixList" style="width: 83px; left: 0%; bottom:180px; position: relative" @change="updateGraphic()"></v-select>
