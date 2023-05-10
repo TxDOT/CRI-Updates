@@ -245,13 +245,14 @@ export async function goToMap(name, nbr){
 export async function isTrainingAccess(groupsArr){
   let esriGroups = await groupsArr
   const belongCRI = esriGroups.some(x => x.title === "County Road Inventory")
-  if(belongCRI){
+  console.log(belongCRI)
+  if(belongCRI === true){
     let isGroup = esriGroups.some(t => t.title === 'County Road Inventory Advanced')
     store.commit('setCertifiedCheck', isGroup)
     return;
   }
 
-  router.push({name: "errors"})
+  router.push({name: "error"})
   // groupsArr.then((x) => {
   //   let isGroup = x.some(t => t.title === 'County Road Inventory Advanced')
   //   store.commit('setCertifiedCheck', isGroup)
