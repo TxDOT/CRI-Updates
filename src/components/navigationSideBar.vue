@@ -101,7 +101,7 @@
             this.addRdBoolean = false
             this.graphic = false;
           })
-          .catch((x)=>console.log(x))
+          .catch(err => console.log(err))
       },
       openStepper(){
         this.steppClose = true;

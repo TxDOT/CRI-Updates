@@ -286,12 +286,12 @@ export default {
         }
     },
     watch:{
-        // radioBtnSel:{
-        //     handler: function(){
-        //         console.log(this.radioBtnSel)
-        //     },
-        //     immediate:true,
-        // },
+        radioBtnSel:{
+            handler: function(){
+                //
+            },
+            immediate:true,
+        },
         discardEdits(del){
             if(!del) return;
             setTimeout(()=>{ this.discardEdits = false},3000)
@@ -372,7 +372,6 @@ export default {
                 }
                 let beginWhitespaceCheck = /^\s*/g 
                 let s = this.getComment.replace(beginWhitespaceCheck, '')
-                console.log(s)
                 this.commentText = s
                 return;
             },

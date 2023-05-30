@@ -8,7 +8,7 @@ export const criConstants = {
     assetLyrRdbLane: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/1',
     advanceUploadLayer: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_QAQC_prod/FeatureServer/0",//'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_QAQC_dev/FeatureServer/0',
     txCounties: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/Texas_County_Boundaries/FeatureServer/0",
-    judgeInfoTable: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CNTY_INFO_dev/FeatureServer/0", //https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_CNTY_INFO/FeatureServer/0
+    judgeInfoTable: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_CNTY_INFO/FeatureServer/0", //https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CNTY_INFO_dev/FeatureServer/0
     deleteDocumentFL: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Delete_Documentation_prod/FeatureServer/0",//"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_DELETE_DOCUMENTATION_DEV/FeatureServer/0",
     
     design: [{num:'1', name:'One Way'}, {num:'2',name:'Two Way'}, {num:'3',name:'Boulevard'}],

@@ -76,7 +76,6 @@ export default {
 
         },
         dragOver(){
-            //console.log(event)
             document.getElementById('output').style.border = '2px dashed green'
         },
         dragLeave(){

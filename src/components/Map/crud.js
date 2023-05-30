@@ -99,7 +99,7 @@ function deleteFeat(editId){
     editsLayer.applyEdits({
         deleteFeatures: [editId]
     })
-    .then(result=>console.log(`done ${result}`))
+    .then(result=>console.log(`deleted ${result}`))
     .catch(err => console.log(err))
 }
 

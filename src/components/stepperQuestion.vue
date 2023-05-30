@@ -314,7 +314,8 @@ export default {
       },
       getComment:{
         handler: function(){
-          this.comment = this.getComment
+          this.comment = this.oldComment = this.getComment
+          
         },
         immediate: true
       },
