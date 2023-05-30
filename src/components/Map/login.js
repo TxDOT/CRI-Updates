@@ -252,7 +252,7 @@ export async function isTrainingAccess(groupsArr){
     return;
   }
 
-  router.push({name: "error"})
+  router.push({name: "Login"})
   // groupsArr.then((x) => {
   //   let isGroup = x.some(t => t.title === 'County Road Inventory Advanced')
   //   store.commit('setCertifiedCheck', isGroup)

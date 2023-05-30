@@ -5,19 +5,20 @@
             <v-card-title class="cardTitle"><p id="titleText">Upload Files</p></v-card-title>
             <v-card-text style="z-index: 2;">
                 <div class="fileContainer">
-                    <form id="output" @dragover="dragOver()" @dragleave="dragLeave()" :disabled="this.isFmeRun">
-                        <input :disabled="this.isFmeRun" type="file" name="file" @change="dropItem($event)"/>
+                    <form id="output" @dragover="dragOver()" @dragleave="dragLeave()" :disabled="this.isFmeRun[0]">
+                        <input :disabled="this.isFmeRun[0]" type="file" name="file" @change="dropItem($event)"/>
                     </form>
                 </div>
             </v-card-text>
-            <v-card-text id="text" v-if="this.isFmeRun"><v-icon id="dragNDropTxt">mdi-upload</v-icon>{{fmeProcess}}</v-card-text>
+            <v-card-text id="text" v-if="this.isFmeRun[0]"><v-icon id="dragNDropTxt">mdi-upload</v-icon>{{fmeProcess}}</v-card-text>
             <v-card-text id="text" v-else><v-icon id="dragNDropTxt">mdi-upload</v-icon>{{uploadText}}</v-card-text>
             <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
             <v-btn @click="closeDialog()" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
         </v-card>
-        <v-alert id="fmeResp" :color="this.isFmeRun === true ? '#cc7b29' : 'green'" tile v-if="serverResponse" style="color:white" :dismissible="this.isFmeRun === true ? false : true">{{serverCheck}}
-            <v-progress-circular id="processIcon" indeterminate size="22" v-if="this.isFmeRun === true "></v-progress-circular>
-            <template v-slot:close="{ toggle }" v-if="this.isFmeRun === false">
+        <v-alert id="fmeResp" :color="alertToggleColor()" tile v-if="serverResponse" style="color:white" :dismissible="this.isFmeRun[0] === true ? false : true">
+            {{serverCheck}}
+            <v-progress-circular id="processIcon" indeterminate size="22" v-if="this.isFmeRun[0] === true "></v-progress-circular>
+            <template v-slot:close="{ toggle }" v-if="this.isFmeRun[0] === false">
                 <v-icon @click="closeAlert(toggle)" depressed tile outlined id="closeAlertBtn">mdi-close-circle</v-icon>
             </template>
         </v-alert><!-- update -->
@@ -27,6 +28,7 @@
             <v-btn class="btn" depressed id="ctnUpldBtn" @click="isAgree"><u>Continue</u></v-btn>
             <v-btn class="btn" depressed id="cnclUpldBtn" @click="isDisagree">Cancel</v-btn>
         </v-alert>
+        
     </v-container>
 
     
@@ -48,6 +50,7 @@ export default {
             serverChecks: 'Processing upload and performing additional checks.',//update
             serverDone: 'Process completed. If QC errors has been detected, be on the lookout for an email.',
             uploadText: 'Drop Shapefiles Here',
+            timeoutResp: "The review is taking longer than usual. Periodically refresh the application and/or email.",
             fmeProcess: 'Cannot Upload while Process is Running',
             isProcessUpload: false,
             fileName: '',
@@ -56,6 +59,13 @@ export default {
         }
     },
     methods:{
+        alertToggleColor(){
+            if(this.isFmeRun[0] === false){
+                return this.isFmeRun[1] === "timeout" ? "#FF0800" : "green"
+            }
+            return "#cc7b29"
+
+        },
         closeAlert(toggle){
             toggle()
             this.serverResponse = false
@@ -79,7 +89,7 @@ export default {
         dropItem(event){
             this.fileName = retrieveFile(event)
             this.processUploadFile(this.fileName)
-            this.isFmeRun = true
+            this.isFmeRun = [true, ""]
         },
 
         processUploadFile(file){
@@ -134,8 +144,15 @@ export default {
     watch:{
         isFmeRun:{
            handler: function(){
-            this.serverCheck = this.isFmeRun === true ? this.serverChecks : this.serverDone
-            this.display = this.isFmeRun
+
+            if(this.isFmeRun[0] === false){
+                this.serverCheck = this.isFmeRun[1] === "timeout" ? this.timeoutResp : this.serverDone
+                this.display = this.isFmeRun[0]
+                return
+            }
+            this.serverCheck = this.serverChecks
+            this.display = this.isFmeRun[0]
+            return 
            },
            immediate: true,
         }
@@ -175,7 +192,7 @@ export default {
         position: relative;
         top: 0rem;
         left: 35%;
-        width: 58vh;
+        width: 30rem;
         text-align: left;
     }
     .fileContainer{
@@ -233,7 +250,7 @@ export default {
         display:none;
         position: absolute;
         top: 9.1rem;
-        left: 14.5rem;
+        right: 14.5rem;
     }
     #dragNDrop{
         position:absolute;
@@ -244,7 +261,8 @@ export default {
     }
     #processIcon{
         position: relative;
-        left: 7rem;
+        left: 1rem;
+        padding-left: 2rem;
     }
 
     #continueUpload{

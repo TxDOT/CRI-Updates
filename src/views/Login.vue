@@ -104,7 +104,6 @@ export default {
         query.outFields = [ "*" ]
         
         let queryResult = await countyOfficialInfo.queryFeatures(query)
-        console.log(queryResult)
         this.countyNumber = cntyNum
         this.judgeCntyOid = queryResult.features[0].attributes['OBJECTID_1']
         this.judgeNameSend = queryResult.features[0].attributes['JUDGE_NM']
@@ -120,8 +119,6 @@ export default {
       },
       logMeIn(){
         esriId.getCredential(this.auth.portalUrl + "/sharing")
-        console.log('logging in')
-        
       },
       async loadMap(name, nbr){
         await goToMap(name, nbr)
@@ -136,7 +133,6 @@ export default {
         this.loginToMap = true
         portal.load()
           .then( async () => {
-            console.log(portal.user.email)
             this.usrEmail = portal.user.email
             this.$router.push('/load')
             isTrainingAccess(portal.user.fetchGroups())

@@ -88,7 +88,6 @@
               this.nextDeleteRoadForm = true
               let lastDelRd = gLayer.graphics.items.at(-1)
               store.commit('setDeltaDis',[lastDelRd.attributes.originalLength, 'Delete'])
-              console.log(lastDelRd.attributes.originalLength)
             }
           }},
         ],

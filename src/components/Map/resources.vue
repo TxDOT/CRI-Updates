@@ -54,13 +54,16 @@
         <v-btn outlined tile small @click="display = false; downloadTemp()" color="#14375A" :id="isCert === false ? 'dwnloadTempBtn' : 'dwnloadTempBtnF'" :disabled="isCert===false">
           <u>Download</u>
         </v-btn>
+        <div id="downloadInst">
+          <v-icon small>mdi-information</v-icon><a @click="downloadPdf()" :id="isCert===false ? 'disableDwnldInstruct': 'dwnloadInstruct'" :disabled="isCert===false">Click here to download instructions.</a>
+        </div>
         <v-icon id="uploadIcon" :disabled="isCert===false">mdi-upload</v-icon>
         <v-card-text id="uploadTxt" :class="isCert === false ? 'textSymbDisable' : 'textSymb'">
           <b>UPLOAD GIS DATA<br>
           Drag and drop your suggested road edits.</b><br>
           <p class="itemText">Upload inventory updates loaded into the template provided above. Only submit<br>changes to your inventory with adds, removes, and updates. Please do not submit your<br>county's entire road inventory.</p>
         </v-card-text>
-        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" :id="isCert === false ? 'uploadBtn' : 'uploadBtnF'" :disabled="isCert===false || isFmeRun === true">
+        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" :id="isCert === false ? 'uploadBtn' : 'uploadBtnF'" :disabled="isCert===false || this.disable === true">
           <u>{{ uploadGISData }}</u>
         </v-btn>
         <v-btn id="closeBtn" tile outlined color="#14375A" @click="display = false">Close</v-btn>
@@ -80,18 +83,18 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="isHelpTraining" width="650" persistent>
+    <v-dialog v-model="isHelpTraining" width="800" persistent>
       <v-card tile height="315">
         <v-card-title class="surfaceTitle"><p id="helpTrainPos">Help and Training</p></v-card-title>
           <v-card-text>
             <v-item-group>
               <v-container>
                 <v-row>
-                  <v-col v-for="n in 3" :key="n" cols="12" md="4">
+                  <v-col v-for="n in 4" :key="n" md="3" >
                     <v-item>
                       <v-tooltip bottom max-width="200" color="#204E70" style="border-radius: 0px;"> 
                         <template v-slot:activator="{ on, attrs }">
-                          <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" width=600 @click="openPage(mediaType[n])" color="green"><p id="helpTrainContent">{{mediaType[n]}}</p><v-icon id="helpTrainIcon">{{iconType[n]}}</v-icon></v-card>
+                          <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" @click="openPage(mediaType[n])" color="green"><p id="helpTrainContent">{{mediaType[n]}}</p><v-icon id="helpTrainIcon">{{iconType[n]}}</v-icon></v-card>
                         </template>
                         <span>{{tooltips[n]}}</span>
                       </v-tooltip>
@@ -161,15 +164,16 @@
         isFileSuccess: false,
         isFileDwnload: false,
         uploadGISData: "Upload",
+        disable: false,
         disclaimer: false,
         exitApp: false,
         display:false,
         drawer: true,
         faqs: false,
         isHelpTraining: false,
-        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory"],
-        mediaType: ['', 'TxDOT Youtube Channel', 'FAQs','Access Sandbox Environment'],
-        iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github'],
+        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory", "Click here to download Bulk Submission Instructions"],
+        mediaType: ['', 'TxDOT Youtube Channel', 'FAQs','Access Sandbox Environment', "Download Advanced Bulk Upload Instructions"],
+        iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github', "mdi-download-circle"],
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
               this.isUserCertify === false ? this.certifiedFalse() : this.certifiedTrue()
@@ -208,6 +212,14 @@
         tempdwnl.href = 'https://raw.githubusercontent.com/TxDOT/CRI/main/CRI_Template.gdb.zip'
         tempdwnl.click()
       },
+      downloadPdf(){
+        let pdf = document.createElement('a')
+        pdf.href = 'https://raw.githubusercontent.com/TxDOT/CRI/main/CountyRoadInventoryMap_BulkLoad_BestPracticeWorkflow_DataDictionary.pdf'
+        pdf.download = "CountyRoadInventoryMap_BulkLoad_BestPracticeWorkflow_DataDictionary.pdf"
+        pdf.mediaType = "application/pdf"
+        pdf.target = "_blank"
+        pdf.click()
+      },
       close(x){
           x === 'isUserCertify' ? this.display = false : this.isHelpTraining = false
       },
@@ -235,6 +247,9 @@
         else if(event === 'TxDOT Youtube Channel'){
           window.open('https://youtube.com/playlist?list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2')
         }
+        else if(event === 'Download Advanced Bulk Upload Instructions'){
+          this.downloadPdf()
+        }
       },
       cntyQueryTab(){
         window.open('https://txdot.maps.arcgis.com/home/item.html?id=8c07970b38c5471c9b862ca411cc3841')
@@ -258,7 +273,8 @@
     watch:{
       isFmeRun:{
         handler: function(){
-          this.uploadGISData = this.isFmeRun === true ? "Running" : "Upload"
+          this.disable = this.isFmeRun[0]
+          this.uploadGISData = this.isFmeRun[0] === true ? "Running" : "Upload"
         },
         immediate: true
       },
@@ -490,14 +506,15 @@
   left: 5rem;
 }
 #uploadBtn{
-  position: absolute; 
+  position: relative; 
   left: 6.5rem; 
-  top: 44rem; 
+  width: 5rem;
+  bottom: 3.2rem; 
 }
 #uploadBtnF{
   position: absolute; 
   left: 6.5rem; 
-  top: 42.5rem; 
+  top: 44rem; 
 }
 #trainingBtn{
   position: relative;
@@ -542,8 +559,8 @@
 }
 #helpTrainIcon{
   position:absolute; 
-  top:5rem; 
-  right: 4rem; 
+  top:5.3rem; 
+  right: 3.5rem; 
   font-size: 3.5rem;
 }
 #closeBtn{
@@ -606,4 +623,30 @@
   color: #14375A;
   padding-left: 1rem;
 }
+
+#dwnloadInstruct{
+  font-size: .7rem;
+  padding-left: .3rem;
+  text-decoration: underline;
+  /* position: relative;
+  left: 1.5rem;
+  bottom: 1rem; */
+}
+
+#disableDwnldInstruct{
+  font-size: .7rem;
+  padding-left: .3rem;
+  text-decoration: underline;
+  pointer-events: none;
+  color: grey;
+}
+
+#downloadInst{
+  position: relative;
+  right: 9rem;
+  bottom: .5rem;
+
+}
+
+
 </style>

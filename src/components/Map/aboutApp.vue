@@ -18,7 +18,7 @@
 
         <div id="btnPosition"><v-btn underline tile color="#14375A" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
 
-        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.5.9</u></v-card-text>
+        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.6.0</u></v-card-text>
 
             
       </v-card>

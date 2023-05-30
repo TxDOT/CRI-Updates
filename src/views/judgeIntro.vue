@@ -86,7 +86,6 @@ export default{
            },
         updateMileage(curr, upd){
             if(upd){
-                console.log(curr,upd)
                 let delta = curr - upd    
                 this.mileageTxt = Number(Math.abs(delta).toFixed(2)) === 0.00 ? `Edits were made in the CRI Map for a net change in total mileage of 0.00 miles.` : upd > curr ? `Edits were made in the CRI Map for a net change in total mileage of +${Math.abs(delta).toFixed(2)} miles.`:`Edits were made in the CRI Map for a net change in total mileage of -${Math.abs(delta).toFixed(2)} miles.`
                 return
@@ -101,7 +100,6 @@ export default{
                 this.assignDel = false
                 this.judgeLetter = true
                 this.accptCertify = false
-                console.log(this.judgeLetter)
             },
             immediate: true,
         }

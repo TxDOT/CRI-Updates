@@ -42,9 +42,6 @@ export default {
                         made by your delegate(s) upon their completion and submittal of edits.`
     },
     methods:{
-        testFile(event){
-            console.log(event)
-        },
         addEmail(){
             let count= this.counter++
             this.emailCounter.push({
@@ -55,8 +52,6 @@ export default {
             //this.emailList.push({"count": count, "email":''})
         },
         deleteEmail(index){
-            console.log(index)
-            console.log(this.emailCounter)
             this.emailCounter.splice(index, 1)
         },
         // accept(){

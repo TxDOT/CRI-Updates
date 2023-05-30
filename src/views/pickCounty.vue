@@ -86,7 +86,6 @@ export default {
         this.pick=false
         this.load=true
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find(x => cntyNbrNm[0][x] === this.pickCounty)
-        console.log(getCountyNbr)
         let whereStatement = `CNTY_NBR = '${getCountyNbr}'`
 
         const query = new Query();
@@ -94,14 +93,12 @@ export default {
         query.outFields = [ "*" ]
         let queryResult = countyOfficialInfo.queryFeatures(query)
         queryResult.then((result)=>{
-          console.log(result)
           this.countyNumber = getCountyNbr
           this.countyName = this.pickCounty
           this.judgeCntyOid = result.features[0].attributes['OBJECTID_1']
           this.countyMiles = result.features[0].attributes['TOT_MLGE']
           this.judgeNameSend = result.features[0].attributes['JUDGE_NM'].trim()
           this.judgeEmailSend = result.features[0].attributes['JUDGE_EML']
-          console.log(this.judgeNameSend)
           this.loadData(this.pickCounty, getCountyNbr)
         })
       },

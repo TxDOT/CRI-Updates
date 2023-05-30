@@ -154,13 +154,11 @@ export default {
             this.restartSeq = true
             this.deleteSecond = true
             this.deleteClick = false
-            console.log(this.commentText)
             
             let splitNm = this.commentText ? this.commentText.split("Delete Reason:"): ["Not a Road"]
             
             
             this.prevComment = splitNm
-            console.log(this.prevComment)
             let txt = splitNm.length > 1 ? this.cityAnnexReason.find(x => x.text === splitNm[1].trim()) : this.cityAnnexReason.find(x => x.text === splitNm[0]) ? this.cityAnnexReason.find(x => x.text === splitNm[0]) : {value: 3, text:"Not a Road"}
 
             this.delReason = this.initialVal = txt.value
@@ -188,7 +186,6 @@ export default {
             return;
         },
         keepDelete(){
-            console.log('heyyyyyy')
             this.updateGraphicComment(this.prevComment[0], this.prevComment[1])
             this.resetDefault();
             //this.commentText = this.prevComment[0]
@@ -209,7 +206,6 @@ export default {
             this.commentText = `${this.fileName} uploaded.`
         },
         updateComment(x){
-            console.log(x)
             this.radioBtnSel = null
             this.isDocUpload = null
             this.isLinkExplain = false
@@ -252,19 +248,14 @@ export default {
         },
         updateGraphicComment(cmnt, delReason){
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
-            
-            console.log(this.commentText, this.restartSeq)
             editGraphic.attributes.comment = `${cmnt} Delete Reason:${delReason}`
-            console.log(editGraphic.attributes.comment)
         },
         continueEdit(){
-            console.log('heyyyy1')
             this.updateGraphicComment(this.commentText, this.getDeleteReason().text)
             this.resetDefault()
             saveToEditsLayer()
         },
         deleteRoadClick(){
-            console.log('test')
             this.radioBtnSel = false
             removeGraphic()
             removeHighlight()
@@ -295,12 +286,12 @@ export default {
         }
     },
     watch:{
-        radioBtnSel:{
-            handler: function(){
-                console.log(this.radioBtnSel)
-            },
-            immediate:true,
-        },
+        // radioBtnSel:{
+        //     handler: function(){
+        //         console.log(this.radioBtnSel)
+        //     },
+        //     immediate:true,
+        // },
         discardEdits(del){
             if(!del) return;
             setTimeout(()=>{ this.discardEdits = false},3000)

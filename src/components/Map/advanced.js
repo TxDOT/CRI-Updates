@@ -378,18 +378,28 @@ async function uploadChecks(schemaFields, txdotSchema){
     return await schemaPromise
 }
 
-async function serverResponse(submitid){
+function serverResponse(submitid){
     console.log(`start FME time: ${getTime()[0]}`)
-    store.commit('setIsFmeProcess', true)
-    console.log(submitid)
+    store.commit('setIsFmeProcess', [true, ""])
     // --Current -- let dataReturn = await fetch(`https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=ef92b878734df046a715c1e39d46cb40f1f321fd', 'Content-Type': 'text/plain', 'Access-Control-Allow-Private-Network': true}})
     //https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/CRI_QAQC_dev_CORS.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync
-    let dataReturn = await fetch(`https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_QAQC.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=f1cdc75a1b3ddd13167fb0e4cb6e6301b0373889', 'Content-Type': 'text/plain'}})
-    await dataReturn.text() ? 'Process completed. Please check your email for a validation report.' : null
+    let dataReturn = fetch(`https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_QAQC.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=f1cdc75a1b3ddd13167fb0e4cb6e6301b0373889', 'Content-Type': 'text/plain'}})
+    dataReturn
+        .then(() =>{
+
+            console.log(`end FME time: ${getTime()[0]}`)
+            store.commit('setIsFmeProcess', [false, "success"])
+            reloadEdits()
+        })
+        .catch(() =>{
+            store.commit('setIsFmeProcess', [false, "timeout"])
+            console.log('error')
+            return
+            
+        })
+    
     // document.getElementById('fmeResp').innerText = `${text}`//update
-    console.log(`end FME time: ${getTime()[0]}`)
-    store.commit('setIsFmeProcess', false)
-    reloadEdits()
+
     //store.commit('setServerCheck', false)
     // setTimeout(()=>{
     //     reloadEdits()
