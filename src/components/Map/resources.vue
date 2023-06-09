@@ -83,14 +83,27 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="isHelpTraining" width="800" persistent>
+    <v-dialog v-model="isWebexTraining" max-width="500" persistent>
+      <v-card tile style="height:17rem;">
+        <v-card-title class="surfaceTitle titles"><p id="webExTraining">Webex Training Schedule</p></v-card-title>
+        <v-card-text class="textSymb" id="rdLogTxt">
+          For those who need assistance, TxDOT will be hosting live WebEx video training on these dates:<br><br>
+          Wednesday, June 21, 2023, 2:00 – 3:00 pm<br>
+          Wednesday, July 19, 2023, 2:00 – 3:00 pm<br>
+          Wednesday, August 16, 2023, 2:00 – 3:00 pm<br>
+          To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell">https://txdot.webex.com/join/jferrell</a>
+        </v-card-text>
+        <v-btn outlined tile color="#14375A" id="webexbtn" @click="webexClose()">CLOSE</v-btn>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="isHelpTraining" width="1000" persistent>
       <v-card tile height="315">
         <v-card-title class="surfaceTitle"><p id="helpTrainPos">Help and Training</p></v-card-title>
           <v-card-text>
             <v-item-group>
               <v-container>
                 <v-row>
-                  <v-col v-for="n in 4" :key="n" md="3" >
+                  <v-col v-for="n in 5" :key="n" md="2.6" >
                     <v-item>
                       <v-tooltip bottom max-width="200" color="#204E70" style="border-radius: 0px;"> 
                         <template v-slot:activator="{ on, attrs }">
@@ -163,6 +176,7 @@
         countyNm: null,
         isFileSuccess: false,
         isFileDwnload: false,
+        isWebexTraining: false,
         uploadGISData: "Upload",
         disable: false,
         disclaimer: false,
@@ -171,9 +185,10 @@
         drawer: true,
         faqs: false,
         isHelpTraining: false,
-        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory", "Click here to download Bulk Submission Instructions"],
-        mediaType: ['', 'TxDOT Youtube Channel', 'FAQs','Access Sandbox Environment', "Download Advanced Bulk Upload Instructions"],
-        iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github', "mdi-download-circle"],
+        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory",
+                   "Click here to download Bulk Submission Instructions", "Click here to see WebEx Training Schedule"],
+        mediaType: ['', 'TxDOT Youtube Channel', 'FAQs','Access Sandbox Environment', "Download Advanced Bulk Upload Instructions", "WebEx Training"],
+        iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github', "mdi-download-circle", "mdi-calendar"],
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
               this.isUserCertify === false ? this.certifiedFalse() : this.certifiedTrue()
@@ -220,6 +235,10 @@
         pdf.target = "_blank"
         pdf.click()
       },
+      getWebEx(){
+        this.isWebexTraining = true;
+        this.isHelpTraining = false;
+      },
       close(x){
           x === 'isUserCertify' ? this.display = false : this.isHelpTraining = false
       },
@@ -236,6 +255,9 @@
         this.isUserCertify = false
         this.removeBtnFocus();
       },
+      webexClose(){
+        this.isWebexTraining = false
+      },
       openPage(event){
         if(event === 'Access Sandbox Environment'){
           window.open('https://txdot.github.io/CRI-Updates/login')
@@ -249,6 +271,9 @@
         }
         else if(event === 'Download Advanced Bulk Upload Instructions'){
           this.downloadPdf()
+        }
+        else if(event === 'WebEx Training'){
+          this.getWebEx()
         }
       },
       cntyQueryTab(){
@@ -645,8 +670,19 @@
   position: relative;
   right: 9rem;
   bottom: .5rem;
-
 }
 
+#webExTraining{
+  position: relative;
+  padding: none;
+  right: .5rem;
+  bottom: .5rem;
+}
+
+#webexbtn{
+  position: absolute;
+  bottom: .7rem;
+  right: 1.4rem;
+}
 
 </style>

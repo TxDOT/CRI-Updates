@@ -64,12 +64,19 @@ export default{
         this.$store.commit('setCntyMiles',this.currentMiles)
         this.mainTxt = `
           <p align="justify">Dear ${this.judgeName},</p>
-          <p align="justify">The Texas Department of Transportation (TxDOT) is soliciting updates to the County Road Inventory (CRI) from your county.  The deadline for the ${new Date().getFullYear()} submission is <u>August 31</u>.<br><br>
+          <p align="justify">The Texas Department of Transportation (TxDOT) is soliciting updates to the County Road Inventory (CRI) from your county.  The deadline for the ${new Date().getFullYear()} submission is <u>August 31</u>.<br>
             
           Your ${new Date().getFullYear()} certified mileage is: <b><u>${this.currentMiles}.</b></u> ${this.mileageTxt}<br><br>
           
           If you agree with this mileage, please click the AGREE & CERTIFY button below.  To review your CRI and make edits, please click the REVIEW & EDIT button below.  To delegate the responsibility of making updates to a trusted partner, please click the ASSIGN DELEGATE button below.<br><br>
-          Thank you for your assistance in keeping the county road inventory up to date. If you have any questions or need clarification, please contact us by email or phone. <br><br>
+
+          For those who need assistance, TxDOT will be hosting live WebEx video training on these dates:<br>
+          Wednesday, June 21, 2023, 2:00 – 3:00 pm<br>
+          Wednesday, July 19, 2023, 2:00 – 3:00 pm<br>
+          Wednesday, August 16, 2023, 2:00 – 3:00 pm<br>
+          To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell">https://txdot.webex.com/join/jferrell</a><br><br>
+
+          Thank you for your assistance in keeping the county road inventory up to date. If you have any questions or need clarification, please contact us by email or phone. <br>
           Sincerely,<br><br> 
           Michael Chamberlain<br>  
           Transportation Planning and Programming Division<br>  
