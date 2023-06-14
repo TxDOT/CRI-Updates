@@ -64,7 +64,7 @@ export default{
         this.$store.commit('setCntyMiles',this.currentMiles)
         this.mainTxt = `
           <p align="justify">Dear ${this.judgeName},</p>
-          <p align="justify">The Texas Department of Transportation (TxDOT) is soliciting updates to the County Road Inventory (CRI) from your county.  The deadline for the ${new Date().getFullYear()} submission is <u>August 31</u>.<br>
+          <p align="justify">The Texas Department of Transportation (TxDOT) is soliciting updates to the County Road Inventory (CRI) from your county.  The deadline for the ${new Date().getFullYear()} submission is <u>August 31</u>.<br><br>
             
           Your ${new Date().getFullYear()} certified mileage is: <b><u>${this.currentMiles}.</b></u> ${this.mileageTxt}<br><br>
           
