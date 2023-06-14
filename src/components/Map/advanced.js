@@ -1,5 +1,5 @@
 // import methods and functions into file
-import { clientSideGeoJson, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map'
+import { clientSideGeoJson, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst} from './map'
 import {createEpoch} from '../Map/helper'
 import { criConstants } from '../../common/cri_constants';
 import {store} from '../../store'
@@ -22,9 +22,9 @@ export async function downloadRdLog(){
 async function bulkAssetReturn(countyQuery){
     //get length
     //base 5000, splice every 5000
-    let incre = 5000
+    let incre = 1000
     let iStart = 0 //initialStart
-    let eStart = 5000 //endStart
+    let eStart = 1000 //endStart
     let srfcAsset = []
     let dsgnAsset = []
     let laneAsset = []
@@ -45,87 +45,95 @@ async function bulkAssetReturn(countyQuery){
 
     while(iStart < ids.length){
         let arr = ids.slice(iStart, eStart)
-
+        let min = Math.min(...arr)
+        let max = Math.max(...arr)
+        console.log(min, max)
         const assetQuery = new Query() 
         assetQuery.where = `RDBD_GMTRY_LN_ID in (${arr})`
+        assetQuery.num = 20000
+        assetQuery.orderByFields = ["RDBD_GMTRY_LN_ID"]
         assetQuery.outFields = [ "*" ]
-
+        //console.log(assetQuery)
         const roadSrfc = await rdbdSrfcAsst.queryFeatures(assetQuery)
         const roadDsgn = await rdbdDsgnAsst.queryFeatures(assetQuery)
         const roadLane = await rdbdLaneAsst.queryFeatures(assetQuery)
-
-        
+        //console.log(roadSrfc)
+        //console.log(roadSrfc.features.find(x => x.attributes.RDBD_GMTRY_LN_ID === 52681))
         roadSrfc.features.forEach((x)=>{
-        let rdSrfc = criConstants.surface.find(({num}) => num === x.attributes.SRFC_TYPE_ID)
-        let srfcObj = {
-            rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
-            srfcType: rdSrfc.name,
-            begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
-            end: x.attributes.ASSET_LN_END_DFO_MS
-        }
-        srfcAsset.push(srfcObj)
-        })
+            let rdSrfc = criConstants.surface.find(({num}) => num === x.attributes.SRFC_TYPE_ID)
+            
+            let srfcObj = {
+                rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
+                srfcType: rdSrfc.name,
+                begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
+                end: x.attributes.ASSET_LN_END_DFO_MS
+            }
+            srfcAsset.push(srfcObj)
+            })
 
         roadDsgn.features.forEach((x)=>{
-        let dsgnObj = {
-            rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
-            srfcType: x.attributes.RDWAY_DSGN_TYPE_DSCR,
-            begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
-            end: x.attributes.ASSET_LN_END_DFO_MS
-        }
-        dsgnAsset.push(dsgnObj)
+            let dsgnObj = {
+                rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
+                srfcType: x.attributes.RDWAY_DSGN_TYPE_DSCR,
+                begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
+                end: x.attributes.ASSET_LN_END_DFO_MS
+            }
+            dsgnAsset.push(dsgnObj)
         })
 
         roadLane.features.forEach((x)=>{
-        let laneObj = {
-            rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
-            srfcType: x.attributes.NBR_THRU_LANE_CNT,
-            begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
-            end: x.attributes.ASSET_LN_END_DFO_MS
-        }
-        laneAsset.push(laneObj)
+            let laneObj = {
+                rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
+                srfcType: x.attributes.NBR_THRU_LANE_CNT,
+                begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
+                end: x.attributes.ASSET_LN_END_DFO_MS
+            }
+            laneAsset.push(laneObj)
         })
 
         iStart += incre
         eStart += incre
+        console.log(iStart, eStart)
     }
-    await surfaceAsset(srfcAsset, dsgnAsset, laneAsset, useInfo) 
+    
+    await surfaceAsset(srfcAsset, dsgnAsset, laneAsset, useInfo)
 }
 
 // create fields for CSV file
-async function surfaceAsset(roadSrfc, roadDsgn, roadLane, cntyQ){
+async function surfaceAsset(roadSrfcs, roadDsgn, roadLane, cntyQ){
     let dataHolder = []
-
+    //here
     let surfacePromise = new Promise(()=>{
         for(let x=0; x < cntyQ.length; x++){
-        let srfcAst = roadSrfc.filter(y=>y.rdbdId === cntyQ[x].roadId)
-        let dsgnAst = roadDsgn.filter(y=>y.rdbdId === cntyQ[x].roadId)
-        let laneAst = roadLane.filter(y=>y.rdbdId === cntyQ[x].roadId)
 
-        srfcAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
-        dsgnAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
-        laneAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
+            let srfcAst = roadSrfcs.filter(y=>y.rdbdId === cntyQ[x].roadId)
+            let dsgnAst = roadDsgn.filter(y=>y.rdbdId === cntyQ[x].roadId)
+            let laneAst = roadLane.filter(y=>y.rdbdId === cntyQ[x].roadId)
+            srfcAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
+            dsgnAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
+            laneAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
 
-        srfcAst.forEach((z,i)=>{
-            srfcAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
-        })
-        dsgnAst.forEach((z,i)=>{
-            dsgnAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
-        })
-        laneAst.forEach((z,i)=>{
-            laneAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
-        })
-        dataHolder.push({
-            "Road Name" : cntyQ[x].roadN, 
-            "Route ID" : cntyQ[x].routeId,
-            "Length" : cntyQ[x].len,
-            "Road Surface": srfcAst.join(' then '),
-            "Number of Lanes": laneAst.join(' then '),
-            "Road Design": dsgnAst.join(' then '),
-            "County Name": cntyQ[x].cntyN, 
-            "County Number": cntyQ[x].cntyNbr, 
-            "District Number": store.getters.getDistrict
-        })
+            srfcAst.forEach((z,i)=>{
+                srfcAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
+            })
+            dsgnAst.forEach((z,i)=>{
+                dsgnAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
+            })
+            laneAst.forEach((z,i)=>{
+                laneAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
+            })
+
+            dataHolder.push({
+                "Road Name" : cntyQ[x].roadN, 
+                "Route ID" : cntyQ[x].routeId,
+                "Length" : cntyQ[x].len,
+                "Road Surface": srfcAst.join(' then '),
+                "Number of Lanes": laneAst.join(' then '),
+                "Road Design": dsgnAst.join(' then '),
+                "County Name": cntyQ[x].cntyN, 
+                "County Number": cntyQ[x].cntyNbr, 
+                "District Number": store.getters.getDistrict
+            })
         }
     })
 

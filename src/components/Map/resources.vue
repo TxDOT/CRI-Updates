@@ -84,13 +84,16 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="isWebexTraining" max-width="500" persistent>
-      <v-card tile style="height:17rem;">
+      <v-card tile style="height:19rem;">
         <v-card-title class="surfaceTitle titles"><p id="webExTraining">Webex Training Schedule</p></v-card-title>
         <v-card-text class="textSymb" id="rdLogTxt">
           For those who need assistance, TxDOT will be hosting live WebEx video training on these dates:<br><br>
-          Wednesday, June 21, 2023, 2:00 – 3:00 pm<br>
-          Wednesday, July 19, 2023, 2:00 – 3:00 pm<br>
-          Wednesday, August 16, 2023, 2:00 – 3:00 pm<br>
+          <ul>
+            <li>Wednesday, June 21, 2023, 2:00 – 3:00 pm<br></li>
+            <li>Wednesday, July 19, 2023, 2:00 – 3:00 pm<br></li>
+            <li>Wednesday, August 16, 2023, 2:00 – 3:00 pm<br></li>
+          </ul>
+          <br>
           To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell">https://txdot.webex.com/join/jferrell</a>
         </v-card-text>
         <v-btn outlined tile color="#14375A" id="webexbtn" @click="webexClose()">CLOSE</v-btn>
