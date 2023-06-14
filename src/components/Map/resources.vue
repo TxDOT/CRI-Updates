@@ -94,7 +94,7 @@
             <li>Wednesday, August 16, 2023, 2:00 – 3:00 pm<br></li>
           </ul>
           <br>
-          To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell">https://txdot.webex.com/join/jferrell</a>
+          To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell" target="_blank">https://txdot.webex.com/join/jferrell</a>
         </v-card-text>
         <v-btn outlined tile color="#14375A" id="webexbtn" @click="webexClose()">CLOSE</v-btn>
       </v-card>

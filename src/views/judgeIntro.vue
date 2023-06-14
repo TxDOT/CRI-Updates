@@ -74,7 +74,7 @@ export default{
           &nbsp;&nbsp;  • Wednesday, June 21, 2023, 2:00 – 3:00 pm<br>
           &nbsp;&nbsp;  • Wednesday, July 19, 2023, 2:00 – 3:00 pm<br>
           &nbsp;&nbsp;  • Wednesday, August 16, 2023, 2:00 – 3:00 pm<br>
-          To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell">https://txdot.webex.com/join/jferrell</a><br><br>
+          To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell" target="_blank">https://txdot.webex.com/join/jferrell</a><br><br>
 
           Thank you for your assistance in keeping the county road inventory up to date. If you have any questions or need clarification, please contact us by email or phone. <br>
           Sincerely,<br><br> 
