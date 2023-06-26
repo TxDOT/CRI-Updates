@@ -105,7 +105,7 @@ export default {
         
         let queryResult = await countyOfficialInfo.queryFeatures(query)
         this.countyNumber = cntyNum
-        this.judgeCntyOid = queryResult.features[0].attributes['OBJECTID_1']
+        this.judgeCntyOid = queryResult.features[0].attributes['OBJECTID']
         this.judgeNameSend = queryResult.features[0].attributes['JUDGE_NM']
         this.judgeEmailSend = queryResult.features[0].attributes['JUDGE_EML']
 
