@@ -129,10 +129,12 @@
 <script>
 
 import { getSelectedDFO, applyMToAsset, initLoadAssetGraphic, getGraphic } from '../roadInfo'
+import { geomToMiles } from '../helper'
 import { mouseHoverDfoDisplay, stopEditingPoint } from '../edit'
 import {criConstants} from '../../../common/cri_constants'
 import {gLayer} from '../map'
 import assetAlert from '../stepperContent/assetAlert.vue'
+
 export default {
     components: {assetAlert},
     name: 'roadSurface',
@@ -427,16 +429,24 @@ export default {
       },
       immediate: true,
     },
+    roadGeometry:{
+      handler: function(){
+        console.log(this.roadGeometry)
+        let len = geomToMiles(this.roadGeometry, true, 3).toFixed(3)
+        this.$set(this.mileInfo.at(-1), 'ASSET_LN_END', Number(len))
+        console.log(this.mileInfo.at(-1))
+      }
+    }
   },
     computed:{
-    getDfoBool: {
-      get() {
-        return this.$store.state.isDfoReturn
+      getDfoBool: {
+        get() {
+          return this.$store.state.isDfoReturn
+        },
+        set(bool) {
+          this.$store.commit('setIsDfoReturn', bool)
+        }
       },
-      set(bool) {
-        this.$store.commit('setIsDfoReturn', bool)
-      }
-    },
     // newHeight(x){
     //   return x+76
     // },
@@ -490,6 +500,14 @@ export default {
         this.$store.commit('setDfoReturn', dfo)
       }
     },
+    roadGeometry: {
+        get(){
+          return this.$store.state.roadGeometry
+        },
+        set(geom){
+          this.$store.commit('setRoadGeom', geom)
+        }
+      },
   }
 }
 </script>

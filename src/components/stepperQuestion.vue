@@ -327,9 +327,11 @@ export default {
       },
       steppClose:{
         handler: function(){
+          console.log(this.steppClose, this.firstAddToMap, this.forMod,this.forInfo)
           if(this.steppClose === true && this.firstAddToMap === true && !this.forMod && !this.forInfo){
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
             let getLength = geometryEngine.geodesicLength(editGraphic.geometry, "miles")
+            console.log(getLength)
             this.deltaDis = [Number(getLength.toFixed(3)), 'Add']
             return;
           }
@@ -599,6 +601,7 @@ export default {
           return this.$store.state.deltaDistance
         },
         set(len){
+          console.log(len)
           this.$store.commit('setDeltaDis', len)
         }
       },

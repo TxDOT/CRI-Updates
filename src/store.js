@@ -490,14 +490,14 @@ export const store = new Vuex.Store({
             state.userEmail = usrEmail
         },
         setDeltaDis(state, newLen){
+            // console.log("mileage change:", state.deltaDistance)
+            // console.log(state.oldLength, newLen[0])
             if(newLen[1] === 'Reset'){
-                console.log(state.deltaDistance)
                 state.deltaDistance -= state.deltaDistance
-                console.log(state.deltaDistance)
                 return;
             }
             if(newLen[1] === "Add"){
-                console.log(state.deltaDistance, newLen[0])
+                //console.log(state.deltaDistance, newLen[0])
                 state.deltaDistance += newLen[0]
                 return;
             }
@@ -513,20 +513,27 @@ export const store = new Vuex.Store({
                 if(state.oldLength === 0){
                     return;
                 }
-                let delta = newLen[0] - state.oldLength
-                let mileage;
-                if(state.oldLength < newLen[0]){
-                    let addMiles = Math.abs(delta)
-                    mileage = addMiles
-                }
-                if(state.oldLength > newLen[0]){
-                    let subMiles = -Math.abs(delta)
-                    mileage = subMiles
-                }
-                if(state.oldLength === newLen[0]){
-                    mileage = 0
-                }
-                state.deltaDistance += mileage
+                // let delta = newLen[0] - state.oldLength
+                // console.log("delta:",delta)
+                // console.log(state.deltaDistance + delta, state.deltaDistance)
+                // let change = (state.deltaDistance + delta) - state.deltaDistance
+                // console.log("change:",change)
+                
+                // let mileage;
+                // if(state.oldLength < newLen[0]){
+                //     let addMiles = Math.abs(delta)
+                //     mileage = addMiles
+                //     console.log(mileage)
+                // }
+                // if(state.oldLength > newLen[0]){
+                //     let subMiles = delta
+                //     mileage = subMiles
+                //     console.log(mileage)
+                // }
+                // if(state.oldLength === newLen[0]){
+                //     mileage = 0
+                // }
+                state.deltaDistance += newLen[0]
                 return;
             }
         },

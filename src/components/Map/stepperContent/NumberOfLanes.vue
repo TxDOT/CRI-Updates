@@ -87,6 +87,7 @@
 
 import { getSelectedDFO, applyMToAsset } from '../roadInfo'
 import { mouseHoverDfoDisplay, stopEditingPoint } from '../edit'
+import { geomToMiles } from '../helper'
 import {criConstants} from '../../../common/cri_constants'
 import {gLayer} from '../map'
 import assetAlert from '../stepperContent/assetAlert.vue'
@@ -358,7 +359,15 @@ export default {
         }
       }, 
       immediate: true,
-    }, 
+    },
+    roadGeometry:{
+      handler: function(){
+        console.log(this.roadGeometry)
+        let len = geomToMiles(this.roadGeometry, true, 3)
+        this.$set(this.mileInfo.at(-1), 'ASSET_LN_END', Number(len))
+        console.log(this.mileInfo.at(-1))
+      }
+    }
   },
   computed:{
     getDfoBool:{
@@ -422,6 +431,14 @@ export default {
         this.$store.commit('setDfoReturn', dfo)
       }
     },
+    roadGeometry: {
+        get(){
+          return this.$store.state.roadGeometry
+        },
+        set(geom){
+          this.$store.commit('setRoadGeom', geom)
+        }
+      },
   }
 }
 </script>

@@ -172,9 +172,14 @@ export async function hideEditedRoads(graphicL, update){
 //updateLength() gets new length of selected graphic and sends new length to store
 export function updateLength(){
   try{
+    let oldLen; 
     setUpGraphic();
     sketch.on('update', (event)=>{
-      if(event.state === 'active'){
+      if(event.state === 'start'){
+        oldLen = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))
+      }
+
+      if(event.state === 'active'){ 
         if(event.toolEventInfo.type === 'reshape-stop'){
           geomCheck(event.graphics[0].geometry, false)
           //controls undo/redo edtis
@@ -185,6 +190,7 @@ export function updateLength(){
           geomCheck(event.graphics[0].geometry, false)
         }
       }
+
   
       if(event.state === 'complete'){
         geomCheck(event.graphics[0].geometry, false)
@@ -199,7 +205,9 @@ export function updateLength(){
             store.commit('setIsUndoDisable', true) 
 
           }
-          store.commit('setDeltaDis',[newLengths, 'Modify'])
+          console.log(newLengths, oldLen)
+          let modifyChange = newLengths - oldLen
+          store.commit('setDeltaDis',[modifyChange, 'Modify'])
           store.commit('setRoadGeom', event.graphics[0].geometry.clone())
           reapplyM(event.graphics[0])
           updateGraphicsLayer(event.graphics[0].attributes.objectid, newLengths)
@@ -267,7 +275,9 @@ export function removeGraphic(){
     store.commit('setDeltaDis',[graphicR[0].attributes.originalLength, 'Add'])
   }
   else if(graphicR[0].attributes.editType === 'EDIT'){
-    let diffAdded = Math.abs(graphicR[0].attributes.originalLength - length)
+    console.log(graphicR[0].attributes.originalLength, length)
+    let diffAdded = length - graphicR[0].attributes.originalLength
+    console.log(diffAdded)
     store.commit('setDeltaDis',[diffAdded, 'Edit'])
   }
 }

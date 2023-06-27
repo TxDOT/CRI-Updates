@@ -1,7 +1,7 @@
 // import methods and functions into file
 import {sketchPoint, view, gLayer, search, clientSideGeoJson, rdbdAssetPt, rdbdAssetLine } from './map' 
 import { criConstants } from '../../common/cri_constants';
-import { highLightFeat, queryFeatureTables, queryFeat,setDataToStore} from './helper'; //setDataToStore
+import { highLightFeat, queryFeatureTables, queryFeat,setDataToStore, geomToMiles} from './helper'; //setDataToStore
 import { store } from '../../store'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
@@ -294,7 +294,10 @@ export function initLoadAssetGraphic(asset){
       
       let objID = store.getters.getObjectid
       let graphicFilter = gLayer.graphics.items.filter(x => x.attributes.objectid === objID)
+      let len = geomToMiles(graphicFilter[0].geometry, true, 3)
+      console.log(len)
       let graphicAsset = assetType[asset]()
+      graphicAsset.at(-1).ASSET_LN_END_DFO_MS = len
       store.commit('setRoadGeom', graphicFilter[0].geometry.clone())
       if(graphicAsset === null){
         removeAsstPoints();
