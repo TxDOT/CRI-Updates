@@ -87,7 +87,6 @@ export default {
         this.load=true
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find(x => cntyNbrNm[0][x] === this.pickCounty)
         let whereStatement = `CNTY_NBR = '${getCountyNbr}'`
-
         const query = new Query();
         query.where = whereStatement
         query.outFields = [ "*" ]
@@ -108,7 +107,8 @@ export default {
             this.$router.push('/map')
             this.load=false
           })
-          .catch(()=>{
+          .catch((err)=>{
+            console.log(err)
             this.$router.push({name: "error"})
           })
 

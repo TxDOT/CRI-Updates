@@ -175,7 +175,7 @@ export async function defineGraphic(graphics, clickType, editType){
         // newGraphic.attributes.editType === 'DELETE' ? store.commit('setDeltaDis',[oldLength, 'Delete']) : null
         res(gLayer)
       })
-  
+      
       let returnGraphicPromise = await graphicPromise
       hideEditedRoads(returnGraphicPromise) //imported from edit.js
     }

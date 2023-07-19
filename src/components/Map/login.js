@@ -55,7 +55,6 @@ export async function countyInfo(){
 }
 
 
-
 //reloads edits from EDITS Feature Service to Graphics Layer
 //need to rework this function
 export async function reloadEdits(){
@@ -68,7 +67,6 @@ export async function reloadEdits(){
     //finally subtract delete roads from total length 
     let mileSetUp = 0;
     for(let i=0; i < createGraphics.features.length; i++){
-      
       let length = geomToMiles(createGraphics.features[i].geometry,true,3)
       //reset Edit TYPE_ID to add/edit/delete so that criConstants.editType can be used in defineGraphic func
       if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 1){
@@ -81,10 +79,8 @@ export async function reloadEdits(){
         createGraphics.features[i].attributes.EDIT_TYPE_ID = 'add'
       }
       else if(createGraphics.features[i].attributes.EDIT_TYPE_ID === 5){
-        
         let returnRoad = await queryFeat(createGraphics.features[i])
-      
-        let oldLength = geomToMiles(returnRoad.features[0].geometry,true,3)
+        let oldLength = !returnRoad.features.length ? geomToMiles(createGraphics.features[i].geometry,true,3) : geomToMiles(returnRoad.features[0].geometry,true,3)
         let diff = length - oldLength
         mileSetUp += diff
         //detlete
@@ -245,7 +241,6 @@ export async function goToMap(name, nbr){
 export async function isTrainingAccess(groupsArr){
   let esriGroups = await groupsArr
   const belongCRI = esriGroups.some(x => x.title === "County Road Inventory")
-  console.log(belongCRI)
   if(belongCRI === true){
     let isGroup = esriGroups.some(t => t.title === 'County Road Inventory Advanced')
     store.commit('setCertifiedCheck', isGroup)
