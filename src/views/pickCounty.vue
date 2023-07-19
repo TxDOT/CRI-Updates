@@ -94,7 +94,8 @@ export default {
         queryResult.then((result)=>{
           this.countyNumber = getCountyNbr
           this.countyName = this.pickCounty
-          this.judgeCntyOid = result.features[0].attributes['OBJECTID_1']
+          this.judgeCntyOid = result.features[0].attributes['OBJECTID']
+          console.log(this.judgeCntyOid)
           this.countyMiles = result.features[0].attributes['TOT_MLGE']
           this.judgeNameSend = result.features[0].attributes['JUDGE_NM'].trim()
           this.judgeEmailSend = result.features[0].attributes['JUDGE_EML']
