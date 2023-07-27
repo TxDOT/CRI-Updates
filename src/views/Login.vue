@@ -138,6 +138,7 @@ export default {
             isTrainingAccess(portal.user.fetchGroups())
             this.userName = portal.user.username 
             let countyInfo = localStorage.getItem('county') ? this.checkLocalStorage() : await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed.
+            console.log(countyInfo)
             if(!countyInfo){return;}
             let cntyNumber = countyInfo[1]
             let cntyName = countyInfo[0]
@@ -149,10 +150,11 @@ export default {
           })
       },  
       async getCountyInfo(username){
+        console.log(username)
         let county;
         let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
           let userNameSplit = username.split('_')
-          if(userNameSplit[1].toLowerCase().includes(cntyNbrNm[0][x].replace(/\s/,'').toLowerCase())){
+          if(userNameSplit[1].toLowerCase() === cntyNbrNm[0][x].replace(/\s/,'').toLowerCase()){
             county = cntyNbrNm[0][x]
             return cntyNbrNm[0]
           }
