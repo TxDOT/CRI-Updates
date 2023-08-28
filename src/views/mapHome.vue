@@ -15,6 +15,7 @@
     <geomCheck v-if="isGeomCheck === true"/>
     <!-- <isCertAdvanced v-if="returnMapAttr"/> -->
     <dragndrop/>
+    <eoeWarning v-if="isEoEWarns === true"/>
   </div>
 </template>
 
@@ -31,12 +32,13 @@ import about from '../components/Map/aboutApp.vue'
 import Legend from '../components/Map/mapLegend.vue'
 import geomCheck from '../components/Map/geomCheck.vue'
 import dragndrop from '../components/Map/dragNDrop.vue'
+import eoeWarning from '../components/Map/reminder.vue'
 //import isCertAdvanced from '../components/Map/certAdvanced.vue'
 import { highLightFeat } from '../components/Map/helper'
 import { expandLegend } from '../components/Map/map'
 
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, eoeWarning},
     props:["id"],
     name: 'MapHome',
     data(){
@@ -49,7 +51,8 @@ export default {
         isDfoRead: false,
         isMapValues: false,
         displayLegend: false,
-        isGeomCheck: true
+        isGeomCheck: true,
+        isEoEWarns: false
       }
     },
     beforeRouteLeave(to, from, next){
@@ -70,8 +73,24 @@ export default {
       // });
 
       highLightFeat('pointer-move')
+      const date = new Date()
+      const month = date.getMonth() + 1
+      const day = date.getDate()
+      console.log(month, day)
+      if(month === 8 && day >= 21){
+        console.log(
+          "hey"
+        )
+        this.isEoEWarn = true
+      }
     },
     watch:{
+      isEoEWarn:{
+        handler: function(){
+         this.isEoEWarns = this.isEoEWarn
+        },
+        immediate: true
+      },
       steppClose:{
         handler: function(){
           if(this.steppClose === true){
@@ -118,6 +137,16 @@ export default {
       }
     },
     computed:{
+      isEoEWarn: {
+        get(){
+          console.log(this.$store.state.isEoEWarning)
+          return this.$store.state.isEoEWarning
+        },
+        set(bool){
+          this.$store.commit("setIsEoEWarning", bool)
+        }
+      },
+
       getDfoBool:{
         get(){
           return this.$store.state.isDfoReturn

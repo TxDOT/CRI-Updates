@@ -67,9 +67,13 @@ export const store = new Vuex.Store({
         isFmeProcess: false,
         totalReloadPer:0,
         cntyCentroid: [0,0],
-        isDocumentUploaded: null
+        isDocumentUploaded: null,
+        isEoEWarning: false,
     },
     getters:{
+        getIsEoEWarning(state){
+            return state.isEoEWarning
+        },
         getIsDocumentUploaded(state){
             return state.isDocumentUploaded
         },
@@ -259,6 +263,12 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsEoEWarning(state, bool){
+            state.isEoEWarning = bool
+            setTimeout(()=>{
+                state.isEoEWarning = false
+            }, 30000)
+        },
         setIsDocumentUploaded(state, bool){
             state.isDocumentUploaded = bool
         },
