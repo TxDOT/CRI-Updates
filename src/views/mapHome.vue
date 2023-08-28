@@ -76,11 +76,7 @@ export default {
       const date = new Date()
       const month = date.getMonth() + 1
       const day = date.getDate()
-      console.log(month, day)
       if(month === 8 && day >= 21){
-        console.log(
-          "hey"
-        )
         this.isEoEWarn = true
       }
     },

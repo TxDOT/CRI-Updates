@@ -17,8 +17,8 @@ export default {
 <style scoped>
     #eoeWarning{
         position: relative;
-        width: 30vw;
-        left: 39vw;
+        width: 36rem;
+        left: 36vw;
         bottom:.8rem;
     }
 </style>
