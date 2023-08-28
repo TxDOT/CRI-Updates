@@ -265,9 +265,9 @@ export const store = new Vuex.Store({
     {
         setIsEoEWarning(state, bool){
             state.isEoEWarning = bool
-            // setTimeout(()=>{
-            //     state.isEoEWarning = false
-            // }, 30000)
+            setTimeout(()=>{
+                state.isEoEWarning = false
+            }, 30000)
         },
         setIsDocumentUploaded(state, bool){
             state.isDocumentUploaded = bool
