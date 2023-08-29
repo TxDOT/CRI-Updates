@@ -53,12 +53,13 @@ export default{
         this.judgeEmail = getCntyInfoQuery.features[0].attributes['JUDGE_EML'].toLowerCase()
         this.judgeEmailSend = this.judgeEmail
         this.countyNbr = getCntyInfoQuery.features[0].attributes['CNTY_NBR']
-        this.currentMiles = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE'] ? getCntyInfoQuery.features[0].attributes['UPDATED_MLGE'] : getCntyInfoQuery.features[0].attributes['TOT_MLGE']
+        this.currentMiles = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE']
+        let totalMileage = getCntyInfoQuery.features[0].attributes['TOT_MLGE']
         let updatedMileage = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE']
         this.county = getCntyInfoQuery.features[0].attributes['CNTY_NM']
         this.sendData = parseInt(this.currentMiles)
         this.updateMileage(getCntyInfoQuery.features[0].attributes['TOT_MLGE'], updatedMileage)
-        localStorage.setItem('county',JSON.stringify([this.county,this.countyNbr,this.currentMiles]))
+        localStorage.setItem('county',JSON.stringify([this.county,this.countyNbr, totalMileage]))
         //this.sendCountyName();
           //this.sendCountyName(Number(getCntyInfoQuery.features[0].attributes['Total_Mileage']))
         this.$store.commit('setCntyMiles',this.currentMiles)
