@@ -53,7 +53,7 @@ export default{
         this.judgeEmail = getCntyInfoQuery.features[0].attributes['JUDGE_EML'].toLowerCase()
         this.judgeEmailSend = this.judgeEmail
         this.countyNbr = getCntyInfoQuery.features[0].attributes['CNTY_NBR']
-        this.currentMiles = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE']
+        this.currentMiles = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE'] ? getCntyInfoQuery.features[0].attributes['UPDATED_MLGE'] : getCntyInfoQuery.features[0].attributes['TOT_MLGE']
         let totalMileage = getCntyInfoQuery.features[0].attributes['TOT_MLGE']
         let updatedMileage = getCntyInfoQuery.features[0].attributes['UPDATED_MLGE']
         this.county = getCntyInfoQuery.features[0].attributes['CNTY_NM']
