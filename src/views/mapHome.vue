@@ -73,12 +73,18 @@ export default {
       // });
 
       highLightFeat('pointer-move')
+
       const date = new Date()
       const month = date.getMonth() + 1
       const day = date.getDate()
-      if(month === 8 && day >= 21){
+
+      const noPopup = [6,7,8]
+      const isJuneJulyMonth =  noPopup.includes(month)
+
+      if((month === 8 && day >= 21) || !isJuneJulyMonth){
         this.isEoEWarn = true
       }
+
     },
     watch:{
       isEoEWarn:{
