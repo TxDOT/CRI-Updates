@@ -69,8 +69,13 @@ export const store = new Vuex.Store({
         cntyCentroid: [0,0],
         isDocumentUploaded: null,
         isEoEWarning: false,
+        editLayer: "",
     },
     getters:{
+        getFeatLayerInfo(state){
+            console.log(state.editLayer)
+            return state.editLayer
+        },
         getIsEoEWarning(state){
             return state.isEoEWarning
         },
@@ -263,6 +268,9 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setFeatLayerInfo(state, obj){
+            state.editLayer = obj
+        },
         setIsEoEWarning(state, bool){
             state.isEoEWarning = bool
             setTimeout(()=>{

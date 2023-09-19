@@ -1,32 +1,31 @@
 <template>
-    <v-alert :type="getColor === '#c55a11' ? 'warning' : ''" border="left" :color="getColor" id="eoeWarning" tile dense dismissible>
-        <p v-if="getColor === '#c55a11'"><b>IMPORTANT:</b> <u>Submit and Certify</u> edits by the August 31 deadline.</p>
-        <p v-else><b>Notice:</b> Submissions for 2023 closed on August 31st.  We're processing your updates now.  You may continue to make updates up to August 31, 2024 for next year's submission.</p>
+    <v-alert :type="getType" :color="getColor" id="eoeWarning" tile dense dismissible border="left">
+        <div v-html="this.getText"></div>
     </v-alert>
 </template>
 <script>
+
+import {returnAlertInfo} from '../Map/map'
+
 export default {
     name: "eoeWarning",
     data() {
         return{
             getColor: null,
             getText: "",
-            
+            getType: ""
         }
     },
 
-    mounted(){
-        const date = new Date();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
+   async mounted(){
+        const dateEpoch = new Date().getTime();
+        const alertInfo = await returnAlertInfo()
 
-        if(month === 8 && day >= 21){
-            this.getColor = "#c55a11"
-        }
+        const returnItem = alertInfo.features.find(y => dateEpoch >= y.attributes.ALERT_DATE_BEGIN && dateEpoch <= y.attributes.ALERT_DATE_END)
 
-        else if(month < 8 || month >= 9 ){
-            this.getColor = "#207f74"
-        }
+        this.getText = returnItem.attributes.ALERT
+        this.getColor = returnItem.attributes.COLOR
+        this.getType = returnItem.attributes.ICON
     }
 
 }

@@ -35,7 +35,7 @@ import dragndrop from '../components/Map/dragNDrop.vue'
 import eoeWarning from '../components/Map/reminder.vue'
 //import isCertAdvanced from '../components/Map/certAdvanced.vue'
 import { highLightFeat } from '../components/Map/helper'
-import { expandLegend } from '../components/Map/map'
+import { expandLegend, returnAlertInfo } from '../components/Map/map'
 
 export default {
     components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, eoeWarning},
@@ -64,7 +64,7 @@ export default {
       
       next(false)
     },
-    mounted(){
+    async mounted(){
       expandLegend.watch('expanded',(curr)=>{
           curr === false ? this.displayLegend = false : this.displayLegend = true
       });
@@ -73,18 +73,13 @@ export default {
       // });
 
       highLightFeat('pointer-move')
+      
+      const alertInfo = await returnAlertInfo()
+      const dateEpoch = new Date().getTime()
 
-      const date = new Date()
-      const month = date.getMonth() + 1
-      const day = date.getDate()
-
-      const noPopup = [6,7,8]
-      const isJuneJulyMonth =  noPopup.includes(month)
-
-      if((month === 8 && day >= 21) || !isJuneJulyMonth){
-        this.isEoEWarn = true
-      }
-
+      const returnItem = alertInfo.features.find(y => dateEpoch >= y.attributes.ALERT_DATE_BEGIN && dateEpoch <= y.attributes.ALERT_DATE_END)
+      console.log(returnItem)
+      this.isEoEWarn = returnItem ? true : false
     },
     watch:{
       isEoEWarn:{

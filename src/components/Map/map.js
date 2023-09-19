@@ -17,10 +17,15 @@ import ScaleBar from "@arcgis/core/widgets/ScaleBar";
 import CoordinateVM from "@arcgis/core/widgets/CoordinateConversion/CoordinateConversionViewModel";
 import Search from "@arcgis/core/widgets/Search";
 import Expand from "@arcgis/core/widgets/Expand";
+
 export const gLayer = new GraphicsLayer();
 export const delgLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
+
+export const criUtils = new FeatureLayer({
+    url: criConstants.criUtils
+})
 
 const txdotVectorTiles = new VectorTileLayer({
     url: "https://tiles.arcgis.com/tiles/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Vector_Tile_Basemap/VectorTileServer",
@@ -160,7 +165,6 @@ view.ui.add([
     index: 0
   },
 ]);
-
 
 //referenceLayer feature Layer
 export const featLayer = new FeatureLayer({
@@ -308,3 +312,7 @@ export const initialize = (container) => {
             console.warn('An error in creating the map occurred:', error);
         });
 };
+
+export async function returnAlertInfo(){
+    return await criUtils.queryFeatures()
+}
