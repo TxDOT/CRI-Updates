@@ -58,7 +58,8 @@ export default {
         county:'',
         auth: {},
         cntyNme:'',
-        loginToMap: false
+        loginToMap: false,
+        isCertify: false,
         }
     },
     beforeRouteLeave(to, from, next){
@@ -108,6 +109,7 @@ export default {
         this.judgeCntyOid = queryResult.features[0].attributes['OBJECTID']
         this.judgeNameSend = queryResult.features[0].attributes['JUDGE_NM']
         this.judgeEmailSend = queryResult.features[0].attributes['JUDGE_EML']
+        this.isCertify = queryResult.features[0].attributes['CERTFD'] === "Y" ? true : false
 
         return queryResult.features[0].attributes['TOT_MLGE']
       },      
@@ -133,6 +135,10 @@ export default {
         this.loginToMap = true
         portal.load()
           .then( async () => {
+            if(this.isCertify){
+              this.$router.push('/EOY')
+              return
+            }
             this.usrEmail = portal.user.email
             this.$router.push('/load')
             isTrainingAccess(portal.user.fetchGroups())

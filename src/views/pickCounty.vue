@@ -67,7 +67,8 @@ export default {
                 'Young', 'Zapata', 'Zavala', 'Swisher'],
             pickCounty: '',
             pick: true, 
-            load: false
+            load: false,
+            isCertify: false,
         }
     },
     methods:{
@@ -99,12 +100,17 @@ export default {
           this.countyMiles = result.features[0].attributes['TOT_MLGE']
           this.judgeNameSend = result.features[0].attributes['JUDGE_NM'].trim()
           this.judgeEmailSend = result.features[0].attributes['JUDGE_EML']
+          this.isCertify = result.features[0].attributes['CERTFD'] === "Y" ? true : false
           this.loadData(this.pickCounty, getCountyNbr)
         })
       },
       async loadData(name, nbr){
         goToMap(name, nbr)
           .then(() =>{
+            if(this.isCertify){
+              this.$router.push('/EOY')
+              return
+            }
             this.$router.push('/map')
             this.load=false
           })

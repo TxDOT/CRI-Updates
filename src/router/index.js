@@ -41,6 +41,12 @@ const routes = [
     props:true
   },
   {
+    path:'/EOY',
+    name:'EOY',
+    component: () =>  import(/* webpackChunkName: "PickCounty" */ "../views/eoyCertifyPage.vue"),
+    props:true
+  },
+  {
     path: "/catchAll(.*)",
     name: "error",
     component: errorPage

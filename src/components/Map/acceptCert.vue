@@ -103,7 +103,7 @@ export default {
             this.ccEmail.forEach((x) => {
                 ccEmailList.push(x.EmailAdd)
             })
-            sendJudgeEmail(step, [], ccEmailList, this.signature, null, null)
+            sendJudgeEmail(step, [], ccEmailList, this.signature, this.countyNumber, null)
         }
     },
 
@@ -126,6 +126,14 @@ export default {
         countyMileage:{
             get(){
                 return this.$store.state.cntyMiles
+            }
+        },
+        countyNumber:{
+            get(){
+                return this.$store.state.cntyNmbr
+            },
+            set(num){
+                this.$store.commit("setCntyNmbr", num)
             }
         },
         isJudgeLetter:{

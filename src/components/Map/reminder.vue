@@ -13,7 +13,7 @@ export default {
         return{
             getColor: null,
             getText: "",
-            getType: ""
+            getType: null
         }
     },
 
