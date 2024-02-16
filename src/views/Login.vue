@@ -6,15 +6,11 @@
       max-width="500"
       id="cardDisplay"
       >
-      <v-card v-model="disagree" height="250" style="border-radius:0px">
+      <v-card v-if="login" height="250" class="login-card">
         <v-card-actions>
           <div id="loginBannerPos" v-if="certify===false">
             <v-alert color="#14375A" border="top" dark v-html="statusMessageFalse" id="loginBannerTxt"></v-alert>
           </div>
-          <!-- <div style="position:absolute; top:10%; left: 0%" v-if="certify===true">
-          <v-alert color="green" border="top" dark v-html="statusMessageTrue" class="black--text mb-3" >
-          </v-alert>
-          </div> -->
           <div id="loginTxt" class="black--text mb-3">
             <v-card-text style="color:black;" v-html="disagreeTxt">
             </v-card-text>
@@ -24,18 +20,34 @@
                 <u>Login</u>
               </v-btn>
             </div>
-              <v-btn id="SignupBtnPos" depressed text tile color="black" x-small onclick="window.open('https://www.txdot.gov/data-maps/roadway-inventory/cri-form.html','_blank')" >
+              <v-btn id="SignupBtnPos" depressed text tile color="black" x-small @click="signup = true; login=false;" >
                 Sign-Up
-              </v-btn>
-         
+              </v-btn>         
         </v-card-actions>
       </v-card>
+      <v-card v-if="signup" class="login-card"> 
+        <v-form>
+          <v-col>
+            <v-row class="signup-form">
+              <v-text-field v-model="firstName" required label="First Name" :rules="firstNameRequired"></v-text-field>
+            </v-row>
+            <v-row class="signup-form">
+              <v-text-field v-model="lastName" required label="Last Name" :rules="lastNameRequired"></v-text-field>
+            </v-row>
+            <v-row class="signup-form">
+              <v-text-field v-model="email" required label="Email" :rules="emailRequired"></v-text-field>
+            </v-row>
+          </v-col>
+          <v-btn class="continueButton" outlined tile color="#14375A" :disabled="formDisabled"><u>submit</u></v-btn>
+          <v-btn @click="signup = false; login=true;" class="cancelButton1" depressed text tile>cancel</v-btn>
+        </v-form>
+      </v-card>
     </v-dialog>
-
 </template>
 
 <script>
 import {countyOfficialInfo} from '../components/Map/map'
+import {getTodaysDate} from '../components/Map/helper'
 import {goToMap, isTrainingAccess} from '../components/Map/login'
 import {cntyNbrNm} from '../common/txCnt'
 import OAuthInfo from "@arcgis/core/identity/OAuthInfo";
@@ -58,8 +70,41 @@ export default {
         county:'',
         auth: {},
         cntyNme:'',
+        login: true,
         loginToMap: false,
         isCertify: false,
+        signup: false,
+        formDisabled: true,
+        firstName:"",
+        firstNameRequired:[
+          value => {
+            console.log(value)
+            if(!value.length) return true
+            return "First Name is required"
+          },
+          value => {
+            if(value.length >= 3) return true
+            return "First Name must be greater than 3 characters" 
+          }
+        ],
+        lastName:"",
+        lastNameRequired:[
+          value => {
+            if(value) return true
+            return "Last Name is required"
+          },
+          value => {
+            if(value.length >= 3) return true
+            return "Last Name must be greater than 3 characters" 
+          }
+        ],
+        email:"",
+        emailRequired:[
+          value => {
+            if(/.+@.+\..+/.test(value)) return true
+            return "E-mail must be valid"
+          }
+        ],
         }
     },
     beforeRouteLeave(to, from, next){
@@ -110,7 +155,7 @@ export default {
         this.judgeNameSend = queryResult.features[0].attributes['JUDGE_NM']
         this.judgeEmailSend = queryResult.features[0].attributes['JUDGE_EML']
         this.isCertify = queryResult.features[0].attributes['CERTFD'] === "Y" ? true : false
-
+        
         return queryResult.features[0].attributes['TOT_MLGE']
       },      
 
@@ -123,7 +168,13 @@ export default {
         esriId.getCredential(this.auth.portalUrl + "/sharing")
       },
       async loadMap(name, nbr){
-        await goToMap(name, nbr)
+        const map = await goToMap(name, nbr)
+        const [month, date] = getTodaysDate()
+        console.log(month, date)
+        if(map === 0 && (month === 8 && (date >= 1 || date <= 15))){
+          this.$router.push('/EOY')
+          return;
+        }
         this.$router.push('/map')
         this.loginToMap = false
         //view.goTo(viewPoint);
@@ -173,6 +224,20 @@ export default {
           return;
         }
       }
+    },
+    watch:{
+      formDisabled: {
+        handler: function(){
+          console.log(this.firstNameRequired)
+          if(this.firstNameRequired && this.lastNameRequired && this.emailRequired){
+            console.log(this.firstNameRequired)
+            return false
+          }
+          return true
+        },
+        immediate: true
+      }
+
     },
     computed:{
       setLogOut:{
@@ -289,5 +354,13 @@ export default {
   position:absolute; 
   left:4%; 
   bottom:13%
+}
+.login-card{
+  border-radius: 0px !important;
+  
+}
+.signup-form{
+  padding-left: 3rem !important;
+  padding-right: 3rem !important;
 }
 </style>

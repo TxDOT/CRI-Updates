@@ -1,13 +1,13 @@
 <!-- tools in sidebar nav -->
 <template>
   <v-list class="outlineColor" id="toolsList" >
-    <v-list-item-group v-model="clearEditBtn" color="#15648C">
+    <v-list-item-group v-model="clearEditBtn" color="#15648C" >
       <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="item.disabled">
         <v-list-item-icon>
           <v-icon v-text="item.icon" color="black" :disabled="item.disabled"></v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title v-text="item.title"></v-list-item-title>
+          <v-list-item-title v-text="item.title" class="navFontSize"></v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list-item-group>
@@ -16,12 +16,21 @@
 
 <script>
 import { jumpToGoogle, undoSketch, redoSketch } from './mapNav'
+import { criEditsLayer } from './map'
   export default {
     name: 'mapTools',
     data (){
       return {
         display:false,
         items: [
+          { title: 'Last Year Edit\'s', disabled: false, icon: 'mdi-history', action: ()=>{
+            console.log(this.countyName)
+            criEditsLayer.definitionExpression = `COUNTY_NAME = '${this.countyName}'`
+            criEditsLayer.visible = !criEditsLayer.visible
+            this.isLastYearEdits = criEditsLayer.visible
+            // criEditsLayer.visible = true
+            }
+          },
           { title: 'Jump To Google', disabled: false, icon: 'mdi-run',action: ()=>{
             this.clearEditBtn = true
             jumpToGoogle();
@@ -49,23 +58,41 @@ import { jumpToGoogle, undoSketch, redoSketch } from './mapNav'
         ],
       }
     },
+    methods:{
+
+
+
+    },
     watch:{
       undoEdits:{
         handler: function(){
-          this.items[1].disabled = this.undoEdits
+          this.items[2].disabled = this.undoEdits
           this.stepIn = null;
         },
         immediate: true
       },
       redoEdits:{
         handler: function(){
-          this.items[2].disabled = this.redoEdits
+          this.items[3].disabled = this.redoEdits
           this.stepIn = null;
         },
         immediate: true
       }
     },
     computed:{
+      isLastYearEdits:{
+        get(){
+          return this.$store.state.isLastYearEdits
+        },
+        set(bool){
+          this.$store.commit('setIsLastYearEdits', bool)
+        }
+      },
+      countyName:{
+        get(){
+          return this.$store.state.cntyName
+        }
+      },
       undoEdits:{
         get(){
           return this.$store.state.isUndoDisable
@@ -109,8 +136,9 @@ import { jumpToGoogle, undoSketch, redoSketch } from './mapNav'
 }
 
 #toolsList{
-  position: absolute;
-  bottom: 39vh; 
-  width: 100%;
+  /* position: fixed;
+  top: 19rem;
+  bottom: 45%; 
+  width: 100%; */
 }
 </style>

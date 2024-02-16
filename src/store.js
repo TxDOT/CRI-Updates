@@ -70,10 +70,17 @@ export const store = new Vuex.Store({
         isDocumentUploaded: null,
         isEoEWarning: false,
         editLayer: "",
+        isLastYearEdits: false,
+        isLegend: false,
     },
     getters:{
+        getIsLegend(state){
+            return state.isLegend
+        },
+        getIsLastYearEdits(state){
+            return state.isLastYearEdits
+        },
         getFeatLayerInfo(state){
-            console.log(state.editLayer)
             return state.editLayer
         },
         getIsEoEWarning(state){
@@ -268,6 +275,13 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsLegend(state, bool){
+            state.isLegend = bool
+        },
+        setIsLastYearEdits(state, bool){
+            console.log(bool)
+            state.isLastYearEdits = bool
+        },
         setFeatLayerInfo(state, obj){
             state.editLayer = obj
         },

@@ -8,11 +8,10 @@
 
 <script>
 import {countyInfo} from './components/Map/login'
-
+///Needs to wait for URL query to complete before initiaiting.
 export default {
     name: 'App',
-
-    mounted(){
+    async mounted (){
       countyInfo().then((result) =>{
         if(result.response === true){
           this.$router.push({name:'JudgeIntro', params:{id: result.nbr}})

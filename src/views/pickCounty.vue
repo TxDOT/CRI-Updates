@@ -30,6 +30,7 @@ import {cntyNbrNm} from '../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query"
 import loader from '../components/Map/loader.vue'
 import esriId from "@arcgis/core/identity/IdentityManager";
+import {getTodaysDate} from '../components/Map/helper'
 
 export default {
     name: 'PickCounty',
@@ -96,7 +97,6 @@ export default {
           this.countyNumber = getCountyNbr
           this.countyName = this.pickCounty
           this.judgeCntyOid = result.features[0].attributes['OBJECTID']
-          console.log(this.judgeCntyOid)
           this.countyMiles = result.features[0].attributes['TOT_MLGE']
           this.judgeNameSend = result.features[0].attributes['JUDGE_NM'].trim()
           this.judgeEmailSend = result.features[0].attributes['JUDGE_EML']
@@ -105,11 +105,12 @@ export default {
         })
       },
       async loadData(name, nbr){
+        const [month, date] = getTodaysDate()
         goToMap(name, nbr)
-          .then(() =>{
-            if(this.isCertify){
+          .then((map) =>{
+            if(map === 0 && (month === 8 && (date >= 1 || date <= 15))){
               this.$router.push('/EOY')
-              return
+              return;
             }
             this.$router.push('/map')
             this.load=false

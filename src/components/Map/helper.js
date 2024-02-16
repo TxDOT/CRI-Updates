@@ -312,5 +312,9 @@ export function getCentroid(cntyPoly){
   centroid.push(ySum/n)
   store.commit('setCntyCentroid', centroid)
   return;
-  
+}
+
+export function getTodaysDate(){
+  const dateObj = new Date()
+  return [dateObj.getMonth(), dateObj.getDate()]
 }

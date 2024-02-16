@@ -1,24 +1,24 @@
 <!-- Legend component -->
 <template >
-    <v-card id="legendPos" tile>
-        <v-card-title class="editRdTitle"><p id="legendTitleTxt">Edit Types</p></v-card-title>
-        <canvas id="legend" width="190" height="150"></canvas>
-        <div id="add">
-            <v-card-text class="editType">Add Road</v-card-text>
-        </div>
-        <div id="edit">
-            <v-card-text class="editType">Edit Road</v-card-text>
-        </div>
-        <div id="delete">
-            <v-card-text class="editType">Delete Road</v-card-text>
-        </div>
-        
-    </v-card>
-
+    
+        <v-card tile class="legend-box">
+            <v-card-title class="editRdTitle"><p id="legendTitleTxt">Edit Types</p></v-card-title>
+            <canvas id="legend-edit-type" width="190" height="150"></canvas>
+            <div id="add">
+                <v-card-text class="editType">Add Road</v-card-text>
+            </div>
+            <div id="edit">
+                <v-card-text class="editType">Edit Road</v-card-text>
+            </div>
+            <div id="delete">
+                <v-card-text class="editType">Delete Road</v-card-text>
+            </div>
+        </v-card>
 
 </template>
 
 <script>
+
 
 
 export default {
@@ -30,31 +30,66 @@ export default {
         }
     },
     mounted(){
-        let canvas = document.getElementById('legend')
-        this.canvas = canvas.getContext('2d')
+            let canvasT = document.getElementById('legend-edit-type')
+            this.canvas = canvasT.getContext('2d')
 
-        this.canvas.strokeStyle = '#27D83E'
-        this.canvas.setLineDash([8, 6]);
-        this.canvas.lineWidth = 3.5
-        this.canvas.lineCap = 'round'
+            this.canvas.strokeStyle = '#27D83E'
+            this.canvas.setLineDash([8, 6]);
+            this.canvas.lineWidth = 3.5
+            this.canvas.lineCap = 'round'
 
-        this.canvas.lineDashOffset = 4
-        this.canvas.beginPath()
-        this.canvas.moveTo(1,20)
-        this.canvas.lineTo(60, 20);
-        this.canvas.stroke()
+            this.canvas.lineDashOffset = 4
+            this.canvas.beginPath()
+            this.canvas.moveTo(1,30)
+            this.canvas.lineTo(60, 30);
+            this.canvas.stroke()
 
-        this.canvas.strokeStyle = '#F8A307'
-        this.canvas.beginPath()
-        this.canvas.moveTo(1,50)
-        this.canvas.lineTo(60, 50);
-        this.canvas.stroke()
-        
-        this.canvas.strokeStyle = '#E32636'
-        this.canvas.beginPath()
-        this.canvas.moveTo(1,80)
-        this.canvas.lineTo(60,80);
-        this.canvas.stroke()
+            this.canvas.strokeStyle = '#F8A307'
+            this.canvas.beginPath()
+            this.canvas.moveTo(1,75)
+            this.canvas.lineTo(60, 75);
+            this.canvas.stroke()
+            
+            this.canvas.strokeStyle = '#E32636'
+            this.canvas.beginPath()
+            this.canvas.moveTo(1,120)
+            this.canvas.lineTo(60,120);
+            this.canvas.stroke()
+
+       
+    },
+    methods:{
+
+    },
+    watch:{
+        lastYearEdit:{
+            handler: function(){
+                if(this.lastYearEdit){
+                    console.log("hell")
+                }
+            },
+            immediate: true
+        },
+    },
+    computed:{
+        lastYearEdit:{
+            get(){
+                console.log(this.$store.state.isLastYearEdits)
+                return this.$store.state.isLastYearEdits
+            },
+            set(bool){
+                this.$store.commit('setIsLastYearEdits', bool)
+            }
+      },
+      isLegend:{
+            get(){
+                console.log(this.$store.state.isLegend)
+                return this.$store.state.isLegend
+            },
+            set(bool){
+                this.$store.commit('setIsLegend', bool)
+            }
+      },
     }
 }
 </script>
@@ -92,6 +127,9 @@ export default {
     .editType{
         font-size: .8rem;
         padding: 0%;
+        bottom: .5rem;
+        position: relative;
+        text-align: left;
     }
     #legendPos{
         position: absolute; 
@@ -100,6 +138,13 @@ export default {
         width: 10.5rem; 
         height: 8rem;
     }
+    /* #legendPos1{
+        position: absolute; 
+        bottom: 25%; 
+        right: 2%; 
+        width: 10.5rem; 
+        height: 8rem;
+    } */
     #legendTitleTxt{
         position:absolute; 
         top: 0.5%; 

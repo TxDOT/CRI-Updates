@@ -27,6 +27,7 @@ export const criUtils = new FeatureLayer({
     url: criConstants.criUtils
 })
 
+
 const txdotVectorTiles = new VectorTileLayer({
     url: "https://tiles.arcgis.com/tiles/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Vector_Tile_Basemap/VectorTileServer",
     id: "txdot"
@@ -49,7 +50,7 @@ const imgBasemap = new Basemap({
 //map constructor 
 export const map = new Map({
     basemap: vTBasemap,
-    layers: [rdbdAssetLine,rdbdAssetPt,gLayer]
+    layers: [rdbdAssetLine,rdbdAssetPt, gLayer]
 });
 //mapview constructor
 export const view = new MapView({
@@ -62,8 +63,7 @@ export const view = new MapView({
     constraints: {
         rotationEnabled: false,
         snapToZoom: false
-
-      }
+    }
 });
 
 // ESRI UI WIDGETS
@@ -108,30 +108,7 @@ export const search = new Search({
 
 
 
-// PUSH SOURCES TO SEARCH WIDGET
-search.sources.push({
-    layer: new FeatureLayer({
-        url: criConstants.refernceLayer,
-    }),
-    searchFields: ["SRCH_SHORT", "SRCH_LONG"],
-    displayField: "SRCH_SHORT",
-    exactMatch: false,
-    autoSelect: true,
-    outFields: ["*"],
-    name: "County Road",
-    placeholder: "Ex: Smith Road",
-    maxResults: 12,
-    maxSuggestions: 12,
-    suggestionsEnabled: true,
-    minCharacters: 0,
-    popupEnabled: false,
-    popupOpenOnSelect: false,
-    resultSymbol: {
-        type: "simple-line",
-        color: "cyan",
-        width: "6px",
-    }
-});
+
 // ADD AND POSITION WIDGETS IN THE MAPVIEW
 view.ui.remove("attribution");
 view.ui.empty("top-left");
@@ -166,6 +143,8 @@ view.ui.add([
   },
 ]);
 
+
+
 //referenceLayer feature Layer
 export const featLayer = new FeatureLayer({
     url: criConstants.refernceLayer,
@@ -196,6 +175,31 @@ export const clientSideGeoJson = new GeoJSONLayer({
         }
     }
   });
+
+  // PUSH SOURCES TO SEARCH WIDGET
+search.sources.push({
+    layer: new FeatureLayer({
+        url: criConstants.refernceLayer,
+    }),
+    searchFields: ["SRCH_SHORT", "SRCH_LONG"],
+    displayField: "SRCH_SHORT",
+    exactMatch: false,
+    autoSelect: true,
+    outFields: ["*"],
+    name: "County Road",
+    placeholder: "Ex: Smith Road",
+    maxResults: 12,
+    maxSuggestions: 12,
+    suggestionsEnabled: true,
+    minCharacters: 0,
+    popupEnabled: false,
+    popupOpenOnSelect: false,
+    resultSymbol: {
+        type: "simple-line",
+        color: "cyan",
+        width: "6px",
+    }
+});
 
 export const addAttach = new FeatureLayer({
     url: criConstants.deleteDocumentFL
@@ -235,6 +239,62 @@ export const txCounties = new FeatureLayer({
 //county information feature layer
 export const countyOfficialInfo = new FeatureLayer({
     url: criConstants.judgeInfoTable,
+})
+//CRI Edits layer
+export const criEditsLayer = new FeatureLayer({
+    url: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Map_Markups_2023_Edits/FeatureServer/0",
+    renderer: {
+        type: "unique-value",
+        field: "EDIT_STATUS",
+        defaultSymbol: { type: "simple-line", color: "red" },
+        uniqueValueInfos: [{
+            value: 4, //Complete
+            symbol:{
+                type: "simple-line",
+                color: "#89CFF0",
+                width: "2px",
+                style: "solid"
+            }
+        },
+        {
+            value: 1, //Geometry Edit Complete
+            symbol:{
+                type: "simple-line",
+                color: "#89CFF0",
+                width: "2px",
+                style: "solid"
+            }
+        },
+        {
+            value: 0, //Not Started
+            symbol:{
+                type: "simple-line",
+                color: "#F0E130",
+                width: "2px",
+                style: "solid"
+            }
+        },
+        {
+            value: 6, //FIELD VERIFICATION NEEDED (FVN)
+            symbol:{
+                type: "simple-line",
+                color: "#F0E130",
+                width: "2px",
+                style: "solid"
+            }
+        },
+        {
+            value: 5, //Does not Meet Criteria
+            symbol:{
+                type: "simple-line",
+                color: "#8B008B",
+                width: "2px",
+                style: "solid"
+            }
+        }],
+    },
+    visible: false,
+    //popupEnabled: true
 })
 //sketch model used when modifying a new road.
 export const sketch = new SketchViewModel({
@@ -284,7 +344,7 @@ export const sketchPoint = new SketchViewModel({
 //watching the view until the state is set to Ready. Then stepper is set to close and add in featLayer and countyPolygons.
 watchUtils.whenOnce(view,"ready").then(()=>{
     document.getElementById('stepper').style.width = '0px'
-    map.addMany([clientSideGeoJson,txCounties])
+    map.addMany([clientSideGeoJson,txCounties,criEditsLayer])
 });
 
 //prevent users from double clicking

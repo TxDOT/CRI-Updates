@@ -421,8 +421,8 @@
   font-size: 16px;
 }
 #advanceList{
-  position: absolute;
-  bottom: 3vh; 
+  position: fixed;
+  /* bottom: 1rem;  */
   width: 98%
 }
 #advancedCard{

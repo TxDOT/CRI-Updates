@@ -1,10 +1,12 @@
 <template>
         <v-card height="700">
             <div><img src="../assets/darrelBarrel.gif">
-            <p><br><br>Howdy!
-            <br><br>Are you trying to make edits? Well unfortunently, you cannot make edits as the Judge has certified the edits and it is passed August 31st.
-            Better luck next time!<br><br>
-                - Darrel aka Darrel the Barrel
+            <p><br>Whoa, hold on...
+            <br><br>The County Road Inventory Map is closed following the August 31st deadline
+                    while we transition to the next data year.<br><br>
+                    The map will reopen on September 15th.
+                    <br><br>
+                Thank You!
             </p>
 
             </div>
@@ -36,4 +38,17 @@ export default {
 }
 </script>
 <style scoped>
+p{
+    position: relative;
+    bottom: 1.5rem;
+    font-size: 20px;
+    text-align: left;
+    padding-left: 30%;
+    padding-right: 30%;
+}
+
+div{
+    align-items: center;
+}
+
 </style>

@@ -247,3 +247,9 @@
   font-size: .8rem;
   color: black !important;
 }
+
+.legend-box{
+  position: relative;
+  width:15rem;
+  bottom: 2rem;
+}

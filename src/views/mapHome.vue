@@ -11,7 +11,11 @@
     <v-progress-circular indeterminate color="primary" style="top:400px;" v-if="loading===true"></v-progress-circular>
     <dfoBox v-if="isDfoRead===true"/>
     <about v-if="aboutClick === true"/>
-    <Legend v-if="displayLegend === true"/>
+    <div id="legend-flex">
+      <Legend v-if="this.isLegend === true"/>
+      <LastYearsEditLegend v-if="this.lastYearEdit === true"/>
+    </div>
+    
     <geomCheck v-if="isGeomCheck === true"/>
     <!-- <isCertAdvanced v-if="returnMapAttr"/> -->
     <dragndrop/>
@@ -36,9 +40,10 @@ import eoeWarning from '../components/Map/reminder.vue'
 //import isCertAdvanced from '../components/Map/certAdvanced.vue'
 import { highLightFeat } from '../components/Map/helper'
 import { expandLegend, returnAlertInfo } from '../components/Map/map'
+import LastYearsEditLegend from '../components/Map/mapLastYearsEditLegend.vue'
 
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, eoeWarning},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, eoeWarning, LastYearsEditLegend},
     props:["id"],
     name: 'MapHome',
     data(){
@@ -66,7 +71,8 @@ export default {
     },
     async mounted(){
       expandLegend.watch('expanded',(curr)=>{
-          curr === false ? this.displayLegend = false : this.displayLegend = true
+          curr === false ?  this.isLegend = false : this.isLegend = true
+          // this.isLegend = this.displayLegend
       });
       // basemapToggle.watch('activeBasemap',(curr)=>{
       //   curr.baseLayers.items[0].id === 'imagery' ? featLayer.renderer = criConstants.featLayerColorImagery : featLayer.renderer = criConstants.featLayerColorVector
@@ -78,7 +84,6 @@ export default {
       const dateEpoch = new Date().getTime()
 
       const returnItem = alertInfo.features.find(y => dateEpoch >= y.attributes.ALERT_DATE_BEGIN && dateEpoch <= y.attributes.ALERT_DATE_END)
-      console.log(returnItem)
       this.isEoEWarn = returnItem ? true : false
     },
     watch:{
@@ -131,12 +136,16 @@ export default {
             this.isMapValues = true
           }
         }
+      },
+      lastYearEdit:{
+        handler: function(){
+          this.displayLegend = this.lastYearEdit
+        }
       }
     },
     computed:{
       isEoEWarn: {
         get(){
-          console.log(this.$store.state.isEoEWarning)
           return this.$store.state.isEoEWarning
         },
         set(bool){
@@ -218,6 +227,22 @@ export default {
           this.$store.commit('setIsMapAttr',bool)
         }
       },
+      lastYearEdit:{
+        get(){
+          return this.$store.state.isLastYearEdits
+        },
+        set(bool){
+          this.$store.commit('setIsLastYearEdits', bool)
+         }
+      },
+      isLegend:{
+        get(){
+          return this.$store.state.isLegend
+        },
+        set(bool){
+          this.$store.commit('setIsLegend', bool)
+        }
+      },
     }
 }
 </script>
@@ -243,5 +268,13 @@ export default {
   height:100%;
   background-color:rgba(0,0,0,0.65);
 } */
-
+#legend-flex{
+  display: flex; 
+  gap: 10px; 
+  flex-direction: column-reverse; 
+  bottom: 3rem; 
+  right: 1rem; 
+  height: 26rem; 
+  position: absolute;
+}
 </style>

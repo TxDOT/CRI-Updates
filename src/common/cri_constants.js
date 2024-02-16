@@ -1,6 +1,7 @@
 export const criConstants = {
-    // portalUrl: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_SurfType_Geom_view/FeatureServer/0",
+    //portalUrl: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_SurfType_Geom_view/FeatureServer/0",
     criUtils: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Utils/FeatureServer/0",
+    criUrl: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_URL/FeatureServer/0",
     refernceLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/0', 
     editsLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS/FeatureServer/0',
     assetLyrRdbSrf: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/2',
@@ -42,6 +43,7 @@ export const criConstants = {
     colorTable: {
       'Paved': "#FF6700",
       'Brick': "#FE012E",
+      'Dirt/Natural': "#0098FF",
       'Gravel': "#E700FF",
       'Concrete': "#47BF40",
       'One Way': "#FFBF00",
@@ -64,7 +66,4 @@ export const criConstants = {
     txdotSchema: ['EDIT_TYPE', 'ROAD_PRFX', 'ROAD_SFX', 'ROAD_TYPE', 'ROAD_NM', 'SURFACE', 'LANE', 'DESIGN'],
     txdotRequired: ['EDIT_TYPE','SURFACE', 'LANE', 'DESIGN', 'ROAD_TYPE', 'ROAD_NM']
   }
-
-  
-
 

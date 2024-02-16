@@ -25,6 +25,7 @@ export async function countyInfo(){
         const query = new Query();
         query.where = whereStatement
         query.outFields = [ "*" ]
+        
         let newQuery = countyOfficialInfo.queryFeatures(query)
         // query county extent for dynamic home button
         const geomQuery = new Query();
@@ -110,7 +111,7 @@ export async function reloadEdits(){
     }
     //reloadItemsQuick(createGraphics.features)
     store.commit('setDeltaDis',[mileSetUp, 'Add'])
-    return currentEditRoads
+    return [currentEditRoads, mileSetUp]
 }
 
 function queryLayer(cntyName, rdbdId){
@@ -128,7 +129,6 @@ function queryLayer(cntyName, rdbdId){
 
 //convert REF layer service (i.e County) to GeoJSON layer. Client side querying.
 export async function createGeoJson(cntyName){
-
   let geoJSONArr = {
     type: "FeatureCollection",
     features: []
@@ -197,7 +197,8 @@ export async function createGeoJson(cntyName){
 //function to query ref table by OID and COUNTY NAME and go and load map
 export async function goToMap(name, nbr){
     await createGeoJson(name)
-    let road = await reloadEdits()
+    let [road, miles] = await reloadEdits()
+    
     let objectidList = [];
     for(let id in road.features){
       if(road.features[id].attributes !== null){
@@ -235,7 +236,7 @@ export async function goToMap(name, nbr){
     // set mapview constraints to county geometry
     view.constraints.geometry = returnCountyObj.features[0].geometry.extent;
     view.constraints.minZoom = 8;
-    return;
+    return miles;
 } 
 //sets store for Advanced page Access
 export async function isTrainingAccess(groupsArr){

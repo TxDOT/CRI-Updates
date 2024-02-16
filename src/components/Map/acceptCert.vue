@@ -187,7 +187,8 @@ export default {
     }
     #signature{
         position: relative;
-        font-family: Brush Script MT;
+        font-family: serif;
+        font-style: italic;
         font-size:1.8rem;
         left: 1.4rem;
         align-content: left;

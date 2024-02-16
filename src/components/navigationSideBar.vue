@@ -15,8 +15,8 @@
               </v-list-item>
             </v-list-item-group>
           </v-list>
-          <mapTools/>
-          <aboutHelp/>
+          <mapTools style="top: 4rem; position: relative;"/>
+          <aboutHelp style="top: 7rem; position: relative;"/>
       </v-navigation-drawer>
     </v-container>
 </template>
@@ -288,9 +288,10 @@ body.select{
 
 #navSideBarPos{
   top:3.7rem !important;
-  height:100%;
-  width: 12rem !important;
-  min-width: 12rem;
+  /* max-height: 100%; */
+  width: 13rem !important;
+  /* min-width: 12rem; */
+  overflow-y: auto !important;
 }
 #navTxPos{
   position:relative; 
@@ -298,8 +299,10 @@ body.select{
   font-size: 12.2px;
 }
 #navList{
-  position: absolute; 
-  top: 4.5vh; 
-  width: 100%
+  /* position: fixed; 
+  top: 5%; 
+  width: 100%;
+  min-height: 45rem;
+  overflow-y: auto; */
 }
 </style>
