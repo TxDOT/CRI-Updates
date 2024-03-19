@@ -45,9 +45,6 @@ async function bulkAssetReturn(countyQuery){
 
     while(iStart < ids.length){
         let arr = ids.slice(iStart, eStart)
-        let min = Math.min(...arr)
-        let max = Math.max(...arr)
-        console.log(min, max)
         const assetQuery = new Query() 
         assetQuery.where = `RDBD_GMTRY_LN_ID in (${arr})`
         assetQuery.num = 20000
@@ -93,7 +90,6 @@ async function bulkAssetReturn(countyQuery){
 
         iStart += incre
         eStart += incre
-        console.log(iStart, eStart)
     }
     
     await surfaceAsset(srfcAsset, dsgnAsset, laneAsset, useInfo)
@@ -295,9 +291,7 @@ export async function uploadPass(message, upldData){
     document.getElementById('text').style.color = 'green'
     store.commit('setIsDragDrop', false)//update
     store.commit('setServerCheck', true) //update
-    console.log(`start time: ${getTime()}`)
     let taskid = await upldToAdvceFeatLyr(upldData)
-    console.log(`end time: ${getTime()}`)
     serverResponse(taskid)//update
 }
 

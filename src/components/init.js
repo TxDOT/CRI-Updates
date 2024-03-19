@@ -9,7 +9,6 @@ export const criUrlRead = new FeatureLayer({
 
 async function getUrls(){
     let urls = await criUrlRead.queryFeatures()
-    //console.log(urls.features.find(item => item.attributes.NAME === `${urlName}`).URL)
     let urlObj = urls.features
     return {
         REF_LAYER_URL: urlObj.find(x => x.attributes.NAME === "REF_LAYER").attributes.URL,

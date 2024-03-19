@@ -362,10 +362,8 @@ export default {
     },
     roadGeometry:{
       handler: function(){
-        console.log(this.roadGeometry)
         let len = geomToMiles(this.roadGeometry, true, 3)
         this.$set(this.mileInfo.at(-1), 'ASSET_LN_END', Number(len))
-        console.log(this.mileInfo.at(-1))
       }
     }
   },

@@ -62,19 +62,11 @@ export default {
 
     },
     watch:{
-        lastYearEdit:{
-            handler: function(){
-                if(this.lastYearEdit){
-                    console.log("hell")
-                }
-            },
-            immediate: true
-        },
+
     },
     computed:{
         lastYearEdit:{
             get(){
-                console.log(this.$store.state.isLastYearEdits)
                 return this.$store.state.isLastYearEdits
             },
             set(bool){
@@ -83,7 +75,6 @@ export default {
       },
       isLegend:{
             get(){
-                console.log(this.$store.state.isLegend)
                 return this.$store.state.isLegend
             },
             set(bool){

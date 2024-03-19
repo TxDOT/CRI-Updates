@@ -6,7 +6,7 @@
       max-width="500"
       id="cardDisplay"
       >
-      <v-card v-if="login" height="250" class="login-card">
+      <v-card height="250" class="login-card">
         <v-card-actions>
           <div id="loginBannerPos" v-if="certify===false">
             <v-alert color="#14375A" border="top" dark v-html="statusMessageFalse" id="loginBannerTxt"></v-alert>
@@ -20,12 +20,12 @@
                 <u>Login</u>
               </v-btn>
             </div>
-              <v-btn id="SignupBtnPos" depressed text tile color="black" x-small @click="signup = true; login=false;" >
+              <v-btn id="SignupBtnPos" depressed text tile color="black" x-small @click="signup = true; login=false;" onclick="window.open('https://www.txdot.gov/data-maps/roadway-inventory/cri-form.html','_blank')">
                 Sign-Up
               </v-btn>         
         </v-card-actions>
       </v-card>
-      <v-card v-if="signup" class="login-card"> 
+      <!-- <v-card v-if="signup" class="login-card"> 
         <v-form>
           <v-col>
             <v-row class="signup-form">
@@ -41,7 +41,7 @@
           <v-btn class="continueButton" outlined tile color="#14375A" :disabled="formDisabled"><u>submit</u></v-btn>
           <v-btn @click="signup = false; login=true;" class="cancelButton1" depressed text tile>cancel</v-btn>
         </v-form>
-      </v-card>
+      </v-card> -->
     </v-dialog>
 </template>
 
@@ -78,7 +78,6 @@ export default {
         firstName:"",
         firstNameRequired:[
           value => {
-            console.log(value)
             if(!value.length) return true
             return "First Name is required"
           },
@@ -170,8 +169,7 @@ export default {
       async loadMap(name, nbr){
         const map = await goToMap(name, nbr)
         const [month, date] = getTodaysDate()
-        console.log(month, date)
-        if(map === 0 && (month === 8 && (date >= 1 || date <= 15))){
+        if(map === 0 && (month === 8 && (date >= 1 || date < 15))){
           this.$router.push('/EOY')
           return;
         }
@@ -228,9 +226,7 @@ export default {
     watch:{
       formDisabled: {
         handler: function(){
-          console.log(this.firstNameRequired)
           if(this.firstNameRequired && this.lastNameRequired && this.emailRequired){
-            console.log(this.firstNameRequired)
             return false
           }
           return true

@@ -279,7 +279,6 @@ export const store = new Vuex.Store({
             state.isLegend = bool
         },
         setIsLastYearEdits(state, bool){
-            console.log(bool)
             state.isLastYearEdits = bool
         },
         setFeatLayerInfo(state, obj){

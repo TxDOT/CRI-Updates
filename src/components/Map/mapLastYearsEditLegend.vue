@@ -61,8 +61,8 @@ export default {
     },
     methods:{
         displayLegendLastYearEdits(){
-            let canvasLastYearEdit = document.getElementById('legend-last-year-edits')
-            this.canvasLastYearEdits = canvasLastYearEdit.getContext('2d')
+            //let canvasLastYearEdit = document.getElementById('legend-last-year-edits')
+            this.canvasLastYearEdits = document.getElementById('legend-last-year-edits').getContext('2d')
 
             this.canvasLastYearEdits.strokeStyle = '#F0E130'
             //this.canvasLastYearEdits.setLineDash([8, 6]);
@@ -89,20 +89,11 @@ export default {
         }
     },
     watch:{
-        lastYearEdit:{
-            handler: function(){
-                if(this.lastYearEdit){
-                    console.log("hell")
-                    this.displayLegendLastYearEdits()
-                }
-            },
-            immediate: true
-        },
+
     },
     computed:{
         lastYearEdit:{
             get(){
-                console.log(this.$store.state.isLastYearEdits)
                 return this.$store.state.isLastYearEdits
             },
             set(bool){
@@ -111,7 +102,6 @@ export default {
       },
       isLegend:{
             get(){
-                console.log(this.$store.state.isLegend)
                 return this.$store.state.isLegend
             },
             set(bool){

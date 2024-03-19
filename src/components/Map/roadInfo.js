@@ -295,7 +295,6 @@ export function initLoadAssetGraphic(asset){
       let objID = store.getters.getObjectid
       let graphicFilter = gLayer.graphics.items.filter(x => x.attributes.objectid === objID)
       let len = geomToMiles(graphicFilter[0].geometry, true, 3)
-      console.log(len)
       let graphicAsset = assetType[asset]()
       graphicAsset.at(-1).ASSET_LN_END_DFO_MS = len
       store.commit('setRoadGeom', graphicFilter[0].geometry.clone())

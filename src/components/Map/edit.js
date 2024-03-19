@@ -205,7 +205,6 @@ export function updateLength(){
             store.commit('setIsUndoDisable', true) 
 
           }
-          console.log(newLengths, oldLen)
           let modifyChange = newLengths - oldLen
           store.commit('setDeltaDis',[modifyChange, 'Modify'])
           store.commit('setRoadGeom', event.graphics[0].geometry.clone())
@@ -275,9 +274,7 @@ export function removeGraphic(){
     store.commit('setDeltaDis',[graphicR[0].attributes.originalLength, 'Add'])
   }
   else if(graphicR[0].attributes.editType === 'EDIT'){
-    console.log(graphicR[0].attributes.originalLength, length)
     let diffAdded = length - graphicR[0].attributes.originalLength
-    console.log(diffAdded)
     store.commit('setDeltaDis',[diffAdded, 'Edit'])
   }
 }

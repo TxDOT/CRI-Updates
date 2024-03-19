@@ -1,7 +1,7 @@
 <template>
-        <v-card height="700">
-            <div><img src="../assets/darrelBarrel.gif">
-            <p><br>Whoa, hold on...
+        <v-card height="700" elevation="0">
+            <div><img src="../assets/ColorFlyingTLOGO_TxDOT_RGB_REG.png" style="max-width: 34%;">
+            <p>
             <br><br>The County Road Inventory Map is closed following the August 31st deadline
                     while we transition to the next data year.<br><br>
                     The map will reopen on September 15th.
