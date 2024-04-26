@@ -14,16 +14,16 @@
 
         <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" item-value="dir" style="width:83px; left: 307px; bottom: 246px; position: relative;" @change="updateGraphic()"></v-select>
 
-        <v-btn v-if="!infoRoad" outlined style="bottom:210px; left:132px; border-color: black;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#204E70" :disabled="streetName.length < 1"> 
+        <!-- <v-btn v-if="!infoRoad" outlined style="bottom:210px; left:132px; border-color: black;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#204E70" :disabled="streetName.length < 1"> 
           <u>Next Step</u>
-        </v-btn>
+        </v-btn> -->
     </v-card>
 </template>
 
 <script>
 
 import { sketchCompete } from '../edit'
-import { initLoadAssetGraphic } from '../roadInfo'
+import { initLoadAssetGraphic, getGraphic} from '../roadInfo'
 import {criConstants} from '../../../common/cri_constants'
 import { gLayer } from '../map'
 
@@ -111,7 +111,14 @@ export default {
         },
         objid:{
           handler: function(){
-            this.resetItems();    
+            this.resetItems();
+            
+            getGraphic()
+            this.feature = false;
+            this.graphic = true;
+            //this.numLane = roadInfo.getLan
+            this.stepperClose = true;
+            //this.rdbdSurf    
           }, 
           immediate: true,
         },

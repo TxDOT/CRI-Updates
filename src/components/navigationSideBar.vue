@@ -1,6 +1,6 @@
 <!-- Left Nav side bar component -->
 <template>
-    <v-container style="height:100% min-width: 50%;">
+    <v-container style="height:100%; min-width: 50%;">
       <v-navigation-drawer app disable-resize-watcher disable-route-watcher id="navSideBarPos" permanent> 
         <v-card-title id="testTitle"><v-card-text id="navTxPos">What Do You Want To Do?</v-card-text></v-card-title>
           <v-list id="navList"> 

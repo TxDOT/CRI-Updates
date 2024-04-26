@@ -34,6 +34,7 @@
       step="2"
       color="#204E70"
       @click="complete()"
+      v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt();complete()}} : {}"
       >
       Road Name: <strong>{{fetchRoadName.toUpperCase()}}</strong>
     </v-stepper-step>
@@ -43,31 +44,31 @@
       <roadName/>
     </v-stepper-content>
 
-    <v-stepper-step step="3" color="#204E70" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt();complete();initLoadAsset('surface')}} : {}" >
+    <!-- <v-stepper-step step="3" color="#204E70" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"  >
       Road Surface: <strong>{{fetchRoadSurface}}</strong>
     </v-stepper-step>
     <v-stepper-content step="3" >
       <roadSurface/>
-    </v-stepper-content>
+    </v-stepper-content> -->
 
-    <v-stepper-step
+    <!-- <v-stepper-step
       color="#204E70"
       :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"
       step="4"
-      v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('design')}} : {}"
-      ><!-- Get asset breaks and draw graphic points -->
-      Road Design: <strong>{{fetchRoadDesign}}</strong>
-    </v-stepper-step>
+      v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('design')}} : {}"> -->
+      <!-- Get asset breaks and draw graphic points -->
+      <!-- Road Design: <strong>{{fetchRoadDesign}}</strong> -->
+    <!-- </v-stepper-step>
      <v-stepper-content step="4">
       <roadDesign/>
-    </v-stepper-content>
+    </v-stepper-content> -->
 
-    <v-stepper-step color="#204E70" step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('numLane')}} : {}">
+    <!-- <v-stepper-step color="#204E70" step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('numLane')}} : {}">
       Number of Lanes: <strong>{{fetchNumLanes}}</strong>
     </v-stepper-step>
     <v-stepper-content step="5">
       <numOfLane/>
-    </v-stepper-content>
+    </v-stepper-content> -->
       
     <v-btn v-if="!forInfo" id="cnclBtnEdit" depressed tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
     <v-btn v-if="!forInfo" tile id="saveBtnEdit" depressed :disabled="!setAssetCover[0] || this.geomChecks > 0" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
@@ -126,9 +127,9 @@ import { gLayer } from './Map/map'
 import * as geometryEngine from '@arcgis/core/geometry/geometryEngine'
 //importing vue components
 import roadName from '../components/Map/stepperContent/RoadName.vue'
-import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
-import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
-import numOfLane from './Map/stepperContent/NumberOfLanes.vue'
+//import roadDesign from '../components/Map/stepperContent/RoadDesign.vue'
+//import roadSurface from './Map/stepperContent/RoadSurfaces.vue'
+//import numOfLane from './Map/stepperContent/NumberOfLanes.vue'
 import editVerts from './Map/stepperContent/EditVerts.vue'
 import confirmAlertSuccess from '../components/Map/stepperContent/confirmAlertsSUCCESS.vue'
 import sketchAlert from '../components/Map/stepperContent/discardAlert.vue'
@@ -136,7 +137,7 @@ import finalCheck from '../components/Map/stepperContent/saveAssetCheck.vue'
 
 export default {
     name:"stepper",
-    components:{roadName,roadDesign, roadSurface, numOfLane, editVerts, confirmAlertSuccess, sketchAlert, finalCheck},
+    components:{roadName, editVerts, confirmAlertSuccess, sketchAlert, finalCheck},
     props:{
       received: Boolean
     },

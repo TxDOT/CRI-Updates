@@ -483,15 +483,18 @@ function setUpGraphic(){
     view.hitTest(event,opts).then((response)=>{
       //prevents users from selecting a new road if stepper is open and past step 1. or if edit dialog boxes are open
       if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
+        console.log('hey1')
         return;
       }
       response.results.forEach((result)=>{
         if(result.graphic.attributes.objectid !== store.getters.getObjectid){
+          console.log('hey2')
           return;
         }
         //Can only proceed forward if edit type is add or edit. And road info stepper and edit stepper is not open
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
+            console.log('hey3')
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)

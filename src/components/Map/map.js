@@ -40,11 +40,11 @@ const imagery = new WMTSLayer({
     id: "imagery"
 });
 //add vector tile basemap
-const vTBasemap = new Basemap({
+export const vTBasemap = new Basemap({
     baseLayers: txdotVectorTiles
 });
 //add imagery as basemap
-const imgBasemap = new Basemap({
+export const imgBasemap = new Basemap({
     baseLayers: imagery
 });
 //map constructor 

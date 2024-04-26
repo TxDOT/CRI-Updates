@@ -18,7 +18,7 @@
 
         <div id="btnPosition"><v-btn underline tile color="#14375A" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
 
-        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.6.4</u></v-card-text>
+        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.6.5</u></v-card-text>
 
             
       </v-card>
@@ -31,7 +31,7 @@ export default {
     data (){
       return {
         updateList:['Added Geometry Checks (Self-Intersection, Minimum geometry length)', 'Updated sign-up URL','Added link to training videos','Adjusted Action item Body text font', 'Disabled mile info after ending asset mileage is completed', 
-                    'Adjusted Missing Attributes/Discard Edit Popup', 'Judge Workflow Updated', 'Updated delete workflow', 'Updated to automatic asset length changes', 'Added EOY edits alert', 'Last Years edits layer and legend added']
+                    'Adjusted Missing Attributes/Discard Edit Popup', 'Judge Workflow Updated', 'Updated delete workflow', 'Updated to automatic asset length changes', 'Added EOY edits alert', 'Last Years edits layer and legend added', 'Removed Design/Surface/Lane attributes']
       }
     },
     methods:{
