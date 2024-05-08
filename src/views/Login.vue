@@ -448,9 +448,6 @@ export default {
       //   },
       //   immediate: true
       // }
-      email: function(newValue) {
-          this.email = this.handlecaps(newValue);
-        },
 
     },
     computed:{
@@ -572,13 +569,13 @@ export default {
 .v-input #input-23 {
     text-transform: lowercase !important;
 }
-.v-input__slot{
+.custom-border-radius .v-input__slot{
   min-width:400px ;
   max-width: 400px;
 }
-.v-text-field__details{
+.custom-border-radius .v-text-field__details{
   
-  left: 400px;
+    left: 400px;
     top: -30px;
     position: relative;
 
@@ -634,7 +631,7 @@ export default {
 }
 .signup-form{
   padding-left: 3rem !important;
-  padding-right: 3rem !important;
+  padding-right: 2rem !important;
   margin-bottom: -30px;
   height: 65px;
   
@@ -644,7 +641,8 @@ export default {
   position: absolute;
   top:60px;
   text-align: left;
-  padding-right:3rem;
+  padding-left: 1px;
+  padding-right:2rem;
   font-size: 1rem;
   }
 
@@ -652,8 +650,8 @@ export default {
   position: absolute;
   text-align: left;
   top: 365px;
-  padding-left: 20px;
-  padding-right:3rem;
+  padding-left: 1px;
+  padding-right:2rem;
   font-size: 1rem;
 
 }
@@ -676,8 +674,8 @@ export default {
   }
   .btnblocker{
     position: absolute;
-    bottom: 0px;
-    right: 0;
+    bottom: 10px;
+    right: 5px;
     height: 40px;
     width: 188px;
     background-color: transparent ;
