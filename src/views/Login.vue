@@ -37,7 +37,7 @@
               </v-btn>         
         </v-card-actions>
       </v-card>
-      <v-card height="700" class="signup-card" v-if="registerpopup">
+      <v-card height="675" class="signup-card" v-if="registerpopup">
         <v-progress-circular
         :size="50"
         color="primary"
@@ -61,13 +61,13 @@
                 <v-text-field v-model="lastName" required label="Last Name" :rules="lastNameRequired" :outlined=true :dense=true class="custom-border-radius"></v-text-field>
               </v-row>
               <v-row class="signup-form">
-                <v-text-field v-model="email" required label="Email" :rules="emailRequired" :outlined=true :dense=true class="custom-border-radius"></v-text-field>
+                <v-text-field v-model="email" required label="Email" :rules="emailRequired" :outlined=true :dense=true class="custom-border-radius" id= 'email-id' ></v-text-field>
               </v-row>
               <v-row class="signup-form">
                 <v-text-field v-model="phone" required label="Phone" :rules="phoneRequired" :outlined=true :dense=true class="custom-border-radius" @input="formatPhone"></v-text-field>
               </v-row>
               <v-row class="signup-form">
-                <v-select v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius"></v-select>
+                <v-select v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius" attach></v-select>
               </v-row>
             </v-col>
           </v-form>
@@ -299,7 +299,6 @@ export default {
       handlesubmit(){
           let url = `https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CountyAGOemailer.fmw?First_Name=${this.firstName}&Last_Name=${this.lastName}&Email=${this.email}&Phone=${this.phone}&COUNTY=${this.county}&opt_showresult=false&opt_servicemode=sync&token=3b29e4f4fc49088ae415b595fabd69bb5cf32bc6`
           this.sendRequest(url)
-
 
       },
       async sendRequest(url) {
@@ -561,12 +560,12 @@ export default {
   margin: auto;}
 .custom-checkbox .v-label {
   color: black; /* Set the desired label font color here */
-  font-size: 1rem;
+  font-size: 14px;
 }
 .custom-border-radius .v-input__control {
   border-radius: 0px; /* Adjust the border radius as needed */
 }
-.v-input #input-23 {
+.v-input #email-id {
     text-transform: lowercase !important;
 }
 .custom-border-radius .v-input__slot{
@@ -579,6 +578,12 @@ export default {
     top: -30px;
     position: relative;
 
+}
+
+.custom-border-radius .v-menu__content{
+  position:relative;
+  top: 40px !important;
+  left:-400px !important;
 }
 .v-dialog {
   border-radius: 0px;
@@ -599,6 +604,7 @@ export default {
 #loginBannerTxt{
   border-radius: 0px; 
   text-align: left;
+  font-size:20px;
 }
 #loginTxt{
   position:absolute; 
@@ -643,7 +649,7 @@ export default {
   text-align: left;
   padding-left: 1px;
   padding-right:2rem;
-  font-size: 1rem;
+  font-size: 14px;
   }
 
 #termstext{
@@ -652,7 +658,7 @@ export default {
   top: 365px;
   padding-left: 1px;
   padding-right:2rem;
-  font-size: 1rem;
+  font-size: 14px;
 
 }
 .formPos{
