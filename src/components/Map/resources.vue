@@ -89,9 +89,9 @@
         <v-card-text class="textSymb" id="rdLogTxt">
           For those who need assistance, TxDOT will be hosting live WebEx video training on these dates:<br><br>
           <ul>
-            <li>Wednesday, June 21, 2023, 2:00 – 3:00 pm<br></li>
-            <li>Wednesday, July 19, 2023, 2:00 – 3:00 pm<br></li>
-            <li>Wednesday, August 16, 2023, 2:00 – 3:00 pm<br></li>
+            <li>Thursday, June 13, 2024, 2:00 – 3:00 pm<br></li>
+            <li>Thursday, July 18, 2024, 2:00 – 3:00 pm<br></li>
+            <li>Thursday, August 15, 2024, 2:00 – 3:00 pm<br></li>
           </ul>
           <br>
           To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell" target="_blank">https://txdot.webex.com/join/jferrell</a>

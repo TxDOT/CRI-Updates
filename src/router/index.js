@@ -6,6 +6,10 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path:'',
+    redirect: {name: '/login'}
+  },
+  {
     path: '/:id(\\d{0,3})', //uses Path-to-RegExp (https://github.com/pillarjs/path-to-regexp/tree/v1.7.0)
     name: 'JudgeIntro',
     component: () =>  import(/* webpackChunkName: "MileSign" */ "../views/judgeIntro.vue"),

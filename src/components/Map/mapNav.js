@@ -1,4 +1,4 @@
-import {view, sketch, gLayer} from '../Map/map';
+import {view, sketch, gLayer, map, imgBasemap, vTBasemap} from '../Map/map';
 import {store} from '../../store'
 
 //jump to google
@@ -35,6 +35,22 @@ function checkEditsHistory(){
         store.commit('setIsUndoDisable', true)
         store.commit('setIsRedoDisable', false)
     }
+}
+
+export function basemapDisplayOnZoom(){
+    view.watch("scale", (isReady)=>{
+        console.log(isReady)
+        if(isReady < 98704){
+            map.basemap = imgBasemap
+            return
+        }
+
+        if(isReady > 98704){
+            map.basemap = vTBasemap
+        return
+        }
+    })
+    return 
 }
 
 

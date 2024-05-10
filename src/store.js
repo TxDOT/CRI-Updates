@@ -72,8 +72,12 @@ export const store = new Vuex.Store({
         editLayer: "",
         isLastYearEdits: false,
         isLegend: false,
+        showVideo: false,
     },
     getters:{
+        getShowVideo(state){
+            return state.showVideo
+        },
         getIsLegend(state){
             return state.isLegend
         },
@@ -275,6 +279,9 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsShowVideo(state, bool){
+            state.showVideo = bool
+        },
         setIsLegend(state, bool){
             state.isLegend = bool
         },

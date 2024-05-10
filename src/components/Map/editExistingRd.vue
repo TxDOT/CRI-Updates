@@ -3,16 +3,29 @@
     <v-container>
         <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">
             <v-card-title class="editRdTitle" v-if="edit===true">
-                <v-card-text class="editActionType">Edit Road</v-card-text>
+                <v-card-text class="editActionType">
+                    Edit Road
+                    <v-icon color="white" id="addVideo">
+                        mdi-video-outline
+                    </v-icon>
+                </v-card-text>
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="addR===true">
-                <v-card-text class="editActionType" >Add Road</v-card-text>
+                <v-card-text class="editActionType">
+                    Add Road
+                    <v-icon color="white" id="addVideo">
+                        mdi-video-outline
+                    </v-icon>
+                </v-card-text>
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="deleteR===true">
-                <v-card-text class="editActionType">Delete Road</v-card-text>
+                <v-card-text class="editActionType">
+                    Delete Road
+                    <v-icon color="white" id="addVideo">
+                        mdi-video-outline
+                    </v-icon>
+                </v-card-text>
             </v-card-title>
-    
-
         <v-card-text v-if="edit===true" class="editRdInfo">
             <v-icon color="blue" class="editRdIcon">
                  mdi-plus
@@ -101,23 +114,25 @@
     </v-card>
     <sketchAlert v-if="discardEdits"/>
     <confirmationAlert v-if="deleteConfirm"/>
+    <editingVideo v-if="isVideo"/>
     </v-container>
-
        
 </template>
 
 <script>
 import confirmationAlert from './stepperContent/confirmationAlertsDEL.vue'
 import sketchAlert from '../Map/stepperContent/discardAlert.vue'
+import editingVideo from '../Map/videoTemplate.vue'
 import {stopEditing, removeGraphic, saveToEditsLayer, removeHighlight} from './edit'
 import { gLayer } from '../Map/map'
 import {addAttachment} from '../Map/crud'
 
 export default {
     name: 'editExistingRd',
-    components: {confirmationAlert, sketchAlert},
+    components: {confirmationAlert, sketchAlert, editingVideo},
     data (){
       return {
+        test: true,
         radioSelect: false,
         upldCity: false,
         isUpldShapefile: false,
@@ -129,6 +144,7 @@ export default {
         delTxt: '',
         modifyR: false,
         addR: false,
+        isVideo: false,
         stepper: false,
         deleteConfirm: false,
         discardEdits: false,
@@ -148,6 +164,9 @@ export default {
         prevComment: [],
         initialVal: null
       }
+    },
+    mounted(){
+        
     },
     methods:{
         restartDeleteSeq(){
@@ -283,7 +302,7 @@ export default {
                 this.addRdBoolean = false
                 this.returnDFOValue=0
             }
-        }
+        },
     },
     watch:{
         radioBtnSel:{
@@ -308,12 +327,18 @@ export default {
         },
         editStatus:{
             handler: function(){
+                if(this.editStatus){
+                    this.isShowVideo = true
+                }
                 this.edit = this.editStatus
             },
             immediate:true,
         },
         deleteRoad:{
             handler: function(){
+                if(this.deleteRoad){
+                    this.isShowVideo = true
+                }
                 this.deleteR = this.deleteRoad
             },
             immediate:true,
@@ -326,9 +351,18 @@ export default {
         },
         addRdBoolean:{
             handler: function(){
+                if(this.addRdBoolean){
+                    this.isShowVideo = true
+                }
                 this.addR =  this.addRdBoolean
             },
             immediate:true,
+        },
+        isShowVideo:{
+            handler: function(){
+                this.isVideo =  this.isShowVideo
+            },
+            immediate: true,
         },
         nextDeleteRoadForm:{
             handler: function(){
@@ -484,12 +518,29 @@ export default {
             set(comm){
                 this.$store.commit('setComment', comm)
             }
-      },
+        },
+        isShowVideo:{
+            get(){
+                return this.$store.state.showVideo
+            },
+            set(bool){
+                this.$store.commit("setIsShowVideo", bool)
+            }
+        }
     }
 }
 </script>
 
 <style scoped>
+    #addVideo{
+        position: relative;
+        float: right;
+        left: 35px;
+        font-size: 1.8rem;
+    }
+    #addVideo:hover{
+        cursor: pointer;
+    }
     .editRdTitle{
         background: #14375A;
         color:white;

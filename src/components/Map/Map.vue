@@ -5,8 +5,7 @@
 
 <script>
 
-//import { map} from '../Map/map';
-
+import {basemapDisplayOnZoom} from './mapNav.js'
 export default {
     name: 'Map',
     data(){
@@ -23,21 +22,7 @@ export default {
     async mounted() {
         const app = await import('../Map/map');
         app.initialize(this.$el);
-
-        // view.when((x) =>{
-        //     x.watch('zoom',(curr)=>{
-        //         if(curr > 10 || curr < 11){
-        //             map.basemap = imgBasemap
-        //             return
-        //         }
-        //         else if(curr < 10 || curr > 9){
-        //             map.basemap = vTBasemap
-        //         }
-        //     // map.basemap = vTBasemap
-        //     return
-        //   // this.isLegend = this.displayLegend
-        //     });
-        // })
+        basemapDisplayOnZoom()
     },
 
 };
