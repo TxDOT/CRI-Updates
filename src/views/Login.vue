@@ -55,19 +55,19 @@
           <v-form class = "formPos">
             <v-col>
               <v-row class="signup-form">
-                <v-text-field v-model="firstName" required label="First Name" :rules="firstNameRequired" :outlined=true :dense=true class="custom-border-radius"></v-text-field>
+                <v-text-field v-model="firstName" required label="First Name" :rules="firstNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' ></v-text-field>
               </v-row>
               <v-row class="signup-form">
-                <v-text-field v-model="lastName" required label="Last Name" :rules="lastNameRequired" :outlined=true :dense=true class="custom-border-radius"></v-text-field>
+                <v-text-field v-model="lastName" required label="Last Name" :rules="lastNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' ></v-text-field>
               </v-row>
               <v-row class="signup-form">
-                <v-text-field v-model="email" required label="Email" :rules="emailRequired" :outlined=true :dense=true class="custom-border-radius" id= 'email-id' ></v-text-field>
+                <v-text-field v-model="email" required label="Email" :rules="emailRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input-email' ></v-text-field>
               </v-row>
               <v-row class="signup-form">
-                <v-text-field v-model="phone" required label="Phone" :rules="phoneRequired" :outlined=true :dense=true class="custom-border-radius" @input="formatPhone"></v-text-field>
+                <v-text-field v-model="phone" required label="Phone" :rules="phoneRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input'  @input="formatPhone" ></v-text-field>
               </v-row>
               <v-row class="signup-form">
-                <v-select v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius" attach></v-select>
+                <v-select v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius" attach id= 'form-select' ></v-select>
               </v-row>
             </v-col>
           </v-form>
@@ -297,12 +297,8 @@ export default {
     },
     methods:{
       handlesubmit(){
-        let url= `https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP-MB/CountyAGOemailer.fmw?First_Name=${this.firstName}&Last_Name=${this.lastName}&Email=${this.email}&Phone=${this.phone}&COUNTY=${this.county}&opt_showresult=false&opt_servicemode=sync&token=96055a7cb4bd9efb11e3f3accb044f026f4885a0`
-        this.sendRequest(url)
-
-          
-
-
+          let url= `https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP-MB/CountyAGOemailer.fmw?First_Name=${this.firstName}&Last_Name=${this.lastName}&Email=${this.email}&Phone=${this.phone}&COUNTY=${this.county}&opt_showresult=false&opt_servicemode=sync&token=96055a7cb4bd9efb11e3f3accb044f026f4885a0`
+          this.sendRequest(url)
 
       },
       async sendRequest(url) {
@@ -569,8 +565,18 @@ export default {
 .custom-border-radius .v-input__control {
   border-radius: 0px; /* Adjust the border radius as needed */
 }
-.v-input #email-id {
+.v-input #form-input {
+    font-size: 14px !important;
+
+}
+.v-input #form-input-email {
     text-transform: lowercase !important;
+    font-size: 14px !important;
+
+}
+
+.custom-border-radius .v-select__selection{
+  font-size: 14px !important;
 }
 .custom-border-radius .v-input__slot{
   min-width:400px ;
@@ -609,6 +615,8 @@ export default {
   border-radius: 0px; 
   text-align: left;
   font-size:20px;
+  font-weight: 400;
+
 }
 #loginTxt{
   position:absolute; 
@@ -637,7 +645,8 @@ export default {
   top: 0;
   bottom: 0;
   margin: auto;
-  width: 1200px;
+  width: 900px;
+  overflow: hidden;;
 }
 .signup-form{
   padding-left: 3rem !important;
