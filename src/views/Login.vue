@@ -37,7 +37,7 @@
               </v-btn>         
         </v-card-actions>
       </v-card>
-      <v-card height="675" class="signup-card" v-if="registerpopup">
+      <v-card height="675" class="signup-card" v-if="registerpopup" tile>
         <v-progress-circular
         :size="50"
         color="primary"
@@ -55,7 +55,7 @@
           <v-form class = "formPos">
             <v-col>
               <v-row class="signup-form">
-                <v-text-field v-model="firstName" required label="First Name" :rules="firstNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' ></v-text-field>
+                <v-text-field v-model="firstName" required label="First Name" :rules="firstNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' tile></v-text-field>
               </v-row>
               <v-row class="signup-form">
                 <v-text-field v-model="lastName" required label="Last Name" :rules="lastNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' ></v-text-field>
@@ -67,7 +67,7 @@
                 <v-text-field v-model="phone" required label="Phone" :rules="phoneRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input'  @input="formatPhone" ></v-text-field>
               </v-row>
               <v-row class="signup-form">
-                <v-select v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius" attach id= 'form-select' ></v-select>
+                <v-autocomplete v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius" attach id= 'form-select' :clearable=true ></v-autocomplete>
               </v-row>
             </v-col>
           </v-form>
@@ -303,21 +303,16 @@ export default {
       },
       async sendRequest(url) {
         try {
-          
-
-          this.isSpinner = true
           this.btnBlockerPointerEvents = 'none'
-          const response = await fetch(url);
-          this.btnBlockerPointerEvents = 'all'
-          this.isSpinner = false
           this.registerpopup=false
           this.clearValues()
           this.checkboxvalue = false
+          this.btnBlockerPointerEvents = 'all'
           this.isAlert = true
           setTimeout(() => {
             this.isAlert = false
           }, 5000)
-
+          const response = await fetch(url);
           if (!response.ok) {
             throw new Error('Network response was not ok');
           }
