@@ -5,7 +5,7 @@
             <v-card-title class="editRdTitle" v-if="edit===true">
                 <v-card-text class="editActionType">
                     Edit Road
-                    <v-icon color="white" id="addVideo">
+                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
@@ -13,7 +13,7 @@
             <v-card-title class="editRdTitle" v-if="addR===true">
                 <v-card-text class="editActionType">
                     Add Road
-                    <v-icon color="white" id="addVideo">
+                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
@@ -21,7 +21,7 @@
             <v-card-title class="editRdTitle" v-if="deleteR===true">
                 <v-card-text class="editActionType">
                     Delete Road
-                    <v-icon color="white" id="addVideo">
+                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
@@ -132,7 +132,6 @@ export default {
     components: {confirmationAlert, sketchAlert, editingVideo},
     data (){
       return {
-        test: true,
         radioSelect: false,
         upldCity: false,
         isUpldShapefile: false,
@@ -164,9 +163,6 @@ export default {
         prevComment: [],
         initialVal: null
       }
-    },
-    mounted(){
-        
     },
     methods:{
         restartDeleteSeq(){
@@ -537,6 +533,7 @@ export default {
         float: right;
         left: 35px;
         font-size: 1.8rem;
+        z-index: 9999;
     }
     #addVideo:hover{
         cursor: pointer;

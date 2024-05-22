@@ -1,11 +1,12 @@
 <!-- component that holds mapView -->
 <template>
-    <div id="viewDiv" class="main"></div>
+    <div id="viewDiv" class="main">
+    </div>
 </template>
 
 <script>
 
-import {basemapDisplayOnZoom} from './mapNav.js'
+
 export default {
     name: 'Map',
     data(){
@@ -22,7 +23,6 @@ export default {
     async mounted() {
         const app = await import('../Map/map');
         app.initialize(this.$el);
-        basemapDisplayOnZoom()
     },
 
 };
@@ -85,7 +85,7 @@ export default {
     right: 600px;
 } */
 </style>
-//I think these can be applied in the app.vue
+
 <style>
     .esri-basemap-toggle__container, .esri-basemap-toggle__image {
         width: 32px;

@@ -73,8 +73,16 @@ export const store = new Vuex.Store({
         isLastYearEdits: false,
         isLegend: false,
         showVideo: false,
+        isTour: false,
+        isOverlay: false,
     },
     getters:{
+        getIsOverlay(state){
+            return state.isOverlay
+        },
+        getShowTour(state){
+            return state.isTour
+        },
         getShowVideo(state){
             return state.showVideo
         },
@@ -279,7 +287,14 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsOverlay(state, bool){
+            state.isOverlay = bool
+        },
+        setShowTour(state, bool){
+            state.isTour = bool
+        },
         setIsShowVideo(state, bool){
+            console.log(bool)
             state.showVideo = bool
         },
         setIsLegend(state, bool){

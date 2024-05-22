@@ -3,7 +3,7 @@ import { criConstants } from '../../common/cri_constants';
 import {initGraphicCheck, queryEditsLayer} from './crud'
 import {store} from '../../store'
 import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic , geomToMiles} from './helper';
-import { getNewDfoDist, epochToHumanTime } from './roadInfo' 
+import { getNewDfoDist, epochToHumanTime } from './roadInfo'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils"
@@ -11,6 +11,7 @@ import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
 
 export async function addRoadbed(){
   try{
+    // let bsmapZoom = basemapDisplayOnZoom()
     let addNewRoad = new Promise(function(res,rej){
         sketch.create("polyline",{mode:"click", hasZ: false})
         sketch.on('create', (event) => {
@@ -25,6 +26,7 @@ export async function addRoadbed(){
           }
     
           if(event.state === "complete"){
+            // bsmapZoom.remove()
             store.commit('setIsDfoReturn', false)
             store.commit('setDfoReturn', 0)
             store.commit('setIsInitAdd', true)
@@ -131,6 +133,7 @@ export async function modifyRoadbed(clickType, editType){
     })
     let feature = await promise
     store.commit('setRoadGeom', feature.features[0].geometry.clone())
+    view.goTo(feature.features[0].geometry)
     await queryFeatureTables(feature, true)
     defineGraphic(feature,clickType, editType)
     return feature
@@ -240,6 +243,7 @@ export function delRoad(){
   })
   //changing edit type to delete
   graphicDel[0].attributes.editType = 'DELETE'
+  view.goTo(graphicDel[0].geometry)
   let length = Number(geometryEngine.geodesicLength(graphicDel[0].geometry, "miles").toFixed(5))
   //sending length to recalculate mileage change in footer
   store.commit('setDeltaDis',[length, 'Delete'])
@@ -247,6 +251,7 @@ export function delRoad(){
   let symbol = graphicDel[0].symbol.clone()
   symbol.color = criConstants.editType['delete'][0]
   graphicDel[0].symbol = symbol
+  return
 }
 //removes highlight around road
 export function removeHighlight(){

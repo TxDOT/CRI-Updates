@@ -37,7 +37,7 @@
             </v-btn>         
       </v-card-actions>
     </v-card>
-    <v-card height="700" class="signup-card" v-if="registerpopup">
+    <v-card height="675" class="signup-card" v-if="registerpopup">
       <v-progress-circular
       :size="50"
       color="primary"
@@ -55,19 +55,19 @@
         <v-form class = "formPos">
           <v-col>
             <v-row class="signup-form">
-              <v-text-field v-model="firstName" required label="First Name" :rules="firstNameRequired" :outlined=true :dense=true class="custom-border-radius"></v-text-field>
+              <v-text-field v-model="firstName" required label="First Name" :rules="firstNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' ></v-text-field>
             </v-row>
             <v-row class="signup-form">
-              <v-text-field v-model="lastName" required label="Last Name" :rules="lastNameRequired" :outlined=true :dense=true class="custom-border-radius"></v-text-field>
+              <v-text-field v-model="lastName" required label="Last Name" :rules="lastNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' ></v-text-field>
             </v-row>
             <v-row class="signup-form">
-              <v-text-field v-model="email" required label="Email" :rules="emailRequired" :outlined=true :dense=true class="custom-border-radius"></v-text-field>
+              <v-text-field v-model="email" required label="Email" :rules="emailRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input-email' ></v-text-field>
             </v-row>
             <v-row class="signup-form">
-              <v-text-field v-model="phone" required label="Phone" :rules="phoneRequired" :outlined=true :dense=true class="custom-border-radius" @input="formatPhone"></v-text-field>
+              <v-text-field v-model="phone" required label="Phone" :rules="phoneRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input'  @input="formatPhone" ></v-text-field>
             </v-row>
             <v-row class="signup-form">
-              <v-select v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius"></v-select>
+              <v-select v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius" attach id= 'form-select' ></v-select>
             </v-row>
           </v-col>
         </v-form>
@@ -297,9 +297,8 @@ export default {
   },
   methods:{
     handlesubmit(){
-        let url = `https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CountyAGOemailer.fmw?First_Name=${this.firstName}&Last_Name=${this.lastName}&Email=${this.email}&Phone=${this.phone}&COUNTY=${this.county}&opt_showresult=false&opt_servicemode=sync&token=3b29e4f4fc49088ae415b595fabd69bb5cf32bc6`
+        let url= `https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP-MB/CountyAGOemailer.fmw?First_Name=${this.firstName}&Last_Name=${this.lastName}&Email=${this.email}&Phone=${this.phone}&COUNTY=${this.county}&opt_showresult=false&opt_servicemode=sync&token=96055a7cb4bd9efb11e3f3accb044f026f4885a0`
         this.sendRequest(url)
-
 
     },
     async sendRequest(url) {
@@ -561,13 +560,23 @@ bottom: 0;
 margin: auto;}
 .custom-checkbox .v-label {
 color: black; /* Set the desired label font color here */
-font-size: 1rem;
+font-size: 14px;
 }
 .custom-border-radius .v-input__control {
 border-radius: 0px; /* Adjust the border radius as needed */
 }
-.v-input #input-23 {
+.v-input #form-input {
+  font-size: 14px !important;
+
+}
+.v-input #form-input-email {
   text-transform: lowercase !important;
+  font-size: 14px !important;
+
+}
+
+.custom-border-radius .v-select__selection{
+font-size: 14px !important;
 }
 .custom-border-radius .v-input__slot{
 min-width:400px ;
@@ -579,6 +588,12 @@ max-width: 400px;
   top: -30px;
   position: relative;
 
+}
+
+.custom-border-radius .v-menu__content{
+position:relative;
+top: 40px !important;
+left:-400px !important;
 }
 .v-dialog {
 border-radius: 0px;
@@ -599,6 +614,9 @@ width:100%;
 #loginBannerTxt{
 border-radius: 0px; 
 text-align: left;
+font-size:20px;
+font-weight: 400;
+
 }
 #loginTxt{
 position:absolute; 
@@ -627,7 +645,8 @@ right: 0;
 top: 0;
 bottom: 0;
 margin: auto;
-width: 1200px;
+width: 900px;
+overflow: hidden;;
 }
 .signup-form{
 padding-left: 3rem !important;
@@ -643,7 +662,7 @@ top:60px;
 text-align: left;
 padding-left: 1px;
 padding-right:2rem;
-font-size: 1rem;
+font-size: 14px;
 }
 
 #termstext{
@@ -652,7 +671,7 @@ text-align: left;
 top: 365px;
 padding-left: 1px;
 padding-right:2rem;
-font-size: 1rem;
+font-size: 14px;
 
 }
 .formPos{

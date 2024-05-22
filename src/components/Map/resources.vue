@@ -117,6 +117,7 @@
                     </v-item>
                   </v-col>
                 </v-row>
+                <v-btn id="tourBtn" tile text @click="takeTour()">take a tour</v-btn>
               </v-container>
             </v-item-group>
           </v-card-text>
@@ -219,6 +220,10 @@
       }
     },
     methods:{
+      takeTour(){
+        this.isTour = true
+        this.isHelpTraining = false
+      },
       closeFaqBtn(){
         this.faqs = false;
       },
@@ -392,11 +397,28 @@
         set(bool){
           this.$store.commit('setIsFmeProcess', bool)
         }
-      }
+      },
+      isTour:{
+        get(){
+          return this.$store.state.isTour
+        },
+        set(bool){
+          console.log(bool)
+          this.$store.commit("setShowTour", bool)
+        }
+      },
     }
   }
 </script>
 <style scoped>
+#tourBtn{
+  position: relative;
+  right: 26rem;
+  top: 10px;
+  text-decoration: underline;
+  color: #14375A;
+  opacity: 1 !important;
+}
 .v-list-item{
   display: flex;
   text-align: left;

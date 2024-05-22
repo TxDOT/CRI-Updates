@@ -28,6 +28,7 @@
   import aboutHelp from "../components/Map/resources.vue"
   import {gLayer} from './Map/map'
   import {store} from '../store'
+  import {basemapDisplayOnEditType} from './Map/mapNav.js'
 
   export default {
     name: 'navSideBar',
@@ -40,17 +41,21 @@
         edit: false,
         items: [
           { title: 'Add Road', icon: 'mdi-plus', action: ()=>{
+            const isZoomReq = basemapDisplayOnEditType()
+            if(isZoomReq){
+              this.addRdBoolean = true
+              return
+            }
+            console.log('hey')
             this.infoRoad = false
             this.getDfoBool = true
-            this.editExistingRd = false;
+            //this.editExistingRd = false;
             this.deleteRoad = false
             this.clearEditBtn = true
             this.addRdBoolean = true
             this.addRoad();
             this.display=true;
-            
             this.modifyRoad = false
-
             }
           },
           { title: 'Edit Road', icon: 'mdi-pencil', action: async ()=>{

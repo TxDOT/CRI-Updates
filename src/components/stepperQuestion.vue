@@ -12,8 +12,18 @@
     min-width="0"
     :height="imageHeight"
     >
-    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road</v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">
+      Add a new Road
+      <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true">
+        mdi-video-outline
+      </v-icon>
+    </v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">
+      Edit Road
+      <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true">
+        mdi-video-outline
+      </v-icon>
+    </v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
     <v-stepper-step
       :editable="setAssetCover[0]"
@@ -96,7 +106,7 @@
     </v-dialog>
   </v-stepper>
 
-  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 3%; width: 97.1%;">
+  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 4.8%; width: 97.1%;">
     <p style="color: white; font-size: .8rem; position:relative; bottom: .4vh; left: .1rem;">Editor Name: {{editName}}</p>
     <p style="color: white; font-size: .8rem; position:absolute; top: .2vh; right: 0.6rem;">Edit Date: {{editDt}}</p>
   </v-footer>
@@ -460,8 +470,8 @@ export default {
           xs: () => {return '220px'},
           sm: () => {return '400px'},
           md: () => {return '80vh'},
-          lg: () => {return '83vh'},
-          xl: () => {return '83vh'}
+          lg: () => {return '74vh'},
+          xl: () => {return '54vh'}
         }
         return resize[`${this.$vuetify['breakpoint'].name}`]()
       },
@@ -618,24 +628,33 @@ export default {
 }
 </script>
 <style scoped>
+#addVideo{
+  position: relative;
+  float: right;
+  margin-right: 15px;
+  font-size: 1.8rem;
+}
+#addVideo:hover{
+  cursor: pointer;
+}
 .stepStyle{
   width:50%;
 }
 #cnclBtnEdit{
   border:none;
-  bottom: .5rem;
+  bottom: 1rem;
   right:6rem;
   position: absolute;
 }
 
 #saveBtnEdit{
   border: black 1px solid;
-  bottom: .5rem;
+  bottom: 1rem;
   right:1rem;
   position: absolute
 }
 #discardBtnEdit{
-  bottom: .5rem; 
+  bottom: 1rem; 
   left: 1rem; 
   position: absolute;
   z-index: 1;
@@ -643,18 +662,20 @@ export default {
 #addCommentBtn{
   position: absolute;
   left: 1rem;
-  bottom: 7rem; 
+  bottom: 11rem; 
   z-index:1
 }
 #comment{
   position: absolute;
   left:1rem;
-  bottom: 3rem;
+  top: 21rem;
   line-height:.5px;
   width:93%;
   overflow-y: scroll;
-  max-height: 70px;
+  max-height: 104px;
   text-align: left;
+  display: flex;
+  flex-direction: column
 }
 #dialogComment{
   width:30%;

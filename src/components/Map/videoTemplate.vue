@@ -6,7 +6,6 @@
             </span>
             <v-btn block tile id="watchBtn" depressed text @click="watchVideo()">watch now</v-btn>
         </v-card-text>
-
     </v-card>
 </template>
 
@@ -18,23 +17,32 @@
             return{
                 youtubeUrl: "",
                 edit: false,
+                videoEvtLis: false
             }
         },
         mounted(){
             setTimeout(()=>{
                 this.showVideo = false
+                
             }, 3000)
-            this.addVideos()
-            
+            console.log("hey")
+            //this.addVideos()
         },
         methods:{
             watchVideo(){
                 window.open(this.youtubeUrl, "_blank")
             },
             addVideos(){
-                document.getElementById("addVideo").addEventListener("mouseenter", ()=>{
-                    this.showVideo = true
-                })
+                
+                // console.log(document.getElementById("addVideo"))
+                // if(document.getElementById("addVideos")){
+                //     document.getElementById("addVideos").addEventListener("mouseenter", ()=>{
+                //         console.log("hey2")
+                //         this.showVideo = true
+                //     })
+                //     return
+                // }
+
             }
         },
         
@@ -50,9 +58,7 @@
             },
             deleteRoad:{
                 handler: function(){
-                    console.log(this.deleteRoad)
                     if(this.deleteRoad){
-
                         this.youtubeUrl = "https://www.txdot.gov/"
                         return
                     }
@@ -101,12 +107,13 @@
 
 <style scoped>
     #showVideo{
-        position: relative;
+        position: absolute;
         background-color: #204E70;
         width: 20rem;
-        top: 43px;
-        left: 40rem;
+        top: 5rem;
+        left: calc(25.5vw + 13.75rem);
         color: white;
+        z-index: 9999;
     }
     #watchBtn{
         color: white;
