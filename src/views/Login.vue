@@ -302,23 +302,24 @@ export default {
 
       },
       async sendRequest(url) {
-        try {
+        
           this.btnBlockerPointerEvents = 'none'
           this.registerpopup=false
           this.clearValues()
           this.checkboxvalue = false
           this.btnBlockerPointerEvents = 'all'
-          this.isAlert = true
-          setTimeout(() => {
-            this.isAlert = false
-          }, 5000)
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-        } catch (error) {
-          console.error('Error:', error);
-        }
+          //const response = await fetch(url)
+          fetch(url)
+          .then(()=>{
+            this.isAlert = true
+            setTimeout(() => {
+                this.isAlert = false
+              }, 5000)
+            })
+          .catch((err) => {
+            console.error('Error:', err);
+            return;
+          })
       },
       formatPhone(){
         // Remove non-numeric characters from the input value
@@ -561,6 +562,10 @@ export default {
   border-radius: 0px; /* Adjust the border radius as needed */
 }
 .v-input #form-input {
+    font-size: 14px !important;
+
+}
+.v-input #form-select {
     font-size: 14px !important;
 
 }
