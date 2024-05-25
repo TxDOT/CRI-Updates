@@ -1,5 +1,5 @@
 // import methods and functions into file
-import { clientSideGeoJson, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst} from './map'
+import { clientSideGeoJson} from './map'
 import {createEpoch} from '../Map/helper'
 import { criConstants } from '../../common/cri_constants';
 import {store} from '../../store'
@@ -25,9 +25,6 @@ async function bulkAssetReturn(countyQuery){
     let incre = 1000
     let iStart = 0 //initialStart
     let eStart = 1000 //endStart
-    let srfcAsset = []
-    let dsgnAsset = []
-    let laneAsset = []
 
     let ids = []
     let useInfo = []
@@ -51,81 +48,57 @@ async function bulkAssetReturn(countyQuery){
         assetQuery.orderByFields = ["RDBD_GMTRY_LN_ID"]
         assetQuery.outFields = [ "*" ]
         //console.log(assetQuery)
-        const roadSrfc = await rdbdSrfcAsst.queryFeatures(assetQuery)
-        const roadDsgn = await rdbdDsgnAsst.queryFeatures(assetQuery)
-        const roadLane = await rdbdLaneAsst.queryFeatures(assetQuery)
         //console.log(roadSrfc)
         //console.log(roadSrfc.features.find(x => x.attributes.RDBD_GMTRY_LN_ID === 52681))
-        roadSrfc.features.forEach((x)=>{
-            let rdSrfc = criConstants.surface.find(({num}) => num === x.attributes.SRFC_TYPE_ID)
+        // roadSrfc.features.forEach((x)=>{
+        //     let rdSrfc = criConstants.surface.find(({num}) => num === x.attributes.SRFC_TYPE_ID)
             
-            let srfcObj = {
-                rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
-                srfcType: rdSrfc.name,
-                begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
-                end: x.attributes.ASSET_LN_END_DFO_MS
-            }
-            srfcAsset.push(srfcObj)
-            })
+        //     let srfcObj = {
+        //         rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
+        //         srfcType: rdSrfc.name,
+        //         begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
+        //         end: x.attributes.ASSET_LN_END_DFO_MS
+        //     }
+        //     srfcAsset.push(srfcObj)
+        //     })
 
-        roadDsgn.features.forEach((x)=>{
-            let dsgnObj = {
-                rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
-                srfcType: x.attributes.RDWAY_DSGN_TYPE_DSCR,
-                begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
-                end: x.attributes.ASSET_LN_END_DFO_MS
-            }
-            dsgnAsset.push(dsgnObj)
-        })
+        // roadDsgn.features.forEach((x)=>{
+        //     let dsgnObj = {
+        //         rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
+        //         srfcType: x.attributes.RDWAY_DSGN_TYPE_DSCR,
+        //         begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
+        //         end: x.attributes.ASSET_LN_END_DFO_MS
+        //     }
+        //     dsgnAsset.push(dsgnObj)
+        // })
 
-        roadLane.features.forEach((x)=>{
-            let laneObj = {
-                rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
-                srfcType: x.attributes.NBR_THRU_LANE_CNT,
-                begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
-                end: x.attributes.ASSET_LN_END_DFO_MS
-            }
-            laneAsset.push(laneObj)
-        })
+        // roadLane.features.forEach((x)=>{
+        //     let laneObj = {
+        //         rdbdId: x.attributes.RDBD_GMTRY_LN_ID,
+        //         srfcType: x.attributes.NBR_THRU_LANE_CNT,
+        //         begin: x.attributes.ASSET_LN_BEGIN_DFO_MS,
+        //         end: x.attributes.ASSET_LN_END_DFO_MS
+        //     }
+        //     laneAsset.push(laneObj)
+        // })
 
         iStart += incre
         eStart += incre
     }
     
-    await surfaceAsset(srfcAsset, dsgnAsset, laneAsset, useInfo)
+    await surfaceAsset(useInfo)
 }
 
 // create fields for CSV file
-async function surfaceAsset(roadSrfcs, roadDsgn, roadLane, cntyQ){
+async function surfaceAsset(cntyQ){
     let dataHolder = []
     //here
     let surfacePromise = new Promise(()=>{
         for(let x=0; x < cntyQ.length; x++){
-
-            let srfcAst = roadSrfcs.filter(y=>y.rdbdId === cntyQ[x].roadId)
-            let dsgnAst = roadDsgn.filter(y=>y.rdbdId === cntyQ[x].roadId)
-            let laneAst = roadLane.filter(y=>y.rdbdId === cntyQ[x].roadId)
-            srfcAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
-            dsgnAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
-            laneAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
-
-            srfcAst.forEach((z,i)=>{
-                srfcAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
-            })
-            dsgnAst.forEach((z,i)=>{
-                dsgnAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
-            })
-            laneAst.forEach((z,i)=>{
-                laneAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
-            })
-
             dataHolder.push({
                 "Road Name" : cntyQ[x].roadN, 
                 "Route ID" : cntyQ[x].routeId,
                 "Length" : cntyQ[x].len,
-                "Road Surface": srfcAst.join(' then '),
-                "Number of Lanes": laneAst.join(' then '),
-                "Road Design": dsgnAst.join(' then '),
                 "County Name": cntyQ[x].cntyN, 
                 "County Number": cntyQ[x].cntyNbr, 
                 "District Number": store.getters.getDistrict
@@ -143,63 +116,6 @@ async function surfaceAsset(roadSrfcs, roadDsgn, roadLane, cntyQ){
     buildCSV(createCsv)
     return await surfacePromise
 }
-  
-  // async function surfaceAsset(roadSrfc, roadDsgn, roadLane, cntyQ){
-  //     console.log("Start:", new Date())
-  //     let totalLen = cntyQ.length
-  //     console.log(totalLen)
-  //     let dataHolder = []
-  //     for(let x=0; x < cntyQ.length; x++){
-  //       let assetPromise = new Promise((res)=>{
-  //         setTimeout(()=>{
-  //           let srfcAst = roadSrfc.filter(y=>y.rdbdId === cntyQ[x].roadId)
-  //           let dsgnAst = roadDsgn.filter(y=>y.rdbdId === cntyQ[x].roadId)
-  //           let laneAst = roadLane.filter(y=>y.rdbdId === cntyQ[x].roadId)
-  
-  //           srfcAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
-  //           dsgnAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
-  //           laneAst.sort((a,b)=>(a.begin > b.begin) ? 1: -1)
-  
-  //           srfcAst.forEach((z,i)=>{
-  //             srfcAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
-  //           })
-  //           dsgnAst.forEach((z,i)=>{
-  //             dsgnAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
-  //           })
-  //           laneAst.forEach((z,i)=>{
-  //             laneAst.splice(i, 1, `${z.srfcType}: From ${Number(z.begin.toFixed(3))} To ${Number(z.end.toFixed(3))}`)
-  //           })
-  //           dataHolder.push({
-  //             "Road Name" : cntyQ[x].roadN, 
-  //             "Route ID" : cntyQ[x].routeId,
-  //             "Length" : cntyQ[x].len,
-  //             "Road Surface": srfcAst.join(' then '),
-  //             "Number of Lanes": laneAst.join(' then '),
-  //             "Road Design": dsgnAst.join(' then '),
-  //             "County Name": cntyQ[x].cntyN, 
-  //             "County Number": cntyQ[x].cntyNbr, 
-  //             "District Number": store.getters.getDistrict
-  //           })
-  //           res(dataHolder)
-  //         },0)
-  //       })
-  //       let returnPromise = await assetPromise
-  //       //console.log(returnPromise)
-  //       if(returnPromise.length === totalLen){
-  //         let createCsv = `${Object.keys(dataHolder[0]).toString()}\n`
-  //         dataHolder.forEach((value)=>{
-  //           let newRow = Object.values(value)
-  //           createCsv += newRow.join(',')
-  //           createCsv += "\n"
-  //         })
-  
-  //       await buildCSV(createCsv)
-  //       console.log("End:", new Date())
-  
-  //       }
-  //     }
-  //     console.log('complete')
-  // }
 
 // make the CSV file  
 async function buildCSV(csvString){
@@ -326,7 +242,7 @@ async function uploadValueCheck(feat, validali){
     let validArr = validali
     let valueCheckPromise = new Promise((res)=>{
         let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Edit or Delete. Re-submit"
-        let lengthMessage = "Empty or Null fields have been detected.\nReview required fields [EDIT_TYPE, SURFACE, LANE, DESIGN, ROAD_TYPE, ROAD_NM] have a value and re-submit"
+        let lengthMessage = "Empty or Null fields have been detected.\nReview required fields [EDIT_TYPE, bh ROAD_TYPE, ROAD_NM] have a value and re-submit"
         let isCheckLength = [];
         let editTypeMsg = [];
         for(let i=0; i < feat.featureSet.features.length; i++){
@@ -384,7 +300,7 @@ function serverResponse(submitid){
     store.commit('setIsFmeProcess', [true, ""])
     // --Current -- let dataReturn = await fetch(`https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=ef92b878734df046a715c1e39d46cb40f1f321fd', 'Content-Type': 'text/plain', 'Access-Control-Allow-Private-Network': true}})
     //https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/CRI_QAQC_dev_CORS.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync
-    let dataReturn = fetch(`https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_QAQC.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=f1cdc75a1b3ddd13167fb0e4cb6e6301b0373889', 'Content-Type': 'text/plain'}})
+    let dataReturn = fetch(`https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_QAQC_Dev.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=cc1026cafbc5cf1ef1afd66650813760fb3ac0c0', 'Content-Type': 'text/plain'}})
     dataReturn
         .then(() =>{
             store.commit('setIsFmeProcess', [false, "success"])

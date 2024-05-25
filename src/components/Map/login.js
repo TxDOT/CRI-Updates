@@ -180,7 +180,6 @@ export async function createGeoJson(cntyName){
 
     geoJSONArr.features.push(geojson)
   }
-  
   // create a new blob from geojson featurecollection
   const blob = new Blob([JSON.stringify(geoJSONArr)], {
     type: "application/json"

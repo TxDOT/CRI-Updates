@@ -61,6 +61,7 @@ import { expandLegend, returnAlertInfo } from '../components/Map/map'
 import LastYearsEditLegend from '../components/Map/mapLastYearsEditLegend.vue'
 import cycleIntro from '../components/Map/cyclePopup.vue'
 import {basemapDisplayOnZoom} from '../components/Map/mapNav.js'
+import {getGraphic} from '../components/Map/roadInfo.js'
 
 export default {
     components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, eoeWarning, LastYearsEditLegend, cycleIntro},
@@ -102,7 +103,7 @@ export default {
       // });
 
       highLightFeat('pointer-move')
-      
+      getGraphic()
       const alertInfo = await returnAlertInfo()
       const dateEpoch = new Date().getTime()
 

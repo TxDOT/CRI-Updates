@@ -67,7 +67,12 @@ export function basemapDisplayOnZoom(){
                         store.commit("setStepperClose", true)
                     })
             }
-            basemapToggle.toggle()
+            try{
+                basemapToggle.toggle()
+            }
+            catch(err){
+                console.log(err)
+            }
             return
         }
         if((aScale > delimeter) && basemapToggle.viewModel.activeBasemap.baseLayers.items[0].type !== "vector-tile"){
@@ -75,7 +80,12 @@ export function basemapDisplayOnZoom(){
             if(isAdd){
                 stopEditing()
             }
-            basemapToggle.toggle()
+            try{
+                basemapToggle.toggle()
+            }
+            catch(err){
+                console.log(err)
+            }
             return
         }
     })

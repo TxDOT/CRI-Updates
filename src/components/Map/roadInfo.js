@@ -29,6 +29,7 @@ export async function popUpData(res){
 
 //populates stepper form when graphic is clicked.
 export async function getGraphic(){
+    console.log("start")
     let getGraphPromise = new Promise(function(resp){
       view.on("click", function(event){
         let option = {include: [clientSideGeoJson, gLayer]}
@@ -38,23 +39,33 @@ export async function getGraphic(){
         // }
         view.when(()=>{
           //get response from graphics and set getters in store.js
-          view.hitTest(event,option)
-            .then(async function(response){
+          view.hitTest(event, option)
+            .then(function(response){
+              console.log(JSON.stringify(response.results[0].graphic.attributes))
+              console.log(store.getters.getEditExisting, store.getters.getDeleteRd)
               //dont populate stepper if user is in edit or delete workflow
               if(response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true) ){
+                //removeGraphicListener.remove()
                 return;
               }
               if(response.results.length && store.getters.getdeleteGraphClick === true){
+                //removeGraphicListener.remove()
                 return;
               }
+
               else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber >= 1 && store.getters.getInfoRd === false && store.getters.getObjectid !== response.results[0].graphic.attributes['objectid'])){
+                console.log(response.results[0].graphic.attributes['objectid'])
+                console.log(store.getters.getStepNumber, store.getters.getStepperClose, store.getters.getInfoRd, store.getters.getObjectid )
                 store.commit('setdenyFeatClick', true)
+                //removeGraphicListener.remove()
                 return;
               }
               //update road information stepper
               else if(response.results.length){
-                if(!response.results[0].graphic.attributes['editType']){
+                if(!response.results[0].graphic.attributes['editType'] && (!store.getters.getEditExisting && !store.getters.getDeleteRd && !store.getters.getDeleteRdSecond)){
+                  console.log(response)
                   popUpData(response)
+                  //removeGraphicListener.remove()
                   return;
                 }
                 let timestamp = epochToHumanTime(response.results[0].graphic.attributes['editDt'], response.results[0].graphic.attributes['createDt'])
@@ -63,10 +74,8 @@ export async function getGraphic(){
                   //sketch.update([response.results[0].graphic], {tool:"reshape"});
                   store.commit('setStepperClose', true)
                   store.commit('setInfoRd', false)
-                  setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
-                                response.results[0].graphic.attributes['roadbedDesign'],
+                  setDataToStore(
                                 response.results[0].graphic.attributes['roadbedName'],
-                                response.results[0].graphic.attributes['numLane'],
                                 response.results[0].graphic.attributes['objectid'],
                                 response.results[0].graphic.attributes['comment'],
                                 [response.results[0].graphic.attributes['editNm'], 
@@ -77,10 +86,8 @@ export async function getGraphic(){
                   resp(response.results[0].graphic)
                 }
                 else if(response.results[0].graphic.attributes['editType'] === 'DELETE'){
-                  setDataToStore(response.results[0].graphic.attributes['roadbedSurface'],
-                                response.results[0].graphic.attributes['roadbedDesign'],
+                  setDataToStore(
                                 response.results[0].graphic.attributes['roadbedName'],
-                                response.results[0].graphic.attributes['numLane'],
                                 response.results[0].graphic.attributes['objectid'],
                                 response.results[0].graphic.attributes['comment'],
                                 [response.results[0].graphic.attributes['editNm'], 
@@ -89,11 +96,13 @@ export async function getGraphic(){
                                 timestamp[0]])
                   store.commit('setdeleteGraphClick', true)
                 }
+                //removeGraphicListener.remove()
+                return
             }
           })
         })
       });
-    });
+    })
     let returnGetGraph = await getGraphPromise;
     return returnGetGraph
 }

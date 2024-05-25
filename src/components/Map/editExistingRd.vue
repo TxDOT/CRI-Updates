@@ -5,7 +5,7 @@
             <v-card-title class="editRdTitle" v-if="edit===true">
                 <v-card-text class="editActionType">
                     Edit Road
-                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true">
+                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true" @mouseleave="closeVideo()">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
@@ -13,7 +13,7 @@
             <v-card-title class="editRdTitle" v-if="addR===true">
                 <v-card-text class="editActionType">
                     Add Road
-                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true">
+                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true" @mouseleave="closeVideo()">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
@@ -21,7 +21,7 @@
             <v-card-title class="editRdTitle" v-if="deleteR===true">
                 <v-card-text class="editActionType">
                     Delete Road
-                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true">
+                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true" @mouseleave="closeVideo()">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
@@ -41,14 +41,22 @@
         <v-card-text v-if="deleteR === true" class="editRdInfo">
             <v-icon color="blue" class="editRdIcon" style="transform:rotate(330deg); top:0px">
                 mdi-navigation
-            </v-icon>Select a road from the map to delete it
+            </v-icon>
+            Select a road from the map to delete it
         </v-card-text>
         <v-btn tile outlined depressed id="cancelBtn" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false;"><u>Cancel</u></v-btn>
         </v-card>
     <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style = "deleteClick ? {'height' : '11rem'} : {}"> <!-- //&& this.modifyR === false -->
         <v-card-title class="delRdTitle">
             Delete a Road
+            <div>
+                <v-icon color="white" id="addVideoDel" @mouseover="isShowVideo = true" @mouseleave="closeVideo()">
+                mdi-video-outline
+                </v-icon>
+            </div>
+
         </v-card-title>
+        
         <v-card-text class="textSymb" id="bodyTxt" :style="deleteClick ? {'text-align': 'left', 'top':'35px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
             <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> {{ delTxt }}
         </v-card-text>
@@ -58,6 +66,7 @@
             </v-icon>
             Edit may be discarded later if you change your mind
         </v-alert>
+
          <!-- <a v-if="!deleteClick"  id="comment">Comment</a> -->
          <!-- <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox> -->
         <v-row v-if="!deleteClick">
@@ -206,7 +215,12 @@ export default {
             //this.commentText = this.prevComment[0]
             //this.delReason = this.initialVal
         },
-
+        closeVideo(){
+            setTimeout(() => {
+                console.log('hey')
+                this.isShowVideo = false
+            },1500)
+        },
         getDeleteReason(){
             return this.cityAnnexReason.find(x=> x.value === this.delReason)
         },
@@ -293,6 +307,7 @@ export default {
                 this.modifyRoad = false
             }
             else if(this.addR === true){
+                this.isOverlay = false
                 this.getDfoBool = false
                 stopEditing();
                 this.addRdBoolean = false
@@ -323,18 +338,15 @@ export default {
         },
         editStatus:{
             handler: function(){
-                if(this.editStatus){
-                    this.isShowVideo = true
-                }
+                // if(this.editStatus){
+                //     this.isShowVideo = true
+                // }
                 this.edit = this.editStatus
             },
             immediate:true,
         },
         deleteRoad:{
             handler: function(){
-                if(this.deleteRoad){
-                    this.isShowVideo = true
-                }
                 this.deleteR = this.deleteRoad
             },
             immediate:true,
@@ -347,9 +359,6 @@ export default {
         },
         addRdBoolean:{
             handler: function(){
-                if(this.addRdBoolean){
-                    this.isShowVideo = true
-                }
                 this.addR =  this.addRdBoolean
             },
             immediate:true,
@@ -522,6 +531,14 @@ export default {
             set(bool){
                 this.$store.commit("setIsShowVideo", bool)
             }
+        },
+        isOverlay:{
+            get(){
+                return this.$store.state.isOverlay
+            },
+            set(bool){
+                this.$store.commit('setIsOverlay', bool)
+            }
         }
     }
 }
@@ -534,8 +551,20 @@ export default {
         left: 35px;
         font-size: 1.8rem;
         z-index: 9999;
+        bottom: 5px !important;
+    }
+    #addVideoDel{
+        position: relative;
+        float: right;
+        left: 335px;
+        font-size: 1.8rem;
+        z-index: 9999;
+        bottom: 0px !important;
     }
     #addVideo:hover{
+        cursor: pointer;
+    }
+    #addVideoDel:hover{
         cursor: pointer;
     }
     .editRdTitle{

@@ -43,13 +43,18 @@
           { title: 'Add Road', icon: 'mdi-plus', action: ()=>{
             const isZoomReq = basemapDisplayOnEditType()
             if(isZoomReq){
+              this.infoRoad = false
+              this.editExistingRd = false;
+              this.deleteRoad = false
+              this.clearEditBtn = true
               this.addRdBoolean = true
+              this.modifyRoad = false
               return
             }
             console.log('hey')
             this.infoRoad = false
             this.getDfoBool = true
-            //this.editExistingRd = false;
+            this.editExistingRd = false;
             this.deleteRoad = false
             this.clearEditBtn = true
             this.addRdBoolean = true
@@ -59,22 +64,23 @@
             }
           },
           { title: 'Edit Road', icon: 'mdi-pencil', action: async ()=>{
-            stopEditing();
-            this.clearEditBtn = true
-            this.editExistingRd = true;
-            this.nextDeleteRoadForm = false
-            this.addRdBoolean = false;
-            this.deleteRoad = false;
-            this.infoRoad = false
-
-            await modifyRoadbed('click', 'edit')
-            if(this.editExistingRd === true){
-              this.receiveLoadStatus = false
-              this.modifyRoad = true
-              this.firstAddToMap = true
-              this.openStepper();
+              stopEditing();
+              this.clearEditBtn = true
+              this.editExistingRd = true;
+              this.nextDeleteRoadForm = false
+              this.addRdBoolean = false;
+              this.deleteRoad = false;
+              this.infoRoad = false
+              console.log("click, ediut")
+              await modifyRoadbed('click', 'edit')
+              if(this.editExistingRd === true){
+                this.receiveLoadStatus = false
+                this.modifyRoad = true
+                this.firstAddToMap = true
+                this.openStepper();
+              }
             }
-          }},
+          },
           { title: 'Delete Road', icon: 'mdi-close-circle', action: async ()=>{
             this.infoRoad = false
             this.modifyRoad = false
@@ -111,7 +117,7 @@
       },
       openStepper(){
         this.steppClose = true;
-        this.editExistingRd = null;
+        this.editExistingRd = false;
         search.clear()
       },
       alertTest(){

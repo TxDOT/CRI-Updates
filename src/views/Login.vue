@@ -37,7 +37,7 @@
             </v-btn>         
       </v-card-actions>
     </v-card>
-    <v-card height="675" class="signup-card" v-if="registerpopup">
+    <v-card height="675" class="signup-card" v-if="registerpopup" tile>
       <v-progress-circular
       :size="50"
       color="primary"
@@ -55,7 +55,7 @@
         <v-form class = "formPos">
           <v-col>
             <v-row class="signup-form">
-              <v-text-field v-model="firstName" required label="First Name" :rules="firstNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' ></v-text-field>
+              <v-text-field v-model="firstName" required label="First Name" :rules="firstNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' tile></v-text-field>
             </v-row>
             <v-row class="signup-form">
               <v-text-field v-model="lastName" required label="Last Name" :rules="lastNameRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input' ></v-text-field>
@@ -67,7 +67,7 @@
               <v-text-field v-model="phone" required label="Phone" :rules="phoneRequired" :outlined=true :dense=true class="custom-border-radius" id= 'form-input'  @input="formatPhone" ></v-text-field>
             </v-row>
             <v-row class="signup-form">
-              <v-select v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius" attach id= 'form-select' ></v-select>
+              <v-autocomplete v-model="county" :items="cntyNames" required label="County" :rules="countyRequired" :outlined=true :dense=true class="custom-border-radius" attach id= 'form-select' :clearable=true ></v-autocomplete>
             </v-row>
           </v-col>
         </v-form>
@@ -302,28 +302,24 @@ export default {
 
     },
     async sendRequest(url) {
-      try {
-        
-
-        this.isSpinner = true
+      
         this.btnBlockerPointerEvents = 'none'
-        const response = await fetch(url);
-        this.btnBlockerPointerEvents = 'all'
-        this.isSpinner = false
         this.registerpopup=false
         this.clearValues()
         this.checkboxvalue = false
-        this.isAlert = true
-        setTimeout(() => {
-          this.isAlert = false
-        }, 5000)
-
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-      }
+        this.btnBlockerPointerEvents = 'all'
+        //const response = await fetch(url)
+        fetch(url)
+        .then(()=>{
+          this.isAlert = true
+          setTimeout(() => {
+              this.isAlert = false
+            }, 5000)
+          })
+        .catch((err) => {
+          console.error('Error:', err);
+          return;
+        })
     },
     formatPhone(){
       // Remove non-numeric characters from the input value
@@ -569,6 +565,10 @@ border-radius: 0px; /* Adjust the border radius as needed */
   font-size: 14px !important;
 
 }
+.v-input #form-select {
+  font-size: 14px !important;
+
+}
 .v-input #form-input-email {
   text-transform: lowercase !important;
   font-size: 14px !important;
@@ -576,119 +576,115 @@ border-radius: 0px; /* Adjust the border radius as needed */
 }
 
 .custom-border-radius .v-select__selection{
-font-size: 14px !important;
+  font-size: 14px !important;
 }
 .custom-border-radius .v-input__slot{
-min-width:400px ;
-max-width: 400px;
+  min-width:400px ;
+  max-width: 400px;
 }
 .custom-border-radius .v-text-field__details{
-
   left: 400px;
   top: -30px;
   position: relative;
-
 }
 
 .custom-border-radius .v-menu__content{
-position:relative;
-top: 40px !important;
-left:-400px !important;
+  position:relative;
+  top: 40px !important;
+  left:-400px !important;
 }
 .v-dialog {
-border-radius: 0px;
+  border-radius: 0px;
 }
 
 #loginBannerPos{
-position:absolute; 
-top:0%; 
-left: 0%; 
-width:100%;
+  position:absolute; 
+  top:0%; 
+  left: 0%; 
+  width:100%;
 }
 #registerBannerPos{
-position:absolute; 
-top:0%; 
-left: 0%; 
-width:100%;
+  position:absolute; 
+  top:0%; 
+  left: 0%; 
+  width:100%;
 }
 #loginBannerTxt{
-border-radius: 0px; 
-text-align: left;
-font-size:20px;
-font-weight: 400;
+  border-radius: 0px; 
+  text-align: left;
+  font-size:20px;
+  font-weight: 400;
 
 }
 #loginTxt{
-position:absolute; 
-top:15%; 
-left: 5%; 
-text-align: left;
+  position:absolute; 
+  top:15%; 
+  left: 5%; 
+  text-align: left;
 }
 #loginBtnPos{
-position:absolute; 
-right:4%; 
-bottom:10%
+  position:absolute; 
+  right:4%; 
+  bottom:10%
 }
 #SignupBtnPos{
-position:absolute; 
-left:4%; 
-bottom:13%
+  position:absolute; 
+  left:4%; 
+  bottom:13%
 }
 .login-card{
-border-radius: 0px !important;
+  border-radius: 0px !important;
 
 }
 .signup-card{
-position: absolute;
-left: 0;
-right: 0;
-top: 0;
-bottom: 0;
-margin: auto;
-width: 900px;
-overflow: hidden;;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  width: 900px;
+  overflow: hidden;;
 }
 .signup-form{
-padding-left: 3rem !important;
-padding-right: 2rem !important;
-margin-bottom: -30px;
-height: 65px;
-
-
+  padding-left: 3rem !important;
+  padding-right: 2rem !important;
+  margin-bottom: -30px;
+  height: 65px;
 }
+
 #formtext{
-position: absolute;
-top:60px;
-text-align: left;
-padding-left: 1px;
-padding-right:2rem;
-font-size: 14px;
+  position: absolute;
+  top:60px;
+  text-align: left;
+  padding-left: 1px;
+  padding-right:2rem;
+  font-size: 14px;
 }
 
 #termstext{
-position: absolute;
-text-align: left;
-top: 365px;
-padding-left: 1px;
-padding-right:2rem;
-font-size: 14px;
-
+  position: absolute;
+  text-align: left;
+  top: 365px;
+  padding-left: 1px;
+  padding-right:2rem;
+  font-size: 14px;
 }
 .formPos{
-position: absolute;
-top: 140px;
+  position: absolute;
+  top: 140px;
 }
 .cancelButton{
-right: 10px;
-bottom: 8px;
+  right: 10px;
+  bottom: 8px;
 } 
 .continueButton{
-right: 12px;
+  right: 12px;
 } 
 .buttonPos{
-position: absolute;
-bottom: 0px;
-right: 0;
+  position: absolute;
+  bottom: 0px;
+  right: 0;
 
 }
 .btnblocker{

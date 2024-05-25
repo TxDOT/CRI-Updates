@@ -528,6 +528,7 @@ export const store = new Vuex.Store({
             state.editExisting = edit
         },
         setAddRd(state, add){
+            console.log(add)
             state.addRd = add
         },
         setStepperClose(state, steppClose){

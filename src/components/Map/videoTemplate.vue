@@ -21,29 +21,15 @@
             }
         },
         mounted(){
-            setTimeout(()=>{
-                this.showVideo = false
-                
-            }, 3000)
-            console.log("hey")
-            //this.addVideos()
+            // setTimeout(()=>{
+            //     this.showVideo = false
+            // }, 2000)
         },
         methods:{
             watchVideo(){
                 window.open(this.youtubeUrl, "_blank")
+                return
             },
-            addVideos(){
-                
-                // console.log(document.getElementById("addVideo"))
-                // if(document.getElementById("addVideos")){
-                //     document.getElementById("addVideos").addEventListener("mouseenter", ()=>{
-                //         console.log("hey2")
-                //         this.showVideo = true
-                //     })
-                //     return
-                // }
-
-            }
         },
         
         watch:{
@@ -111,7 +97,7 @@
         background-color: #204E70;
         width: 20rem;
         top: 5rem;
-        left: calc(25.5vw + 13.75rem);
+        left: calc(500px + 13rem);
         color: white;
         z-index: 9999;
     }
