@@ -382,9 +382,7 @@ export default {
       },
       showGIDVerts(){
         let getGraphic = gLayer.graphics.items.filter(x=> x.attributes.objectid === this.objid)
-        console.log("stepper")
         showVerticies(getGraphic[0])
-        console.log("step")
         return
       },
       initLoadAsset(asset){
@@ -412,6 +410,7 @@ export default {
         document.getElementById("stepper").style.width = '0px'
         this.steppClose = false;
         this.infoRoad = false;
+        this.editExistingRd = null
         this.e1 = 1;
         removeAsstPoints();
         this.getDfoBool = false;
@@ -632,7 +631,6 @@ export default {
           return this.$store.state.deltaDistance
         },
         set(len){
-          console.log(len)
           this.$store.commit('setDeltaDis', len)
         }
       },

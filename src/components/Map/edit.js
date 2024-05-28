@@ -88,7 +88,6 @@ function createInfoSendToStore(newRoad){
       width: 2,
       style: "dash"
     }
-    console.log("edit")
     showVerticies(sketch.layer.graphics.items.at(-1))
     let timestamp = epochToHumanTime(date)
     //Apply M Measures function
@@ -107,7 +106,6 @@ function createInfoSendToStore(newRoad){
 export async function modifyRoadbed(clickType, editType){
     let promise = new Promise(function(res, rej){
       const removeModListener = view.on(clickType,(event) => {
-        console.log(store.getters.getEditExisting, store.getters.getDeleteRd)
         if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
           store.commit('setEditExisting', null)
           store.commit('setDeleteRd', null)
@@ -178,7 +176,6 @@ export function updateLength(){
   try{
     let oldLen; 
     setUpGraphic();
-    console.log("updateLength")
     sketch.on('update', (event)=>{
       if(event.state === 'start'){
         oldLen = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))
@@ -498,13 +495,10 @@ function setUpGraphic(){
         }
         //Can only proceed forward if edit type is add or edit. And road info stepper and edit stepper is not open
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
-          console.log(result.graphic.attributes.editType, result.graphic.attributes.editType, store.getters.getInfoRd, store.getters.getIsStepCancel)
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
-            console.log(result.graphic)
-            console.log("edit 1")
             sketch.update([result.graphic], {tool:"reshape"});
           }
         }

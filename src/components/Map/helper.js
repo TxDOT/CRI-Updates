@@ -12,7 +12,6 @@ import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtil
 
 //Sets Road Data in the data store. 
 export async function setDataToStore( name, objectid, comment, editInfo){
-    console.log(comment)
     // store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
     // store.commit('setRoadbedDesign', design) 
     store.commit('setRoadbedName', name)
@@ -38,6 +37,7 @@ export async function queryFeat(qry){
 //Querying asset (nonGeom) tables and pushing values to store
 export async function queryFeatureTables(tblqry){
     //this function is called when a user makes an initial edit (first part of the ternery) and on reload of the map (second part of the ternery).
+    console.log(tblqry)
     let queryStatment = tblqry.features ? tblqry.features[0].attributes.RDBD_GMTRY_LN_ID : tblqry.attributes.RDBD_GMTRY_LN_ID
     const query = new Query();
     query.where = `RDBD_GMTRY_LN_ID = ${queryStatment}`
@@ -160,7 +160,6 @@ export async function defineGraphic(graphics, clickType, editType){
           }
         })
         gLayer.graphics.add(newGraphic);
-        console.log('helper')
         newGraphic.attributes.editType === 'EDIT' && editType ? showVerticies(newGraphic) : null
         store.commit('setOldLength',oldLength)
         store.commit('setModifyRd', true)

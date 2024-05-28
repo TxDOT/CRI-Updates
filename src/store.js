@@ -294,7 +294,6 @@ export const store = new Vuex.Store({
             state.isTour = bool
         },
         setIsShowVideo(state, bool){
-            console.log(bool)
             state.showVideo = bool
         },
         setIsLegend(state, bool){
@@ -325,7 +324,6 @@ export const store = new Vuex.Store({
             state.judgeObjectId = jdgeObjectId
         },
         setIsFmeProcess(state, boolFME){
-            console.log(boolFME)
             state.isFmeProcess = boolFME
             console.log(`this is is ${state.isFmeProcess}`)
         },
@@ -528,7 +526,6 @@ export const store = new Vuex.Store({
             state.editExisting = edit
         },
         setAddRd(state, add){
-            console.log(add)
             state.addRd = add
         },
         setStepperClose(state, steppClose){

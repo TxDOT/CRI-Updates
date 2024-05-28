@@ -51,7 +51,6 @@
               this.modifyRoad = false
               return
             }
-            console.log('hey')
             this.infoRoad = false
             this.getDfoBool = true
             this.editExistingRd = false;
@@ -71,7 +70,6 @@
               this.addRdBoolean = false;
               this.deleteRoad = false;
               this.infoRoad = false
-              console.log("click, ediut")
               await modifyRoadbed('click', 'edit')
               if(this.editExistingRd === true){
                 this.receiveLoadStatus = false
@@ -117,7 +115,6 @@
       },
       openStepper(){
         this.steppClose = true;
-        this.editExistingRd = false;
         search.clear()
       },
       alertTest(){

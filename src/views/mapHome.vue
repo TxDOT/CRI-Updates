@@ -178,7 +178,6 @@ export default {
       },
       isOverlay:{
         handler: function(){
-          console.log(this.isOverlay)
           this.overlay = this.isOverlay
         }
       }

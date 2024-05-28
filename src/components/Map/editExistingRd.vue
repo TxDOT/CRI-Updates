@@ -2,7 +2,7 @@
 <template>
     <v-container>
         <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">
-            <v-card-title class="editRdTitle" v-if="edit===true">
+            <v-card-title class="editRdTitle" v-if="edit===true && !steppClose">
                 <v-card-text class="editActionType">
                     Edit Road
                     <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true" @mouseleave="closeVideo()">
@@ -217,7 +217,6 @@ export default {
         },
         closeVideo(){
             setTimeout(() => {
-                console.log('hey')
                 this.isShowVideo = false
             },1500)
         },

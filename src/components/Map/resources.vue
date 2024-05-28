@@ -403,7 +403,6 @@
           return this.$store.state.isTour
         },
         set(bool){
-          console.log(bool)
           this.$store.commit("setShowTour", bool)
         }
       },

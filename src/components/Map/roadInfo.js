@@ -29,7 +29,6 @@ export async function popUpData(res){
 
 //populates stepper form when graphic is clicked.
 export async function getGraphic(){
-    console.log("start")
     let getGraphPromise = new Promise(function(resp){
       view.on("click", function(event){
         let option = {include: [clientSideGeoJson, gLayer]}
@@ -41,8 +40,6 @@ export async function getGraphic(){
           //get response from graphics and set getters in store.js
           view.hitTest(event, option)
             .then(function(response){
-              console.log(JSON.stringify(response.results[0].graphic.attributes))
-              console.log(store.getters.getEditExisting, store.getters.getDeleteRd)
               //dont populate stepper if user is in edit or delete workflow
               if(response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true) ){
                 //removeGraphicListener.remove()
@@ -53,17 +50,14 @@ export async function getGraphic(){
                 return;
               }
 
-              else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber >= 1 && store.getters.getInfoRd === false && store.getters.getObjectid !== response.results[0].graphic.attributes['objectid'])){
-                console.log(response.results[0].graphic.attributes['objectid'])
-                console.log(store.getters.getStepNumber, store.getters.getStepperClose, store.getters.getInfoRd, store.getters.getObjectid )
+              else if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber >= 1 && store.getters.getInfoRd === false && store.getters.getObjectid !== response.results[0].graphic.attributes['OBJECTID'])){
                 store.commit('setdenyFeatClick', true)
                 //removeGraphicListener.remove()
                 return;
               }
               //update road information stepper
               else if(response.results.length){
-                if(!response.results[0].graphic.attributes['editType'] && (!store.getters.getEditExisting && !store.getters.getDeleteRd && !store.getters.getDeleteRdSecond)){
-                  console.log(response)
+                if(!response.results[0].graphic.attributes['editType'] && (!store.getters.getEditExisting)){
                   popUpData(response)
                   //removeGraphicListener.remove()
                   return;

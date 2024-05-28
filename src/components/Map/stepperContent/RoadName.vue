@@ -112,7 +112,6 @@ export default {
         objid:{
           handler: function(){
             this.resetItems();
-            console.log(this.objid)
            
             this.feature = false;
             this.graphic = true;

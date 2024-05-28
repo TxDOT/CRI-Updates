@@ -39,7 +39,6 @@ function checkEditsHistory(){
 }
 
 export function basemapDisplayOnEditType(){
-    console.log(view.scale)
     if(view.scale > 9382){
 
         store.commit('setIsOverlay', true)
@@ -47,7 +46,6 @@ export function basemapDisplayOnEditType(){
         return true
     }
     if(basemapToggle.viewModel.activeBasemap.baseLayers.items[0].type !== "wmts"){
-        console.log(view.zoom, view.scale)
         basemapToggle.toggle()
         return
     }
@@ -71,7 +69,7 @@ export function basemapDisplayOnZoom(){
                 basemapToggle.toggle()
             }
             catch(err){
-                console.log(err)
+                //console.log(err)
             }
             return
         }
