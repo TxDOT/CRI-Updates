@@ -3,7 +3,7 @@ export const criConstants = {
     criUtils: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Utils/FeatureServer/0",
     criUrl: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_URL/FeatureServer/0",
     refernceLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/0', 
-    editsLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS_dev/FeatureServer/0',
+    editsLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS/FeatureServer/0',
     assetLyrRdbSrf: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/2',
     assetLyrRdbDsgn: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/3',
     snapLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/Route_County/FeatureServer/0',
