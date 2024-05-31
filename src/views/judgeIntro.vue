@@ -9,7 +9,11 @@
                 <v-btn small tile color="blue" class="buttonColor" @click="logMeIn()"><v-icon left color="white">mdi-vector-polyline-edit</v-icon>Review & Edit</v-btn>
                 <v-btn small tile color="black" class="buttonColor" id="assignDelegate" @click="judgeLetter=false; accptCertify=false; assignDel=true;"><v-icon left color="white">mdi-account-multiple-plus</v-icon>Assign Delegate</v-btn>
 
-                <v-card-text v-html="subTxt" class="letterTxt" id="subTxt"></v-card-text>
+                <v-card-text class="letterTxt" id="subTxt">
+                    <br><p align="justify">If you would like to review your inventory using the Review & Edit button above, but have not yet created an account for yourself, you can <a style="color:black;text-decoration: underline;" @click=registermethod>register here</a>.</p>
+                         <p align="justify">TxDOT reports county road mileage to the Texas State Comptroller and Department of Motor Vehicles. That data is used to calculate funds to be distributed to each county. 
+                         Your participation in the County Road Inventory program is essential for ensuring an accurate and complete inventory.</p>
+                </v-card-text>
             </v-card>
         </v-dialog >
         <v-dialog width="560" v-model="assignDel" persistent>
@@ -18,7 +22,10 @@
         <v-dialog width="490" v-model="accptCertify" persistent>
             <acceptCertify/>
         </v-dialog>
-        
+        <v-dialog v-model="registerPopup" >
+            <Signupform/>
+
+        </v-dialog>
     </v-main>
 </template>
 
@@ -26,10 +33,11 @@
 import {countyInfo} from '../components/Map/login'
 import AssignDelegate from '../components/Map/assignDelegate.vue'
 import acceptCertify from '../components/Map/acceptCert.vue'
+import Signupform from '../components/signupform.vue'
 
 export default{
     name:'JudgeIntro',
-    components: {AssignDelegate, acceptCertify},
+    components: {AssignDelegate, acceptCertify, Signupform },
     props: ["id"],
     data(){
         return{
@@ -84,7 +92,7 @@ export default{
           Director of Data Management<br>  
           TPP_CRI@txdot.gov<br>  
           (512) 851-9039<br><br></p>`
-          this.subTxt = `<br><p align="justify">If you would like to review your inventory using the Review & Edit button above, but have not yet created an account for yourself, you can <a href='https://www.txdot.gov/data-maps/roadway-inventory/cri-form.html' target='_blank'><u>register here</u></a>.</p>
+          this.subTxt = `<br><p align="justify">If you would like to review your inventory using the Review & Edit button above, but have not yet created an account for yourself, you can <button>register here</button>.</p>
                          <p align="justify">TxDOT reports county road mileage to the Texas State Comptroller and Department of Motor Vehicles. That data is used to calculate funds to be distributed to each county. 
                          Your participation in the County Road Inventory program is essential for ensuring an accurate and complete inventory.</p>`
     },
@@ -99,7 +107,16 @@ export default{
                 return
             }
             this.mileageTxt = 'No edits have been made.'
-
+        },
+        registermethod(){
+            this.judgeLetter = false
+            // if (this.registerPopup === true){
+            //     this.registerPopup =false
+            //     this.judgeLetter = true
+            //     return
+            // }
+            this.registerPopup = true
+            return
         }
     },
     watch:{
@@ -108,6 +125,14 @@ export default{
                 this.assignDel = false
                 this.judgeLetter = true
                 this.accptCertify = false
+            },
+            immediate: true,
+        },
+        registerPopup:{
+            handler:function(){
+                if (this.registerPopup === false){
+                    this.judgeLetter = true
+                }
             },
             immediate: true,
         }
@@ -151,6 +176,14 @@ export default{
             },
             set(mile){
                 this.$store.commit('setCntyMiles', mile)
+            }
+        },
+        registerPopup:{
+            get(){
+                return this.$store.state.registerpopup
+            },
+            set(bool){
+                this.$store.commit('setIsRegisterPopup', bool)
             }
         }
     }

@@ -72,8 +72,16 @@ export const store = new Vuex.Store({
         editLayer: "",
         isLastYearEdits: false,
         isLegend: false,
+        registerpopup: false,
+        alerstatus: false,
     },
     getters:{
+        getIsAlert(state){
+            return state.alerstatus
+        },
+        getIsRegisterPopup(state){
+            return state.registerpopup
+        },
         getIsLegend(state){
             return state.isLegend
         },
@@ -275,6 +283,13 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        
+        setIsAlert(state, bool){
+            state.alerstatus = bool
+        },
+        setIsRegisterPopup(state, bool){
+            state.registerpopup = bool
+        },
         setIsLegend(state, bool){
             state.isLegend = bool
         },
