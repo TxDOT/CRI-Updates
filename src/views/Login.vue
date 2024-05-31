@@ -60,11 +60,6 @@ export default {
     data(){
         return{
         isAlert: false,
-        countyvalid: false,
-        emailvalid: false,
-        firstnvalid: false,
-        lastnvalid: false,
-        phonevalid: false,
         isDisabled : false,
         cntyNbrNm,
         registerpopup: false,
