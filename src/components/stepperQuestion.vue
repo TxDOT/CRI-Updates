@@ -14,13 +14,13 @@
     >
     <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">
       Add a new Road
-      <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true" @mouseleave="cancelVideo()">
+      <v-icon color="white" id="addVideo" @mouseover="addHover()" @mouseleave="cancelVideo()">
         mdi-video-outline
       </v-icon>
     </v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forMod && !forInfo">
       Edit Road
-      <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true" @mouseleave="cancelVideo()">
+      <v-icon color="white" id="addVideo" @mouseover="editHover()" @mouseleave="cancelVideo()">
         mdi-video-outline
       </v-icon>
     </v-stepper-header>
@@ -349,6 +349,15 @@ export default {
     },
 
     methods:{
+      editHover(){
+        this.isShowVideo = true
+        this.typeEdit = ["edit", "https://www.youtube.com/watch?v=qy5At3NOTpg&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5"]
+   
+      },
+      addHover(){
+        this.isShowVideo = true
+        this.typeEdit = ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"]
+      },
       cancelVideo(){
         setTimeout(()=>{
           this.isShowVideo = false
@@ -648,6 +657,14 @@ export default {
         },
         set(bool){
           this.$store.commit('setIsShowVideo', bool)
+        }
+      },
+      typeEdit:{
+        get(){
+          return this.$store.state.editType
+        },
+        set(type){
+          this.$store.commit('setIsEditType', type)
         }
       },
     }

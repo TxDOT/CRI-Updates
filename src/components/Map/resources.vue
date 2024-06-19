@@ -189,10 +189,10 @@
         drawer: true,
         faqs: false,
         isHelpTraining: false,
-        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory",
-                   "Click here to download Bulk Submission Instructions", "Click here to see WebEx Training Schedule"],
-        mediaType: ['', 'TxDOT Youtube Channel', 'FAQs','Access Sandbox Environment', "Download Advanced Bulk Upload Instructions", "WebEx Training"],
-        iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github', "mdi-download-circle", "mdi-calendar"],
+        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to see WebEx Training Schedule", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory",
+                   "Click here to download Bulk Submission Instructions"],
+        mediaType: ['', 'TxDOT Youtube Channel', "WebEx Training", 'FAQs','Access Sandbox Environment', "Download Advanced Bulk Upload Instructions"],
+        iconType: ['', 'mdi-video-image', "mdi-calendar", 'mdi-text-box', 'mdi-github', "mdi-download-circle"],
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
               this.isUserCertify === false ? this.certifiedFalse() : this.certifiedTrue()

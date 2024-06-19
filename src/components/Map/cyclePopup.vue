@@ -42,14 +42,12 @@ export default{
             return
         },
         closeProcess(){
-            
             this.isTours = false
         }
     },
     watch:{
         isTours:{
             handler: function(){
-                console.log(this.isTours)
                 this.hideCycle = this.isTours
             }
         }
@@ -57,7 +55,6 @@ export default{
     computed:{
         isTours:{
             get(){
-                console.log(this.$store.state.isTour)
                 return this.$store.state.isTour
             },
             set(bool){
@@ -79,7 +76,8 @@ export default{
         z-index: 9999;
     }
     .btn{
-        margin-right: 40px;
+        margin-right: 25px;
         bottom: 10px;
+        margin-left: 10px;
     }
 </style>

@@ -5,7 +5,7 @@
             <v-card-title class="editRdTitle" v-if="edit===true && !steppClose">
                 <v-card-text class="editActionType">
                     Edit Road
-                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true" @mouseleave="closeVideo()">
+                    <v-icon color="white" id="addVideo" @mouseover="editHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
@@ -13,7 +13,7 @@
             <v-card-title class="editRdTitle" v-if="addR===true">
                 <v-card-text class="editActionType">
                     Add Road
-                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true" @mouseleave="closeVideo()">
+                    <v-icon color="white" id="addVideo" @mouseover="addHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
@@ -21,7 +21,7 @@
             <v-card-title class="editRdTitle" v-if="deleteR===true">
                 <v-card-text class="editActionType">
                     Delete Road
-                    <v-icon color="white" id="addVideo" @mouseover="isShowVideo = true" @mouseleave="closeVideo()">
+                    <v-icon color="white" id="addVideo" @mouseover="deleteHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
@@ -50,7 +50,7 @@
         <v-card-title class="delRdTitle">
             Delete a Road
             <div>
-                <v-icon color="white" id="addVideoDel" @mouseover="isShowVideo = true" @mouseleave="closeVideo()">
+                <v-icon color="white" id="addVideoDel" @mouseover="deleteHover()" @mouseleave="closeVideo()">
                 mdi-video-outline
                 </v-icon>
             </div>
@@ -116,7 +116,6 @@
         <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'bottom':'1rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'1rem', 'left':'76%', 'border-color':'black'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : continueEdit()" class="continueBtn"> 
           <u>Continue</u>
         </v-btn>
-
         <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
           <u>Discard Edit</u>
         </v-btn>
@@ -174,6 +173,21 @@ export default {
       }
     },
     methods:{
+        editHover(){
+            this.isShowVideo = true
+            this.typeEdit = ["edit", "https://www.youtube.com/watch?v=qy5At3NOTpg&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5"]
+            return
+        },
+        addHover(){
+            this.isShowVideo = true
+            this.typeEdit = ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"]
+            return
+        },
+        deleteHover(){
+            this.isShowVideo = true
+            this.typeEdit = ["delete", "https://www.youtube.com/watch?v=3xTr7q4Cno4&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6"]
+            return
+        },
         restartDeleteSeq(){
             this.restartSeq = true
             this.deleteSecond = true
@@ -538,7 +552,15 @@ export default {
             set(bool){
                 this.$store.commit('setIsOverlay', bool)
             }
-        }
+        },
+        typeEdit:{
+            get(){
+                return this.$store.state.editType
+            },
+            set(type){
+                this.$store.commit('setIsEditType', type)
+            }
+        },
     }
 }
 </script>

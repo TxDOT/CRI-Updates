@@ -75,8 +75,20 @@ export const store = new Vuex.Store({
         showVideo: false,
         isTour: false,
         isOverlay: false,
+        registerpopup: false,
+        alerstatus: false,
+        editType: ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"]
     },
     getters:{
+        getIsEditType(state){
+            return state.editType
+        },
+        getIsAlert(state){
+            return state.alerstatus
+        },
+        getIsRegisterPopup(state){
+            return state.registerpopup
+        },
         getIsOverlay(state){
             return state.isOverlay
         },
@@ -287,6 +299,15 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setIsEditType(state, type){
+            state.editType = type
+        },
+        setIsAlert(state, bool){
+            state.alerstatus = bool
+        },
+        setIsRegisterPopup(state, bool){
+            state.registerpopup = bool
+        },
         setIsOverlay(state, bool){
             state.isOverlay = bool
         },

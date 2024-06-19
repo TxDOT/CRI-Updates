@@ -37,7 +37,6 @@ export async function queryFeat(qry){
 //Querying asset (nonGeom) tables and pushing values to store
 export async function queryFeatureTables(tblqry){
     //this function is called when a user makes an initial edit (first part of the ternery) and on reload of the map (second part of the ternery).
-    console.log(tblqry)
     let queryStatment = tblqry.features ? tblqry.features[0].attributes.RDBD_GMTRY_LN_ID : tblqry.attributes.RDBD_GMTRY_LN_ID
     const query = new Query();
     query.where = `RDBD_GMTRY_LN_ID = ${queryStatment}`
