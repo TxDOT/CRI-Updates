@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import {countyOfficialInfo} from '../components/Map/map'
+import {countyOfficialInfo, editsLayer} from '../components/Map/map'
 import {getTodaysDate} from '../components/Map/helper'
 import {goToMap, isTrainingAccess} from '../components/Map/login'
 import {cntyNbrNm} from '../common/txCnt'
@@ -81,6 +81,7 @@ export default {
       login: true,
       loginToMap: false,
       isCertify: false,
+      restrictAccess: "",
       signup: false,
 
       }
@@ -135,25 +136,41 @@ export default {
       this.judgeNameSend = queryResult.features[0].attributes['JUDGE_NM']
       this.judgeEmailSend = queryResult.features[0].attributes['JUDGE_EML']
       this.isCertify = queryResult.features[0].attributes['CERTFD'] === "Y" ? true : false
-      
+      this.restrictAccess = queryResult.features[0].attributes["RESTRICT_ACCESS"]
       return queryResult.features[0].attributes['TOT_MLGE']
-    },      
-
-    checkLocalStorage(){
+    },
+    
+    async getLatestEditDate(cntyName){
+      //find has edits, if no send to EOY
+      let removeWhiteSpace = cntyName.replaceAll(/\s/g, "").toUpperCase()
+      let isEdits = await editsLayer.queryFeatures({
+        
+        where: `RTE_DEFN_LN_CREATE_USER_NM like '%_${removeWhiteSpace}'`,
+        outFields: ["RTE_DEFN_LN_CREATE_USER_NM"],
+      })
+      
+      return isEdits.features.length ? true : false
+    },
+    async checkLocalStorage(){
       let cntyNum = JSON.parse(localStorage.getItem('county'))
       this.getCountyJudge(cntyNum[1])
+     
       return cntyNum
     },
     logMeIn(){
       esriId.getCredential(this.auth.portalUrl + "/sharing")
     },
     async loadMap(name, nbr){
-      const map = await goToMap(name, nbr)
+      let hasEdits = await this.getLatestEditDate(name)
+      await goToMap(name, nbr)
       const [month, date] = getTodaysDate()
-      if(map === 0 && (month === 8 && (date >= 1 || date < 15))){
-        this.$router.push('/EOY')
-        return;
+      if(month === 8 && (date >= 1 && date < 15)){
+        if(this.isCertify || (!this.isCertify && !hasEdits && this.restrictAccess === "Y")){
+          this.$router.push('/EOY')
+          return;
+       }
       }
+
       this.$router.push('/map')
       this.loginToMap = false
       //view.goTo(viewPoint);
@@ -165,14 +182,10 @@ export default {
       this.loginToMap = true
       portal.load()
         .then( async () => {
-          if(this.isCertify){
-            this.$router.push('/EOY')
-            return
-          }
           this.usrEmail = portal.user.email
           this.$router.push('/load')
           isTrainingAccess(portal.user.fetchGroups())
-          this.userName = portal.user.username 
+          this.userName = portal.user.username //portal.user.username
           let countyInfo = localStorage.getItem('county') ? this.checkLocalStorage() : await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed. 
           if(!countyInfo){return;}
           let cntyNumber = countyInfo[1]
@@ -188,14 +201,16 @@ export default {
       let county;
       let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
         let userNameSplit = username.split('_')
-        if(userNameSplit[1].toLowerCase() === cntyNbrNm[0][x].replace(/\s/,'').toLowerCase()){
+
+        if(userNameSplit[1].toLowerCase().replace(/\d/, '') === cntyNbrNm[0][x].replace(/\s/,'').toLowerCase()){
           county = cntyNbrNm[0][x]
           return cntyNbrNm[0]
         }
       })
+
       if(getCountyNbr){
         let totalMileage = await this.getCountyJudge(getCountyNbr)
-        localStorage.setItem('county',JSON.stringify([county,getCountyNbr, totalMileage]))
+        //localStorage.setItem('county',JSON.stringify([county,getCountyNbr, totalMileage]))
         return [county, Number(getCountyNbr), totalMileage]
       }
       else{

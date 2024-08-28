@@ -242,7 +242,7 @@ async function uploadValueCheck(feat, validali){
     let validArr = validali
     let valueCheckPromise = new Promise((res)=>{
         let editTypeMessage = "An incorrect edit type value has been found.\nPlease make sure values are either Add, Edit or Delete. Re-submit"
-        let lengthMessage = "Empty or Null fields have been detected.\nReview required fields [EDIT_TYPE, bh ROAD_TYPE, ROAD_NM] have a value and re-submit"
+        let lengthMessage = "Empty or Null fields have been detected.\nReview required fields [EDIT_TYPE, ROAD_TYPE, ROAD_NM] have a value and re-submit"
         let isCheckLength = [];
         let editTypeMsg = [];
         for(let i=0; i < feat.featureSet.features.length; i++){
