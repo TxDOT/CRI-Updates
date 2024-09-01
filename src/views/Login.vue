@@ -151,12 +151,6 @@ export default {
       
       return isEdits.features.length ? true : false
     },
-    async checkLocalStorage(){
-      let cntyNum = JSON.parse(localStorage.getItem('county'))
-      this.getCountyJudge(cntyNum[1])
-     
-      return cntyNum
-    },
     logMeIn(){
       esriId.getCredential(this.auth.portalUrl + "/sharing")
     },
@@ -186,7 +180,7 @@ export default {
           this.$router.push('/load')
           isTrainingAccess(portal.user.fetchGroups())
           this.userName = portal.user.username //portal.user.username
-          let countyInfo = localStorage.getItem('county') ? this.checkLocalStorage() : await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed. 
+          let countyInfo = await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed. 
           if(!countyInfo){return;}
           let cntyNumber = countyInfo[1]
           let cntyName = countyInfo[0]
