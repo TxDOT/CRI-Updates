@@ -10,7 +10,8 @@
                   <v-icon v-text="item.icon" color="black" :disabled="graphic"></v-icon>
                 </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title v-text="item.title"></v-list-item-title>
+                  <v-list-item-title v-text="item.title">
+                  </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
@@ -27,6 +28,7 @@
   import aboutHelp from "../components/Map/resources.vue"
   import {gLayer} from './Map/map'
   import {store} from '../store'
+  import {basemapDisplayOnEditType} from './Map/mapNav.js'
 
   export default {
     name: 'navSideBar',
@@ -39,6 +41,16 @@
         edit: false,
         items: [
           { title: 'Add Road', icon: 'mdi-plus', action: ()=>{
+            const isZoomReq = basemapDisplayOnEditType()
+            if(isZoomReq){
+              this.infoRoad = false
+              this.editExistingRd = false;
+              this.deleteRoad = false
+              this.clearEditBtn = true
+              this.addRdBoolean = true
+              this.modifyRoad = false
+              return
+            }
             this.infoRoad = false
             this.getDfoBool = true
             this.editExistingRd = false;
@@ -47,28 +59,26 @@
             this.addRdBoolean = true
             this.addRoad();
             this.display=true;
-            
             this.modifyRoad = false
-
             }
           },
           { title: 'Edit Road', icon: 'mdi-pencil', action: async ()=>{
-            stopEditing();
-            this.clearEditBtn = true
-            this.editExistingRd = true;
-            this.nextDeleteRoadForm = false
-            this.addRdBoolean = false;
-            this.deleteRoad = false;
-            this.infoRoad = false
-
-            await modifyRoadbed('click', 'edit')
-            if(this.editExistingRd === true){
-              this.receiveLoadStatus = false
-              this.modifyRoad = true
-              this.firstAddToMap = true
-              this.openStepper();
+              stopEditing();
+              this.clearEditBtn = true
+              this.editExistingRd = true;
+              this.nextDeleteRoadForm = false
+              this.addRdBoolean = false;
+              this.deleteRoad = false;
+              this.infoRoad = false
+              await modifyRoadbed('click', 'edit')
+              if(this.editExistingRd === true){
+                this.receiveLoadStatus = false
+                this.modifyRoad = true
+                this.firstAddToMap = true
+                this.openStepper();
+              }
             }
-          }},
+          },
           { title: 'Delete Road', icon: 'mdi-close-circle', action: async ()=>{
             this.infoRoad = false
             this.modifyRoad = false
@@ -105,7 +115,6 @@
       },
       openStepper(){
         this.steppClose = true;
-        this.editExistingRd = null;
         search.clear()
       },
       alertTest(){

@@ -72,15 +72,31 @@ export const store = new Vuex.Store({
         editLayer: "",
         isLastYearEdits: false,
         isLegend: false,
+        showVideo: false,
+        isTour: false,
+        isOverlay: false,
         registerpopup: false,
         alerstatus: false,
+        editType: ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"]
     },
     getters:{
+        getIsEditType(state){
+            return state.editType
+        },
         getIsAlert(state){
             return state.alerstatus
         },
         getIsRegisterPopup(state){
             return state.registerpopup
+        },
+        getIsOverlay(state){
+            return state.isOverlay
+        },
+        getShowTour(state){
+            return state.isTour
+        },
+        getShowVideo(state){
+            return state.showVideo
         },
         getIsLegend(state){
             return state.isLegend
@@ -283,12 +299,23 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
-        
+        setIsEditType(state, type){
+            state.editType = type
+        },
         setIsAlert(state, bool){
             state.alerstatus = bool
         },
         setIsRegisterPopup(state, bool){
             state.registerpopup = bool
+        },
+        setIsOverlay(state, bool){
+            state.isOverlay = bool
+        },
+        setShowTour(state, bool){
+            state.isTour = bool
+        },
+        setIsShowVideo(state, bool){
+            state.showVideo = bool
         },
         setIsLegend(state, bool){
             state.isLegend = bool
@@ -318,7 +345,6 @@ export const store = new Vuex.Store({
             state.judgeObjectId = jdgeObjectId
         },
         setIsFmeProcess(state, boolFME){
-            console.log(boolFME)
             state.isFmeProcess = boolFME
             console.log(`this is is ${state.isFmeProcess}`)
         },

@@ -1,6 +1,6 @@
 <!-- Road Name asset card -->
 <template>
-    <v-card height="230" elevation="0">
+    <v-card height="121" elevation="0">
         <v-text-field autofocus id="input1" v-model="streetNames" solo flat disabled></v-text-field>
         <span>
             <v-text-field :disabled="infoRoad" persistent-placeholder dense outlined id="input1" :rules="emptyValues" label="Road Name" v-model="streetName" @keyup="rdNameTransform()" style="font-size: 15px; left: 87px; bottom: 16px; width: 100px; position: relative;"></v-text-field>
@@ -23,7 +23,7 @@
 <script>
 
 import { sketchCompete } from '../edit'
-import { initLoadAssetGraphic, getGraphic} from '../roadInfo'
+import { initLoadAssetGraphic} from '../roadInfo'
 import {criConstants} from '../../../common/cri_constants'
 import { gLayer } from '../map'
 
@@ -112,8 +112,7 @@ export default {
         objid:{
           handler: function(){
             this.resetItems();
-            
-            getGraphic()
+           
             this.feature = false;
             this.graphic = true;
             //this.numLane = roadInfo.getLan

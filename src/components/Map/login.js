@@ -180,7 +180,6 @@ export async function createGeoJson(cntyName){
 
     geoJSONArr.features.push(geojson)
   }
-  
   // create a new blob from geojson featurecollection
   const blob = new Blob([JSON.stringify(geoJSONArr)], {
     type: "application/json"
@@ -201,6 +200,7 @@ export async function goToMap(name, nbr){
     
     let objectidList = [];
     for(let id in road.features){
+      
       if(road.features[id].attributes !== null){
         let objectid = road.features[id].attributes.gid || road.features[id].attributes.RDBD_GMTRY_LN_ID
         objectidList.push(objectid)

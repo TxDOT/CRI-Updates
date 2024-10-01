@@ -69,6 +69,7 @@ export default {
             })
 
             sendJudgeEmail(step, ccDelName, ccEmailList, null, null, null)
+            this.isJudgeLetter = !this.isJudgeLetter
         }
     },
     computed:{

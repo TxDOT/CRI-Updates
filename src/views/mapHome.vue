@@ -1,8 +1,9 @@
 <!-- The Parent of the map ui (or the map ui warehouse).  All the components inside the template tags are children.  -->
 <template>
-  <div class="MapHome">
+  <div>
     <mapHeader/>
     <Map/>
+    <v-alert type="warning" v-if="overlay" tile style="position: relative; top: 3.7rem; width: fit-content; left: 50%;">Zoom in to add a road</v-alert>
     <mapFooter/>
     <navSideBar/>
     <stepper v-if="display === true"/>
@@ -20,7 +21,24 @@
     <!-- <isCertAdvanced v-if="returnMapAttr"/> -->
     <dragndrop/>
     <eoeWarning v-if="isEoEWarns === true"/>
+    <v-card id="tourBeginCard" v-if="isTourCard">
+      <v-card-title id="loginBannerTxt"><p style="position: relative; bottom: 13px;">Welcome to the County Road Inventory Map</p></v-card-title>
+      <v-card-text style="position: relative; top: 15px; color: black; text-align: left; margin-bottom: 10px;">
+        Whether you're a seasoned editor or this is your first time here, let us give you a tour of some of the features of this application
+      </v-card-text>
+      <div>
+        <v-btn color="#14375A" text tile id="tourBtn" @click="isTour = true; isTourCard = false;">Take a Tour</v-btn>
+      </div>
+      <div id="isTour">
+        <v-btn style="float: right; margin-right: 15px; margin-bottom: 15px;" color="#14375A" text tile @click="isTourCard=false">Exit</v-btn>
+        <v-checkbox dense v-model="isNoTour" @change="updateLocalStorage" label="Don't show me this again." style="margin-left: 15px;" class="checkboxSize"></v-checkbox>
+      </div>
+    </v-card>
+    <div>
+      <cycleIntro v-if="isTour"/>
+    </div>
   </div>
+  
 </template>
 
 <script>
@@ -41,9 +59,12 @@ import eoeWarning from '../components/Map/reminder.vue'
 import { highLightFeat } from '../components/Map/helper'
 import { expandLegend, returnAlertInfo } from '../components/Map/map'
 import LastYearsEditLegend from '../components/Map/mapLastYearsEditLegend.vue'
+import cycleIntro from '../components/Map/cyclePopup.vue'
+import {basemapDisplayOnZoom} from '../components/Map/mapNav.js'
+import {getGraphic} from '../components/Map/roadInfo.js'
 
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, eoeWarning, LastYearsEditLegend},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, eoeWarning, LastYearsEditLegend, cycleIntro},
     props:["id"],
     name: 'MapHome',
     data(){
@@ -57,7 +78,10 @@ export default {
         isMapValues: false,
         displayLegend: false,
         isGeomCheck: true,
-        isEoEWarns: false
+        isEoEWarns: false,
+        isTourCard: localStorage.getItem('disableTour') ? false : true,
+        isNoTour: false,
+        overlay: false
       }
     },
     beforeRouteLeave(to, from, next){
@@ -79,12 +103,22 @@ export default {
       // });
 
       highLightFeat('pointer-move')
-      
+      getGraphic()
       const alertInfo = await returnAlertInfo()
       const dateEpoch = new Date().getTime()
 
       const returnItem = alertInfo.features.find(y => dateEpoch >= y.attributes.ALERT_DATE_BEGIN && dateEpoch <= y.attributes.ALERT_DATE_END)
       this.isEoEWarn = returnItem ? true : false
+
+      basemapDisplayOnZoom()
+    },
+    methods:{
+      updateLocalStorage(){
+        localStorage.getItem('disableTour') ? localStorage.removeItem('disableTour') : localStorage.setItem('disableTour', true)
+      },
+      turnOverlayOff(){
+        this.isOverlay = false
+      }
     },
     watch:{
       isEoEWarn:{
@@ -140,6 +174,11 @@ export default {
       lastYearEdit:{
         handler: function(){
           this.displayLegend = this.lastYearEdit
+        }
+      },
+      isOverlay:{
+        handler: function(){
+          this.overlay = this.isOverlay
         }
       }
     },
@@ -243,11 +282,37 @@ export default {
           this.$store.commit('setIsLegend', bool)
         }
       },
+      isTour:{
+        get(){
+          return this.$store.state.isTour
+        },
+        set(bool){
+          this.$store.commit('setShowTour', bool)
+        }
+      },
+      isOverlay:{
+        get(){
+          return this.$store.state.isOverlay
+        },
+        set(bool){
+          this.$store.commit('setIsOverlay', bool)
+        }
+      }
     }
 }
 </script>
 
 <style scoped>
+#isTour{
+  position: relative;
+  top: 10px;
+}
+#isTour >>> .v-icon.v-icon{
+  font-size: 16px !important;
+}
+#isTour >>> .v-label{
+  font-size: 12px !important;
+}
 #viewDiv {
   position: absolute;
   top: 6%;
@@ -263,11 +328,7 @@ export default {
   z-index: 3;
   height: 15px;
 }
-/* .MapHome{
-  width:100%;
-  height:100%;
-  background-color:rgba(0,0,0,0.65);
-} */
+
 #legend-flex{
   display: flex; 
   gap: 10px; 
@@ -276,5 +337,27 @@ export default {
   right: 1rem; 
   height: 26rem; 
   position: absolute;
+}
+#tourBeginCard{
+  position: absolute;
+  width: 444px;
+  justify-content: center;
+  align-items: center;
+  left: 40vw;
+  top: 200px;
+  border-radius: 0%;
+  /* min-height: 100vh; */
+}
+#loginBannerTxt{
+  border-radius: 0px; 
+  text-align: left;
+  background-color: #14375A;
+  color: white;
+  height: 40px;
+}
+
+#tourBtn{
+  text-decoration: underline;
+  border: 1px black solid;
 }
 </style>

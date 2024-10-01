@@ -1,5 +1,6 @@
-import {view, sketch, gLayer} from '../Map/map';
+import {view, sketch, gLayer, basemapToggle} from '../Map/map.js';
 import {store} from '../../store'
+import {addRoadbed, stopEditing} from '../Map/edit.js'
 
 //jump to google
 export function jumpToGoogle() {
@@ -35,6 +36,58 @@ function checkEditsHistory(){
         store.commit('setIsUndoDisable', true)
         store.commit('setIsRedoDisable', false)
     }
+}
+
+export function basemapDisplayOnEditType(){
+    if(view.scale > 9382){
+
+        store.commit('setIsOverlay', true)
+        //turn on overlay
+        return true
+    }
+    if(basemapToggle.viewModel.activeBasemap.baseLayers.items[0].type !== "wmts"){
+        basemapToggle.toggle()
+        return
+    }
+    return 
+}
+
+export function basemapDisplayOnZoom(){
+    const watchScale = view.watch("scale", (aScale)=>{
+        const delimeter = 9382
+        if((aScale < delimeter) && basemapToggle.viewModel.activeBasemap.baseLayers.items[0].type !== "wmts"){
+            const isAdd = store.getters.getAddRd
+            if(isAdd){
+                store.commit('setIsOverlay', false)
+                addRoadbed()
+                    .then(() =>{
+                        store.commit("setAddRd", false)
+                        store.commit("setStepperClose", true)
+                    })
+            }
+            try{
+                basemapToggle.toggle()
+            }
+            catch(err){
+                //console.log(err)
+            }
+            return
+        }
+        if((aScale > delimeter) && basemapToggle.viewModel.activeBasemap.baseLayers.items[0].type !== "vector-tile"){
+            const isAdd = store.getters.getAddRd
+            if(isAdd){
+                stopEditing()
+            }
+            try{
+                basemapToggle.toggle()
+            }
+            catch(err){
+                console.log(err)
+            }
+            return
+        }
+    })
+    return watchScale
 }
 
 

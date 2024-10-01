@@ -89,9 +89,9 @@
         <v-card-text class="textSymb" id="rdLogTxt">
           For those who need assistance, TxDOT will be hosting live WebEx video training on these dates:<br><br>
           <ul>
-            <li>Wednesday, June 21, 2023, 2:00 – 3:00 pm<br></li>
-            <li>Wednesday, July 19, 2023, 2:00 – 3:00 pm<br></li>
-            <li>Wednesday, August 16, 2023, 2:00 – 3:00 pm<br></li>
+            <li>Thursday, June 13, 2024, 2:00 – 3:00 pm<br></li>
+            <li>Thursday, July 18, 2024, 2:00 – 3:00 pm<br></li>
+            <li>Thursday, August 15, 2024, 2:00 – 3:00 pm<br></li>
           </ul>
           <br>
           To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell" target="_blank">https://txdot.webex.com/join/jferrell</a>
@@ -117,6 +117,7 @@
                     </v-item>
                   </v-col>
                 </v-row>
+                <v-btn id="tourBtn" tile text @click="takeTour()">take a tour</v-btn>
               </v-container>
             </v-item-group>
           </v-card-text>
@@ -188,10 +189,10 @@
         drawer: true,
         faqs: false,
         isHelpTraining: false,
-        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory",
-                   "Click here to download Bulk Submission Instructions", "Click here to see WebEx Training Schedule"],
-        mediaType: ['', 'TxDOT Youtube Channel', 'FAQs','Access Sandbox Environment', "Download Advanced Bulk Upload Instructions", "WebEx Training"],
-        iconType: ['', 'mdi-video-image', 'mdi-text-box', 'mdi-github', "mdi-download-circle", "mdi-calendar"],
+        tooltips: ['',"Click here to access TxDOT's County Road Inventory YouTube Channel", "Click here to see WebEx Training Schedule", "Click here to access FAQs", "Click here to access a sandbox environment for practicing edits without affecting your county's inventory",
+                   "Click here to download Bulk Submission Instructions"],
+        mediaType: ['', 'TxDOT Youtube Channel', "WebEx Training", 'FAQs','Access Sandbox Environment', "Download Advanced Bulk Upload Instructions"],
+        iconType: ['', 'mdi-video-image', "mdi-calendar", 'mdi-text-box', 'mdi-github', "mdi-download-circle"],
         items: [
           { title: 'Advanced', icon: 'mdi-cog', action: ()=>{
               this.isUserCertify === false ? this.certifiedFalse() : this.certifiedTrue()
@@ -219,6 +220,10 @@
       }
     },
     methods:{
+      takeTour(){
+        this.isTour = true
+        this.isHelpTraining = false
+      },
       closeFaqBtn(){
         this.faqs = false;
       },
@@ -392,11 +397,27 @@
         set(bool){
           this.$store.commit('setIsFmeProcess', bool)
         }
-      }
+      },
+      isTour:{
+        get(){
+          return this.$store.state.isTour
+        },
+        set(bool){
+          this.$store.commit("setShowTour", bool)
+        }
+      },
     }
   }
 </script>
 <style scoped>
+#tourBtn{
+  position: relative;
+  right: 26rem;
+  top: 10px;
+  text-decoration: underline;
+  color: #14375A;
+  opacity: 1 !important;
+}
 .v-list-item{
   display: flex;
   text-align: left;

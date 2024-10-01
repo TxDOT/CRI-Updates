@@ -1,11 +1,11 @@
 <!-- component that holds mapView -->
 <template>
-    <div id="viewDiv" class="main"></div>
+    <div id="viewDiv" class="main">
+    </div>
 </template>
 
 <script>
 
-//import { map} from '../Map/map';
 
 export default {
     name: 'Map',
@@ -23,21 +23,6 @@ export default {
     async mounted() {
         const app = await import('../Map/map');
         app.initialize(this.$el);
-
-        // view.when((x) =>{
-        //     x.watch('zoom',(curr)=>{
-        //         if(curr > 10 || curr < 11){
-        //             map.basemap = imgBasemap
-        //             return
-        //         }
-        //         else if(curr < 10 || curr > 9){
-        //             map.basemap = vTBasemap
-        //         }
-        //     // map.basemap = vTBasemap
-        //     return
-        //   // this.isLegend = this.displayLegend
-        //     });
-        // })
     },
 
 };
@@ -100,7 +85,7 @@ export default {
     right: 600px;
 } */
 </style>
-//I think these can be applied in the app.vue
+
 <style>
     .esri-basemap-toggle__container, .esri-basemap-toggle__image {
         width: 32px;

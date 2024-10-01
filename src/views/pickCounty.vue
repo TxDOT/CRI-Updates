@@ -30,7 +30,6 @@ import {cntyNbrNm} from '../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query"
 import loader from '../components/Map/loader.vue'
 import esriId from "@arcgis/core/identity/IdentityManager";
-import {getTodaysDate} from '../components/Map/helper'
 
 export default {
     name: 'PickCounty',
@@ -77,7 +76,6 @@ export default {
         esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
           .then(()=>{
             esriId.destroyCredentials()
-            localStorage.removeItem('county')
             this.$router.push('/login')
           })
           .catch(()=>{
@@ -105,13 +103,8 @@ export default {
         })
       },
       async loadData(name, nbr){
-        const [month, date] = getTodaysDate()
         goToMap(name, nbr)
-          .then((map) =>{
-            if(map === 0 && (month === 8 && (date >= 1 || date <= 15))){
-              this.$router.push('/EOY')
-              return;
-            }
+          .then(() =>{
             this.$router.push('/map')
             this.load=false
           })

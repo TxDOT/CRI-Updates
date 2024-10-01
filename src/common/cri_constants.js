@@ -1,17 +1,17 @@
 export const criConstants = {
     //portalUrl: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_SurfType_Geom_view/FeatureServer/0",
-    criUtils: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Utils/FeatureServer/0",
+    criUtils: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Utils/FeatureServer/0", //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Util_Dev/FeatureServer/0"
     criUrl: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_URL/FeatureServer/0",
-    refernceLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/0', 
-    editsLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS_dev/FeatureServer/0',
-    assetLyrRdbSrf: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/2',
-    assetLyrRdbDsgn: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/3',
+    refernceLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/0', //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_REF_LAYERS_testVersion/FeatureServer/0"
+    editsLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS/FeatureServer/0', //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_EDITS_dev/FeatureServer/0"
+    //assetLyrRdbSrf: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/2',
+    //assetLyrRdbDsgn: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/3',
     snapLayer: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/Route_County/FeatureServer/0',
-    assetLyrRdbLane: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/1',
-    advanceUploadLayer: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_QAQC_dev/FeatureServer/0",
+    //assetLyrRdbLane: 'https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_REF_LAYERS/FeatureServer/1',
+    advanceUploadLayer: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_QAQC_prod/FeatureServer/0", //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CRI_QAQC_dev/FeatureServer/0"
     txCounties: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/Texas_County_Boundaries/FeatureServer/0",
-    judgeInfoTable: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/ArcGIS/rest/services/CNTY_INFO_dev/FeatureServer/0", //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CNTY_INFO_dev/FeatureServer"
-    deleteDocumentFL: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_DELETE_DOCUMENTATION_DEV/FeatureServer/0", //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_DELETE_DOCUMENTATION_DEV/FeatureServer"
+    judgeInfoTable: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_CNTY_INFO/FeatureServer/0", //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CNTY_INFO_dev/FeatureServer/0"
+    deleteDocumentFL: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_DELETE_DOCUMENTATION_PROD/FeatureServer/0", //"https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_DELETE_DOCUMENTATION_DEV/FeatureServer"
     
     design: [{num:'1', name:'One Way'}, {num:'2',name:'Two Way'}, {num:'3',name:'Boulevard'}],
     surface: [{num:1, name:'Concrete'},{num:2, name:'Concrete'},{num:3, name:'Concrete'},{num:4, name:'Paved'},{num:5, name:'Paved'},{num:6, name:'Paved'},{num:7, name:'Paved'},{num:8, name:'Paved'},{num:9, name:'Paved'},{num:10, name:'Paved'}, {num:11, name:'Brick'},{num:12, name:'Dirt/Natural'},{num:13, name:'Gravel'},{num:14, name:'Paved'}],
@@ -63,7 +63,7 @@ export const criConstants = {
       'delete': ['#E32636', 'DELETE', 4]
     },
 
-    txdotSchema: ['EDIT_TYPE', 'ROAD_PRFX', 'ROAD_SFX', 'ROAD_TYPE', 'ROAD_NM', 'SURFACE', 'LANE', 'DESIGN'],
-    txdotRequired: ['EDIT_TYPE','SURFACE', 'LANE', 'DESIGN', 'ROAD_TYPE', 'ROAD_NM']
+    txdotSchema: ['EDIT_TYPE', 'ROAD_PRFX', 'ROAD_SFX', 'ROAD_TYPE', 'ROAD_NM'],
+    txdotRequired: ['EDIT_TYPE', 'ROAD_TYPE', 'ROAD_NM']
   }
 

@@ -18,7 +18,7 @@
 
         <div id="btnPosition"><v-btn underline tile color="#14375A" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
 
-        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.6.5</u></v-card-text>
+        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.6.12</u></v-card-text>
 
             
       </v-card>
@@ -30,8 +30,8 @@ export default {
     name: 'about',
     data (){
       return {
-        updateList:['Added Geometry Checks (Self-Intersection, Minimum geometry length)', 'Updated sign-up URL','Added link to training videos','Adjusted Action item Body text font', 'Disabled mile info after ending asset mileage is completed', 
-                    'Adjusted Missing Attributes/Discard Edit Popup', 'Judge Workflow Updated', 'Updated delete workflow', 'Updated to automatic asset length changes', 'Added EOY edits alert', 'Last Years edits layer and legend added', 'Removed Design/Surface/Lane attributes']
+        updateList:["Added layer showing Last Year's Edits", "Removed Design/Surface/Lane attributes", "Added self-guided tour popups", "Added short training videos (Add Road, Edit Road, Delete Road, Save & Exit, Submit & Certify, Overview)", "Enhanced registration process",
+                    "Integrated aerial imagery basemap with editing tools", "Added End of Year cutoff process"]
       }
     },
     methods:{
@@ -136,8 +136,8 @@ export default {
 }
 #updateText{
     position:relative;
-    line-height: 1px;
-    white-space: nowrap;
+    line-height: 15px;
+    white-space: wrap;
     padding: 0rem;
 }
 #btnPosition{

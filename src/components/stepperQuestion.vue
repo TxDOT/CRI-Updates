@@ -12,8 +12,18 @@
     min-width="0"
     :height="imageHeight"
     >
-    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">Add a new Road</v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">Edit Road</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">
+      Add a new Road
+      <v-icon color="white" id="addVideo" @mouseover="addHover()" @mouseleave="cancelVideo()">
+        mdi-video-outline
+      </v-icon>
+    </v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">
+      Edit Road
+      <v-icon color="white" id="addVideo" @mouseover="editHover()" @mouseleave="cancelVideo()">
+        mdi-video-outline
+      </v-icon>
+    </v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
     <v-stepper-step
       :editable="setAssetCover[0]"
@@ -96,7 +106,7 @@
     </v-dialog>
   </v-stepper>
 
-  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 3%; width: 97.1%;">
+  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 4.8%; width: 97.1%;">
     <p style="color: white; font-size: .8rem; position:relative; bottom: .4vh; left: .1rem;">Editor Name: {{editName}}</p>
     <p style="color: white; font-size: .8rem; position:absolute; top: .2vh; right: 0.6rem;">Edit Date: {{editDt}}</p>
   </v-footer>
@@ -263,30 +273,30 @@ export default {
         },
       immediate: true
       },
-      rdbdSurf: {
-        handler: function(){
-          if(!this.rdbdSurf) return
-          let surf = this.rdbdSurf[0].SRFC_TYPE_ID
-          this.fetchRoadSurface = this.rdbdSurf.length > 1 ? "MULTIPLE" : `${surf}`
-        },
-        immediate: true
-      },
-      roadDesign: {
-        handler: function(){
-          if(!this.roadDesign) return
-          let dsgn = this.roadDesign[0].SRFC_TYPE_ID === 'Two-way' ? 'Two Way' : this.roadDesign[0].SRFC_TYPE_ID
-          this.fetchRoadDesign = this.roadDesign.length > 1 ? "MULTIPLE" : `${dsgn}`
-        },
-        immediate: true
-      },
-      numLane: {
-        handler: function(){
-          if(!this.numLane) return
-          let lanes = this.numLane[0].SRFC_TYPE_ID
-          this.fetchNumLanes = this.numLane.length > 1 ? "MULTIPLE" : `${lanes}`
-        },
-        immediate: true
-      },
+      // rdbdSurf: {
+      //   handler: function(){
+      //     if(!this.rdbdSurf) return
+      //     let surf = this.rdbdSurf[0].SRFC_TYPE_ID
+      //     this.fetchRoadSurface = this.rdbdSurf.length > 1 ? "MULTIPLE" : `${surf}`
+      //   },
+      //   immediate: true
+      // },
+      // roadDesign: {
+      //   handler: function(){
+      //     if(!this.roadDesign) return
+      //     let dsgn = this.roadDesign[0].SRFC_TYPE_ID === 'Two-way' ? 'Two Way' : this.roadDesign[0].SRFC_TYPE_ID
+      //     this.fetchRoadDesign = this.roadDesign.length > 1 ? "MULTIPLE" : `${dsgn}`
+      //   },
+      //   immediate: true
+      // },
+      // numLane: {
+      //   handler: function(){
+      //     if(!this.numLane) return
+      //     let lanes = this.numLane[0].SRFC_TYPE_ID
+      //     this.fetchNumLanes = this.numLane.length > 1 ? "MULTIPLE" : `${lanes}`
+      //   },
+      //   immediate: true
+      // },
       editorInfo: {
         handler: function(){
           if(!this.editorInfo) return;
@@ -328,11 +338,9 @@ export default {
       },
       steppClose:{
         handler: function(){
-          console.log(this.steppClose, this.firstAddToMap, this.forMod,this.forInfo)
           if(this.steppClose === true && this.firstAddToMap === true && !this.forMod && !this.forInfo){
             let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
             let getLength = geometryEngine.geodesicLength(editGraphic.geometry, "miles")
-            console.log(getLength)
             this.deltaDis = [Number(getLength.toFixed(3)), 'Add']
             return;
           }
@@ -341,43 +349,68 @@ export default {
     },
 
     methods:{
+      editHover(){
+        this.isShowVideo = true
+        this.typeEdit = ["edit", "https://www.youtube.com/watch?v=qy5At3NOTpg&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5"]
+   
+      },
+      addHover(){
+        this.isShowVideo = true
+        this.typeEdit = ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"]
+      },
+      cancelVideo(){
+        setTimeout(()=>{
+          this.isShowVideo = false
+        },1500)
+        return
+      },
       geometryChecks(){
         geomCheck()
+        return
       },
       saveComment(){
         this.oldComment = this.comment
+        return
       },
       cancelComment(){
         this.comment = this.oldComment
+        return
       },
       cancelStepper(){
         cancelEditStepper()
+        return
       },
       onScroll(){
         this.scrollInvoked++
+        return
       },
       delGraphic(){
         this.firstAddToMap = false
         removeGraphic();
-        // removeHighlight()
+        return
       },
       showGIDVerts(){
         let getGraphic = gLayer.graphics.items.filter(x=> x.attributes.objectid === this.objid)
         showVerticies(getGraphic[0])
+        return
       },
       initLoadAsset(asset){
         initLoadAssetGraphic(asset)
+        return
       },
       startExecuteDfoPts(){
         this.exeDfoPts = 'point'
+        return
       },
       emptyMileArr(){
         if(this.mileInfo.length){
           this.mileInfo.length = 0
         }
+        return
       },
       removeAsstPt(){
         removeAsstPoints();
+        return
       },
       cancel(){
         this.isGeomCheck = 0;
@@ -386,12 +419,14 @@ export default {
         document.getElementById("stepper").style.width = '0px'
         this.steppClose = false;
         this.infoRoad = false;
+        this.editExistingRd = null
         this.e1 = 1;
         removeAsstPoints();
         this.getDfoBool = false;
         removeHighlight()
         //this.comment = ""
         this.closeSelectRoad = false
+        return
       },
       saveAttri(){
         let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
@@ -416,10 +451,13 @@ export default {
         this.successAlert=true;
         saveToEditsLayer()
         this.cancel();
+        return
       },
+
       complete(){
         stopEditingPoint();
         sketchCompete();
+        return
       }
     },
     computed:{
@@ -459,9 +497,9 @@ export default {
         let resize = {
           xs: () => {return '220px'},
           sm: () => {return '400px'},
-          md: () => {return '80vh'},
-          lg: () => {return '83vh'},
-          xl: () => {return '83vh'}
+          md: () => {return '64vh'},
+          lg: () => {return '64vh'},
+          xl: () => {return '54vh'}
         }
         return resize[`${this.$vuetify['breakpoint'].name}`]()
       },
@@ -473,24 +511,24 @@ export default {
           this.$store.commit('setStepNumber', Number(x))
         }
       },
-      numLane:{
-        get(){
-          return JSON.parse(this.$store.state.numLane)
-        }
-      },
-      rdbdSurf:{
-        get(){
-          if(typeof(this.$store.state.roadbedSurface) === 'string'){
-            return JSON.parse(this.$store.state.roadbedSurface) 
-          }
-          else{
-            return this.$store.state.roadbedSurface
-          }
-        },
-        set(x){
-          this.$store.commit('setRoadbedSurface',JSON.stringify(x))
-        }
-      },
+      // numLane:{
+      //   get(){
+      //     return JSON.parse(this.$store.state.numLane)
+      //   }
+      // },
+      // rdbdSurf:{
+      //   get(){
+      //     if(typeof(this.$store.state.roadbedSurface) === 'string'){
+      //       return JSON.parse(this.$store.state.roadbedSurface) 
+      //     }
+      //     else{
+      //       return this.$store.state.roadbedSurface
+      //     }
+      //   },
+      //   set(x){
+      //     this.$store.commit('setRoadbedSurface',JSON.stringify(x))
+      //   }
+      // },
       roadName:{
         get(){
           if(typeof(this.$store.state.roadbedName) === 'string'){
@@ -502,11 +540,11 @@ export default {
           this.$store.commit('setRoadbedName',JSON.stringify(name))
         }
       },
-      roadDesign:{
-        get(){
-          return JSON.parse(this.$store.state.roadbedDesign)
-        }
-      },
+      // roadDesign:{
+      //   get(){
+      //     return JSON.parse(this.$store.state.roadbedDesign)
+      //   }
+      // },
       objid:{
         get(){
           return this.$store.state.objectid
@@ -602,7 +640,6 @@ export default {
           return this.$store.state.deltaDistance
         },
         set(len){
-          console.log(len)
           this.$store.commit('setDeltaDis', len)
         }
       },
@@ -613,29 +650,54 @@ export default {
         set(bool){
           this.$store.commit('setdenyFeatClick', bool)
         }
-      }
+      },
+      isShowVideo:{
+        get(){
+          return this.$store.state.showVideo
+        },
+        set(bool){
+          this.$store.commit('setIsShowVideo', bool)
+        }
+      },
+      typeEdit:{
+        get(){
+          return this.$store.state.editType
+        },
+        set(type){
+          this.$store.commit('setIsEditType', type)
+        }
+      },
     }
 }
 </script>
 <style scoped>
+#addVideo{
+  position: relative;
+  float: right;
+  margin-right: 15px;
+  font-size: 1.8rem;
+}
+#addVideo:hover{
+  cursor: pointer;
+}
 .stepStyle{
   width:50%;
 }
 #cnclBtnEdit{
   border:none;
-  bottom: .5rem;
+  bottom: 1rem;
   right:6rem;
   position: absolute;
 }
 
 #saveBtnEdit{
   border: black 1px solid;
-  bottom: .5rem;
+  bottom: 1rem;
   right:1rem;
   position: absolute
 }
 #discardBtnEdit{
-  bottom: .5rem; 
+  bottom: 1rem; 
   left: 1rem; 
   position: absolute;
   z-index: 1;
@@ -643,18 +705,20 @@ export default {
 #addCommentBtn{
   position: absolute;
   left: 1rem;
-  bottom: 7rem; 
+  bottom: 11rem; 
   z-index:1
 }
 #comment{
   position: absolute;
   left:1rem;
-  bottom: 3rem;
+  bottom: 8rem;
   line-height:.5px;
   width:93%;
   overflow-y: scroll;
-  max-height: 70px;
+  max-height: 104px;
   text-align: left;
+  display: flex;
+  flex-direction: column
 }
 #dialogComment{
   width:30%;
@@ -709,6 +773,7 @@ export default {
   position: fixed;
   top: 5rem;
   left: 13.5rem;
+  width: 25.3vw;
   padding-bottom: 0%;
   font-size: 16px;
   z-index: 2;

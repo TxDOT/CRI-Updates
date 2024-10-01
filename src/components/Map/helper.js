@@ -1,5 +1,5 @@
 // import methods and functions into file
-import { view, clientSideGeoJson, gLayer, rdbdSrfcAsst, rdbdDsgnAsst, rdbdLaneAsst } from './map' //importing from ESRI API via map.js
+import { view, clientSideGeoJson, gLayer } from './map' //importing from ESRI API via map.js
 import { criConstants } from '../../common/cri_constants';
 import { store } from '../../store'
 import { getTime } from '../Map/advanced'
@@ -11,11 +11,11 @@ import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtil
 
 
 //Sets Road Data in the data store. 
-export async function setDataToStore(surface, design, name, lane, objectid, comment, editInfo){
-    store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
-    store.commit('setRoadbedDesign', design) 
+export async function setDataToStore( name, objectid, comment, editInfo){
+    // store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
+    // store.commit('setRoadbedDesign', design) 
     store.commit('setRoadbedName', name)
-    store.commit('setNumLane', lane)
+    // store.commit('setNumLane', lane)
     store.commit('setObjectid', objectid)
     store.commit('setComment', comment)
     store.commit('setEditInfo', editInfo)
@@ -41,62 +41,51 @@ export async function queryFeatureTables(tblqry){
     const query = new Query();
     query.where = `RDBD_GMTRY_LN_ID = ${queryStatment}`
     query.outFields = [ "*" ]
-    const rdbdSrfc = rdbdSrfcAsst.queryFeatures(query)
-    const rdbdDsgn = rdbdDsgnAsst.queryFeatures(query)
-    const rdbdLane = rdbdLaneAsst.queryFeatures(query)
-    const rdbdSrfcAtt = await rdbdSrfc
-    const rdbdDsgnAtt = await rdbdDsgn
-    const rdbdLaneAtt = await rdbdLane
+    // const rdbdSrfc = rdbdSrfcAsst.queryFeatures(query)
+    // const rdbdDsgn = rdbdDsgnAsst.queryFeatures(query)
+    // const rdbdLane = rdbdLaneAsst.queryFeatures(query)
+    // const rdbdSrfcAtt = await rdbdSrfc
+    // const rdbdDsgnAtt = await rdbdDsgn
+    // const rdbdLaneAtt = await rdbdLane
     // parse and match coded values (cri_constants.js) and push to empty array
-    let rdbdSrfArry = [];
-    let rdbdDsgnArry = [];
-    let rdbdNumLnArry = [];
+    // let rdbdSrfArry = [];
+    // let rdbdDsgnArry = [];
+    // let rdbdNumLnArry = [];
   
-    if(rdbdSrfArry.length){
-      rdbdSrfArry.length = 0
-    }
+    // if(rdbdSrfArry.length){
+    //   rdbdSrfArry.length = 0
+    // }
     //auto extend assets
-    let lengthRd = geometryEngine.geodesicLength(tblqry.features[0].geometry, "miles")
+    // let lengthRd = geometryEngine.geodesicLength(tblqry.features[0].geometry, "miles")
     // looping through Roadbed Surface items and replacing with coded values, located in cri_constants.js
-    for(let srf in rdbdSrfcAtt.features){
-      let surface = criConstants.surface
-      //**this can be modified to include the Array.Splice method
-      for(let i in surface){
-        if(surface[i]['num'] === rdbdSrfcAtt.features[srf].attributes.SRFC_TYPE_ID){
-          rdbdSrfcAtt.features[srf].attributes.SRFC_TYPE_ID = surface[i]['name']
-        }
-      }
-      //**
-      rdbdSrfArry.push(rdbdSrfcAtt.features[srf].attributes)
-    }
     //looping through roadbed design and creating a new object
-    for(let z=0; z < rdbdDsgnAtt.features.length; z++){
-      rdbdDsgnArry.push({
-        SRFC_TYPE_ID: rdbdDsgnAtt.features[z].attributes.RDWAY_DSGN_TYPE_DSCR,
-        ASSET_LN_BEGIN_DFO_MS: Number(rdbdDsgnAtt.features[z].attributes.ASSET_LN_BEGIN_DFO_MS.toFixed(3)),
-        ASSET_LN_END_DFO_MS: Number(rdbdDsgnAtt.features[z].attributes.ASSET_LN_END_DFO_MS.toFixed(3)),
-        OBJECTID: null
-      })
-    }
+    // for(let z=0; z < rdbdDsgnAtt.features.length; z++){
+    //   rdbdDsgnArry.push({
+    //     SRFC_TYPE_ID: rdbdDsgnAtt.features[z].attributes.RDWAY_DSGN_TYPE_DSCR,
+    //     ASSET_LN_BEGIN_DFO_MS: Number(rdbdDsgnAtt.features[z].attributes.ASSET_LN_BEGIN_DFO_MS.toFixed(3)),
+    //     ASSET_LN_END_DFO_MS: Number(rdbdDsgnAtt.features[z].attributes.ASSET_LN_END_DFO_MS.toFixed(3)),
+    //     OBJECTID: null
+    //   })
+    // }
     //looping through number of lanes and creating a new object
-    for(let a=0; a < rdbdLaneAtt.features.length; a++){
-      rdbdNumLnArry.push({
-        SRFC_TYPE_ID:  rdbdLaneAtt.features[a].attributes.NBR_THRU_LANE_CNT.toString(),
-        ASSET_LN_BEGIN_DFO_MS:  Number(rdbdLaneAtt.features[a].attributes.ASSET_LN_BEGIN_DFO_MS.toFixed(3)),
-        ASSET_LN_END_DFO_MS:  Number(rdbdLaneAtt.features[a].attributes.ASSET_LN_END_DFO_MS.toFixed(3)),
-        OBJECTID: null
-      })
-    }
-    //sort the array by begin dfo asc
-    rdbdSrfArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
-    rdbdDsgnArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
-    rdbdNumLnArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
-    //converting begin/end dfo to a Number
-    for(let i=0; i < rdbdSrfArry.length; i++){
-      rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3))
-      rdbdSrfArry[i].ASSET_LN_END_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_END_DFO_MS.toFixed(3))
-      delete rdbdSrfArry.objectid
-    }
+    //for(let a=0; a < rdbdLaneAtt.features.length; a++){
+    //   rdbdNumLnArry.push({
+    //     SRFC_TYPE_ID:  rdbdLaneAtt.features[a].attributes.NBR_THRU_LANE_CNT.toString(),
+    //     ASSET_LN_BEGIN_DFO_MS:  Number(rdbdLaneAtt.features[a].attributes.ASSET_LN_BEGIN_DFO_MS.toFixed(3)),
+    //     ASSET_LN_END_DFO_MS:  Number(rdbdLaneAtt.features[a].attributes.ASSET_LN_END_DFO_MS.toFixed(3)),
+    //     OBJECTID: null
+    //   })
+    // }
+    // //sort the array by begin dfo asc
+    // rdbdSrfArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
+    // rdbdDsgnArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
+    // rdbdNumLnArry.sort((a,b)=>(a.ASSET_LN_BEGIN_DFO_MS > b.ASSET_LN_BEGIN_DFO_MS)? 1:-1)
+    // //converting begin/end dfo to a Number
+    // for(let i=0; i < rdbdSrfArry.length; i++){
+    //   rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_BEGIN_DFO_MS.toFixed(3))
+    //   rdbdSrfArry[i].ASSET_LN_END_DFO_MS = Number(rdbdSrfArry[i].ASSET_LN_END_DFO_MS.toFixed(3))
+    //   delete rdbdSrfArry.objectid
+    // }
     //creating the Street Name Object
     let roadNameObj = {streetName:tblqry.features[0].attributes.ST_DEFN_NM, 
       prefix: tblqry.features[0].attributes.ST_PRFX_TYPE_DSCR ? tblqry.features[0].attributes.ST_PRFX_TYPE_DSCR.toUpperCase() : null, 
@@ -104,11 +93,11 @@ export async function queryFeatureTables(tblqry){
       streetType: tblqry.features[0].attributes.ST_TYPE_DSCR,
     }
     //auto extend Asset Lengths
-    rdbdSrfArry.at(-1).ASSET_LN_END_DFO_MS = Number((rdbdSrfArry.at(0).ASSET_LN_BEGIN_DFO_MS + lengthRd).toFixed(3))
-    rdbdDsgnArry.at(-1).ASSET_LN_END_DFO_MS = Number((rdbdDsgnArry.at(0).ASSET_LN_BEGIN_DFO_MS + lengthRd).toFixed(3))
-    rdbdNumLnArry.at(-1).ASSET_LN_END_DFO_MS = Number((rdbdNumLnArry.at(0).ASSET_LN_BEGIN_DFO_MS + lengthRd).toFixed(3))
+    // rdbdSrfArry.at(-1).ASSET_LN_END_DFO_MS = Number((rdbdSrfArry.at(0).ASSET_LN_BEGIN_DFO_MS + lengthRd).toFixed(3))
+    // rdbdDsgnArry.at(-1).ASSET_LN_END_DFO_MS = Number((rdbdDsgnArry.at(0).ASSET_LN_BEGIN_DFO_MS + lengthRd).toFixed(3))
+    //rdbdNumLnArry.at(-1).ASSET_LN_END_DFO_MS = Number((rdbdNumLnArry.at(0).ASSET_LN_BEGIN_DFO_MS + lengthRd).toFixed(3))
 
-    setDataToStore(JSON.stringify(rdbdSrfArry), JSON.stringify(rdbdDsgnArry), JSON.stringify([roadNameObj]), JSON.stringify(rdbdNumLnArry), tblqry.features[0].attributes.OBJECTID)
+    setDataToStore(JSON.stringify([roadNameObj]), tblqry.features[0].attributes.OBJECTID)
     return;
 }
 
@@ -148,9 +137,11 @@ export async function defineGraphic(graphics, clickType, editType){
             gid: graphics.features ? graphics.features[0].attributes.RDBD_GMTRY_LN_ID : graphics.attributes.GID,
             objectid: graphics.features ? graphics.features[0].attributes.OBJECTID : graphics.attributes.OBJECTID,
             roadbedName: graphics.features ? store.getters.getRoadbedName : graphics.attributes.ASSET_ST_DEFN_NM,
-            roadbedDesign: graphics.features ? store.getters.getRoadbedDesign : graphics.attributes.ASSET_RDWAY_DSGN_TYPE_DSCR,
-            roadbedSurface: graphics.features ? store.getters.getRoadbedSurface : graphics.attributes.ASSET_SRFC_TYPE_DSCR,
-            numLane: graphics.features ? store.getters.getNumLane : graphics.attributes.ASSET_NBR_THRU_LANE_CNT,
+            assetBegin: graphics.features ? graphics.features[0].attributes.ASSET_LN_BEGIN_DFO_MS : graphics.attributes.ASSET_LN_BEGIN_DFO_MS,
+            assetEnd: graphics.features ? graphics.features[0].attributes.ASSET_LN_END_DFO_MS : graphics.attributes.ASSET_LN_END_DFO_MS,
+            // roadbedDesign: graphics.features ? store.getters.getRoadbedDesign : graphics.attributes.ASSET_RDWAY_DSGN_TYPE_DSCR,
+            // roadbedSurface: graphics.features ? store.getters.getRoadbedSurface : graphics.attributes.ASSET_SRFC_TYPE_DSCR,
+            // numLane: graphics.features ? store.getters.getNumLane : graphics.attributes.ASSET_NBR_THRU_LANE_CNT,
             originalLength: oldLength,
             isCreatedAssets: true,
             createDt: graphics.features ? date : graphics.attributes.RTE_DEFN_LN_CREATE_DT,
@@ -169,7 +160,6 @@ export async function defineGraphic(graphics, clickType, editType){
         })
         gLayer.graphics.add(newGraphic);
         newGraphic.attributes.editType === 'EDIT' && editType ? showVerticies(newGraphic) : null
-  
         store.commit('setOldLength',oldLength)
         store.commit('setModifyRd', true)
         // newGraphic.attributes.editType === 'DELETE' ? store.commit('setDeltaDis',[oldLength, 'Delete']) : null

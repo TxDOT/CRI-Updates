@@ -1,12 +1,12 @@
-<!-- map header -->ubmitCertifyCd
+<!-- map header -->
 <template>
     <div class="mapHeader flex" >
         <v-app-bar app color="#14375A" class="white--text" id="headerPos" clipped-left>
             <v-app-bar-title class="h1-text" id=headerTitle>
                 <p>TxDOT County Road Inventory Map</p>
             </v-app-bar-title>
-                <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" id="saveExitBtn"><u>Save & Exit</u></v-btn>
-                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitStepOne();"><u>Submit & Certify</u></v-btn>
+                <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" id="saveExitBtn" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=byunatFVEiM&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6', 'Save and Exit')"><u>Save & Exit</u></v-btn>
+                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitStepOne();" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=7Wety51-6Os&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5', 'Submit and Certify')"><u>Submit & Certify</u></v-btn>
         </v-app-bar>
 
         <!-- <div class="text-center">
@@ -51,6 +51,14 @@
                     </v-btn>
             </v-card>
         </v-dialog>
+        <v-card id="showVideo" tile v-if="showVideo">
+            <v-card-text>
+                <span style="color: white; text-align: left;">
+                    Watch a short video about {{ videoStep }}.
+                </span>
+                <v-btn block tile id="watchBtn" depressed text @click="watchVideo()">watch now</v-btn>
+            </v-card-text>
+        </v-card>
     </div> 
 </template>
 
@@ -61,16 +69,27 @@ import {sendJudgeEmail, updateTotalMileage} from '../Map/helper'
 
 export default {
     name:"mapHeader",
-    data () {
+    data() {
       return {
         submitCertify:false,
         previousTotal: 0,
         snackbar: false,
         cancelSubmit: false,
-        submitCertifySuccess: false
+        submitCertifySuccess: false,
+        showVideo: false,
+        youtubeUrl: "",
+        videoStep: ""
       }
     },
     methods:{
+        isEditingVideo(vid, vidStep){
+            this.showVideo = true
+            this.youtubeUrl = vid
+            this.videoStep = vidStep
+            setTimeout(()=>{
+                this.showVideo = false
+            }, 4000)
+        },
         submitStepOne(){
             this.submitCertify = true
             this.cancelSubmit = true
@@ -83,7 +102,6 @@ export default {
             esriId.checkSignInStatus("https://txdot.maps.arcgis.com/sharing")
                 .then(()=>{
                     esriId.destroyCredentials()
-                    localStorage.removeItem('county')
                     this.$router.push('/login')
                 })
                 .catch(()=>{
@@ -93,6 +111,9 @@ export default {
         submit(step){
             let totalMile = updateTotalMileage()
             sendJudgeEmail(step, [this.delUsername], [this.userEmail], null, this.judgeCntyOid, totalMile)
+        },
+        watchVideo(){
+            window.open(this.youtubeUrl, "_blank")
         }
     },
     computed:{
@@ -138,11 +159,34 @@ export default {
             get(){
                 return this.$store.state.judgeObjectId
             }
-        }
+        },
+        // showVideo:{
+        //     get(){
+        //         return this.$store.state.showVideo
+        //     },
+        //     set(bool){
+        //         this.$store.commit('setIsShowVideo', bool)
+        //     }
+        // },
+        
     }
 }    
 </script>
 <style scoped>
+#watchBtn{
+    color: white;
+    border: 1px solid white;
+}
+#showVideo{
+    position: absolute;
+    background-color: #204E70;
+    width: 20rem;
+    top: 4rem;
+    right: calc(100vw - 99%);
+    color: white;
+    z-index: 9999;
+}
+
 .surfaceTitle{
   position: relative;
   background-color: #14375A;

@@ -23,7 +23,7 @@ import { criEditsLayer } from './map'
       return {
         display:false,
         items: [
-          { title: 'Last Year Edit\'s', disabled: false, icon: 'mdi-history', action: ()=>{
+          { title: 'Last Year\'s Edits', disabled: false, icon: 'mdi-history', action: ()=>{
             criEditsLayer.definitionExpression = `COUNTY_NAME = '${this.countyName}'`
             criEditsLayer.visible = !criEditsLayer.visible
             this.isLastYearEdits = criEditsLayer.visible

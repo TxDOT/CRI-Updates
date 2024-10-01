@@ -3,7 +3,7 @@ import { criConstants } from '../../common/cri_constants';
 import {initGraphicCheck, queryEditsLayer} from './crud'
 import {store} from '../../store'
 import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic , geomToMiles} from './helper';
-import { getNewDfoDist, epochToHumanTime } from './roadInfo' 
+import { getNewDfoDist, epochToHumanTime } from './roadInfo'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils"
@@ -11,6 +11,7 @@ import * as geodesicUtils from "@arcgis/core/geometry/support/geodesicUtils";
 
 export async function addRoadbed(){
   try{
+    // let bsmapZoom = basemapDisplayOnZoom()
     let addNewRoad = new Promise(function(res,rej){
         sketch.create("polyline",{mode:"click", hasZ: false})
         sketch.on('create', (event) => {
@@ -25,6 +26,7 @@ export async function addRoadbed(){
           }
     
           if(event.state === "complete"){
+            // bsmapZoom.remove()
             store.commit('setIsDfoReturn', false)
             store.commit('setDfoReturn', 0)
             store.commit('setIsInitAdd', true)
@@ -59,21 +61,21 @@ function createInfoSendToStore(newRoad){
       gid: 9999,
       objectid: Number(date.getTime().toFixed(7)),
       roadbedName: JSON.stringify(null),
-      roadbedDesign: JSON.stringify([{
-        SRFC_TYPE_ID: "Two-way",
-        ASSET_LN_BEGIN_DFO_MS: 0,
-        ASSET_LN_END_DFO_MS: Number(newRoad[0].toFixed(3))
-      }]),
-      roadbedSurface: JSON.stringify([{
-        SRFC_TYPE_ID: "Paved",
-        ASSET_LN_BEGIN_DFO_MS: 0,
-        ASSET_LN_END_DFO_MS: Number(newRoad[0].toFixed(3))
-      }]),
-      numLane: JSON.stringify([{
-        SRFC_TYPE_ID: "2",
-        ASSET_LN_BEGIN_DFO_MS: 0,
-        ASSET_LN_END_DFO_MS: Number(newRoad[0].toFixed(3))
-      }]),
+      // roadbedDesign: JSON.stringify([{
+      //   SRFC_TYPE_ID: "Two-way",
+      //   ASSET_LN_BEGIN_DFO_MS: 0,
+      //   ASSET_LN_END_DFO_MS: Number(newRoad[0].toFixed(3))
+      // }]),
+      // roadbedSurface: JSON.stringify([{
+      //   SRFC_TYPE_ID: "Paved",
+      //   ASSET_LN_BEGIN_DFO_MS: 0,
+      //   ASSET_LN_END_DFO_MS: Number(newRoad[0].toFixed(3))
+      // }]),
+      // numLane: JSON.stringify([{
+      //   SRFC_TYPE_ID: "2",
+      //   ASSET_LN_BEGIN_DFO_MS: 0,
+      //   ASSET_LN_END_DFO_MS: Number(newRoad[0].toFixed(3))
+      // }]),
       originalLength: Number(newRoad[0].toFixed(3)),
       createDt: date,
       createNm: store.getters.getUserName,
@@ -96,21 +98,19 @@ function createInfoSendToStore(newRoad){
     store.commit('setModifyRd', false)
     store.commit('setEditInfo' ,[null, null, store.getters.getUserName, timestamp[1]])
   
-    setDataToStore(sketch.layer.graphics.items.at(-1).attributes.roadbedSurface,
-                   sketch.layer.graphics.items.at(-1).attributes.roadbedDesign,
-                   sketch.layer.graphics.items.at(-1).attributes.roadbedName,
-                   sketch.layer.graphics.items.at(-1).attributes.numLane,
+    setDataToStore(sketch.layer.graphics.items.at(-1).attributes.roadbedName,
                    sketch.layer.graphics.items.at(-1).attributes.objectid,
                    '')
 }
 
 export async function modifyRoadbed(clickType, editType){
     let promise = new Promise(function(res, rej){
-      view.on(clickType,(event) => {
+      const removeModListener = view.on(clickType,(event) => {
         if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
           store.commit('setEditExisting', null)
           store.commit('setDeleteRd', null)
           rej('cancel')
+          removeModListener.remove()
           return;
         }
         let opts = { include: clientSideGeoJson }
@@ -122,6 +122,7 @@ export async function modifyRoadbed(clickType, editType){
             }
             if(response.results[i].graphic.geometry !== null && response.results[i].graphic.sourceLayer !== null){
               let test = queryFeat(response)
+              removeModListener.remove()
               test
                 .then(result=>res(result))
             }
@@ -131,6 +132,7 @@ export async function modifyRoadbed(clickType, editType){
     })
     let feature = await promise
     store.commit('setRoadGeom', feature.features[0].geometry.clone())
+    view.goTo(feature.features[0].geometry)
     await queryFeatureTables(feature, true)
     defineGraphic(feature,clickType, editType)
     return feature
@@ -166,7 +168,7 @@ export async function hideEditedRoads(graphicL, update){
     }
     clientSideGeoJson.definitionExpression = `RDBD_GMTRY_LN_ID not in (${objectidList}) and CNTY_TYPE_NM = '${store.getters.getCntyName}'`
     
-  }
+}
 
 
 //updateLength() gets new length of selected graphic and sends new length to store
@@ -209,7 +211,7 @@ export function updateLength(){
           store.commit('setDeltaDis',[modifyChange, 'Modify'])
           store.commit('setRoadGeom', event.graphics[0].geometry.clone())
           reapplyM(event.graphics[0])
-          updateGraphicsLayer(event.graphics[0].attributes.objectid, newLengths)
+          //updateGraphicsLayer(event.graphics[0].attributes.objectid, newLengths)
         }
       } 
     })
@@ -240,6 +242,7 @@ export function delRoad(){
   })
   //changing edit type to delete
   graphicDel[0].attributes.editType = 'DELETE'
+  view.goTo(graphicDel[0].geometry)
   let length = Number(geometryEngine.geodesicLength(graphicDel[0].geometry, "miles").toFixed(5))
   //sending length to recalculate mileage change in footer
   store.commit('setDeltaDis',[length, 'Delete'])
@@ -247,6 +250,7 @@ export function delRoad(){
   let symbol = graphicDel[0].symbol.clone()
   symbol.color = criConstants.editType['delete'][0]
   graphicDel[0].symbol = symbol
+  return
 }
 //removes highlight around road
 export function removeHighlight(){
@@ -433,10 +437,10 @@ export async function cancelEditStepper(){
 //setting M-Vaules on geometry changes
 function reapplyM(arr){
   let gl = gLayer.graphics.items.filter(x => x.objectid = arr.attributes.objectid).at(-1)
-  let getFirstAsset = JSON.parse(gl.attributes.roadbedSurface)
+  let getFirstAsset = gl.attributes.assetBegin
   let applyM = [];
   try{
-    let segMil = getFirstAsset.at(0).ASSET_LN_BEGIN_DFO_MS;
+    let segMil = getFirstAsset;
     arr.geometry.paths[0][0][2] ? applyM.push(arr.geometry.paths[0][0][2]) : applyM.push(segMil);
     for(let i=0; i < arr.geometry.paths[0].length; i++){
       
@@ -483,18 +487,15 @@ function setUpGraphic(){
     view.hitTest(event,opts).then((response)=>{
       //prevents users from selecting a new road if stepper is open and past step 1. or if edit dialog boxes are open
       if((response.results.length && store.getters.getStepperClose === true && store.getters.getStepNumber > 1) || (response.results.length && (store.getters.getEditExisting === true || store.getters.getDeleteRd === true))){
-        console.log('hey1')
         return;
       }
       response.results.forEach((result)=>{
         if(result.graphic.attributes.objectid !== store.getters.getObjectid){
-          console.log('hey2')
           return;
         }
         //Can only proceed forward if edit type is add or edit. And road info stepper and edit stepper is not open
         if((result.graphic.attributes.editType === 'ADD' || result.graphic.attributes.editType === 'EDIT') && (store.getters.getInfoRd === false && store.getters.getIsStepCancel === false)){
           if(result.graphic.layer === sketch.layer && result.graphic.attributes){
-            console.log('hey3')
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
@@ -509,35 +510,35 @@ function setUpGraphic(){
   });
 }
 
-function updateGraphicsLayer(oid, length){
-  length;
-  for(let i=0; i < gLayer.graphics.items.length; i++){
-    let assetArr = ['roadbedDesign', 'roadbedSurface', 'numLane']
-    if(gLayer.graphics.items[i].attributes.objectid === oid){
-      for(let x=0; x < assetArr.length; x++){
-        let asset = JSON.parse(gLayer.graphics.items[i].attributes[assetArr[x]])
-        let endDFO = gLayer.graphics.items[i].geometry.paths.at(-1)[0][0][2]
-        if(!asset) return;
-        if(!endDFO) return;
-        asset.at(-1).ASSET_LN_END_DFO_MS = Number(endDFO.toFixed(3))
-        gLayer.graphics.items[i].attributes[assetArr[x]] = JSON.stringify(asset)
+// function updateGraphicsLayer(oid, length){
+//   length;
+//   for(let i=0; i < gLayer.graphics.items.length; i++){
+//     let assetArr = ['roadbedDesign', 'roadbedSurface', 'numLane']
+//     if(gLayer.graphics.items[i].attributes.objectid === oid){
+//       for(let x=0; x < assetArr.length; x++){
+//         let asset = JSON.parse(gLayer.graphics.items[i].attributes[assetArr[x]])
+//         let endDFO = gLayer.graphics.items[i].geometry.paths.at(-1)[0][0][2]
+//         if(!asset) return;
+//         if(!endDFO) return;
+//         asset.at(-1).ASSET_LN_END_DFO_MS = Number(endDFO.toFixed(3))
+//         gLayer.graphics.items[i].attributes[assetArr[x]] = JSON.stringify(asset)
         
-        let commitToStore = {
-          roadbedDesign: ()=>{
-            return store.commit('setRoadbedDesign', JSON.stringify(asset))
-          },
-          roadbedSurface: ()=>{
-            return store.commit('setRoadbedSurface', JSON.stringify(asset))
-          },
-          numLane: ()=>{
-            return store.commit('setNumLane',JSON.stringify(asset))
-          }
-        }
-        commitToStore[assetArr[x]]()
-      }
-    }
-  }
-}
+//         let commitToStore = {
+//           roadbedDesign: ()=>{
+//             return store.commit('setRoadbedDesign', JSON.stringify(asset))
+//           },
+//           roadbedSurface: ()=>{
+//             return store.commit('setRoadbedSurface', JSON.stringify(asset))
+//           },
+//           numLane: ()=>{
+//             return store.commit('setNumLane',JSON.stringify(asset))
+//           }
+//         }
+//         commitToStore[assetArr[x]]()
+//       }
+//     }
+//   }
+// }
 
 //hides feature roadbeds when converted to graphic
 // function hideEditedRoads(graphicL, update){
@@ -569,6 +570,7 @@ function updateGraphicsLayer(oid, length){
 export function saveToEditsLayer(){
   let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === store.getters.getObjectid)
   initGraphicCheck(editGraphic, false)
+  return
 }
 
 

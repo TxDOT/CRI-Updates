@@ -1,8 +1,12 @@
 <template>
     <v-main>
-        <v-dialog persistent max-width="1000" v-model="judgeLetter" id="judgeDialog">
+        <v-dialog persistent max-width="1200" v-model="judgeLetter" id="judgeDialog">
             <v-card id="judgeLetter">
-                <v-card-title><v-img :src="require('@/assets/txdotLogo.jpeg')" id="judgeLetterLogo"></v-img></v-card-title>
+                <v-card-title>
+                    <svg height="130" width="600" style="position: relative; left: 250px;">
+                        <image href="@/assets/TxDOT_Logo_Horizontal_RGB.svg" width="100%"></image>
+                    </svg>
+                </v-card-title>
                 <v-card-text justify="left" v-html="mainTxt" class="letterTxt" id="mainTxt"></v-card-text>
                 
                 <v-btn small tile color="green" class="buttonColor" id="acceptCert" @click="judgeLetter=false; assignDel=false; accptCertify=true"><v-icon left color="white" >mdi-certificate</v-icon>Agree & Certify</v-btn>
@@ -10,7 +14,7 @@
                 <v-btn small tile color="black" class="buttonColor" id="assignDelegate" @click="judgeLetter=false; accptCertify=false; assignDel=true;"><v-icon left color="white">mdi-account-multiple-plus</v-icon>Assign Delegate</v-btn>
 
                 <v-card-text class="letterTxt" id="subTxt">
-                    <br><p align="justify">If you would like to review your inventory using the Review & Edit button above, but have not yet created an account for yourself, you can <a style="color:black;text-decoration: underline;" @click=registermethod>register here</a>.</p>
+                    <br><p align="justify">If you would like to review your inventory using the Review & Edit button above, but have not yet created an account for yourself, you can <a style="color:black;text-decoration: underline; color: blue; font-weight: bold;" @click=registermethod>register here</a>.</p>
                          <p align="justify">TxDOT reports county road mileage to the Texas State Comptroller and Department of Motor Vehicles. That data is used to calculate funds to be distributed to each county. 
                          Your participation in the County Road Inventory program is essential for ensuring an accurate and complete inventory.</p>
                 </v-card-text>
@@ -72,17 +76,19 @@ export default{
           //this.sendCountyName(Number(getCntyInfoQuery.features[0].attributes['Total_Mileage']))
         //this.$store.commit('setCntyMiles',this.currentMiles)
         this.mainTxt = `
-          <p align="justify">Dear ${this.judgeName},</p>
+          <p align="justify">Dear ${this.judgeName.trim()},</p>
           <p align="justify">The Texas Department of Transportation (TxDOT) is soliciting updates to the County Road Inventory (CRI) from your county.  The deadline for the ${new Date().getFullYear()} submission is <u>August 31</u>.<br><br>
             
           Your ${new Date().getFullYear()} certified mileage is: <b><u>${this.currentMiles}.</b></u> ${this.mileageTxt}<br><br>
           
           If you agree with this mileage, please click the AGREE & CERTIFY button below.  To review your CRI and make edits, please click the REVIEW & EDIT button below.  To delegate the responsibility of making updates to a trusted partner, please click the ASSIGN DELEGATE button below.<br><br>
 
+          We have made a few changes to the app to facilitate your updates. Now, only the alignment of each road – including its length – and the road name are required. We are no longer collecting the surface type, design (e.g. one-way/two-way), and number of lanes. This information will be collected by TxDOT when necessary. Finally, training videos have been updated to be more concise and easy to follow.<br><br>
+          
           For those who need assistance, TxDOT will be hosting live WebEx video training on these dates:<br>
-          &nbsp;&nbsp;  • Wednesday, June 21, 2023, 2:00 – 3:00 pm<br>
-          &nbsp;&nbsp;  • Wednesday, July 19, 2023, 2:00 – 3:00 pm<br>
-          &nbsp;&nbsp;  • Wednesday, August 16, 2023, 2:00 – 3:00 pm<br>
+          &nbsp;&nbsp;  • Thursday, June 13, 2024, 2:00 – 3:00 pm<br>
+          &nbsp;&nbsp;  • Thursday, July 18, 2024, 2:00 – 3:00 pm<br>
+          &nbsp;&nbsp;  • Thursday, August 15, 2024, 2:00 – 3:00 pm<br>
           To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell" target="_blank">https://txdot.webex.com/join/jferrell</a><br><br>
 
           Thank you for your assistance in keeping the county road inventory up to date. If you have any questions or need clarification, please contact us by email or phone. <br>
@@ -194,18 +200,18 @@ export default{
 <style scoped>
 #judgeLetterLogo{
     position: relative;
-    height: 10rem;
-    bottom: .2rem;
-    bottom: 2rem;
-    width: 4rem;
+    height: 9rem;
+    left: 150px;
+    width: 53rem;
+    margin-bottom: 50px;
 }
 #judgeLetter{
     position: relative;
     flex-direction: column;
-    width: 70rem;
+    width: 90rem;
     overflow-y: auto !important;
     min-height: 0vh;
-    max-height: 90vh;
+    max-height: 100vh;
 }
 .buttonColor{
     color: white;
@@ -222,8 +228,10 @@ export default{
 }
 #subTxt{
     position:relative;
-    bottom: 3rem;
+    bottom: 5rem;
     color:black;
+    padding-bottom: 0px !important;
+    margin-bottom: 0px !important;
 }
 #judgeDialog{
     position: relative;
