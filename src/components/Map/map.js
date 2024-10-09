@@ -242,7 +242,7 @@ export const countyOfficialInfo = new FeatureLayer({
 })
 //CRI Edits layer
 export const criEditsLayer = new FeatureLayer({
-    url: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/CRI_Map_Markups_2023_Edits/FeatureServer/0",
+    url: "https://services.arcgis.com/KTcxiTD9dsQw4r7Z/arcgis/rest/services/LAST_YEARS_EDITS/FeatureServer/0",
     renderer: {
         type: "unique-value",
         field: "EDIT_STATUS",
