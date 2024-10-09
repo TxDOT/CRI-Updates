@@ -18,7 +18,7 @@
 
         <div id="btnPosition"><v-btn underline tile color="#14375A" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
 
-        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.6.12</u></v-card-text>
+        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.6.13</u></v-card-text>
 
             
       </v-card>
@@ -31,7 +31,7 @@ export default {
     data (){
       return {
         updateList:["Added layer showing Last Year's Edits", "Removed Design/Surface/Lane attributes", "Added self-guided tour popups", "Added short training videos (Add Road, Edit Road, Delete Road, Save & Exit, Submit & Certify, Overview)", "Enhanced registration process",
-                    "Integrated aerial imagery basemap with editing tools", "Added End of Year cutoff process"]
+                    "Integrated aerial imagery basemap with editing tools", "Added End of Year cutoff process", "Starting mileage update popup info box"]
       }
     },
     methods:{
