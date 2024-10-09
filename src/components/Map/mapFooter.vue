@@ -2,7 +2,33 @@
 <template>
     <v-footer app id="footerPos">
       <div id="footerCard" style="color:white"><div id="coordsPos">{{x}}, {{y}}</div>
-        County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Mileage Change: <b :style="[mileageChange > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(mileageChange) ===0? {'color':'white'} : null]">{{Number(mileageChange)}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
+        County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|<span @mouseover="mileagePopup = true" @mouseleave="handlemileagePopup">&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;</span>|&nbsp;&nbsp;Mileage Change: <b :style="[mileageChange > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(mileageChange) ===0? {'color':'white'} : null]">{{Number(mileageChange)}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
+      </div>
+      <div class="container" v-if="mileagePopup" >
+        <div class="callout" @mouseover="popupHoverStatus = true" @mouseleave="handlemileagePopupleave">
+          <span>
+            <p style="color:white; text-align: left; font-size: .8vw; margin: 5px;">
+              From September 1st to December 31st the starting mileage below is updated monthly and may fluctuate as TxDOT applies the county's edits received through August 31st. 
+              Check the status of the edits by clicking the 'Last Year's Edits' layer on the left.
+            </p>
+          </span>
+          <div id="buttonPos">
+            <v-btn
+                x-small
+                tile
+                dense
+                outlined
+                dark
+                @click="mileagePopup = false; exitClick = true"
+                >
+              <span style="color: white; font-size: .6vw; ">
+                EXIT
+              </span>
+            
+            </v-btn>
+          </div>
+          
+        </div>
       </div>
     </v-footer>
 </template>
@@ -22,7 +48,10 @@ export default {
       modifyLine: 0,
       mileageChange: 0,
       x:0,
-      y:0
+      y:0,
+      mileagePopup: true,
+      popupHoverStatus: false,
+      exitClick : false,
     }
   },
   mounted(){
@@ -90,6 +119,23 @@ export default {
         this.$store.commit('setCntyEndingMiles', mi)
       }
     },
+  },
+  methods: {
+    handlemileagePopup(){
+      setTimeout(() => {
+        if (this.popupHoverStatus === false ){
+          this.mileagePopup = false
+        }
+      }, 1500);
+    },
+    handlemileagePopupleave(){
+      if (this.exitClick === true){
+        this.popupHoverStatus = false
+        this.mileagePopup = false
+      }
+      
+
+    }
   }
   
 } 
@@ -116,5 +162,44 @@ export default {
     position:fixed; 
     right: 4vw;  
     font-size: .8vw;
+  }
+  .container{
+    position: absolute;
+    bottom: 5.66vw;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    left: 63vh;
+    
+  }
+
+  .callout{
+    position: relative;
+    height: auto;
+    width: 480px;
+    border: 3px solid #204E70;
+    background-color: #204E70;
+    
+
+  }
+  .callout::before, .callout::after{
+    content: ' ';
+    position: absolute;
+    display: block;
+    height: 0;
+    width: 0;
+  }
+
+  .callout::before{
+    border: 15px solid transparent;
+    border-top-color: #204E70;
+    bottom: -30px;
+    left: 45%;
+  }
+  #buttonPos{
+    display: flex;
+    justify-content: end;
+    margin-right: 5px;
+    margin-bottom: 5px;
   }
 </style>
