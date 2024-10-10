@@ -166,14 +166,14 @@ export default {
     font-size: .8vw;
   }
   .container{
-    position: absolute; /* Position relative to #footerCard */
-    bottom: calc(100% + 0.5rem); /* Adjust to position above the span */
-    left: 44%; /* Center horizontally within #footerCard */
-    transform: translateX(-50%); /* Adjust for centering */
-    display: flex; /* Flexbox for content alignment */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    width: auto; /* Width can adjust based on content */
+    position: absolute; 
+    bottom: calc(100% + 0.5rem); 
+    left: 44%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+    width: auto;
    
     
   }
