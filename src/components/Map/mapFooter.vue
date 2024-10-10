@@ -14,16 +14,17 @@
           </span>
           <div id="buttonPos">
             <v-btn
-                x-small
-                tile
-                dense
-                outlined
-                dark
+                height="3vh" 
+                tile 
+                outlined 
+                color="white" 
+                class="mx-2" 
+                small
                 @click="mileagePopup = false; exitClick = true"
-                >
-              <span style="color: white; font-size: .6vw; ">
+            >
+              <u>
                 EXIT
-              </span>
+              </u>
             
             </v-btn>
           </div>
@@ -156,7 +157,8 @@ export default {
     width: 100%; 
     height:2.05vw; 
     text-align: center;
-    background: #4D4D4D
+    background: #4D4D4D;
+    
   }
   #coordsPos{
     position:fixed; 
@@ -164,19 +166,23 @@ export default {
     font-size: .8vw;
   }
   .container{
-    position: absolute;
-    bottom: 5.66vw;
-    display: flex;
-    align-items: center;
-    height: 100%;
-    left: 63vh;
+    position: absolute; /* Position relative to #footerCard */
+    bottom: calc(100% + 0.5rem); /* Adjust to position above the span */
+    left: 44%; /* Center horizontally within #footerCard */
+    transform: translateX(-50%); /* Adjust for centering */
+    display: flex; /* Flexbox for content alignment */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    width: auto; /* Width can adjust based on content */
+   
     
   }
 
   .callout{
     position: relative;
     height: auto;
-    width: 480px;
+    width: auto;
+    max-width: 480px;
     border: 3px solid #204E70;
     background-color: #204E70;
     
