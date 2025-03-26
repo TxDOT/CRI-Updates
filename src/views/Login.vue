@@ -180,7 +180,7 @@ export default {
           this.$router.push('/load')
           isTrainingAccess(portal.user.fetchGroups())
           this.userName = portal.user.username //portal.user.username
-          let countyInfo = await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed. 
+          let countyInfo = await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed.
           if(!countyInfo){return;}
           let cntyNumber = countyInfo[1]
           let cntyName = countyInfo[0]
