@@ -51,7 +51,6 @@ import esriId from "@arcgis/core/identity/IdentityManager";
 import Portal from "@arcgis/core/portal/Portal";
 import Query from "@arcgis/core/rest/support/Query"
 import Signupform from '../components/signupform.vue';
-//import { C } from 'caniuse-lite/data/agents';
 
 export default {
   name: 'Login',
@@ -189,6 +188,9 @@ export default {
           this.countyNumber = cntyNumber
           this.countyMiles = countyInfo[2]
           this.loadMap(cntyName,cntyNumber)
+        })
+        .catch(() => {
+          this.$router.push({name: "error"})
         })
     },  
     async getCountyInfo(username){
