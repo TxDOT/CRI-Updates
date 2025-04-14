@@ -4,7 +4,7 @@
       <div id="footerCard" style="color:white"><div id="coordsPos">{{x}}, {{y}}</div>
         County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|<span @mouseover="mileagePopup = true" @mouseleave="handlemileagePopup">&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;</span>|&nbsp;&nbsp;Mileage Change: <b :style="[mileageChange > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(mileageChange) ===0? {'color':'white'} : null]">{{Number(mileageChange)}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
       </div>
-      <div class="container" v-if="false" >
+      <div class="container" v-if="mileagePopup && getTime() === true" >
         <div class="callout" @mouseover="popupHoverStatus = true" @mouseleave="handlemileagePopupleave">
           <span>
             <p style="color:white; text-align: left; font-size: .8vw; margin: 5px;">
@@ -63,7 +63,8 @@ export default {
         this.x = Number(latLong[0].toFixed(6))
         this.y = Number(latLong[1].toFixed(6))
       }
-    })
+    }),
+    this.getTime()
   },
   watch:{
     modifyLength:{
@@ -136,6 +137,15 @@ export default {
       }
       
 
+    },
+    getTime(){
+
+      const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+      const d = month[new Date().getMonth()]
+      if (d == "September" || d == "October" || d == "November" || d == "December"){
+        return true
+      }
+      return false
     }
   }
   
@@ -183,8 +193,8 @@ export default {
     height: auto;
     width: auto;
     max-width: 480px;
-    border: 3px solid #204E70;
-    background-color: #204E70;
+    border: 3px solid #014e96;
+    background-color: #014e96;
     
 
   }
@@ -198,7 +208,7 @@ export default {
 
   .callout::before{
     border: 15px solid transparent;
-    border-top-color: #204E70;
+    border-top-color: #014e96;
     bottom: -30px;
     left: 45%;
   }

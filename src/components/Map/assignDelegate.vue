@@ -10,8 +10,8 @@
         </v-row>
         
         <a x-small @click="addEmail" id="addDelegate">Add additional delegate</a>
-        <v-btn text color="#204E70" id="cancelBtn" @click="returnToLetter()">Cancel</v-btn>
-        <v-btn tile outlined color="#204E70" id="acceptBtn" @click="submit('delegate')"><u>Accept</u></v-btn>
+        <v-btn text color="#014e96" id="cancelBtn" @click="returnToLetter()">Cancel</v-btn>
+        <v-btn tile outlined color="#014e96" id="acceptBtn" @click="submit('delegate')"><u>Accept</u></v-btn>
 
     </v-card>
 

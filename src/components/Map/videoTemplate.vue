@@ -111,7 +111,7 @@
 <style scoped>
     #showVideo{
         position: absolute;
-        background-color: #204E70;
+        background-color: #014e96;
         width: 20rem;
         top: 5rem;
         left: calc(500px + 13rem);

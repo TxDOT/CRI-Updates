@@ -12,8 +12,8 @@
             <v-autocomplete id="pickCount" class="countyPicker" persistent-placeholder outlined dense tile v-model="pickCounty" :items="cntyNames" label="County Name"></v-autocomplete>
 
             <div>
-              <v-btn :disabled="pickCounty.length === 0" outlined id="continueBtn" depressed color="#204E70" tile @click="getCountyInfo()"><u>Continue</u></v-btn>
-              <v-btn id="cancelBtn" depressed text color="#204E70" tile @click="cancel()"><u>Cancel</u></v-btn>
+              <v-btn :disabled="pickCounty.length === 0" outlined id="continueBtn" depressed color="#014e96" tile @click="getCountyInfo()"><u>Continue</u></v-btn>
+              <v-btn id="cancelBtn" depressed text color="#014e96" tile @click="cancel()"><u>Cancel</u></v-btn>
             </div>
         </v-card>
         
@@ -189,7 +189,7 @@ export default {
   cursor: pointer;
 }
 .surfaceTitle{
-  background-color: #204E70;
+  background-color: #014e96;
   color: white;
   height:30px;
   width: 100%;

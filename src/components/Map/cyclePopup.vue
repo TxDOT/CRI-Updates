@@ -1,7 +1,7 @@
 <template>
     <div :style="currentPos" v-if="hideCycle">
         <div class="arrow-right" :style="arrowChange[currIndex - 1] ? arrowChange[currIndex - 1] : arrowChange[currIndex]" v-if="currIndex > 0"></div>
-        <v-card style="position: relative; width: 13rem; right: 0px;" color="#14375a" tile>
+        <v-card style="position: relative; width: 13rem; right: 0px;" color="#0056a9" tile>
             <v-card-text v-html="posText[currIndex].txt" style="text-align: left; color: white; width: 100%; padding: 15px;"></v-card-text>
             <div style="display: flex; flex-direction: row;">
                 <v-btn @click="closeProcess()" color="white" class="btn" text tile>Exit</v-btn>
@@ -72,7 +72,7 @@ export default{
         width: 0;
         border-style: solid;
         border-width: 0 10px 25px 10px;
-        border-color: transparent transparent #14375a transparent;
+        border-color: transparent transparent #0056a9 transparent;
         z-index: 9999;
     }
     .btn{

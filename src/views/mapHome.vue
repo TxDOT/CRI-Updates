@@ -4,6 +4,7 @@
     <mapHeader/>
     <Map/>
     <v-alert type="warning" v-if="overlay" tile style="position: relative; top: 0px; width: fit-content; left: 50%;">Zoom in to add a road</v-alert>
+    <AskAnalyst/>
     <mapFooter/>
     <navSideBar/>
     <stepper v-if="display === true"/>
@@ -62,9 +63,10 @@ import LastYearsEditLegend from '../components/Map/mapLastYearsEditLegend.vue'
 import cycleIntro from '../components/Map/cyclePopup.vue'
 import {basemapDisplayOnZoom} from '../components/Map/mapNav.js'
 import {getGraphic} from '../components/Map/roadInfo.js'
+import AskAnalyst from '../components/Map/askAnalyst.vue'
 
 export default {
-    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, eoeWarning, LastYearsEditLegend, cycleIntro},
+    components: {Map, mapHeader, mapFooter,navSideBar, stepper, editExistingRd, denyClickFeat, dfoBox, about, Legend, geomCheck, dragndrop, eoeWarning, LastYearsEditLegend, cycleIntro, AskAnalyst},
     props:["id"],
     name: 'MapHome',
     data(){
@@ -333,7 +335,7 @@ export default {
   display: flex; 
   gap: 10px; 
   flex-direction: column-reverse; 
-  bottom: 3rem; 
+  bottom: 4rem; 
   right: 1rem; 
   height: 26rem; 
   position: absolute;

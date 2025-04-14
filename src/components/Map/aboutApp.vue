@@ -16,9 +16,9 @@
             <v-card-text class="textSymb" id="updateTextRow" v-for="(i, index) in updateList" :key=index><ul id="updateText"><li>{{updateList[index]}}</li></ul></v-card-text>
         </div>
 
-        <div id="btnPosition"><v-btn underline tile color="#14375A" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
+        <div id="btnPosition"><v-btn underline tile color="#0056a9" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
 
-        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.6.14</u></v-card-text>
+        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.7.0</u></v-card-text>
 
             
       </v-card>
@@ -30,8 +30,7 @@ export default {
     name: 'about',
     data (){
       return {
-        updateList:["Added layer showing Last Year's Edits", "Removed Design/Surface/Lane attributes", "Added self-guided tour popups", "Added short training videos (Add Road, Edit Road, Delete Road, Save & Exit, Submit & Certify, Overview)", "Enhanced registration process",
-                    "Integrated aerial imagery basemap with editing tools", "Added End of Year cutoff process", "Starting mileage update popup info box"]
+        updateList:["Added chat feature", "Updated editing tools", "Updated short training videos", "Updated map colors to new TxDOT blue"]
       }
     },
     methods:{
@@ -78,7 +77,7 @@ export default {
 }
 .surfaceTitle{
   position: inherit;
-  background-color: #14375A;
+  background-color: #0056a9;
   text-align: left;
   color: white;
   top: 0%;

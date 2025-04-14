@@ -10,7 +10,7 @@
             <v-card-text style="position:relative; text-align:left; padding: 0px; color: black; top:20px; left: .9rem;">
                 Road Name is Required.
             </v-card-text>
-            <v-btn id="btnClose" tile @click="setFinalCheck()" outlined color="#14375A"><u>close</u></v-btn>
+            <v-btn id="btnClose" tile @click="setFinalCheck()" outlined color="#0056a9"><u>close</u></v-btn>
         </v-card>
 </template>
 
@@ -37,7 +37,7 @@ export default {
 </script>
 <style scoped>
 .surfaceTitle{
-  background-color: #204E70;
+  background-color: #014e96;
   color: white;
   bottom:16px;
   height:30px;

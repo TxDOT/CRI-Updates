@@ -36,8 +36,8 @@
             </v-checkbox>
         </div>
 
-        <v-btn text color="#204E70" id="cancelBtn" @click="returnToLetter()">Cancel</v-btn>
-        <v-btn tile outlined color="#204E70" id="acceptBtn" :disabled="hideSubText === false || isCountyJudge === false" @click="submit('certify'); test1=false; test2=true;">Accept</v-btn>
+        <v-btn text color="#014e96" id="cancelBtn" @click="returnToLetter()">Cancel</v-btn>
+        <v-btn tile outlined color="#014e96" id="acceptBtn" :disabled="hideSubText === false || isCountyJudge === false" @click="submit('certify'); test1=false; test2=true;">Accept</v-btn>
         
         <div v-if="hideSubText">
             <v-alert id="mileageAlert" color="rgba(255,153,102,.4)" dense>

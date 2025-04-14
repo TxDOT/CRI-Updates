@@ -27,7 +27,7 @@
           Download a table of your county's road information.</b><br>
           <p class="itemText">This is a CSV file that anyone can open using a spreadsheet software such as Microsoft Excel or<br>Google Sheets.</p>
         </v-card-text>
-        <v-btn small outlined tile @click="display = false; downloadRoadLog(); isFileDwnload=true" color="#14375A" id="dwnloadBtn">
+        <v-btn small outlined tile @click="display = false; downloadRoadLog(); isFileDwnload=true" color="#0056a9" id="dwnloadBtn">
           <u>Download</u>
         </v-btn>
         <v-icon id="layerIcon">mdi-layers</v-icon>
@@ -36,14 +36,14 @@
           Download TxDOT's county road inventory for your county.</b><br>
           <p class="itemText">This is GIS data which allows GIS professionals to compare TxDOT's CRI with their inventory for<br>discrepancies.</p>
         </v-card-text>
-        <v-btn outlined tile small @click="display = false; exitApp = true; cntyQueryTab()" color="#14375A" id="downloadBtn">
+        <v-btn outlined tile small @click="display = false; exitApp = true; cntyQueryTab()" color="#0056a9" id="downloadBtn">
           <u>Download</u>
         </v-btn> 
         <v-divider id="divider"></v-divider>
         <v-alert :id="isCert === false ? 'disclaimer' : 'disclaimerF'" tile>
           <p id="disclaimerTxt" v-if="isCert === true">The optional features below are for advanced GIS users only.</p>
           <p id="disclaimerTxt" v-if="isCert === false">The optional features below are for advanced GIS users only.<br>Training is required in order to access these features.</p>
-          <v-btn id="trainingBtn" :href="reqTrainingEmail()" tile outlined color="#14375A" @click="close('isUserCertify')" small v-if="isCert === false">Request Training</v-btn>
+          <v-btn id="trainingBtn" :href="reqTrainingEmail()" tile outlined color="#0056a9" @click="close('isUserCertify')" small v-if="isCert === false">Request Training</v-btn>
         </v-alert>
         <v-icon id="uploadIcon" :disabled="isCert === false">mdi-download</v-icon>
         <v-card-text id="uploadTxt" :class="isCert === false ? 'textSymbDisable' : 'textSymb'">
@@ -51,7 +51,7 @@
           Download an empty feature class template.</b><br>
           <p class="itemText">This file geodatabase contains an empty feature class formatted for uploading your GIS inventory<br>updates using the upload feature below.</p>
         </v-card-text>
-        <v-btn outlined tile small @click="display = false; downloadTemp()" color="#14375A" :id="isCert === false ? 'dwnloadTempBtn' : 'dwnloadTempBtnF'" :disabled="isCert===false">
+        <v-btn outlined tile small @click="display = false; downloadTemp()" color="#0056a9" :id="isCert === false ? 'dwnloadTempBtn' : 'dwnloadTempBtnF'" :disabled="isCert===false">
           <u>Download</u>
         </v-btn>
         <div id="downloadInst">
@@ -63,10 +63,10 @@
           Drag and drop your suggested road edits.</b><br>
           <p class="itemText">Upload inventory updates loaded into the template provided above. Only submit<br>changes to your inventory with adds, removes, and updates. Please do not submit your<br>county's entire road inventory.</p>
         </v-card-text>
-        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#14375A" :id="isCert === false ? 'uploadBtn' : 'uploadBtnF'" :disabled="isCert===false || this.disable === true">
+        <v-btn outlined tile small @click="display = false; dragDropClick = true;" color="#0056a9" :id="isCert === false ? 'uploadBtn' : 'uploadBtnF'" :disabled="isCert===false || this.disable === true">
           <u>{{ uploadGISData }}</u>
         </v-btn>
-        <v-btn id="closeBtn" tile outlined color="#14375A" @click="display = false">Close</v-btn>
+        <v-btn id="closeBtn" tile outlined color="#0056a9" @click="display = false">Close</v-btn>
       </v-card>
     </v-dialog>
     <v-dialog v-model="isFileDwnload" width="500">
@@ -96,7 +96,7 @@
           <br>
           To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell" target="_blank">https://txdot.webex.com/join/jferrell</a>
         </v-card-text>
-        <v-btn outlined tile color="#14375A" id="webexbtn" @click="webexClose()">CLOSE</v-btn>
+        <v-btn outlined tile color="#0056a9" id="webexbtn" @click="webexClose()">CLOSE</v-btn>
       </v-card>
     </v-dialog>
     <v-dialog v-model="isHelpTraining" width="1000" persistent>
@@ -108,7 +108,7 @@
                 <v-row>
                   <v-col v-for="n in 5" :key="n" md="2.6" >
                     <v-item>
-                      <v-tooltip bottom max-width="200" color="#204E70" style="border-radius: 0px;"> 
+                      <v-tooltip bottom max-width="200" color="#014e96" style="border-radius: 0px;"> 
                         <template v-slot:activator="{ on, attrs }">
                           <v-card v-bind="attrs" v-on="on" tile ripple dark height="200" @click="openPage(mediaType[n])" color="green"><p id="helpTrainContent">{{mediaType[n]}}</p><v-icon id="helpTrainIcon">{{iconType[n]}}</v-icon></v-card>
                         </template>
@@ -121,7 +121,7 @@
               </v-container>
             </v-item-group>
           </v-card-text>
-          <v-btn id="clseBtnHelp" outlined tile color="#204E70" @click="close('isHelpTraining')">close</v-btn>
+          <v-btn id="clseBtnHelp" outlined tile color="#014e96" @click="close('isHelpTraining')">close</v-btn>
       </v-card>
     </v-dialog>
     <v-dialog v-model="faqs" id="faqDialog" persistent>
@@ -162,7 +162,7 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
-          <v-btn class="closeBtnUnderline" id="faqBtn" depressed outlined color="#14375A" tile @click="closeFaqBtn()"><u>Close</u></v-btn>
+          <v-btn class="closeBtnUnderline" id="faqBtn" depressed outlined color="#0056a9" tile @click="closeFaqBtn()"><u>Close</u></v-btn>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -415,7 +415,7 @@
   right: 26rem;
   top: 10px;
   text-decoration: underline;
-  color: #14375A;
+  color: #0056a9;
   opacity: 1 !important;
 }
 .v-list-item{
@@ -431,7 +431,7 @@
   margin-right: 16px;
 }
 .surfaceTitle{
-  background-color: #14375A;
+  background-color: #0056a9;
   text-align: left;
   top:0%;
   color: white;
@@ -573,7 +573,7 @@
   text-decoration: underline;
 }
 .titles{
-  background-color:#14375A; 
+  background-color:#0056a9; 
   color:white;
 }
 #progressLoad{
@@ -669,7 +669,7 @@
 }
 .expandPanelContent{
   text-align: left;
-  color: #14375A;
+  color: #0056a9;
   padding-left: 1rem;
 }
 

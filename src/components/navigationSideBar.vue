@@ -1,11 +1,26 @@
 <!-- Left Nav side bar component -->
 <template>
     <v-container style="height:100%; min-width: 50%;">
+      <v-card id="newEditPopup" v-if="isNewEdit" >
+            <v-card-title class="editRdTitle">
+                <v-card-text class="editActionType">
+                    What would you like to do?
+                </v-card-text>
+                
+            </v-card-title>
+            <v-select outlined dense label="Select an edit type"  :items="itemsDropdown" :menu-props="{ top: false, offsetY: true }" style="padding-top: 15px; width: 98%; justify-self: center;" v-model="toolSelection">
+                    
+                </v-select>
+            <div class="buttonPositioning">
+                <v-btn text style=" text-decoration: underline; color: #0056a9" @click="isNewEdit = false; clearEditBtn = false">Cancel</v-btn>
+                <v-btn text outined style=" text-decoration: underline; color: #0056a9; border: solid black 1px; border-radius: 0px;" @click="pickTool()" :disabled="toolSelection == null">Continue</v-btn>
+            </div>
+        </v-card>
       <v-navigation-drawer app disable-resize-watcher disable-route-watcher id="navSideBarPos" permanent> 
-        <v-card-title id="testTitle"><v-card-text id="navTxPos">What Do You Want To Do?</v-card-text></v-card-title>
+        <v-card-title id="testTitle"><v-card-text id="navTxPos">To begin editing, select a road from the map or click New Edit below.</v-card-text></v-card-title>
           <v-list id="navList"> 
             <v-list-item-group id="tester" v-model="clearEditBtn" color="#15648C" active-class="border">
-              <v-list-item v-for="(item,i) in items" :key="i" @click="item.action" :disabled="graphic" ripple color="black">
+              <v-list-item v-for="(item,i) in newedititems" :key="i" @click="item.action" :disabled="isNewEdit || addRdBoolean || editExistingRd || nextDeleteRoadForm || deleteRoad " ripple color="black">
                 <v-list-item-icon>
                   <v-icon v-text="item.icon" color="black" :disabled="graphic"></v-icon>
                 </v-list-item-icon>
@@ -39,68 +54,94 @@
         display: false,
         stepDisplay: true,
         edit: false,
-        items: [
-          { title: 'Add Road', icon: 'mdi-plus', action: ()=>{
-            const isZoomReq = basemapDisplayOnEditType()
-            if(isZoomReq){
-              this.infoRoad = false
-              this.editExistingRd = false;
-              this.deleteRoad = false
-              this.clearEditBtn = true
-              this.addRdBoolean = true
-              this.modifyRoad = false
-              return
+        toolSelection: null,
+        isNewEdit: false,
+        disablebtn: false,
+        itemsDropdown: [{value: 0, text:"Add a new or missing road"}, {value: 1, text: "Remove a road from the county network"}, {value: 2, text:"Change the name of an existing road"},{value: 3, text: "Extend, shorten or realign an existing road"}],
+        newedititems:[
+          {
+            title: 'New Edit', icon: 'mdi-pencil', action: async ()=>{
+              this.isNewEdit = true
+              // this.graphic = true
+              // stopEditing();
+              // this.clearEditBtn = true
+              // this.editExistingRd = true;
+              // this.nextDeleteRoadForm = false
+              // this.addRdBoolean = false;
+              // this.deleteRoad = false;
+              // this.infoRoad = false
+              // await modifyRoadbed('click', 'edit')
+              // if(this.editExistingRd === true){
+              //   this.receiveLoadStatus = false
+              //   this.modifyRoad = true
+              //   this.firstAddToMap = true
+              //   this.openStepper();
+              // }
             }
-            this.infoRoad = false
-            this.getDfoBool = true
-            this.editExistingRd = false;
-            this.deleteRoad = false
-            this.clearEditBtn = true
-            this.addRdBoolean = true
-            this.addRoad();
-            this.display=true;
-            this.modifyRoad = false
-            }
-          },
-          { title: 'Edit Road', icon: 'mdi-pencil', action: async ()=>{
-              stopEditing();
-              this.clearEditBtn = true
-              this.editExistingRd = true;
-              this.nextDeleteRoadForm = false
-              this.addRdBoolean = false;
-              this.deleteRoad = false;
-              this.infoRoad = false
-              await modifyRoadbed('click', 'edit')
-              if(this.editExistingRd === true){
-                this.receiveLoadStatus = false
-                this.modifyRoad = true
-                this.firstAddToMap = true
-                this.openStepper();
-              }
-            }
-          },
-          { title: 'Delete Road', icon: 'mdi-close-circle', action: async ()=>{
-            this.infoRoad = false
-            this.modifyRoad = false
-            this.clearEditBtn = true
-            stopEditing();
-            this.editExistingRd = false
-            this.nextDeleteRoadForm = false
-            this.addRdBoolean = false
-            this.deleteRoad = true
-  
-            await modifyRoadbed('click', 'delete')
-            if(this.deleteRoad === true){
-              this.clearEditBtn = false
-              this.receiveLoadStatus = false
-              this.editExistingRd = false
-              this.deleteRoad = false
-              this.nextDeleteRoadForm = true
-              let lastDelRd = gLayer.graphics.items.at(-1)
-              store.commit('setDeltaDis',[lastDelRd.attributes.originalLength, 'Delete'])
-            }
-          }},
+          }
         ],
+        // items: [
+        //   { title: 'Add Road', icon: 'mdi-plus', action: ()=>{
+        //     const isZoomReq = basemapDisplayOnEditType()
+        //     if(isZoomReq){
+        //       this.infoRoad = false
+        //       this.editExistingRd = false;
+        //       this.deleteRoad = false
+        //       this.clearEditBtn = true
+        //       this.addRdBoolean = true
+        //       this.modifyRoad = false
+        //       return
+        //     }
+        //     this.infoRoad = false
+        //     this.getDfoBool = true
+        //     this.editExistingRd = false;
+        //     this.deleteRoad = false
+        //     this.clearEditBtn = true
+        //     this.addRdBoolean = true
+        //     this.addRoad();
+        //     this.display=true;
+        //     this.modifyRoad = false
+        //     }
+        //   },
+        //   { title: 'Edit Road', icon: 'mdi-pencil', action: async ()=>{
+        //       stopEditing();
+        //       this.clearEditBtn = true
+        //       this.editExistingRd = true;
+        //       this.nextDeleteRoadForm = false
+        //       this.addRdBoolean = false;
+        //       this.deleteRoad = false;
+        //       this.infoRoad = false
+        //       await modifyRoadbed('click', 'edit')
+        //       if(this.editExistingRd === true){
+        //         this.receiveLoadStatus = false
+        //         this.modifyRoad = true
+        //         this.firstAddToMap = true
+        //         this.openStepper();
+        //       }
+        //     }
+        //   },
+        //   { title: 'Delete Road', icon: 'mdi-close-circle', action: async ()=>{
+        //     this.infoRoad = false
+        //     this.modifyRoad = false
+        //     this.clearEditBtn = true
+        //     stopEditing();
+        //     this.editExistingRd = false
+        //     this.nextDeleteRoadForm = false
+        //     this.addRdBoolean = false
+        //     this.deleteRoad = true
+  
+        //     await modifyRoadbed('click', 'delete')
+        //     if(this.deleteRoad === true){
+        //       this.clearEditBtn = false
+        //       this.receiveLoadStatus = false
+        //       this.editExistingRd = false
+        //       this.deleteRoad = false
+        //       this.nextDeleteRoadForm = true
+        //       let lastDelRd = gLayer.graphics.items.at(-1)
+        //       store.commit('setDeltaDis',[lastDelRd.attributes.originalLength, 'Delete'])
+        //     }
+        //   }},
+        // ],
       }
     },
     methods:{
@@ -121,6 +162,127 @@
         if(this.stepDisplay)
         this.display = this.alertStatus
       },
+      pickTool(){
+            this.isNewEdit = false
+            this.disablebtn = true
+            if (this.toolSelection === 0){
+                this.addNewRoad()
+            }
+            else if (this.toolSelection === 1){
+              this.removeRoad()
+            }
+            else if (this.toolSelection === 2){
+              this.renameRoad(true)
+            }
+            else if (this.toolSelection === 3){
+              this.editRoad()
+            }
+        },
+        addNewRoad(){
+
+        //     const isZoomReq = basemapDisplayOnEditType()
+        //     if(isZoomReq){
+        //       this.infoRoad = false
+        //       this.editExistingRd = false;
+        //       this.deleteRoad = false
+        //       this.clearEditBtn = true
+        //       this.addRdBoolean = true
+        //       this.modifyRoad = false
+        //       return
+        //     }
+        //     this.infoRoad = false
+        //     this.getDfoBool = true
+        //     this.editExistingRd = false;
+        //     this.deleteRoad = false
+        //     this.clearEditBtn = true
+        //     this.addRdBoolean = true
+        //     this.addRoad();
+        //     this.display=true;
+        //     this.modifyRoad = false
+
+
+          const isZoomReq = basemapDisplayOnEditType()
+          if(isZoomReq){
+            this.infoRoad = false
+            this.editExistingRd = false;
+            this.deleteRoad = false
+            //this.clearEditBtn = true
+            this.addRdBoolean = true
+            this.modifyRoad = false
+            return
+          }
+
+          this.infoRoad = false
+          this.getDfoBool = true
+          this.editExistingRd = false;
+          this.deleteRoad = false
+          // this.clearEditBtn = true
+          this.addRdBoolean = true
+          this.addRoad();
+          this.display=true;
+          this.modifyRoad = false
+        },
+        async removeRoad(){
+          this.infoRoad = false
+          this.modifyRoad = false
+          // this.clearEditBtn = true
+          stopEditing();
+          this.editExistingRd = false
+          this.nextDeleteRoadForm = false
+          this.addRdBoolean = false
+          this.deleteRoad = true
+
+          await modifyRoadbed('click', 'delete')
+          if(this.deleteRoad === true){
+            // this.clearEditBtn = false
+            this.receiveLoadStatus = false
+            this.editExistingRd = false
+            this.deleteRoad = false
+            this.nextDeleteRoadForm = true
+            let lastDelRd = gLayer.graphics.items.at(-1)
+            store.commit('setDeltaDis',[lastDelRd.attributes.originalLength, 'Delete'])
+          }
+        },
+        async renameRoad(isRename){
+          this.returnStep = 2
+          this.editHeaderStr = 'Select a road from the map to edit the name|Change the name of an existing road'
+          // this.editRoad()
+          stopEditing();
+          // this.clearEditBtn = true
+          this.editExistingRd = true;
+          this.nextDeleteRoadForm = false
+          this.addRdBoolean = false;
+          this.deleteRoad = false;
+          this.infoRoad = true
+          await modifyRoadbed('click', 'edit',isRename)
+          this.infoRoad = false
+          if(this.editExistingRd === true){
+            this.receiveLoadStatus = false
+            this.modifyRoad = true
+            this.firstAddToMap = true
+            this.openStepper();
+          }
+
+        },
+        async editRoad(){ 
+          this.returnStep = 1
+          this.editHeaderStr = 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road'
+          stopEditing();
+          //this.clearEditBtn = true
+          this.editExistingRd = true;
+          this.nextDeleteRoadForm = false
+          this.addRdBoolean = false;
+          this.deleteRoad = false;
+          this.infoRoad = false
+          await modifyRoadbed('click', 'edit')
+          if(this.editExistingRd === true){
+            this.receiveLoadStatus = false
+            this.modifyRoad = true
+            this.firstAddToMap = true
+            this.openStepper();
+          }
+        }
+        
     },
     watch:{ 
       addRdBoolean:{
@@ -155,14 +317,24 @@
         },
         immediate: true,
       },
-      // editExistingRd:{
-      //   handler: function(){
-      //     this.edit = this.editExistingRd
-      //   },
-      //   immediate: true,
-      // }
     },
     computed:{
+      returnStep:{
+        get(){
+          return this.$store.state.stepNumber
+        },
+        set(x){
+          this.$store.commit('setStepNumber', Number(x))
+        }
+      },
+      editHeaderStr: {
+            get(){
+                return this.$store.state.editHeaderString
+            },
+            set(str){
+                this.$store.commit('seteditHeader', str)
+            }
+        },
       getDfoBool:{
         get(){
           return this.$store.state.isDfoReturn
@@ -258,13 +430,15 @@
 <style scoped>
 #testTitle{
   position: relative;
-  background: #204E70;
+  background: #014e96;
   color:white;
-  height: 44px;
+  height: auto;
   width: 100%;
   padding-left: 0px;
   padding-bottom: 5%;
   text-align: left;
+  padding-bottom: 0;
+  padding-top: 0;
 }
 #nav{
   flex: auto;
@@ -304,8 +478,36 @@ body.select{
 }
 #navTxPos{
   position:relative; 
-  bottom:22px; 
+  /* bottom:22px;  */
   font-size: 12.2px;
+  word-break:keep-all;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+#navList{
+  /* position: fixed; 
+  top: 5%; 
+  width: 100%;
+  min-height: 45rem;
+  overflow-y: auto; */
 }
 
+#newEditPopup{
+        position: absolute;
+        top: 5rem;
+        left: 13.4rem;
+        width: 25.3vw;
+        color: #014e96;
+        /* #004180 */
+        border-radius: 0px;
+        height: auto ;
+    }
+
+
+.buttonPositioning{
+        justify-self: end;
+        padding-right: 5px;
+        margin-bottom: 5px;
+
+    }
 </style>

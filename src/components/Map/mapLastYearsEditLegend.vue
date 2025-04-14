@@ -118,7 +118,7 @@ export default {
         left: .7rem;
     }
     .editRdTitle{
-        background: #14375A;
+        background: #0056a9;
         color:white;
         height: 30px;
         text-align: left;

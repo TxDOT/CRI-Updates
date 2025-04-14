@@ -103,7 +103,7 @@ function createInfoSendToStore(newRoad){
                    '')
 }
 
-export async function modifyRoadbed(clickType, editType){
+export async function modifyRoadbed(clickType, editType, isRename){
     let promise = new Promise(function(res, rej){
       const removeModListener = view.on(clickType,(event) => {
         if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
@@ -134,7 +134,7 @@ export async function modifyRoadbed(clickType, editType){
     store.commit('setRoadGeom', feature.features[0].geometry.clone())
     view.goTo(feature.features[0].geometry)
     await queryFeatureTables(feature, true)
-    defineGraphic(feature,clickType, editType)
+    defineGraphic(feature,clickType, editType, isRename)
     return feature
 }
 
@@ -232,7 +232,10 @@ export function stopEditingPoint(){
   sketchPoint.cancel()
 }
 //show verticies along line
-export function showVerticies(x){
+export function showVerticies(x, isRename){
+  if (isRename){
+    return
+  }
   sketch.update([x], {tool:'reshape'})
 }
 //Delete a road from inside the stepper and symbology

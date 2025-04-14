@@ -19,42 +19,46 @@
       </v-icon>
     </v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forMod && !forInfo">
-      Edit Road
+      {{ this.editHeaderStr.split('|')[1] }}
       <v-icon color="white" id="addVideo" @mouseover="editHover()" @mouseleave="cancelVideo()">
         mdi-video-outline
       </v-icon>
     </v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
     <v-stepper-step
+      v-show="editHeaderStr == 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' || !forMod && !forInfo || forInfo"
       :editable="setAssetCover[0]"
       step="1"
-      color="#204E70"
+      color="#014e96"
       @click="showGIDVerts(); removeAsstPt();"
-      class="font-weight-regular; body-1;">
+      class="font-weight-regular; body-1; stepper-icon"
+      >
       Length: <strong>{{fetchLength}} Miles</strong>
     </v-stepper-step>
 
-    <v-stepper-content step="1">
+    <v-stepper-content step="1" v-show="editHeaderStr == 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' || !forMod && !forInfo || forInfo"
+    >
       <editVerts/>
       <!-- Disabled -- dictates whether fields in the stepper form are editable or not.  -->
     </v-stepper-content>
 
     <v-stepper-step 
       :editable="setAssetCover[0] === true || setAssetCover[0] === undefined ? true: setAssetCover[0]"
-      step="2"
-      color="#204E70"
+      :step=2
+      color="#014e96"
       @click="complete()"
       v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt();complete()}} : {}"
+      class=" stepper-icon"
       >
       Road Name: <strong>{{fetchRoadName.toUpperCase()}}</strong>
     </v-stepper-step>
     
-    <v-stepper-content step="2">
+    <v-stepper-content :step=2>
       <!-- Ternery statement if disabled property = true and graphic property = true then disable the v-select tag -->
       <roadName/>
     </v-stepper-content>
 
-    <!-- <v-stepper-step step="3" color="#204E70" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"  >
+    <!-- <v-stepper-step step="3" color="#014e96" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"  >
       Road Surface: <strong>{{fetchRoadSurface}}</strong>
     </v-stepper-step>
     <v-stepper-content step="3" >
@@ -62,7 +66,7 @@
     </v-stepper-content> -->
 
     <!-- <v-stepper-step
-      color="#204E70"
+      color="#014e96"
       :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]"
       step="4"
       v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('design')}} : {}"> -->
@@ -73,18 +77,18 @@
       <roadDesign/>
     </v-stepper-content> -->
 
-    <!-- <v-stepper-step color="#204E70" step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('numLane')}} : {}">
+    <!-- <v-stepper-step color="#014e96" step="5" :editable="setAssetCover[0] === null || setAssetCover[0] === undefined ? true: setAssetCover[0]" v-on="setAssetCover[0] === true ? {'click' : () =>{removeAsstPt(); complete();initLoadAsset('numLane')}} : {}">
       Number of Lanes: <strong>{{fetchNumLanes}}</strong>
     </v-stepper-step>
     <v-stepper-content step="5">
       <numOfLane/>
     </v-stepper-content> -->
       
-    <v-btn v-if="!forInfo" id="cnclBtnEdit" depressed tile text color="#204E70" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
-    <v-btn v-if="!forInfo" tile id="saveBtnEdit" depressed :disabled="!setAssetCover[0] || this.geomChecks > 0" color="#204E70" text @click="saveAttri();"><u>Save</u></v-btn>
+    <v-btn v-if="!forInfo" id="cnclBtnEdit" depressed tile text color="#014e96" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
+    <v-btn v-if="!forInfo" tile id="saveBtnEdit" depressed :disabled="!setAssetCover[0] || this.geomChecks > 0" color="#014e96" text @click="saveAttri();"><u>Save</u></v-btn>
       
     <v-btn v-if="!forInfo" depressed tile color ="#E64545" text id="discardBtnEdit" @click="discardAlertQuest = true">Discard Edit</v-btn>
-    <v-btn v-else id="cancelInfo" tile outlined text color="#204E70" @click="cancel()"><u>Cancel</u></v-btn>
+    <v-btn v-else id="cancelInfo" tile outlined text color="#014e96" @click="cancel()"><u>Cancel</u></v-btn>
 
     <a v-if="!forInfo" @click="dialog=true" id="addCommentBtn">Add An Optional Comment</a>
     <v-card elevation="0" class="overflow-y-auto" id="comment" v-if="!forInfo" v-scroll.self="onScroll" >
@@ -100,13 +104,13 @@
         <v-row no-gutters id="dialogCommentBox">
           <v-textarea v-model="comment"></v-textarea>
         </v-row>
-        <v-btn outlined tile color="#204E70" @click="dialog=false; saveComment()" id="dialogSaveBtn"><u>Save</u></v-btn>
-        <v-btn text tile color="#204E70" @click="dialog=false; cancelComment()" id="dialogCancelBtn"><u>Cancel</u></v-btn>
+        <v-btn outlined tile color="#014e96" @click="dialog=false; saveComment()" id="dialogSaveBtn"><u>Save</u></v-btn>
+        <v-btn text tile color="#014e96" @click="dialog=false; cancelComment()" id="dialogCancelBtn"><u>Cancel</u></v-btn>
       </v-card>
     </v-dialog>
   </v-stepper>
 
-  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #204E70; height: 4.8%; width: 97.1%;">
+  <v-footer v-if="steppClose && editorInfo" style="position: absolute; background: #014e96; height: 4.8%; width: 97.1%;">
     <p style="color: white; font-size: .8rem; position:relative; bottom: .4vh; left: .1rem;">Editor Name: {{editName}}</p>
     <p style="color: white; font-size: .8rem; position:absolute; top: .2vh; right: 0.6rem;">Edit Date: {{editDt}}</p>
   </v-footer>
@@ -118,8 +122,8 @@
     <v-card id="discardSketch" v-model="discardAlertQuest" elevation="10">
       <v-card-title class="cardTitle"><p id="discardTitleTxt">Confirm Discard</p></v-card-title>
       <v-card-text id="discardTxt">Are you sure you want to discard this edit?</v-card-text>
-      <v-btn id="discardYesBtn" tile outlined color="#14375A" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
-      <v-btn id="discardNoBtn" depressed tile text color="#14375A" @click="discardAlertQuest = false"><u>NO</u></v-btn>
+      <v-btn id="discardYesBtn" tile outlined color="#0056a9" @click="discardAlert=true; discardAlertQuest = false; delGraphic(); cancel()"><u>YES</u></v-btn>
+      <v-btn id="discardNoBtn" depressed tile text color="#0056a9" @click="discardAlertQuest = false"><u>NO</u></v-btn>
     </v-card>
   </v-dialog>
   <confirmAlertSuccess v-if="successAlert"/>
@@ -184,7 +188,6 @@ export default {
         geomChecks: 0,
         editName: null,
         editDt: null,
-         
         dfoRules:{
           DFO: value => !!value || 'Required',
           gather: value => {
@@ -667,6 +670,14 @@ export default {
           this.$store.commit('setIsEditType', type)
         }
       },
+      editHeaderStr: {
+            get(){
+                return this.$store.state.editHeaderString
+            },
+            set(str){
+                this.$store.commit('seteditHeader', str)
+            }
+        },
     }
 }
 </script>
@@ -685,20 +696,20 @@ export default {
 }
 #cnclBtnEdit{
   border:none;
-  bottom: 1rem;
+  bottom: .5rem;
   right:6rem;
   position: absolute;
 }
 
 #saveBtnEdit{
   border: black 1px solid;
-  bottom: 1rem;
-  right:1rem;
+  bottom: .5rem;
+  right:.5rem;
   position: absolute
 }
 #discardBtnEdit{
-  bottom: 1rem; 
-  left: 1rem; 
+  bottom: .5rem; 
+  left: .5rem; 
   position: absolute;
   z-index: 1;
 }
@@ -756,7 +767,7 @@ export default {
 #cancelInfo{
   bottom: .5rem; 
   position: absolute; 
-  right: 1rem; 
+  right: .5rem; 
   border:black 1px solid;
 }
 #discardTitleTxt{
@@ -772,7 +783,7 @@ export default {
 #stepper{
   position: fixed;
   top: 5rem;
-  left: 13.5rem;
+  left: 13.4rem;
   width: 25.3vw;
   padding-bottom: 0%;
   font-size: 16px;
@@ -793,7 +804,7 @@ export default {
 .stepHead{
   padding-top:0.5%;
   padding-left:3%;
-  background: #14375A;
+  background: #0056a9;
   color: white;
   font-size: 20px;
   height: 35px;
@@ -813,7 +824,7 @@ export default {
 }
 
 .v-stepper__step--active{
-  outline: #14375A solid 2px;
+  outline: #0056a9 solid 2px;
   background-color: rgba(32, 78, 112, .3)
 }
 .v-stepper__step{
@@ -833,7 +844,7 @@ export default {
   height:7.7rem
 }
 .confirmationTitle{
-  background: #14375A;
+  background: #0056a9;
   color:white;
   font-size: 16px;
   height: 40px;
@@ -845,7 +856,7 @@ export default {
   left: 100%;
 }
 .surfaceTitle{
-  background-color: #14375A;
+  background-color: #0056a9;
   color: white;
   height:30px;
   width: 100%;
@@ -857,7 +868,12 @@ export default {
 }
 #discardNoBtn{
   position: absolute; 
-  right:5rem;
+  right:5rem;}
+
+.stepper-icon >>> .v-stepper__step__step{
+  color: transparent;
+  background-color: transparent !important;
+
 }
 
 
