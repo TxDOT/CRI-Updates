@@ -9,7 +9,7 @@
          ></v-progress-circular>
          <v-card-actions>
            <div id="registerBannerPos">
-             <v-alert color="#004e9a" border="top" dark v-html="statusMessageFalseRegister" id="loginBannerTxt"></v-alert>
+             <v-alert color="#0056a9" border="top" dark v-html="statusMessageFalseRegister" id="loginBannerTxt"></v-alert>
            </div>
            <v-card-text id="formtext">Complete this form to create an account for reviewing and updating your county roads in the County Road Inventory Map. You will receive an
              email within 24 hours containing your username and password.
@@ -48,7 +48,7 @@
            <div class=btnblocker :style="{pointerEvents: btnBlockerPointerEvents}">
              <div class="buttonPos">
                <v-btn @click="togglepopup(); clearValues()" class="cancelButton" depressed text tile>cancel</v-btn>
-               <v-btn class="continueButton" outlined tile color="#004e9a"  @click="handlesubmit()" :disabled="formDisabled"><u>submit</u></v-btn>
+               <v-btn class="continueButton" outlined tile color="#0056a9"  @click="handlesubmit()" :disabled="formDisabled"><u>submit</u></v-btn>
              </div>
            </div>
          </v-card-actions>

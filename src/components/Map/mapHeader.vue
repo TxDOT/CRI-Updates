@@ -51,7 +51,7 @@
                     </v-btn>
             </v-card>
         </v-dialog>
-        <v-card id="showVideo" tile v-if="true">
+        <v-card id="showVideo" tile v-if="showVideo">
             <v-card-text>
                 <span style="color: white; text-align: left;">
                     Watch a short video about {{ videoStep }}.
