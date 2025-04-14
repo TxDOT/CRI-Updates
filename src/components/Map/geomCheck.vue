@@ -52,7 +52,7 @@ export default {
 
 <style scoped>
     .editRdTitle{
-        background: #14375A;
+        background: #004e9a;
         color:white;
         height: 40px;
         text-align: left;

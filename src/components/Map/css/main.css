@@ -155,7 +155,7 @@
 }
 
 .assetPosFinish {
-  border: 1px solid #204E70;
+  border: 1px solid #014e96;
   height: 70px;
   position: relative;
 }
@@ -172,7 +172,7 @@
 }
 
 .assetPosFinish .penciTxt {
-  color: #204E70;
+  color: #014e96;
   left: 14rem;
   bottom: 2.05rem;
   position: relative;
@@ -199,7 +199,7 @@
 }
 
 .addSegColor {
-  color: #204E70;
+  color: #014e96;
 }
 
 /*-- end stepper css --*/
@@ -209,7 +209,7 @@
 }
 
 .cardTitle {
-  background-color: #14375A;
+  background-color: #0056a9;
   color: white;
   height: 40px;
 }
@@ -253,3 +253,15 @@
   width:15rem;
   bottom: 2rem;
 }
+
+.editRdTitle{
+  background: #0056a9;
+  color:white;
+  height: 40px;
+  text-align: left;
+  top: 10%;
+  width: 25.3vw;
+  left: 100%;
+}
+
+

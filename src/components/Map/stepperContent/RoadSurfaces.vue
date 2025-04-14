@@ -12,11 +12,11 @@
         <v-select v-model="assetType" :items="item.types" outlined dense placeholder="Pick a Surface type"
           @change="selectAssetType"></v-select>
       </v-flex>
-      <v-btn class="cancelButton1" text tile color="#204E70"
+      <v-btn class="cancelButton1" text tile color="#014e96"
         @click="isAssetType = isAssetStart = isAssetEnd = false; isAssetFinished = true; cancelNewAsset()">
         <u>Cancel</u>
       </v-btn>
-      <v-btn class="skipButton1" tile absolute outlined color="#204E70"
+      <v-btn class="skipButton1" tile absolute outlined color="#014e96"
         @click="isAssetType = isAssetEnd = isAssetFinished = isAssetStart = false; isAssetFullLen = true;">
         <u>Skip</u>
       </v-btn>
@@ -28,22 +28,22 @@
       </v-card-title>
       <div class="divSrfcFullLen">
         <!-- if back is clicked, all card display properties will be set to false, except for isAssetType.  -->
-        <v-btn class="backButton" depressed text tile color="#204E70"
+        <v-btn class="backButton" depressed text tile color="#014e96"
           @click="isAssetFinished = isAssetStart = isAssetEnd = isAssetFullLen = false;  isAssetType= true;">
           Back
         </v-btn>
         <!-- if Cancel is clicked all card display properties will be set to false, except for isAssetFinished. and cancelNewAsset() will execute-->
-        <v-btn class="cancelButton" depressed text tile color="#204E70"
+        <v-btn class="cancelButton" depressed text tile color="#014e96"
           @click="isAssetType = isAssetStart = isAssetEnd = isAssetFullLen = false; isAssetFinished = true; cancelNewAsset()">
           <u>Cancel</u>
         </v-btn>
         <!-- if Yes is clicked all card display properties will be set to false, except for isAssetFinished. and atBegin, atEnd, updateMileInfo, updateGraphic functions will execute. -->
-        <v-btn class="yesButton" tile absolute outlined color="#204E70"
+        <v-btn class="yesButton" tile absolute outlined color="#014e96"
           @click="isAssetType = isAssetEnd = isAssetStart = isAssetFullLen = false; isAssetFinished = true; atBegin(); atEnd(); updateMileInfo(); updateGraphic();">
           <u>Yes</u>
         </v-btn>
         <!-- if No is clicked all card display properties will be set to false, except for isAssetStart. -->
-        <v-btn class="noButton" tile absolute outlined color="#204E70"
+        <v-btn class="noButton" tile absolute outlined color="#014e96"
           @click="isAssetType = isAssetEnd = isAssetFinished = isAssetFullLen = false; isAssetStart = true;">
           <u>No</u>
         </v-btn>
@@ -61,12 +61,12 @@
           @input="selectAssetDFO"></v-select>
       </v-flex>
       <!-- if Cancel is clicked all card display properties will be set to false, except for isAssetFinished. and cancelDfoLocation() and resetAsset will execute-->
-      <v-btn class="cnclBtnSrfc" text tile color="#204E70" absolute
+      <v-btn class="cnclBtnSrfc" text tile color="#014e96" absolute
         @click="isAssetType = isAssetEnd = isAssetStart = isAssetFullLen = false; isAssetFinished = true; isCanceled = true; cancelDfoLocation(); resetAsset();">
         <u>Cancel</u>
       </v-btn>
       <!-- if Back is clicked all card display properties will be set to false, except for isAssetFullLen. and cancelDfoLocation() and resetAsset will execute-->
-      <v-btn class="cancelButton1" text tile color="#204E70"
+      <v-btn class="cancelButton1" text tile color="#014e96"
         @click="isAssetStart = isAssetEnd = isAssetFinished = isAssetType = false; isAssetFullLen = true; cancelDfoLocation()">
         Back
       </v-btn>
@@ -83,12 +83,12 @@
           @input="selectAssetDFO" item-color="none" validate-on-blur></v-select>
       </v-flex>
       <!-- if Cancel is clicked all card display properties will be set to false, except for isAssetFinished. and cancelDfoLocation() and resetAsset will execute-->
-      <v-btn class="cnclBtnSrfc" text tile color="#204E70" absolute
+      <v-btn class="cnclBtnSrfc" text tile color="#014e96" absolute
         @click="isAssetType = isAssetEnd = isAssetStart = isAssetFullLen = false; isAssetFinished = true; isCanceled = true; cancelDfoLocation(); resetAsset(); ">
         <u>Cancel</u>
       </v-btn>
       <!-- if Back is clicked all card display properties will be set to false, except for isAssetStart. and cancelDfoLocation() and resetAsset will execute-->
-      <v-btn class="cancelButton1" text tile color="#204E70"
+      <v-btn class="cancelButton1" text tile color="#014e96"
         @click="isAssetEnd = isAssetFinished = isAssetType = isAssetFullLen = false; isAssetStart = true; cancelDfoLocation()">
         Back
       </v-btn>
@@ -102,7 +102,7 @@
               :style="{backgroundColor:`${assetColorTable[item.SRFC_TYPE]}`}">{{item.SRFC_TYPE}}</em> between
             {{item.ASSET_LN_BEGIN}} miles<br> and {{item.ASSET_LN_END}} miles</v-card-text>
           <!-- if user is in info mode, mdi-pencil icon, EDIT text, mdi-delete icon, add another segment and DELETE text will be hidden -->
-          <v-btn v-if="!infoRoad" text color="#204E70" class="btnPencil" @click="editAsset(index)">
+          <v-btn v-if="!infoRoad" text color="#014e96" class="btnPencil" @click="editAsset(index)">
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
           <small v-if="!infoRoad" class="penciTxt">EDIT</small>
@@ -117,9 +117,9 @@
       </v-col>
       <a v-if="!infoRoad"
         @click="isAssetFinished = isAssetFullLen = false; isAssetType = true; addRoadSurface(); isAddNew = true;" class="addSegment">
-        <v-icon color="#204E70">mdi-plus-thick</v-icon><u class="addSegColor">Add another segment</u>
+        <v-icon color="#014e96">mdi-plus-thick</v-icon><u class="addSegColor">Add another segment</u>
       </a>
-      <v-btn v-if="!infoRoad" outlined class="nextAssetBtns" tile @click="nextStep(4); initLoadAsset('design')" color="#204E70" :disabled="!setAssetCover[0]">
+      <v-btn v-if="!infoRoad" outlined class="nextAssetBtns" tile @click="nextStep(4); initLoadAsset('design')" color="#014e96" :disabled="!setAssetCover[0]">
         <u>Next Step</u>
       </v-btn>
     </v-card>

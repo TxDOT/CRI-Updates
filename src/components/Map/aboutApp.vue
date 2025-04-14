@@ -16,7 +16,7 @@
             <v-card-text class="textSymb" id="updateTextRow" v-for="(i, index) in updateList" :key=index><ul id="updateText"><li>{{updateList[index]}}</li></ul></v-card-text>
         </div>
 
-        <div id="btnPosition"><v-btn underline tile color="#14375A" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
+        <div id="btnPosition"><v-btn underline tile color="#0056a9" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
 
         <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.6.13</u></v-card-text>
 
@@ -78,7 +78,7 @@ export default {
 }
 .surfaceTitle{
   position: inherit;
-  background-color: #14375A;
+  background-color: #0056a9;
   text-align: left;
   color: white;
   top: 0%;

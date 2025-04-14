@@ -30,6 +30,7 @@ export const store = new Vuex.Store({
         delSketch: null,
         modifyRd: false,
         infoRd: false,
+        isFullEdit: false,
         executeDfoPts: '',
         roadInfoUpdate:[],
         roadGeometry: [],
@@ -77,9 +78,13 @@ export const store = new Vuex.Store({
         isOverlay: false,
         registerpopup: false,
         alerstatus: false,
-        editType: ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"]
+        editHeaderString: 'Edit Road',
+        editType: ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"],
     },
     getters:{
+        getEditHeaderString(state){
+            return state.editHeaderString
+        },
         getIsEditType(state){
             return state.editType
         },
@@ -301,6 +306,9 @@ export const store = new Vuex.Store({
     {
         setIsEditType(state, type){
             state.editType = type
+        },
+        seteditHeader(state, str){
+            state.editHeaderString = str
         },
         setIsAlert(state, bool){
             state.alerstatus = bool

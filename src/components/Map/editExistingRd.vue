@@ -4,7 +4,8 @@
         <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">
             <v-card-title class="editRdTitle" v-if="edit===true && !steppClose">
                 <v-card-text class="editActionType">
-                    Edit Road
+                    {{ this.editHeaderStr.split('|')[1] }}
+
                     <v-icon color="white" id="addVideo" @mouseover="editHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
                     </v-icon>
@@ -12,7 +13,7 @@
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="addR===true">
                 <v-card-text class="editActionType">
-                    Add Road
+                    Add a new or missing road
                     <v-icon color="white" id="addVideo" @mouseover="addHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
                     </v-icon>
@@ -20,106 +21,114 @@
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="deleteR===true">
                 <v-card-text class="editActionType">
-                    Delete Road
+                    Remove a road from the county network
                     <v-icon color="white" id="addVideo" @mouseover="deleteHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
                     </v-icon>
                 </v-card-text>
             </v-card-title>
-        <v-card-text v-if="edit===true" class="editRdInfo">
-            <v-icon color="blue" class="editRdIcon">
-                 mdi-plus
-            </v-icon>
-            Select a road from the map to begin editing
-        </v-card-text>
-        <v-card-text v-if="addR === true" class="editRdInfo">
-            <v-icon color="blue" class="editRdIcon">
-                mdi-cursor-default
-            </v-icon>
-            Click on the map to start digitizing a new road
-        </v-card-text>
-        <v-card-text v-if="deleteR === true" class="editRdInfo">
-            <v-icon color="blue" class="editRdIcon" style="transform:rotate(330deg); top:0px">
-                mdi-navigation
-            </v-icon>
-            Select a road from the map to delete it
-        </v-card-text>
-        <v-btn tile outlined depressed id="cancelBtn" v-if="edit===true || addR === true || deleteR === true" text color="#204E70" @click="cancelEditAction(); clearEditBtn=false;"><u>Cancel</u></v-btn>
-        </v-card>
-    <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style = "deleteClick ? {'height' : '11rem'} : {}"> <!-- //&& this.modifyR === false -->
-        <v-card-title class="delRdTitle">
-            Delete a Road
-            <div>
-                <v-icon color="white" id="addVideoDel" @mouseover="deleteHover()" @mouseleave="closeVideo()">
-                mdi-video-outline
+            <v-card-text v-if="edit===true" class="editRdInfo">
+                <v-icon color="blue" class="editRdIcon">
+                    mdi-plus
                 </v-icon>
+                {{ this.editHeaderStr.split('|')[0] }}
+            </v-card-text>
+            <v-card-text v-if="addR === true" class="editRdInfo">
+                <v-icon color="blue" class="editRdIcon">
+                    mdi-cursor-default
+                </v-icon>
+                Click on the map to start digitizing a new road<br>
+                <br>
+                <span style="color:#0056a9">IMPORTANT! Do not use this tool to digitize over an existing road.</span>
+            </v-card-text>
+            <v-card-text v-if="deleteR === true" class="editRdInfo">
+                <v-icon color="blue" class="editRdIcon" style="transform:rotate(330deg); top:0px">
+                    mdi-navigation
+                </v-icon>
+                Select a road from the map to delete it
+                <br>
+                <br>
+                <span style="color:#0056a9;"> IMPORTANT! Do not use this tool to remove a road then add another in the same location.  Instead, edit the existing road line.</span>
+            </v-card-text>
+            <div style=" height: 40px;">
+
+                <v-btn tile outlined depressed id="cancelBtn" v-if="edit===true || addR === true || deleteR === true" text color="#014e96" @click="cancelEditAction(); clearEditBtn=false;"><u>Cancel</u></v-btn>
             </div>
+        </v-card>
+        <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style = "deleteClick ? {'height' : '11rem'} : {}"> <!-- //&& this.modifyR === false -->
+            <v-card-title class="delRdTitle">
+                Remove a road from the county network
+                <div>
+                    <v-icon color="white" id="addVideoDel" @mouseover="deleteHover()" @mouseleave="closeVideo()">
+                    mdi-video-outline
+                    </v-icon>
+                </div>
 
-        </v-card-title>
+            </v-card-title>
+            
+            <v-card-text class="textSymb" id="bodyTxt" :style="deleteClick ? {'text-align': 'left', 'top':'35px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
+                <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> {{ delTxt }}
+            </v-card-text>
+            <v-alert color="orange" height="35" dense outlined id="infoAlert" v-if="!deleteClick" >
+                <v-icon color="orange" id="icon">
+                    mdi-information
+                </v-icon>
+                Edit may be discarded later if you change your mind
+            </v-alert>
+
+            <!-- <a v-if="!deleteClick"  id="comment">Comment</a> -->
+            <!-- <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox> -->
+            <v-row v-if="!deleteClick">
+                <v-select @change="updateComment($event)" label="Why are you deleting this road?" outlined class="rdDelSelc" v-model="delReason" dense :items="cityAnnexReason">
+                    <template v-slot:item="data">
+                        <v-tooltip right max-width="200" color="#014e96">
+                            <template slot="activator" slot-scope="{ on }" id="tooltip">
+                                <v-list-item-content>
+                                    <v-list-item-title v-html="data.item.text" v-on="on"></v-list-item-title>
+                                </v-list-item-content>
+                            </template>
+                            <span>{{data.item.tooltip}}</span>
+                        </v-tooltip>
+                    </template>
+                </v-select>
+            </v-row>
         
-        <v-card-text class="textSymb" id="bodyTxt" :style="deleteClick ? {'text-align': 'left', 'top':'35px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
-            <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> {{ delTxt }}
-        </v-card-text>
-        <v-alert color="orange" height="35" dense outlined id="infoAlert" v-if="!deleteClick" >
-            <v-icon color="orange" id="icon">
-                mdi-information
-            </v-icon>
-            Edit may be discarded later if you change your mind
-        </v-alert>
-
-         <!-- <a v-if="!deleteClick"  id="comment">Comment</a> -->
-         <!-- <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox> -->
-        <v-row v-if="!deleteClick">
-            <v-select @change="updateComment($event)" label="Why are you deleting this road?" outlined class="rdDelSelc" v-model="delReason" dense :items="cityAnnexReason">
-                <template v-slot:item="data">
-                    <v-tooltip right max-width="200" color="#204E70">
-                        <template slot="activator" slot-scope="{ on }" id="tooltip">
-                            <v-list-item-content>
-                                <v-list-item-title v-html="data.item.text" v-on="on"></v-list-item-title>
-                            </v-list-item-content>
-                        </template>
-                        <span>{{data.item.tooltip}}</span>
-                    </v-tooltip>
-                </template>
-            </v-select>
-        </v-row>
-    
-        <div id="moveRadio">
-            <v-radio-group v-model="radioBtnSel">
-            <v-radio class="radioBtn" v-if="upldCity" @click="isUpldShapefile = true; isLinkExplain = false" label="I can provide documentation (e.g. Shapefile, PDF, etc.)" value="0"></v-radio>
-                <v-card v-if="isUpldShapefile" flat class="radioResponse">
-                    <v-card-text id="dragDrop" v-if="upldCity">
-                        <div class="fileContainer">
-                            <label id="output">
-                                <form id="attachedForm">
-                                    <input type="file" name="attachment" @change="dropItem($event)"/>Upload Document
-                                </form>
-                                
-                            </label>
-                            <label>&nbsp;&nbsp;&nbsp;{{ fileName }}</label>
-                            <p v-if="upldDocSpinner === true"><v-progress-circular id="upldDocSpin" :value="10" indeterminate></v-progress-circular></p>
-                            <p v-if="isDocUpload !== null" :style="isDocUpload === true ? {'color':'green'} : {'color' : 'red'}">
-                                {{ upldDocStatus }}
-                            </p>
-                        </div>
-                    </v-card-text>
+            <div id="moveRadio">
+                <v-radio-group v-model="radioBtnSel">
+                <v-radio class="radioBtn" v-if="upldCity" @click="isUpldShapefile = true; isLinkExplain = false" label="I can provide documentation (e.g. Shapefile, PDF, etc.)" value="0"></v-radio>
+                    <v-card v-if="isUpldShapefile" flat class="radioResponse">
+                        <v-card-text id="dragDrop" v-if="upldCity">
+                            <div class="fileContainer">
+                                <label id="output">
+                                    <form id="attachedForm">
+                                        <input type="file" name="attachment" @change="dropItem($event)"/>Upload Document
+                                    </form>
+                                    
+                                </label>
+                                <label>&nbsp;&nbsp;&nbsp;{{ fileName }}</label>
+                                <p v-if="upldDocSpinner === true"><v-progress-circular id="upldDocSpin" :value="10" indeterminate></v-progress-circular></p>
+                                <p v-if="isDocUpload !== null" :style="isDocUpload === true ? {'color':'green'} : {'color' : 'red'}">
+                                    {{ upldDocStatus }}
+                                </p>
+                            </div>
+                        </v-card-text>
+                    </v-card>
+                <v-radio class="radioBtn" v-if="upldCity" @click="isLinkExplain = true; isUpldShapefile = false;" label="I have a link, or can explain" value="1"></v-radio>
+                <v-card v-if="isLinkExplain" flat class="radioResponse" id="explainTxt">
+                    <v-textarea outlined label="Please Explain" v-model="commentText">{{ commentText }}</v-textarea>
                 </v-card>
-            <v-radio class="radioBtn" v-if="upldCity" @click="isLinkExplain = true; isUpldShapefile = false;" label="I have a link, or can explain" value="1"></v-radio>
-            <v-card v-if="isLinkExplain" flat class="radioResponse" id="explainTxt">
-                <v-textarea outlined label="Please Explain" v-model="commentText">{{ commentText }}</v-textarea>
-            </v-card>
-        </v-radio-group>
-        </div>
-        <v-btn depressed text color="#14375A" @click="deleteClick ? keepDelete() : cancelDelete()" :style="deleteClick ? {'top':'.2rem', 'left':'.5rem', 'border-color':'black', 'width':'5rem'} : {'bottom':'.92rem', 'left':'55.5%', 'border-color':'black', 'width':'5rem', 'text-decoration':'underline'}"> 
-          Cancel
-        </v-btn>
-        <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#14375A" :style="deleteClick ? {'bottom':'1rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'1rem', 'left':'76%', 'border-color':'black'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : continueEdit()" class="continueBtn"> 
-          <u>Continue</u>
-        </v-btn>
-        <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#14375A" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
-          <u>Discard Edit</u>
-        </v-btn>
-    </v-card>
+            </v-radio-group>
+            </div>
+            <v-btn depressed text color="#0056a9" @click="deleteClick ? keepDelete() : cancelDelete(); enableNewEdit(); " :style="deleteClick ? {'top':'.2rem', 'left':'.5rem', 'border-color':'black', 'width':'5rem'} : {'bottom':'.4rem', 'left':'60.9%', 'border-color':'black', 'width':'5rem', 'text-decoration':'underline'}"> 
+            Cancel
+            </v-btn>
+            <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#0056a9" :style="deleteClick ? {'bottom':'.5rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'79.8%', 'border-color':'black'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : continueEdit(); enableNewEdit()" class="continueBtn"> 
+            <u>Continue</u>
+            </v-btn>
+            <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#0056a9" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
+            <u>Discard Edit</u>
+            </v-btn>
+        </v-card>
     <sketchAlert v-if="discardEdits"/>
     <confirmationAlert v-if="deleteConfirm"/>
     <editingVideo v-if="isVideo"/>
@@ -162,17 +171,22 @@ export default {
         cityAnnexReason: [{value: 0, text: "City Annexation", tooltip: "A public road that is now physically located inside the city limits due to an annexation."},
                           {value: 1, text: "Private Road", tooltip: "A private road will typically have a sign that says “No Trespassing”, “Private Property”, or “Do Not Enter”, etc. They may also be gated or locked."},
                           {value: 2, text: "Federal Road", tooltip: "A public road that is physically located within the boundaries of federal lands (e.g. military reservation, national forest, national park) and owned by a federal agency."},
-                          {value: 3, text:"Not a Road", tooltip: "No road present or road was obliterated."}, {value: 4, text: "Other", tooltip: "Please provide an explanation."}],
+                          {value: 3, text:"Not a Road", tooltip: "No road present or road was obliterated."}],
         cityAnnexResp: '',
         fileName:'',
         upldDocStatus: '',
         upldDocSpinner: false,
         restartSeq: false,
         prevComment: [],
-        initialVal: null
+        initialVal: null,
+
       }
     },
     methods:{
+        enableNewEdit(){
+            this.nextDeleteRoadForm = false
+            this.clearEditBtn = false
+        },
         editHover(){
             this.isShowVideo = true
             this.typeEdit = ["edit", "https://www.youtube.com/watch?v=qy5At3NOTpg&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5"]
@@ -188,7 +202,7 @@ export default {
             this.typeEdit = ["delete", "https://www.youtube.com/watch?v=3xTr7q4Cno4&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6"]
             return
         },
-        restartDeleteSeq(){
+        restartDeleteSeq(){//////
             this.restartSeq = true
             this.deleteSecond = true
             this.deleteClick = false
@@ -326,7 +340,7 @@ export default {
                 this.addRdBoolean = false
                 this.returnDFOValue=0
             }
-        },
+        }
     },
     watch:{
         radioBtnSel:{
@@ -450,6 +464,14 @@ export default {
         roadName:{
             get(){
                 return JSON.parse(this.$store.state.roadbedName)
+            }
+        },
+        editHeaderStr: {
+            get(){
+                return this.$store.state.editHeaderString
+            },
+            set(str){
+                this.$store.commit('seteditHeader', str)
             }
         },
         modifyRoad:{
@@ -577,7 +599,8 @@ export default {
     #addVideoDel{
         position: relative;
         float: right;
-        left: 335px;
+        /* left: 335px; */
+        margin-left: 130px;
         font-size: 1.8rem;
         z-index: 9999;
         bottom: 0px !important;
@@ -589,16 +612,19 @@ export default {
         cursor: pointer;
     }
     .editRdTitle{
-        background: #14375A;
+        background: #0056a9;
         color:white;
-        height: 40px;
+        /* max-height: auto;
+        height: 60px; */
+        /* height: 5vh; */
         text-align: left;
         top: 10%;
-        width: 25.3vw;
+        /* width: 25.3vw; */
+        width: auto;
         left: 100%;
     }
     .delRdTitle{
-        background: #14375A;
+        background: #0056a9;
         color:white;
         font-size: 16px;
         height: 40px;
@@ -611,7 +637,8 @@ export default {
     .editRdInfo{
         position: relative;
         font-size: 14px;
-        height: 60px;
+        /* height: 60px ; */
+        height: auto;
         padding-left: 35px;
         padding-top: 8px;
         text-align: left;
@@ -625,16 +652,19 @@ export default {
         padding-right: .7vw;
         padding-top: 0vh;
         text-align: justify;
-        right: 23vw;
+        /* right: 23vw; */
+        left: 5px;
     }
     #edit{
         position: absolute;
         top: 5rem;
         left: 13.4rem;
-        width: 25.3vw;
-        color: #204E70;
+        width: auto;
+        color: #014e96;
         border-radius: 0px;
-        height: 15vh;
+        /* height: 20vh; */
+        max-width: 470px;
+        height: auto;
     }
 
     /* @media only screen and (max-width: 500px){
@@ -652,12 +682,14 @@ export default {
         top:5rem;
         left: 13.4rem;
         width: 30.4rem;
-        color: #204E70;
+        color: #014e96;
         border-radius: 0px;
+
+
         }
     
     .surfaceTitle{
-        background-color: #14375A;
+        background-color: #0056a9;
         color: white;
         height:30px;
         width: 100%;
@@ -665,8 +697,8 @@ export default {
     }
 
     #cancelBtn{
-        right: 2%;
-        top: 63%;
+        right: .7%;
+        /* top: 63%; */
         position: absolute;
         border-color: black;
     }
@@ -676,7 +708,7 @@ export default {
         flex-wrap: wrap;
     }
     #infoAlert{
-        width: 91%;
+        width: 95%;
         left: 3.6%; 
         text-align: left; 
         font-size: 84%; 
@@ -741,7 +773,7 @@ export default {
     .rdDelSelc{
         position: inherit;
         padding-top: .5rem;
-        padding-right: 7.3%;
+        padding-right: 3.6%;
         padding-left : 5.8%;
         height: 3rem;
     }
@@ -762,7 +794,7 @@ export default {
         display: none;
     }
     #output{
-        border: 1.5px solid #204E70;
+        border: 1.5px solid #014e96;
         display: inline-block;
         padding: 6px 12px;
         cursor: pointer;
@@ -777,5 +809,6 @@ export default {
         position: absolute;
         padding-left: 1% !important;
         padding-right: 1% !important;
+    
     }
 </style>

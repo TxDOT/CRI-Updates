@@ -13,7 +13,7 @@
             <v-card-text id="text" v-if="this.isFmeRun[0]"><v-icon id="dragNDropTxt">mdi-upload</v-icon>{{fmeProcess}}</v-card-text>
             <v-card-text id="text" v-else><v-icon id="dragNDropTxt">mdi-upload</v-icon>{{uploadText}}</v-card-text>
             <v-progress-circular id="progress" indeterminate color="primary"></v-progress-circular>
-            <v-btn @click="closeDialog()" outlined tile color="#14375A" id="btnClose"><u>close</u></v-btn>
+            <v-btn @click="closeDialog()" outlined tile color="#004e9a" id="btnClose"><u>close</u></v-btn>
         </v-card>
         <v-alert id="fmeResp" :color="alertToggleColor()" tile v-if="serverResponse" style="color:white" :dismissible="this.isFmeRun[0] === true ? false : true">
             {{serverCheck}}
@@ -23,7 +23,7 @@
             </template>
         </v-alert><!-- update -->
 
-        <v-alert v-if="isProcessUpload" id="continueUpload" border="left" color="#14375A">
+        <v-alert v-if="isProcessUpload" id="continueUpload" border="left" color="#004e9a">
             <p id="alertTxt">You are uploading {{ this.totalCount}} records. To proceed click Continue.</p>
             <v-btn class="btn" depressed id="ctnUpldBtn" @click="isAgree"><u>Continue</u></v-btn>
             <v-btn class="btn" depressed id="cnclUpldBtn" @click="isDisagree">Cancel</v-btn>
@@ -79,7 +79,7 @@ export default {
             document.getElementById('output').style.border = '2px dashed green'
         },
         dragLeave(){
-            document.getElementById('output').style.border = '2px dashed #14375A'
+            document.getElementById('output').style.border = '2px dashed #004e9a'
         },
         drag(event){
             event.stopPropagation();
@@ -215,8 +215,8 @@ export default {
         left: 11rem;
     }
     #output{
-        border: 2px dashed #14375A;
-        color:#14375A;
+        border: 2px dashed #004e9a;
+        color:#004e9a;
         background-color: white;
         min-height: 200px;
         max-width: 27rem; 
@@ -240,7 +240,7 @@ export default {
     }
     #output:-moz-drag-over{
         border: 2px dashed green;
-        color:#14375A;
+        color:#004e9a;
         padding: 60px 0px 100px 180px;
         background-color: white;
     }
@@ -279,12 +279,12 @@ export default {
 
     #ctnUpldBtn{
         left: 12.5rem;
-        color:#14375A;
+        color:#004e9a;
     }
 
     #cnclUpldBtn{
         right: 1.3rem;
-        color:#14375A;
+        color:#004e9a;
     }
     #alertTxt{
         text-align: left;

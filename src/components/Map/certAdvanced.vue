@@ -9,7 +9,7 @@
             </v-select>
         </div>
 
-        <!-- <v-btn id="trainingBtn" :href="emailTag" tile outlined color="#14375A" @click="close()">Request Training</v-btn> -->
+        <!-- <v-btn id="trainingBtn" :href="emailTag" tile outlined color="#004e9a" @click="close()">Request Training</v-btn> -->
     </v-card> 
 </template>
 

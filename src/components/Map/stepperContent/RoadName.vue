@@ -14,7 +14,7 @@
 
         <v-select :disabled="infoRoad" persistent-placeholder dense id="prefix" outlined label="Suffix" v-model="suffixStreet" :items="prefixSuffixList" item-value="dir" style="width:83px; left: 307px; bottom: 246px; position: relative;" @change="updateGraphic()"></v-select>
 
-        <!-- <v-btn v-if="!infoRoad" outlined style="bottom:210px; left:132px; border-color: black;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#204E70" :disabled="streetName.length < 1"> 
+        <!-- <v-btn v-if="!infoRoad" outlined style="bottom:210px; left:132px; border-color: black;" tile @click="nextStep(3); initLoadAsset('surface'); error = null" color="#014e96" :disabled="streetName.length < 1"> 
           <u>Next Step</u>
         </v-btn> -->
     </v-card>

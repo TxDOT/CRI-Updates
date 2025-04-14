@@ -1,7 +1,7 @@
 <!-- map header -->
 <template>
     <div class="mapHeader flex" >
-        <v-app-bar app color="#14375A" class="white--text" id="headerPos" clipped-left>
+        <v-app-bar app color="#0056a9" class="white--text" id="headerPos" clipped-left>
             <v-app-bar-title class="h1-text" id=headerTitle>
                 <p>TxDOT County Road Inventory Map</p>
             </v-app-bar-title>
@@ -25,10 +25,10 @@
                         Click Submit to send your updates to {{ this.judgeNameSend }} for certification.
                     </p>
                     </v-card-text>
-                    <v-btn depressed tile @click="cancelSubmit = false; submitCertify = false" id="btnCloseCancelStep" text color="#14375A">
+                    <v-btn depressed tile @click="cancelSubmit = false; submitCertify = false" id="btnCloseCancelStep" text color="#0056a9">
                         Cancel
                     </v-btn>
-                    <v-btn outlined tile @click="cancelSubmit = false; submitCertifySuccess = true; submit('submit')" color="#14375A" id="btnNextStep">
+                    <v-btn outlined tile @click="cancelSubmit = false; submitCertifySuccess = true; submit('submit')" color="#0056a9" id="btnNextStep">
                         <u>Submit</u>
                     </v-btn>
                     <v-alert id="cancelSubmitAlert" color="rgba(255,153,102,.4)">
@@ -46,12 +46,12 @@
                         {{ this.judgeNameSend }} will be receiving an email confirmation of this submission, with instructions to certify the updates.
                     </p>
                     </v-card-text>
-                    <v-btn outlined tile @click="submitCertify = false; submitCertifySuccess = false" color="#14375A" text id="btnClose">
+                    <v-btn outlined tile @click="submitCertify = false; submitCertifySuccess = false" color="#0056a9" text id="btnClose">
                         <u>Close</u>
                     </v-btn>
             </v-card>
         </v-dialog>
-        <v-card id="showVideo" tile v-if="showVideo">
+        <v-card id="showVideo" tile v-if="true">
             <v-card-text>
                 <span style="color: white; text-align: left;">
                     Watch a short video about {{ videoStep }}.
@@ -179,7 +179,7 @@ export default {
 }
 #showVideo{
     position: absolute;
-    background-color: #204E70;
+    background-color: #014e96;
     width: 20rem;
     top: 4rem;
     right: calc(100vw - 99%);
@@ -189,7 +189,7 @@ export default {
 
 .surfaceTitle{
   position: relative;
-  background-color: #14375A;
+  background-color: #0056a9;
   text-align: left;
   top:0%;
   color: white;
@@ -217,7 +217,7 @@ export default {
 }
 #submitCertifyBtn{
     color:white; 
-    background-color: #207f74; 
+    background-color: #196533; 
     border: 1px solid white; 
     left: .6rem; 
     bottom: .1rem; 
