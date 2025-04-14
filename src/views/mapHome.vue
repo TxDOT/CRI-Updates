@@ -353,7 +353,7 @@ export default {
 #loginBannerTxt{
   border-radius: 0px; 
   text-align: left;
-  background-color: #14375A;
+  background-color: #0056a9;
   color: white;
   height: 40px;
 }

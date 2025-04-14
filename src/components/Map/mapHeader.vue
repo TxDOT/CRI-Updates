@@ -185,7 +185,7 @@ export default {
     position: relative;
     display: flex;
     flex-direction: row;
-    background-color: #14375A;
+    background-color: #0056a9;
     width: 100%;
     height: 100%;
     align-items: center;

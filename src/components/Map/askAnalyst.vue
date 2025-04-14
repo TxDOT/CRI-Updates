@@ -13,13 +13,13 @@
             <v-card id="askAnalystForm" v-if="askAnalystForm">
                 <v-alert color="#0056a9" border="top" dark  v-html="statusMessageAskAnalyst" id="askAnalystBanner"></v-alert>
                 <v-card-text class="askAnalystText">What's your question?</v-card-text>
-                <v-textarea v-model="questionValue"  :rules="questionRequired" no-resize outlined class="questionTextArea"  ></v-textarea>
+                <v-textarea v-model="questionValue" :rules="questionRequired" no-resize outlined class="questionTextArea"  ></v-textarea>
                 <v-card-text class="askAnalystText" >What's your full name?</v-card-text>
                 <v-text-field v-model="nameValue" :rules="nameRequired" single-line outlined dense class="smallTextField" maxlength="40"></v-text-field>
                 <v-card-text class="askAnalystText">How would you prefer to be contacted?</v-card-text>
                     <v-radio-group class="contactDiv" v-model="contactSelected" row>
-                        <v-radio class="contactCheckbox"  color="#0056a9" label="Email"  value="email"  style="padding-right: 0; margin-right: 0;" ></v-radio>
-                        <v-radio class="contactCheckbox"   color="#0056a9" label="Phone"   value="phone" style="width: 50%;" ></v-radio>
+                        <v-radio class="contactCheckbox" color="#0056a9" label="Email" value="email"  style="padding-right: 0; margin-right: 0;" ></v-radio>
+                        <v-radio class="contactCheckbox" color="#0056a9" label="Phone" value="phone" style="width: 50%;" ></v-radio>
                     </v-radio-group>
                 <v-text-field v-model="contactValue" :rules="contactRequired.concat(emailRequired).concat(phoneRequired)" @input="formatPhone()" :disabled="contactSelected == ''" outlined dense autocapitalize="off"  class="smallTextField" id="emailinput" ></v-text-field>
                 <div class="formButtonsDiv">
@@ -64,13 +64,12 @@ export default {
            questionRequired: [
             value => {
                 if(value && value.length){
-                         return true
-                     }
-                     else{
-                        this.questionValue = null
-                         return "Question is required"
- 
-                     }
+                    return true
+                }
+                else{
+                    this.questionValue = null
+                    return "Question is required"
+                }
             }
            ],
            nameRequired:[
@@ -173,21 +172,14 @@ export default {
 
             // Update the model with the formatted phone number
             this.contactValue = formattedNumber;
-        
-    },
+        },
     async submitForm(){
 
-        
         this.askAnalystForm = false
         this.isSpinner = true
-        
-
-        
+            
         let url = `https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_AskAnalystEmailer.fmw?QUESTION=${this.questionValue}&DISTRICT=${this.districtValue}&COUNTY=${this.countyValue}&CONTACT=${this.contactValue}&NAME=${this.nameValue}&USERNAME=${this.userNameValue}&opt_showresult=false&opt_servicemode=sync&token=427aff4b0d078d49d01524319b6686d83bd852f6`
         this.sendRequest(url)
-
-        
-
     },
     cancelForm(){
         this.askAnalystForm = false; 
@@ -200,22 +192,21 @@ export default {
     },
     async sendRequest(url){
         fetch(url)
-                 .then(()=>{
-                    this.thankyouPopup = true
-                    this.isSpinner = false
-                    this.questionValue = null
-        this.nameValue = null
-        this.contactValue = null
-        this.contactSelected = null
-
-                     console.log('success')
-                     })
-                 .catch((err) => {
-                     console.error('Error:', err);
-                     return;
-                 })
+            .then(()=>{
+                this.thankyouPopup = true
+                this.isSpinner = false
+                this.questionValue = null
+                this.nameValue = null
+                this.contactValue = null
+                this.contactSelected = null
+                console.log('success')
+                })
+            .catch((err) => {
+                console.error('Error:', err);
+                return;
+            })
+        }
     }
-}
 }
 
 </script>
@@ -285,7 +276,7 @@ export default {
     width: 95%;
     margin: auto !important; left: 0 !important; right: 0 !important;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
 }
 #askAnalystForm{
     top: 50px !important;
