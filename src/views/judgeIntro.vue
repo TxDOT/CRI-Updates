@@ -86,9 +86,9 @@ export default{
           We have made a few changes to the app to facilitate your updates. Now, only the alignment of each road – including its length – and the road name are required. We are no longer collecting the surface type, design (e.g. one-way/two-way), and number of lanes. This information will be collected by TxDOT when necessary. Finally, training videos have been updated to be more concise and easy to follow.<br><br>
           
           For those who need assistance, TxDOT will be hosting live WebEx video training on these dates:<br>
-          &nbsp;&nbsp;  • Thursday, June 13, 2024, 2:00 – 3:00 pm<br>
-          &nbsp;&nbsp;  • Thursday, July 18, 2024, 2:00 – 3:00 pm<br>
-          &nbsp;&nbsp;  • Thursday, August 15, 2024, 2:00 – 3:00 pm<br>
+          &nbsp;&nbsp;  • Thursday, June 12, 2025, 2:00 – 3:00 pm<br>
+          &nbsp;&nbsp;  • Thursday, July 17, 2025, 2:00 – 3:00 pm<br>
+          &nbsp;&nbsp;  • Thursday, August 14, 2025, 2:00 – 3:00 pm<br>
           To join training, click the following link: <a href="https://txdot.webex.com/join/jferrell" target="_blank">https://txdot.webex.com/join/jferrell</a><br><br>
 
           Thank you for your assistance in keeping the county road inventory up to date. If you have any questions or need clarification, please contact us by email or phone. <br>

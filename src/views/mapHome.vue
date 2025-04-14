@@ -3,7 +3,7 @@
   <div>
     <mapHeader/>
     <Map/>
-    <v-alert type="warning" v-if="overlay" tile style="position: relative; top: 3.7rem; width: fit-content; left: 50%;">Zoom in to add a road</v-alert>
+    <v-alert type="warning" v-if="overlay" tile style="position: relative; top: 0px; width: fit-content; left: 50%;">Zoom in to add a road</v-alert>
     <mapFooter/>
     <navSideBar/>
     <stepper v-if="display === true"/>
@@ -315,7 +315,7 @@ export default {
 }
 #viewDiv {
   position: absolute;
-  top: 6%;
+  top: 40px;
   /* right: 0%; */
   left:10%;
   height: 94%;

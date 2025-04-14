@@ -260,7 +260,7 @@
   position: relative;
   background: #204E70;
   color:white;
-  height: 5%;
+  height: 44px;
   width: 100%;
   padding-left: 0px;
   padding-bottom: 5%;
@@ -296,9 +296,9 @@ body.select{
 }
 
 #navSideBarPos{
-  top:3.7rem !important;
+  top:44px !important;
   /* max-height: 100%; */
-  width: 13rem !important;
+  width: 209px !important;
   /* min-width: 12rem; */
   overflow-y: auto !important;
 }
@@ -307,11 +307,5 @@ body.select{
   bottom:22px; 
   font-size: 12.2px;
 }
-#navList{
-  /* position: fixed; 
-  top: 5%; 
-  width: 100%;
-  min-height: 45rem;
-  overflow-y: auto; */
-}
+
 </style>

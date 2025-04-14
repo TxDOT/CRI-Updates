@@ -1,13 +1,21 @@
 <!-- map header -->
 <template>
-    <div class="mapHeader flex" >
-        <v-app-bar app color="#14375A" class="white--text" id="headerPos" clipped-left>
-            <v-app-bar-title class="h1-text" id=headerTitle>
+    <div style="position: relative; height: 45px; z-index: 9999">
+        <div class="flexBanner">
+            <div>
+                <span style="color: white;">TxDOT County Road Inventory Map</span>
+            </div>
+            <div style="display: flex; flex-direction: row; gap: 10px;">
+                <v-btn height="25px" tile outlined color="white" small @click="ExitDestroyLogIn()" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=byunatFVEiM&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6', 'Save and Exit')"><u>Save & Exit</u></v-btn>
+                <v-btn height="25px" tile id="submitCertifyBtn" small @click="submitStepOne();" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=7Wety51-6Os&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5', 'Submit and Certify')"><u>Submit & Certify</u></v-btn>
+            </div>
+        </div>  
+        <!-- <div app color="#14375A" class="white--text" id="headerPos" clipped-left> -->
+            <!-- <v-app-bar-title class="h1-text" id=headerTitle>
                 <p>TxDOT County Road Inventory Map</p>
-            </v-app-bar-title>
-                <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" id="saveExitBtn" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=byunatFVEiM&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6', 'Save and Exit')"><u>Save & Exit</u></v-btn>
-                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitStepOne();" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=7Wety51-6Os&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5', 'Submit and Certify')"><u>Submit & Certify</u></v-btn>
-        </v-app-bar>
+            </v-app-bar-title> -->
+                
+        <!-- </div> -->
 
         <!-- <div class="text-center">
             <v-snackbar style="bottom:50px;" v-model = snackbar timeout=-1>
@@ -173,6 +181,21 @@ export default {
 }    
 </script>
 <style scoped>
+.flexBanner{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    background-color: #14375A;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.child{
+    align-self: flex-start;
+}
 #watchBtn{
     color: white;
     border: 1px solid white;
@@ -181,7 +204,7 @@ export default {
     position: absolute;
     background-color: #204E70;
     width: 20rem;
-    top: 4rem;
+    top: 50px;
     right: calc(100vw - 99%);
     color: white;
     z-index: 9999;
@@ -200,9 +223,9 @@ export default {
   font-size: 16px;
 }
 #headerPos{
-    height:3.7rem !important;
+
     top:0%;
-    width:100%;
+    /* width:100%; */
 }
 #headerTitle{
     text-align: left; 
@@ -212,15 +235,11 @@ export default {
 }
 #saveExitBtn{
     position: relative;
-    left:.8rem;
-    bottom: .1rem
 }
 #submitCertifyBtn{
     color:white; 
     background-color: #207f74; 
     border: 1px solid white; 
-    left: .6rem; 
-    bottom: .1rem; 
     position: relative;
 }
 .submitCertifyCd{

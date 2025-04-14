@@ -204,7 +204,7 @@ export default {
   }
   #buttonPos{
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin-right: 5px;
     margin-bottom: 5px;
   }
