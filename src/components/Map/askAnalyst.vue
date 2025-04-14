@@ -232,7 +232,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 90vh;
+    min-height: 80vh;
     width: 100%;
     flex-direction: column;
 
