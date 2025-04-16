@@ -20,14 +20,14 @@
       
       <v-card-actions>
         <div id="loginBannerPos" v-if="certify===false">
-          <v-alert color="#14375A" border="top" dark v-html="statusMessageFalse" id="loginBannerTxt"></v-alert>
+          <v-alert color="#0056a9" border="top" dark v-html="statusMessageFalse" id="loginBannerTxt"></v-alert>
         </div>
         <div id="loginTxt" class="black--text mb-3">
           <v-card-text style="color:black;" v-html="disagreeTxt">
           </v-card-text>
         </div>
           <div id="loginBtnPos">
-            <v-btn id="loginButton" outlined tile @click="disagree = false ; logMeIn();" color="#14375A">
+            <v-btn id="loginButton" outlined tile @click="disagree = false ; logMeIn();" color="#0056a9">
               <u>Login</u>
             </v-btn>
           </div>

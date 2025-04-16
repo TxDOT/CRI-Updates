@@ -28,10 +28,10 @@
         Whether you're a seasoned editor or this is your first time here, let us give you a tour of some of the features of this application
       </v-card-text>
       <div>
-        <v-btn color="#14375A" text tile id="tourBtn" @click="isTour = true; isTourCard = false;">Take a Tour</v-btn>
+        <v-btn color="#0056a9" text tile id="tourBtn" @click="isTour = true; isTourCard = false;">Take a Tour</v-btn>
       </div>
       <div id="isTour">
-        <v-btn style="float: right; margin-right: 15px; margin-bottom: 15px;" color="#14375A" text tile @click="isTourCard=false">Exit</v-btn>
+        <v-btn style="float: right; margin-right: 15px; margin-bottom: 15px;" color="#0056a9" text tile @click="isTourCard=false">Exit</v-btn>
         <v-checkbox dense v-model="isNoTour" @change="updateLocalStorage" label="Don't show me this again." style="margin-left: 15px;" class="checkboxSize"></v-checkbox>
       </div>
     </v-card>
@@ -353,7 +353,7 @@ export default {
 #loginBannerTxt{
   border-radius: 0px; 
   text-align: left;
-  background-color: #14375A;
+  background-color: #0056a9;
   color: white;
   height: 40px;
 }

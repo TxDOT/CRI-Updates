@@ -3,7 +3,10 @@
     <v-container>
         <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">
             <v-card-title class="editRdTitle" v-if="edit===true && !steppClose">
-                <v-card-text class="editActionType">
+                <v-card-text class="editActionType" style="        
+                font-size: 16px !important;
+                height: 40px;
+                text-align: left;" >
                     {{ this.editHeaderStr.split('|')[1] }}
 
                     <v-icon color="white" id="addVideo" @mouseover="editHover()" @mouseleave="closeVideo()">
@@ -12,7 +15,10 @@
                 </v-card-text>
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="addR===true">
-                <v-card-text class="editActionType">
+                <v-card-text class="editActionType" style="        
+                font-size: 16px !important;
+                height: 40px;
+                text-align: left;">
                     Add a new or missing road
                     <v-icon color="white" id="addVideo" @mouseover="addHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
@@ -20,7 +26,10 @@
                 </v-card-text>
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="deleteR===true">
-                <v-card-text class="editActionType">
+                <v-card-text class="editActionType" style="        
+                font-size: 16px !important;
+                height: 40px;
+                text-align: left;">
                     Remove a road from the county network
                     <v-icon color="white" id="addVideo" @mouseover="deleteHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
@@ -45,7 +54,7 @@
                 <v-icon color="blue" class="editRdIcon" style="transform:rotate(330deg); top:0px">
                     mdi-navigation
                 </v-icon>
-                Select a road from the map to delete it
+                Select a road from the map to remove it
                 <br>
                 <br>
                 <span style="color:#0056a9;"> IMPORTANT! Do not use this tool to remove a road then add another in the same location.  Instead, edit the existing road line.</span>
@@ -56,7 +65,7 @@
             </div>
         </v-card>
         <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style = "deleteClick ? {'height' : '11rem'} : {}"> <!-- //&& this.modifyR === false -->
-            <v-card-title class="delRdTitle">
+            <v-card-title class="delRdTitle" >
                 Remove a road from the county network
                 <div>
                     <v-icon color="white" id="addVideoDel" @mouseover="deleteHover()" @mouseleave="closeVideo()">
@@ -79,7 +88,7 @@
             <!-- <a v-if="!deleteClick"  id="comment">Comment</a> -->
             <!-- <v-checkbox class="textSymb" v-if="!deleteClick" id="checkbox" :label="'Is this deletion the result of a city annexation?'" color="black" @click="comment=true"></v-checkbox> -->
             <v-row v-if="!deleteClick">
-                <v-select @change="updateComment($event)" label="Why are you deleting this road?" outlined class="rdDelSelc" v-model="delReason" dense :items="cityAnnexReason">
+                <v-select @change="updateComment($event)" label="Why are you removing this road?" outlined class="rdDelSelc" v-model="delReason" dense :items="cityAnnexReason">
                     <template v-slot:item="data">
                         <v-tooltip right max-width="200" color="#014e96">
                             <template slot="activator" slot-scope="{ on }" id="tooltip">
@@ -122,7 +131,7 @@
             <v-btn depressed text color="#0056a9" @click="deleteClick ? keepDelete() : cancelDelete(); enableNewEdit(); " :style="deleteClick ? {'top':'.2rem', 'left':'.5rem', 'border-color':'black', 'width':'5rem'} : {'bottom':'.4rem', 'left':'60.9%', 'border-color':'black', 'width':'5rem', 'text-decoration':'underline'}"> 
             Cancel
             </v-btn>
-            <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#0056a9" :style="deleteClick ? {'bottom':'.5rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'79.8%', 'border-color':'black'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : continueEdit(); enableNewEdit()" class="continueBtn"> 
+            <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#0056a9" :style="deleteClick ? {'bottom':'.9rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'79.8%', 'border-color':'black'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : continueEdit(); enableNewEdit()" class="continueBtn"> 
             <u>Continue</u>
             </v-btn>
             <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#0056a9" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
@@ -405,10 +414,10 @@ export default {
         deleteClick:{
             handler: function(){
                 if(this.deleteClick){
-                    this.delTxt = 'is marked for deletion.'
+                    this.delTxt = 'is marked for removal.'
                     return;
                 }
-                this.delTxt = 'will be deleted.'
+                this.delTxt = 'will be removed.'
             },  
             immediate: true 
         },
@@ -600,7 +609,7 @@ export default {
         position: relative;
         float: right;
         /* left: 335px; */
-        margin-left: 130px;
+        margin-left: 115px;
         font-size: 1.8rem;
         z-index: 9999;
         bottom: 0px !important;
@@ -633,6 +642,7 @@ export default {
         top: 10%;
         width: 100%;
         left: 100%;
+        font-weight: 400;
     }
     .editRdInfo{
         position: relative;
@@ -640,7 +650,8 @@ export default {
         /* height: 60px ; */
         height: auto;
         padding-left: 35px;
-        padding-top: 8px;
+        padding-top: 9.7px;
+        left: 4px;
         text-align: left;
         top: 0px;
         width: 100%;
@@ -677,11 +688,12 @@ export default {
         position: fixed;
         display: flex;
         flex-direction: column;
+        height: auto;
         min-height: 0rem;
-        max-height: 34rem;
+        max-height:34rem;
         top:5rem;
         left: 13.4rem;
-        width: 30.4rem;
+        width: 29.4rem;
         color: #014e96;
         border-radius: 0px;
 

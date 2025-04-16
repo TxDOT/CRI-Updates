@@ -11,7 +11,7 @@
                 <v-card-text class="editType">Edit Road</v-card-text>
             </div>
             <div id="delete">
-                <v-card-text class="editType">Delete Road</v-card-text>
+                <v-card-text class="editType">Remove Road</v-card-text>
             </div>
         </v-card>
 

@@ -74,7 +74,7 @@
         <v-btn v-if="!infoRoad" text color="#014e96" class="btnPencil" @click="editAsset(index)"><v-icon>mdi-pencil</v-icon></v-btn>
         <small v-if="!infoRoad" class="penciTxt">EDIT</small>
         <v-btn v-if="!infoRoad" text class="btnDelete" @click="deleteSurface(index);updateMileInfo();updateGraphic();cancelDfoLocation();" :disabled="mileInfo.length === 1"><v-icon color="red" >mdi-delete</v-icon></v-btn>
-        <small v-if="!infoRoad" class="deleteTxt" :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">DELETE</small>
+        <small v-if="!infoRoad" class="deleteTxt" :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">REMOVE</small>
       </v-row>
       <v-spacer></v-spacer>
     </v-col>

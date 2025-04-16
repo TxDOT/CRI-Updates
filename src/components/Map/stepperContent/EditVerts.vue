@@ -3,8 +3,8 @@
     <v-card>
         <v-card-text style="color:black; text-align: left; position: relative; right:1rem;" v-if="!info">Click and drag vertices to edit the shape of the road.</v-card-text>
         <v-card-text style="color:black; text-align: left; position: relative; right:1rem;" v-else>Click Edit Road to make changes.</v-card-text>
-        <v-btn style="top:0px; left:3rem;" depressed @click="deleteRoad()" text color="#014e96" v-if="!info && modifyRoad"> 
-          <v-icon color="black" medium style="right:5px">mdi-trash-can</v-icon><u>Delete Road</u>
+        <v-btn style="top:0px; left:2rem;" depressed @click="deleteRoad()" text color="#014e96" v-if="!info && modifyRoad"> 
+          <v-icon color="black" medium style="right:5px">mdi-trash-can</v-icon><u>Remove Road</u>
         </v-btn>
         <v-btn outlined tile color="#014e96" v-on="!info ? {'click' : () =>{nextStep(2)}} : {'click' : () =>{beginEdit()}}" :style="!info && modifyRoad ? [isPopupF] : [isPopupT]"> 
           <u v-if="info" @click="headerString = 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road'" >{{editStep}}</u>
@@ -24,8 +24,8 @@ export default {
         advanceStep: 'Next Step',
         editStep: 'Edit Road',
         info: false,
-        isPopupT: {'top':'0rem', 'left':'8.8rem', 'border':'black 1px solid', 'position': 'relative'},
-        isPopupF: {'top':'0rem', 'left':'3.8rem', 'border':'black 1px solid', 'position': 'relative'}
+        isPopupT: {'top':'0rem', 'left':'7.8rem', 'border':'black 1px solid', 'position': 'relative'},
+        isPopupF: {'top':'0rem', 'left':'2.8rem', 'border':'black 1px solid', 'position': 'relative'}
 
       }
     },

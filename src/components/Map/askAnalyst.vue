@@ -17,9 +17,9 @@
                 <v-card-text class="askAnalystText" >What's your full name?</v-card-text>
                 <v-text-field v-model="nameValue" :rules="nameRequired" single-line outlined dense class="smallTextField" maxlength="40"></v-text-field>
                 <v-card-text class="askAnalystText">How would you prefer to be contacted?</v-card-text>
-                    <v-radio-group class="contactDiv" v-model="contactSelected" row>
-                        <v-radio class="contactCheckbox"  color="#0056a9" label="Email"  value="email"  style="padding-right: 0; margin-right: 0;" ></v-radio>
-                        <v-radio class="contactCheckbox"   color="#0056a9" label="Phone"   value="phone" style="width: 50%;" ></v-radio>
+                    <v-radio-group class="contactDiv" v-model="contactSelected" row >
+                        <v-radio class="contactCheckbox"  color="#0056a9" label="Email"  value="email"  style="padding-right: 0; margin-right: 0;"  ></v-radio>
+                        <v-radio class="contactCheckbox"   color="#0056a9" label="Phone"   value="phone" style="width: 50%;"  ></v-radio>
                     </v-radio-group>
                 <v-text-field v-model="contactValue" :rules="contactRequired.concat(emailRequired).concat(phoneRequired)" @input="formatPhone()" :disabled="contactSelected == ''" outlined dense autocapitalize="off"  class="smallTextField" id="emailinput" ></v-text-field>
                 <div class="formButtonsDiv">
@@ -157,6 +157,14 @@ export default {
         this.statusMessageAskAnalyst = "Ask a Question"
         this.statusMessageThankYou = "Thank you"
     },
+    watch: {
+        contactSelected:{
+            handler: function(){
+                this.contactValue = null
+            },
+            immediate: true,
+        },
+    },
     methods:{
         formatPhone(){
             if (this.contactSelected != "phone"){
@@ -232,7 +240,8 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    /* min-height: 100vh; */
+    min-height: calc(80vh - 90px);
     width: 100%;
     flex-direction: column;
 
