@@ -61,6 +61,9 @@ export const criConstants = {
     },
 
     txdotSchema: ['EDIT_TYPE', 'ROAD_PRFX', 'ROAD_SFX', 'ROAD_TYPE', 'ROAD_NM'],
-    txdotRequired: ['EDIT_TYPE', 'ROAD_TYPE', 'ROAD_NM']
+    txdotRequired: ['EDIT_TYPE', 'ROAD_TYPE', 'ROAD_NM'],
+
+    criEmailDevUrl : ["https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_Email_DEV.fmw", "194304fd775dd2fa9e3ca67a6fba5e6ee0ae2eca"],
+    criEmailProdUrl : ["https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_Email.fmw", "c30491278adc9df2ad8cd577a27d433345d266ff"]
   }
 
