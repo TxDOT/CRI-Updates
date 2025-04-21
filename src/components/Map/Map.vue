@@ -114,8 +114,10 @@ export default {
     }
     .esri-scale-bar.esri-widget{
         position: relative;
-        top:93.5%;
+        top:93%;
         /* left: 2%; */
-        left:4vw;
+        /* left:4vw; */
+        /* left: calc(0vh + 20px); */
+        left: 100px;
     }
 </style>

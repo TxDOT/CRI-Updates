@@ -12,21 +12,31 @@
     min-width="0"
     :height="imageHeight"
     >
-    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo">
+    <v-stepper-header class="stepHead" v-if="!forMod && !forInfo" style="        
+                font-size: 16px !important;
+                height: 40px;
+                text-align: left;
+                padding-top: 9.7px;
+                left: 4px;">
       Add a new Road
       <v-icon color="white" id="addVideo" @mouseover="addHover()" @mouseleave="cancelVideo()">
         mdi-video-outline
       </v-icon>
     </v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forMod && !forInfo">
-      {{ this.editHeaderStr.split('|')[1] }}
+    <v-stepper-header class="stepHead" v-if="forMod && !forInfo" style="        
+                font-size: 16px !important;
+                height: 40px;
+                text-align: left;
+                padding-top: 9.7px;
+                left: 4px;">
+      {{ editHeaderStr === 'Edit Road' ? editHeaderStr : editHeaderStr.split('|')[1] }}
       <v-icon color="white" id="addVideo" @mouseover="editHover()" @mouseleave="cancelVideo()">
         mdi-video-outline
       </v-icon>
     </v-stepper-header>
     <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
     <v-stepper-step
-      v-show="editHeaderStr == 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' || !forMod && !forInfo || forInfo"
+      v-show="editHeaderStr == 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' || !forMod && !forInfo || forInfo || editHeaderStr == 'Edit Road' "
       :editable="setAssetCover[0]"
       step="1"
       color="#014e96"
@@ -36,7 +46,7 @@
       Length: <strong>{{fetchLength}} Miles</strong>
     </v-stepper-step>
 
-    <v-stepper-content step="1" v-show="editHeaderStr == 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' || !forMod && !forInfo || forInfo"
+    <v-stepper-content step="1" v-show="editHeaderStr == 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' || !forMod && !forInfo || forInfo || editHeaderStr == 'Edit Road'"
     >
       <editVerts/>
       <!-- Disabled -- dictates whether fields in the stepper form are editable or not.  -->
@@ -188,6 +198,7 @@ export default {
         geomChecks: 0,
         editName: null,
         editDt: null,
+        editClicked: false,
         dfoRules:{
           DFO: value => !!value || 'Required',
           gather: value => {
@@ -275,6 +286,19 @@ export default {
             }
         },
       immediate: true
+      },
+      forInfo: {
+        handler: function(){
+          // if (this.forInfo === true && this.editHeaderStr === 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' || this.editHeaderStr === 'Select a road from the map to edit the name|Change the name of an existing road'){
+          //   if (this.forMod === true &&  this.editHeaderStr != 'Select a road from the map to begin editing|Change the name of an existing road' ){
+          //     console.log("true")
+          //  // this.editClicked = true
+                      
+          //   this.editHeaderStr = 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' 
+          // }
+        },
+        immediate: true
+
       },
       // rdbdSurf: {
       //   handler: function(){
@@ -687,6 +711,7 @@ export default {
   float: right;
   margin-right: 15px;
   font-size: 1.8rem;
+  bottom: 5px !important;
 }
 #addVideo:hover{
   cursor: pointer;
@@ -716,7 +741,8 @@ export default {
 #addCommentBtn{
   position: absolute;
   left: 1rem;
-  bottom: 11rem; 
+  /* bottom: 11rem;  */
+  top: calc(0vh + 60%);
   z-index:1
 }
 #comment{
@@ -849,7 +875,8 @@ export default {
   font-size: 16px;
   height: 40px;
   padding-left: 15px;
-  padding-top: 1%;
+  padding-top: 9.7px;
+  left: 4px;
   text-align: left;
   top: 10%;
   width: 100%;

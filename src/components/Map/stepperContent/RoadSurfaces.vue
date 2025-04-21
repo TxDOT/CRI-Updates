@@ -111,7 +111,7 @@
             <v-icon color="red">mdi-delete</v-icon>
           </v-btn>
           <small v-if="!infoRoad" class="deleteTxt"
-            :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">DELETE</small>
+            :style="[mileInfo.length === 1 ? {'color':'grey'} : {'color':'red'}]">REMOVE</small>
         </v-row>
         <v-spacer></v-spacer>
       </v-col>

@@ -3,7 +3,10 @@
     <v-container style="height:100%; min-width: 50%;">
       <v-card id="newEditPopup" v-if="isNewEdit" >
             <v-card-title class="editRdTitle">
-                <v-card-text class="editActionType">
+                <v-card-text class="editActionType" style="        
+                font-size: 16px !important;
+                height: 40px;
+                text-align: left;">
                     What would you like to do?
                 </v-card-text>
                 
@@ -20,7 +23,7 @@
         <v-card-title id="testTitle"><v-card-text id="navTxPos">To begin editing, select a road from the map or click New Edit below.</v-card-text></v-card-title>
           <v-list id="navList"> 
             <v-list-item-group id="tester" v-model="clearEditBtn" color="#15648C" active-class="border">
-              <v-list-item v-for="(item,i) in newedititems" :key="i" @click="item.action" :disabled="isNewEdit || addRdBoolean || editExistingRd || nextDeleteRoadForm || deleteRoad " ripple color="black">
+              <v-list-item v-for="(item,i) in newedititems" :key="i" @click="item.action" :disabled="isNewEdit || addRdBoolean || editExistingRd || nextDeleteRoadForm || deleteRoad || graphic " ripple color="black">
                 <v-list-item-icon>
                   <v-icon v-text="item.icon" color="black" :disabled="graphic"></v-icon>
                 </v-list-item-icon>
@@ -317,6 +320,14 @@
         },
         immediate: true,
       },
+      isNewEdit: {
+        handler: function(){
+          if (this.isNewEdit === false) { 
+            this.toolSelection = null
+          }
+        },
+        immediate: true
+      }
     },
     computed:{
       returnStep:{
@@ -501,6 +512,7 @@ body.select{
         /* #004180 */
         border-radius: 0px;
         height: auto ;
+        box-shadow:  0 0 6px rgba(0,0,0,0.3);
     }
 
 
