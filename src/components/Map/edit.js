@@ -502,6 +502,9 @@ function setUpGraphic(){
             let oldLength = Number(geometryEngine.geodesicLength(result.graphic.geometry, "miles").toFixed(3))
             store.commit('setRoadGeom', result.graphic.geometry)
             store.commit('setOldLength',oldLength)
+            if (store.getters.getPreventClick === true){
+              return
+            }
             sketch.update([result.graphic], {tool:"reshape"});
           }
         }

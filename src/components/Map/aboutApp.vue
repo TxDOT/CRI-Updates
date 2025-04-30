@@ -30,7 +30,7 @@ export default {
     name: 'about',
     data (){
       return {
-        updateList:["Added chat feature", "Updated editing tools", "Updated short training videos", "Updated map colors to new TxDOT blue"]
+        updateList:["Added Ask a Question feature", "Updated editing tools", "Updated short training videos", "Updated map colors to new TxDOT blue"]
       }
     },
     methods:{

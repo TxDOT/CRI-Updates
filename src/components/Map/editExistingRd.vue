@@ -3,11 +3,8 @@
     <v-container>
         <v-card id="edit"  v-if="edit===true || addR===true || deleteR===true">
             <v-card-title class="editRdTitle" v-if="edit===true && !steppClose">
-                <v-card-text class="editActionType" style="        
-                font-size: 16px !important;
-                height: 40px;
-                text-align: left;" >
-                    {{ this.editHeaderStr.split('|')[1] }}
+                <v-card-text class="editActionType"  >
+                    {{  editHeaderStr === 'Edit Road' ? editHeaderStr : editHeaderStr.split('|')[1] }}
 
                     <v-icon color="white" id="addVideo" @mouseover="editHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
@@ -15,10 +12,7 @@
                 </v-card-text>
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="addR===true">
-                <v-card-text class="editActionType" style="        
-                font-size: 16px !important;
-                height: 40px;
-                text-align: left;">
+                <v-card-text class="editActionType" >
                     Add a new or missing road
                     <v-icon color="white" id="addVideo" @mouseover="addHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
@@ -26,10 +20,7 @@
                 </v-card-text>
             </v-card-title>
             <v-card-title class="editRdTitle" v-if="deleteR===true">
-                <v-card-text class="editActionType" style="        
-                font-size: 16px !important;
-                height: 40px;
-                text-align: left;">
+                <v-card-text class="editActionType" >
                     Remove a road from the county network
                     <v-icon color="white" id="addVideo" @mouseover="deleteHover()" @mouseleave="closeVideo()">
                         mdi-video-outline
@@ -65,13 +56,16 @@
             </div>
         </v-card>
         <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style = "deleteClick ? {'height' : '11rem'} : {}"> <!-- //&& this.modifyR === false -->
-            <v-card-title class="delRdTitle" >
-                Remove a road from the county network
+            <v-card-title class="editRdTitle" >
+                <v-card-text class="editActionType">
+                    Remove a road from the county network
                 <div>
                     <v-icon color="white" id="addVideoDel" @mouseover="deleteHover()" @mouseleave="closeVideo()">
                     mdi-video-outline
                     </v-icon>
                 </div>
+                </v-card-text>
+               
 
             </v-card-title>
             
@@ -609,10 +603,10 @@ export default {
         position: relative;
         float: right;
         /* left: 335px; */
-        margin-left: 115px;
+        right: -35px;
         font-size: 1.8rem;
         z-index: 9999;
-        bottom: 0px !important;
+        bottom: 27px !important;
     }
     #addVideo:hover{
         cursor: pointer;
@@ -623,14 +617,18 @@ export default {
     .editRdTitle{
         background: #0056a9;
         color:white;
+        text-align: left;
+        /* top: 10%; */
+        font-size: 16px !important;
+        width: auto;
+        left: 100%;
+        box-shadow:  0 0 6px rgba(0,0,0,0.3);
+
+        /* width: 25.3vw; */
         /* max-height: auto;
         height: 60px; */
         /* height: 5vh; */
-        text-align: left;
-        top: 10%;
-        /* width: 25.3vw; */
-        width: auto;
-        left: 100%;
+        
     }
     .delRdTitle{
         background: #0056a9;
@@ -642,7 +640,14 @@ export default {
         top: 10%;
         width: 100%;
         left: 100%;
-        font-weight: 400;
+        /* font-weight: 400; */
+    }
+    .editActionDelete{
+        text-align: left;
+        font-size: 16px !important;
+        left: 100%;
+        padding-top: 1%;
+
     }
     .editRdInfo{
         position: relative;
@@ -671,6 +676,7 @@ export default {
         top: 5rem;
         left: 13.4rem;
         width: auto;
+        min-width: 486px;
         color: #014e96;
         border-radius: 0px;
         /* height: 20vh; */
@@ -693,7 +699,8 @@ export default {
         max-height:34rem;
         top:5rem;
         left: 13.4rem;
-        width: 29.4rem;
+        width: auto;
+        min-width: 486px;
         color: #014e96;
         border-radius: 0px;
 
@@ -710,6 +717,7 @@ export default {
 
     #cancelBtn{
         right: .7%;
+        margin-right: 2px;
         /* top: 63%; */
         position: absolute;
         border-color: black;

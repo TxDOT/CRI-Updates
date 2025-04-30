@@ -2,11 +2,12 @@
 <template>
     <v-container style="height:100%; min-width: 50%;">
       <v-card id="newEditPopup" v-if="isNewEdit" >
-            <v-card-title class="editRdTitle">
+            <v-card-title class="editRdTitle" style="box-shadow:  0 0 6px rgba(0,0,0,0.3);">
                 <v-card-text class="editActionType" style="        
                 font-size: 16px !important;
                 height: 40px;
-                text-align: left;">
+                text-align: left;
+                ">
                     What would you like to do?
                 </v-card-text>
                 
@@ -41,7 +42,7 @@
 </template>
 <script>
   import { addRoadbed, modifyRoadbed, stopEditing} from "./Map/edit"
-  import {search} from './Map/map.js'
+  import {search, sketch} from './Map/map.js'
   import mapTools from "../components/Map/mapTools.vue"
   import aboutHelp from "../components/Map/resources.vue"
   import {gLayer} from './Map/map'
@@ -324,12 +325,39 @@
         handler: function(){
           if (this.isNewEdit === false) { 
             this.toolSelection = null
+            this.$store.commit('setpreventClick', false)
+            sketch.updateOnGraphicClick = true
+
+
+
+          }
+          else{
+            this.$store.commit('setpreventClick', true)
+            sketch.updateOnGraphicClick = false
+          }
+        },
+        immediate: true
+      },
+      graphic: {
+        handler: function() {
+          if ((this.graphic === true && this.editExistingRd === null )&& (this.editHeaderStr === 'Select a road from the map to edit the name|Change the name of an existing road' || this.editHeaderStr === "Edit Road")){
+            this.editHeaderStr = "Select a road from the map to begin editing|Extend, shorten, or realign an existing road"
+            this.returnStep = 1
           }
         },
         immediate: true
       }
     },
     computed:{
+      preventClick: {
+        get(){
+          return this.$store.state.preventClick
+        },
+        set(bool){
+          this.$store.commit('setpreventClick', bool )
+
+        }
+      },
       returnStep:{
         get(){
           return this.$store.state.stepNumber
