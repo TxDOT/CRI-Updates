@@ -24,7 +24,7 @@ export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
 
 export const criUtils = new FeatureLayer({
-    url: criConstants.criUtils
+    url: criConstants.criUtils,
 })
 
 
@@ -301,6 +301,7 @@ export const sketch = new SketchViewModel({
     view: view,
     layer: gLayer,
     updateOnGraphicClick: true,
+
     defaultCreateOptions:{
         mode:"click",
         hasZ: false

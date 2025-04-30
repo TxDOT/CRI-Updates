@@ -226,6 +226,7 @@ export default {
     right: 15px;
     /* bottom: 200px; */
     bottom: 50px;
+    z-index: 3;
 }
 .askAnalystDiv{
     display: flex;

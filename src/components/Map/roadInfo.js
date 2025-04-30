@@ -28,9 +28,16 @@ export async function popUpData(res){
 }
 
 //populates stepper form when graphic is clicked.
-export async function getGraphic(){
+export async function getGraphic(){  
+  // const var1 = true
+  // if (var1){
+  //   return
+  // }
     let getGraphPromise = new Promise(function(resp){
       view.on("click", function(event){
+        if (store.getters.getPreventClick === true){
+          return
+        }
         let option = {include: [clientSideGeoJson, gLayer]}
         // if (sketch.state === "active") {
         //   console.log('return?')

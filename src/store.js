@@ -80,8 +80,12 @@ export const store = new Vuex.Store({
         alerstatus: false,
         editHeaderString: 'Edit Road',
         editType: ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"],
+        preventClick: false
     },
     getters:{
+        getPreventClick(state){
+            return state.preventClick
+        },
         getEditHeaderString(state){
             return state.editHeaderString
         },
@@ -304,6 +308,9 @@ export const store = new Vuex.Store({
     },
     mutations:
     {
+        setpreventClick(state, bool){
+            state.preventClick = bool
+        },
         setIsEditType(state, type){
             state.editType = type
         },

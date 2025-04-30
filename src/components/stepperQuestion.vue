@@ -17,8 +17,8 @@
                 height: 40px;
                 text-align: left;
                 padding-top: 9.7px;
-                left: 4px;">
-      Add a new Road
+                left: 5px;">
+      Add a new road
       <v-icon color="white" id="addVideo" @mouseover="addHover()" @mouseleave="cancelVideo()">
         mdi-video-outline
       </v-icon>
@@ -28,13 +28,19 @@
                 height: 40px;
                 text-align: left;
                 padding-top: 9.7px;
-                left: 4px;">
+                left: 4px;
+                letter-spacing: .12px;">
       {{ editHeaderStr === 'Edit Road' ? editHeaderStr : editHeaderStr.split('|')[1] }}
       <v-icon color="white" id="addVideo" @mouseover="editHover()" @mouseleave="cancelVideo()">
         mdi-video-outline
       </v-icon>
     </v-stepper-header>
-    <v-stepper-header class="stepHead" v-if="forInfo">Road Information</v-stepper-header>
+    <v-stepper-header class="stepHead" v-if="forInfo" style="        
+                font-size: 16px !important;
+                height: 40px;
+                text-align: left;
+                padding-top: 9.7px;
+                left: 4px;">Road Information</v-stepper-header>
     <v-stepper-step
       v-show="editHeaderStr == 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' || !forMod && !forInfo || forInfo || editHeaderStr == 'Edit Road' "
       :editable="setAssetCover[0]"
@@ -287,19 +293,7 @@ export default {
         },
       immediate: true
       },
-      forInfo: {
-        handler: function(){
-          // if (this.forInfo === true && this.editHeaderStr === 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' || this.editHeaderStr === 'Select a road from the map to edit the name|Change the name of an existing road'){
-          //   if (this.forMod === true &&  this.editHeaderStr != 'Select a road from the map to begin editing|Change the name of an existing road' ){
-          //     console.log("true")
-          //  // this.editClicked = true
-                      
-          //   this.editHeaderStr = 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road' 
-          // }
-        },
-        immediate: true
-
-      },
+      
       // rdbdSurf: {
       //   handler: function(){
       //     if(!this.rdbdSurf) return
@@ -709,9 +703,9 @@ export default {
 #addVideo{
   position: relative;
   float: right;
-  margin-right: 15px;
+  margin-right: 13px;
   font-size: 1.8rem;
-  bottom: 5px !important;
+  bottom: 4px !important;
 }
 #addVideo:hover{
   cursor: pointer;
@@ -797,8 +791,13 @@ export default {
   border:black 1px solid;
 }
 #discardTitleTxt{
+    
+  font-size: 16px !important;
+  height: 40px;
+  text-align: left;
   position: relative;
   bottom: .7rem;
+  font-weight: 400;
 }
 #discardTxt{
   color:black;
@@ -829,10 +828,10 @@ export default {
 }
 .stepHead{
   padding-top:0.5%;
-  padding-left:3%;
+  padding-left:3.3%;
   background: #0056a9;
   color: white;
-  font-size: 20px;
+  font-size: 16px;
   height: 35px;
   text-align: left;
   border-radius: 0px;

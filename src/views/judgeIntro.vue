@@ -14,8 +14,8 @@
                 <v-btn small tile color="black" class="buttonColor" id="assignDelegate" @click="judgeLetter=false; accptCertify=false; assignDel=true;"><v-icon left color="white">mdi-account-multiple-plus</v-icon>Assign Delegate</v-btn>
 
                 <v-card-text class="letterTxt" id="subTxt">
-                    <br><p align="justify">If you would like to review your inventory using the Review & Edit button above, but have not yet created an account for yourself, you can <a style="color:black;text-decoration: underline; color: blue; font-weight: bold;" @click=registermethod>register here</a>.</p>
-                         <p align="justify">TxDOT reports county road mileage to the Texas State Comptroller and Department of Motor Vehicles. That data is used to calculate funds to be distributed to each county. 
+                    <br><p style="" align="center">If you would like to review your inventory using the Review & Edit button above, but have not yet created an account for yourself, you can <a style="color:black;text-decoration: underline; color: blue; font-weight: bold;" @click=registermethod>register here</a>.</p>
+                         <p align="justify" style="color: gray;">Note: TxDOT reports county road mileage to the Texas State Comptroller and Department of Motor Vehicles. That data is used to calculate funds to be distributed to each county. 
                          Your participation in the County Road Inventory program is essential for ensuring an accurate and complete inventory.</p>
                 </v-card-text>
             </v-card>
@@ -83,7 +83,7 @@ export default{
           
           If you agree with this mileage, please click the AGREE & CERTIFY button below.  To review your CRI and make edits, please click the REVIEW & EDIT button below.  To delegate the responsibility of making updates to a trusted partner, please click the ASSIGN DELEGATE button below.<br><br>
 
-          We have made a few changes to the app to facilitate your updates. Now, only the alignment of each road – including its length – and the road name are required. We are no longer collecting the surface type, design (e.g. one-way/two-way), and number of lanes. This information will be collected by TxDOT when necessary. Finally, training videos have been updated to be more concise and easy to follow.<br><br>
+          We have made a few changes to the app to facilitate your updates. Now, only the alignment of each road – including its length – and the road name are required. We are no longer collecting the surface type, design (e.g. one-way/two-way), and number of lanes. This information will be collected by TxDOT when necessary. Second, training videos have been updated to be more concise and easy to follow.  Third, the editing tools have been updated for easier editing and clarity.  Finally, an 'Ask a Question' feature has been added for users to ask questions if they need assistance.<br><br>
           
           For those who need assistance, TxDOT will be hosting live WebEx video training on these dates:<br>
           &nbsp;&nbsp;  • Thursday, June 12, 2025, 2:00 – 3:00 pm<br>
@@ -212,6 +212,7 @@ export default{
     overflow-y: auto !important;
     min-height: 0vh;
     max-height: 100vh;
+    border-radius: 0 ;
 }
 .buttonColor{
     color: white;
@@ -232,6 +233,8 @@ export default{
     color:black;
     padding-bottom: 0px !important;
     margin-bottom: 0px !important;
+    font-size: 12px;
+    font-style: italic
 }
 #judgeDialog{
     position: relative;
