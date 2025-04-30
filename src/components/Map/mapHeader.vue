@@ -2,7 +2,7 @@
 <template>
     <div class="mapHeader flex" >
         <v-app-bar app color="#0056a9" class="white--text" id="headerPos" clipped-left>
-            <v-app-bar-title class="h1-text" id=headerTitle>
+            <v-app-bar-title id=headerTitle>
                 <p>TxDOT County Road Inventory Map</p>
             </v-app-bar-title>
                 <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" id="saveExitBtn" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=byunatFVEiM&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6', 'Save and Exit')"><u>Save & Exit</u></v-btn>
@@ -208,7 +208,8 @@ export default {
     text-align: left; 
     top:8%; 
     position: relative; 
-    width: 100%
+    width: 100%;
+    font-size: 20px;
 }
 #saveExitBtn{
     position: relative;
