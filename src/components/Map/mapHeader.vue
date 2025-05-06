@@ -1,8 +1,8 @@
 <!-- map header -->
 <template>
     <div style="position: relative; height: 45px; z-index: 9999">
-        <div class="flexBanner">
-            <div>
+        <div class="flexBanner h1-text">
+            <div id="headerTitle">
                 <span style="color: white;">TxDOT County Road Inventory Map</span>
             </div>
             <div style="display: flex; flex-direction: row; gap: 10px;">
@@ -231,7 +231,8 @@ export default {
     text-align: left; 
     top:8%; 
     position: relative; 
-    width: 100%
+    width: 100%;
+    font-size: 20px;
 }
 #saveExitBtn{
     position: relative;
