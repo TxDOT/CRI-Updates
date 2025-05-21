@@ -46,9 +46,9 @@ export default {
 }
 #finalCheck{
     position: absolute;
-    top: 25rem;
+    top: 43%;
     width: 15rem;
-    left: 57rem;
+    left: 57%;
     height: 8rem;
     border-radius: 0px;
 }

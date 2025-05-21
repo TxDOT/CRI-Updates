@@ -19,6 +19,7 @@ import Search from "@arcgis/core/widgets/Search";
 import Expand from "@arcgis/core/widgets/Expand";
 
 export const gLayer = new GraphicsLayer();
+// export const delBugGLayer = new GraphicsLayer();
 export const delgLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
@@ -50,7 +51,7 @@ export const imgBasemap = new Basemap({
 //map constructor 
 export const map = new Map({
     basemap: vTBasemap,
-    layers: [rdbdAssetLine,rdbdAssetPt, gLayer]
+    layers: [rdbdAssetLine,rdbdAssetPt, gLayer] 
 });
 //mapview constructor
 export const view = new MapView({
@@ -234,6 +235,10 @@ export const txCounties = new FeatureLayer({
     url: criConstants.txCounties,
     //definitionExpression: "CNTY_NM= 'Travis'"
     //effect: "blur(8px) brightness(1.2) grayscale(0.8)"
+})
+//city polygon feature Layer
+export const txCities = new FeatureLayer({
+    url: criConstants.txCities,
 })
 
 //county information feature layer

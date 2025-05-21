@@ -28,7 +28,7 @@
         Whether you're a seasoned editor or this is your first time here, let us give you a tour of some of the features of this application
       </v-card-text>
       <div>
-        <v-btn color="#0056a9" text tile id="tourBtn" @click="isTour = true; isTourCard = false;">Take a Tour</v-btn>
+        <v-btn color="#0056a9" text tile class="mainBtn" @click="isTour = true; isTourCard = false;">Take a Tour</v-btn>
       </div>
       <div id="isTour">
         <v-btn style="float: right; margin-right: 15px; margin-bottom: 15px;" color="#0056a9" text tile @click="isTourCard=false">Exit</v-btn>
@@ -83,7 +83,8 @@ export default {
         isEoEWarns: false,
         isTourCard: localStorage.getItem('disableTour') ? false : true,
         isNoTour: false,
-        overlay: false
+        overlay: false,
+        overlapError: false
       }
     },
     beforeRouteLeave(to, from, next){
@@ -120,7 +121,7 @@ export default {
       },
       turnOverlayOff(){
         this.isOverlay = false
-      }
+      },
     },
     watch:{
       isEoEWarn:{
@@ -185,6 +186,15 @@ export default {
       }
     },
     computed:{
+     isOverlapError:{
+        get(){
+          return this.$store.state.overlapError
+        },
+        set(err){
+          console.log(err)
+          this.$store.commit('setOverlapError', err)
+        }
+      },
       isEoEWarn: {
         get(){
           return this.$store.state.isEoEWarning
@@ -337,7 +347,7 @@ export default {
   flex-direction: column-reverse; 
   bottom: 4rem; 
   right: 1rem; 
-  height: 26rem; 
+  min-height: 0px; 
   position: absolute;
 }
 #tourBeginCard{
@@ -358,8 +368,9 @@ export default {
   height: 40px;
 }
 
-#tourBtn{
+.mainBtn{
   text-decoration: underline;
   border: 1px black solid;
 }
+
 </style>

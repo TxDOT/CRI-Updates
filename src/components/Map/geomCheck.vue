@@ -1,11 +1,9 @@
 <!-- geometry checks to display road length and overlaps -->
-<template >
+<template>
     <v-card id="cardPlacement" tile v-if="display">
         <v-card-title class="editRdTitle"><p id="cardTitle">Edit Error</p></v-card-title>
         <v-card-text id="cardTxt">{{geomChecks}}</v-card-text>
     </v-card>
-
-
 </template>
 
 <script>
@@ -66,11 +64,13 @@ export default {
         left: 14rem;
     }
     #cardPlacement{
-        position: relative;
-        top: 2rem;
-        left: 54rem;
         width: 20rem;
         height: 10rem;
+        z-index: 1;
+        position: absolute; 
+        left: 40vw; 
+        top: 200px;
+        z-index: 2;
     }
     #cardTitle{
         position:absolute;

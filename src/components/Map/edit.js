@@ -1,8 +1,8 @@
 import { sketch, sketchPoint, view, gLayer, clientSideGeoJson } from './map' //featLayer
 import { criConstants } from '../../common/cri_constants';
 import {initGraphicCheck, queryEditsLayer} from './crud'
-import {store} from '../../store'
-import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic , geomToMiles} from './helper';
+import {store} from '../../store';
+import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic , geomToMiles, findClosestGeom, editOverlapCheck, getOGCntyRds} from './helper';
 import { getNewDfoDist, epochToHumanTime } from './roadInfo'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
@@ -13,16 +13,20 @@ export async function addRoadbed(){
   try{
     // let bsmapZoom = basemapDisplayOnZoom()
     let addNewRoad = new Promise(function(res,rej){
+        let cityPolys = store.getters.getCityPoly
         sketch.create("polyline",{mode:"click", hasZ: false})
-        sketch.on('create', (event) => {
+        let newSketch = sketch.on('create', (event) => {
+          
           let lengthMiles;
           if(event.state === "start"){
             mouseHoverDfoDisplay('addRoad');
+            getOGCntyRds()
           }
           else if(event.state === "active"){
             let seglengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
             store.commit('setDfoReturn', seglengthMiles)
             geomCheck(event.graphic.geometry, true)
+            editOverlapCheck(event.graphic.geometry)
           }
     
           if(event.state === "complete"){
@@ -31,11 +35,13 @@ export async function addRoadbed(){
             store.commit('setDfoReturn', 0)
             store.commit('setIsInitAdd', true)
             //creating the length of road in miles for user
-            
+            let returnGeom = findClosestGeom(event.graphic.geometry, cityPolys)
+            store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
             lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
             res([lengthMiles, event.graphic.geometry, 'add']);
             rej('cancel')
             sketchCompete();
+            newSketch.remove()
           }
 
         });
@@ -105,6 +111,7 @@ function createInfoSendToStore(newRoad){
 
 export async function modifyRoadbed(clickType, editType, isRename){
     let promise = new Promise(function(res, rej){
+      let cityPolys = store.getters.getCityPoly
       const removeModListener = view.on(clickType,(event) => {
         if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
           store.commit('setEditExisting', null)
@@ -117,6 +124,9 @@ export async function modifyRoadbed(clickType, editType, isRename){
         view.hitTest(event, opts)
         .then(function(response){
           for(let i=0; i < response.results.length; i++){
+            console.log(response.results[i].graphic.geometry)
+            let returnGeom = findClosestGeom(response.results[i].graphic.geometry, cityPolys)
+            store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
             if(store.getters.getEditExisting === true || store.getters.getDeleteRd === true){
               store.commit('setActiveLoader',true)
             }
@@ -175,14 +185,20 @@ export async function hideEditedRoads(graphicL, update){
 export function updateLength(){
   try{
     let oldLen; 
+    
+    // let returnGeom;
     setUpGraphic();
     sketch.on('update', (event)=>{
+      
       if(event.state === 'start'){
         oldLen = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))
       }
 
       if(event.state === 'active'){ 
         if(event.toolEventInfo.type === 'reshape-stop'){
+          let cityPolys = store.getters.getCityPoly
+          let returnGeom = findClosestGeom(event.graphics[0].geometry, cityPolys)
+          store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
           geomCheck(event.graphics[0].geometry, false)
           //controls undo/redo edtis
           sketch['_operationHandle'].history.redo.length ?  store.commit('setIsRedoDisable', false) : store.commit('setIsRedoDisable', true)
@@ -195,9 +211,13 @@ export function updateLength(){
 
   
       if(event.state === 'complete'){
+        // console.log('test')
+        // returnGeom = findClosestGeom(event.graphics[0].geometry, cityPolys)
+        // store.commit('setClosestCity', JSON.stringify(returnGeom))
         geomCheck(event.graphics[0].geometry, false)
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
         if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){
+          
          //store.commit('setDeltaDis',[newLengths, 'Add'])
         }
         else{
@@ -211,6 +231,7 @@ export function updateLength(){
           store.commit('setDeltaDis',[modifyChange, 'Modify'])
           store.commit('setRoadGeom', event.graphics[0].geometry.clone())
           reapplyM(event.graphics[0])
+          
           //updateGraphicsLayer(event.graphics[0].attributes.objectid, newLengths)
         }
       } 

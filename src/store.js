@@ -80,9 +80,21 @@ export const store = new Vuex.Store({
         alerstatus: false,
         editHeaderString: 'Edit Road',
         editType: ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"],
-        preventClick: false
+        preventClick: false,
+        cityPoly: [],
+        closestCity: null,
+        overlapError: false,
     },
     getters:{
+        getOverlapError(state){
+            return state.overlapError
+        },
+        getClosestCity(state){
+            return state.closestCity
+        },
+        getCityPoly(state){
+            return state.cityPoly
+        },
         getPreventClick(state){
             return state.preventClick
         },
@@ -307,7 +319,16 @@ export const store = new Vuex.Store({
         }
     },
     mutations:
-    {
+    {     
+        setOverlapError(state, err){
+            state.overlapError = err
+        },
+        setClosestCity(state, obj){
+            state.closestCity = obj
+        },
+        setCityPoly(state, arr){
+            state.cityPoly = arr
+        },
         setpreventClick(state, bool){
             state.preventClick = bool
         },

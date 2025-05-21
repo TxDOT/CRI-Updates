@@ -101,7 +101,7 @@
     </v-stepper-content> -->
       
     <v-btn v-if="!forInfo" id="cnclBtnEdit" depressed tile text color="#014e96" @click="firstAddToMap ? discardAlertQuest = true : cancel(); cancelStepper();"><u>Cancel</u></v-btn>
-    <v-btn v-if="!forInfo" tile id="saveBtnEdit" depressed :disabled="!setAssetCover[0] || this.geomChecks > 0" color="#014e96" text @click="saveAttri();"><u>Save</u></v-btn>
+    <v-btn v-if="!forInfo" tile id="saveBtnEdit" depressed :disabled="!setAssetCover[0] || this.geomChecks > 0" color="#014e96" text @click="checkCityLimitInteraction();"><u>Save</u></v-btn>
       
     <v-btn v-if="!forInfo" depressed tile color ="#E64545" text id="discardBtnEdit" @click="discardAlertQuest = true">Discard Edit</v-btn>
     <v-btn v-else id="cancelInfo" tile outlined text color="#014e96" @click="cancel()"><u>Cancel</u></v-btn>
@@ -144,15 +144,35 @@
   </v-dialog>
   <confirmAlertSuccess v-if="successAlert"/>
   <finalCheck v-if="finalCheck === true"/>
+  
+  <div v-if="isCityLimit" id="cityLimit">
 
+    <div style="background-color: white; position: absolute; width: 430px; min-height: 430px; max-height: 500px; overflow-y: auto;">
+      <div id="cityLimitHeader">
+        <span>City Limit Interaction</span>
+      </div>
+      <div style="padding: 10px; display: flex; flex-direction: column; gap: 20px">
+        <div id="cityLimitText">
+          <span>WARNING: Your edit is within a city limit boundary. TxDOT classifies roads within city limits as city streets.</span>
+          <span>The edit will likely be rejected. Please provide an explanation if this is an exception.</span>
+          <v-textarea solo flat no-resize label="Why do you have to make this difficult." style="border: 1px solid gray; padding: 10px; " v-model="comment"></v-textarea>
+        </div>
+        <div style="display: flex; flex-direction: row; justify-content: end; gap: 10px; ">
+          <v-btn tile depressed color="#014e96" text style="text-decoration: underline;" @click="isCityLimit = false">Go Back</v-btn>
+          <v-btn tile depressed color="#014e96" text style="border: black 1px solid; text-decoration: underline;" @click="saveAttri(); isCityLimit = !isCityLimit">Confirm Edit</v-btn>
+        </div>
+      </div>
+     
+    </div>
+  </div>
   </v-container>
 </template>
 
 <script>
 //importing functions
-import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, sketchCompete, cancelEditStepper, saveToEditsLayer, geomCheck} from './Map/edit'
+import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, sketchCompete, cancelEditStepper, saveToEditsLayer, geomCheck, } from './Map/edit'
 import { removeAsstPoints, initLoadAssetGraphic } from './Map/roadInfo'
-import { geomToMiles } from './Map/helper'
+import { geomToMiles, checkCityInteraction } from './Map/helper'
 import { gLayer } from './Map/map'
 import * as geometryEngine from '@arcgis/core/geometry/geometryEngine'
 //importing vue components
@@ -173,6 +193,7 @@ export default {
     },
     data () {
       return {
+        isCityLimit: false,
         e1: 1,
         counter:0,
         beginDFO:null,
@@ -434,7 +455,7 @@ export default {
         return
       },
       cancel(){
-        this.isGeomCheck = 0;
+        this.isGeomCheck = null;
         stopEditingPoint();
         sketchCompete();
         document.getElementById("stepper").style.width = '0px'
@@ -447,10 +468,23 @@ export default {
         removeHighlight()
         //this.comment = ""
         this.closeSelectRoad = false
+        this.isOverlapError = false
+        return
+      },
+      checkCityLimitInteraction(){
+        this.graphicObj = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
+        let isInCity = checkCityInteraction(this.graphicObj.geometry)
+        if(isInCity){
+          this.isCityLimit = true
+          console.log(isInCity)
+          return
+        }
+        this.saveAttri()
         return
       },
       saveAttri(){
-        let editGraphic = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
+        this.isOverlapError = false
+        let editGraphic = this.graphicObj
         if(editGraphic.attributes.roadbedName === 'null' || JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
           this.finalCheck = true
           return;
@@ -482,6 +516,14 @@ export default {
       }
     },
     computed:{
+      isOverlapError:{
+        get(){
+          return this.$store.state.overlapError
+        },
+        set(err){
+          this.$store.commit('setOverlapError', err)
+        }
+      },
       setAssetCover:{
         get(){
           return this.$store.state.assetCoverage
@@ -902,10 +944,42 @@ export default {
 
 }
 
-
-</style>
-<style>
 .v-dialog{
   box-shadow: none;
+}
+
+#cityLimitHeader{
+  background-color: #0056a9;
+  color: white;
+  height: 35px;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding-left: 10px;
+}
+
+#cityLimit{
+  height: 100%;
+  width: 89%; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center;
+  position: absolute;
+  bottom: 24px;
+  right: 0px;
+  z-index: 2;
+  background-color: rgba(0,0,0,.5);
+}
+
+#cityLimitText{
+  display: flex;
+  flex-direction: column;
+  gap: 21px;
+}
+
+#cityLimitText span{
+  text-align: left;
 }
 </style>

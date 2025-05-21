@@ -1,5 +1,5 @@
 // import methods and functions into file
-import { view, clientSideGeoJson, gLayer } from './map' //importing from ESRI API via map.js
+import { view, clientSideGeoJson, gLayer, txCities } from './map' //importing from ESRI API via map.js
 import { criConstants } from '../../common/cri_constants';
 import { store } from '../../store'
 import { getTime } from '../Map/advanced'
@@ -9,7 +9,7 @@ import Graphic from "@arcgis/core/Graphic";
 import Query from "@arcgis/core/rest/support/Query";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
 
-
+let cntyGeom; 
 //Sets Road Data in the data store. 
 export async function setDataToStore( name, objectid, comment, editInfo){
     // store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
@@ -307,4 +307,120 @@ export function getCentroid(cntyPoly){
 export function getTodaysDate(){
   const dateObj = new Date()
   return [dateObj.getMonth(), dateObj.getDate()]
+}
+
+function compareGeometryInteractions(geom1, geom2){
+  let newPolyline = geometryEngine.intersect(geom1, geom2)
+  if(!newPolyline){
+    return 0
+  }
+  //loop through and measure distance
+  //add up distance
+  //compare to og polyline
+  let l
+  let measureVal = 0
+  for(l=0; l < newPolyline.paths.length; l++){
+    let tempPolyline = {
+      type: "polyline",
+      paths: [newPolyline.paths[l]],
+      spatialReference: geom2.spatialReference
+    }
+    console.log(tempPolyline)
+    let len = geometryEngine.geodesicLength(tempPolyline, "miles")
+    measureVal += len
+  }
+
+  return measureVal
+} 
+
+export function checkCityInteraction(polyline){
+  console.log(polyline)
+  let ogLength = geometryEngine.geodesicLength(polyline, "miles")
+  let city = JSON.parse(store.getters.getClosestCity)
+  if(!city){
+    return false
+  }
+  console.log(JSON.parse(store.getters.getClosestCity))
+  let interactionRespones = compareGeometryInteractions(city, polyline)
+  if(interactionRespones === 0){
+    return false
+  }
+  let isHalfInCity = interactionRespones > (ogLength/2) 
+  console.log(ogLength)
+  return isHalfInCity
+}
+
+export function returnCitiesInCounty(county){
+  county.then((cow) => {
+    let cityQuery = txCities.createQuery()
+    cityQuery.spatialRelationship = "intersects"
+    cityQuery.returnGeometry = true
+    cityQuery.geometry = cow.features[0].geometry
+    console.log('city')
+    txCities.queryFeatures(cityQuery)
+      .then((c) => {
+        store.commit('setCityPoly', c.features)
+        console.log(c)
+      })
+  })
+  return
+}
+
+export function findClosestGeom(polyline, compareGeom){
+  let c;
+  let shortestDist = []
+  for(c=0; c < compareGeom.length; c++){
+    let convGeom = compareGeom[c].geometry
+    let dist = geometryEngine.distance(polyline, convGeom)
+    if(dist >= shortestDist[0]) continue
+    shortestDist = [dist, compareGeom[c].geometry]
+  }
+
+  console.log(shortestDist)
+  return shortestDist
+}
+
+export function getOGCntyRds(){
+  clientSideGeoJson.queryFeatures({returnGeometry: true, geometry: view.extent})
+    .then((geo) => {
+        let addGraphics = gLayer.graphics.items.filter(g => g.attributes.editType === 'ADD')
+        cntyGeom = [...geo.features, ...addGraphics]
+    })
+    .catch(err => console.log('error retrieving values: ', err)) 
+  return
+}
+
+export function editOverlapCheck(edit){
+  //find closest geoms
+  //buffer closest by 7 meters
+  //perform intersection
+  try{
+    let returnDist = findClosestGeom(edit, cntyGeom)
+    let returnedDistGeom = returnDist[1]
+    let getOGLength = geometryEngine.geodesicLength(returnedDistGeom, "miles")
+    let buffer = geometryEngine.buffer(returnedDistGeom, 7, "meters")
+    // let delBufGraphic = {
+    //   geometry: buffer,
+    //   symbol: {
+    //     type: "simple-fill",
+    //     color: [ 51,51, 204, 0.3 ],
+    //     style: "solid",
+    //     outline: {
+    //       color: "white",
+    //       width: 1
+    //     }
+    //   }
+    // }
+    // delBugGLayer.add(delBufGraphic)
+    let returnLength = compareGeometryInteractions(buffer, edit)
+    if((returnLength/getOGLength)*100 > 50){
+      store.commit('setOverlapError', true)
+    }
+  //compareGeometryInteractions()
+    return
+  }
+  catch(err){
+    console.log(err)
+  }
+ 
 }

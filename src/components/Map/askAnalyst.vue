@@ -75,16 +75,15 @@ export default {
            nameRequired:[
            value => {
                 if(value && value.length && value.length < 40){
-                         return true
-                     }
-                     else if(value && value.length && value.length >= 40){
-                        return "Name field must be under 40 characters"
-                     }
-                     else{
-                        this.nameValue = null
-                         return "Name is required"
- 
-                     }
+                    return true
+                }
+                else if(value && value.length && value.length >= 40){
+                    return "Name field must be under 40 characters"
+                }
+                else{
+                    this.nameValue = null
+                        return "Name is required"
+                    }
             }
            ],
            contactRequired: [
@@ -100,8 +99,7 @@ export default {
            ],
            emailRequired:[
                  value => {
-                    if(this.contactSelected == 'phone'
-                    ){
+                    if(this.contactSelected == 'phone'){
                         return true
                     }
                      if(/.+@.+\..+/.test(value)){
@@ -181,7 +179,7 @@ export default {
             // Update the model with the formatted phone number
             this.contactValue = formattedNumber;
         },
-    async submitForm(){
+    submitForm(){
 
         this.askAnalystForm = false
         this.isSpinner = true
@@ -198,7 +196,7 @@ export default {
         this.contactValue = null
         this.contactSelected = null
     },
-    async sendRequest(url){
+    sendRequest(url){
         fetch(url)
             .then(()=>{
                 this.thankyouPopup = true

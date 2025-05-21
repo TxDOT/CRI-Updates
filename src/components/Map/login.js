@@ -1,7 +1,7 @@
 // import methods and functions into file
 import { countyOfficialInfo, view, txCounties, search, viewPoint, home, featLayer, clientSideGeoJson} from './map'
 import { queryEditsLayer } from './crud'
-import { defineGraphic, geomToMiles, getCentroid, queryFeat } from './helper';
+import { defineGraphic, geomToMiles, getCentroid, queryFeat, returnCitiesInCounty} from './helper';
 import { cntyNbrNm } from '../../common/txCnt'
 import Query from "@arcgis/core/rest/support/Query";
 // import { criConstants } from '../../common/cri_constants';
@@ -180,6 +180,11 @@ export async function createGeoJson(cntyName){
 
     geoJSONArr.features.push(geojson)
   }
+
+  let ogSetOfCntyRds = [...geoJSONArr.features]
+  console.log(ogSetOfCntyRds)
+  store.commit('setOgArrCntyRds', ogSetOfCntyRds)
+
   // create a new blob from geojson featurecollection
   const blob = new Blob([JSON.stringify(geoJSONArr)], {
     type: "application/json"
@@ -188,8 +193,9 @@ export async function createGeoJson(cntyName){
   // URL reference to the blob
   const url = URL.createObjectURL(blob);
   // create new geojson layer using the blob url
+  console.log(url)
   clientSideGeoJson.url = url
-
+  
   return;
 }
 
@@ -221,6 +227,7 @@ export async function goToMap(name, nbr){
     let countyQuery = txCounties.queryFeatures(query)
     
     let returnCountyObj = await countyQuery
+    returnCitiesInCounty(countyQuery)
     getCentroid(returnCountyObj.features[0].geometry)
     store.commit('setDistrict', returnCountyObj.features[0].attributes.TXDOT_DIST_NBR)
     //set search sources to selected county
