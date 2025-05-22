@@ -5,8 +5,8 @@
             <v-app-bar-title id=headerTitle>
                 <p>TxDOT County Road Inventory Map</p>
             </v-app-bar-title>
-                <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" id="saveExitBtn" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=byunatFVEiM&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6', 'Save and Exit')"><u>Save & Exit</u></v-btn>
-                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitStepOne();" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=7Wety51-6Os&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5', 'Submit and Certify')"><u>Submit & Certify</u></v-btn>
+                <v-btn height="3vh" tile outlined color="white" class="mx-2" small @click="ExitDestroyLogIn()" id="saveExitBtn" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=bXWVRMgH-LU&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5', 'Save and Exit')"><u>Save & Exit</u></v-btn>
+                <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitStepOne();" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=-9tuxBxNpko&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6', 'Submit and Certify')"><u>Submit & Certify</u></v-btn>
         </v-app-bar>
 
         <!-- <div class="text-center">

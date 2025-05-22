@@ -372,12 +372,19 @@ export default {
     methods:{
       editHover(){
         this.isShowVideo = true
-        this.typeEdit = ["edit", "https://www.youtube.com/watch?v=qy5At3NOTpg&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5"]
+        // this.typeEdit = ["edit", "https://www.youtube.com/watch?v=qy5At3NOTpg&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5"]
+         if (this.editHeaderStr === 'Select a road from the map to edit the name|Change the name of an existing road'){
+                this.typeEdit = ["edit", "https://www.youtube.com/watch?v=JKxz7-5Pf3o&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=2"]
+            }
+            else if(this.editHeaderStr === 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road'){
+                this.typeEdit = ["edit", "https://www.youtube.com/watch?v=JMIy8Q6vnHw&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=3"]
+
+            }
    
       },
       addHover(){
         this.isShowVideo = true
-        this.typeEdit = ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"]
+        this.typeEdit = ["add", "https://www.youtube.com/watch?v=j0VmkKapclY&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=1"]
       },
       cancelVideo(){
         setTimeout(()=>{

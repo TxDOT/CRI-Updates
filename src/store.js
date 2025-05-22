@@ -79,7 +79,7 @@ export const store = new Vuex.Store({
         registerpopup: false,
         alerstatus: false,
         editHeaderString: 'Edit Road',
-        editType: ["add", "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"],
+        editType: ["add", "https://www.youtube.com/watch?v=j0VmkKapclY&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=1"],
         preventClick: false
     },
     getters:{
