@@ -15,7 +15,7 @@
         name: "editingVideo",
         data(){
             return{
-                youtubeUrl: "https://www.youtube.com/watch?v=3xTr7q4Cno4&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6",
+                youtubeUrl: "https://www.youtube.com/watch?v=teXXYLI3GL8&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=4",
                 edit: false,
                 videoEvtLis: false,
                 editType: "delete"
@@ -38,7 +38,13 @@
                 handler: function(){
                     if(this.editStatus){
                         this.editType = "edit"
-                        this.youtubeUrl = "https://www.youtube.com/watch?v=qy5At3NOTpg&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5"
+                        if (this.editHeaderStr === 'Select a road from the map to edit the name|Change the name of an existing road'){
+                            this.youtubeUrl = "https://www.youtube.com/watch?v=JKxz7-5Pf3o&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=2"
+                        }
+                        else if(this.editHeaderStr === 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road'){
+                            this.youtubeUrl = "https://www.youtube.com/watch?v=JMIy8Q6vnHw&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=3"
+                        }
+
                         return
                     }
                 },
@@ -48,7 +54,7 @@
                 handler: function(){
                     if(this.deleteRoad){
                         this.editType = "delete"
-                        this.youtubeUrl = "https://www.youtube.com/watch?v=3xTr7q4Cno4&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6"
+                        this.youtubeUrl = "https://www.youtube.com/watch?v=teXXYLI3GL8&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=4"
                         return
                     }
                 },
@@ -58,7 +64,7 @@
                 handler: function(){
                     if(this.addRdBoolean){
                         this.editType = "add"
-                        this.youtubeUrl = "https://www.youtube.com/watch?v=5W8jGqaOyXc&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=7"
+                        this.youtubeUrl = 'https://www.youtube.com/watch?v=j0VmkKapclY&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=1'
                         return
                     }
                 },
@@ -104,6 +110,12 @@
                     return this.$store.state.editType
                 },
             },
+             editHeaderStr: {
+                get(){
+                    return this.$store.state.editHeaderString
+                }
+                
+        },
         }
     }
 </script>
