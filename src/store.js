@@ -321,13 +321,16 @@ export const store = new Vuex.Store({
     mutations:
     {     
         setOverlapError(state, err){
+            console.log(err)
             state.overlapError = err
         },
         setClosestCity(state, obj){
             state.closestCity = obj
         },
         setCityPoly(state, arr){
+            console.log(arr)
             state.cityPoly = arr
+            console.log(state.cityPoly)
         },
         setpreventClick(state, bool){
             state.preventClick = bool

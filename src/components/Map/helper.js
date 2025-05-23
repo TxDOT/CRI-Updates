@@ -1,5 +1,5 @@
 // import methods and functions into file
-import { view, clientSideGeoJson, gLayer, txCities } from './map' //importing from ESRI API via map.js
+import { view, clientSideGeoJson, gLayer, txCities, delBugGLayer} from './map' //importing from ESRI API via map.js
 import { criConstants } from '../../common/cri_constants';
 import { store } from '../../store'
 import { getTime } from '../Map/advanced'
@@ -10,6 +10,8 @@ import Query from "@arcgis/core/rest/support/Query";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
 
 let cntyGeom; 
+
+let city;
 //Sets Road Data in the data store. 
 export async function setDataToStore( name, objectid, comment, editInfo){
     // store.commit('setRoadbedSurface', surface) //push surface type values to getSurface setter
@@ -325,7 +327,6 @@ function compareGeometryInteractions(geom1, geom2){
       paths: [newPolyline.paths[l]],
       spatialReference: geom2.spatialReference
     }
-    console.log(tempPolyline)
     let len = geometryEngine.geodesicLength(tempPolyline, "miles")
     measureVal += len
   }
@@ -334,49 +335,63 @@ function compareGeometryInteractions(geom1, geom2){
 } 
 
 export function checkCityInteraction(polyline){
-  console.log(polyline)
   let ogLength = geometryEngine.geodesicLength(polyline, "miles")
-  let city = JSON.parse(store.getters.getClosestCity)
   if(!city){
-    return false
+  city = JSON.parse(store.getters.getClosestCity)
   }
-  console.log(JSON.parse(store.getters.getClosestCity))
+  console.log(city)
   let interactionRespones = compareGeometryInteractions(city, polyline)
   if(interactionRespones === 0){
     return false
   }
   let isHalfInCity = interactionRespones > (ogLength/2) 
-  console.log(ogLength)
   return isHalfInCity
 }
 
-export function returnCitiesInCounty(county){
-  county.then((cow) => {
+export async function returnCitiesInCounty(county){
+  console.log(county)
+  //county.then((cow) => {
     let cityQuery = txCities.createQuery()
     cityQuery.spatialRelationship = "intersects"
     cityQuery.returnGeometry = true
-    cityQuery.geometry = cow.features[0].geometry
-    console.log('city')
+    cityQuery.geometry = county.features[0].geometry
     txCities.queryFeatures(cityQuery)
       .then((c) => {
+        console.log(c.features)
         store.commit('setCityPoly', c.features)
-        console.log(c)
       })
-  })
+      .catch(err => console.log(err))
+  //})
   return
 }
 
 export function findClosestGeom(polyline, compareGeom){
+  if(!compareGeom){
+    return
+  }
+  
+  if(polyline.attributes){
+    let findCurrRoad = compareGeom.findIndex(c => c.attributes.RDBD_GMTRY_LN_ID === polyline.attributes.gid)
+    compareGeom.splice(findCurrRoad, 1)
+  }
+  
   let c;
   let shortestDist = []
   for(c=0; c < compareGeom.length; c++){
     let convGeom = compareGeom[c].geometry
-    let dist = geometryEngine.distance(polyline, convGeom)
-    if(dist >= shortestDist[0]) continue
+    let getOGLength = geometryEngine.geodesicLength(compareGeom[c].geometry, "miles")
+    let buffer = geometryEngine.buffer(convGeom, 7, "meters")
+    
+    let returnLength = compareGeometryInteractions(buffer, polyline.geometry)
+    let dist = returnLength/getOGLength
+    // let dist = geometryEngine.distance(polyline.geometry, convGeom)
+    if(dist < shortestDist[0]){
+      continue
+    }
+
     shortestDist = [dist, compareGeom[c].geometry]
   }
 
-  console.log(shortestDist)
   return shortestDist
 }
 
@@ -395,29 +410,39 @@ export function editOverlapCheck(edit){
   //buffer closest by 7 meters
   //perform intersection
   try{
-    let returnDist = findClosestGeom(edit, cntyGeom)
-    let returnedDistGeom = returnDist[1]
-    let getOGLength = geometryEngine.geodesicLength(returnedDistGeom, "miles")
-    let buffer = geometryEngine.buffer(returnedDistGeom, 7, "meters")
-    // let delBufGraphic = {
-    //   geometry: buffer,
-    //   symbol: {
-    //     type: "simple-fill",
-    //     color: [ 51,51, 204, 0.3 ],
-    //     style: "solid",
-    //     outline: {
-    //       color: "white",
-    //       width: 1
-    //     }
-    //   }
+    //console.log(edit.geometry.paths[0].at(-1)[0])
+    // if(edit.attributes.editType === 'EDIT'){
+    //   let findIndex = cntyGeom.findIndex(c => c.attributes.RDBD_GMTRY_LN_ID === edit.attributes.gid)
+    //   console.log(findIndex)
+    //   console.log(cntyGeom) 
     // }
-    // delBugGLayer.add(delBufGraphic)
-    let returnLength = compareGeometryInteractions(buffer, edit)
-    if((returnLength/getOGLength)*100 > 50){
+    let returnDist = findClosestGeom(edit, cntyGeom)
+    let delBufGraphic = {
+        geometry: returnDist[1],
+        symbol: {
+          type: "simple-fill",
+          color: [ 51,51, 204, 0.3 ],
+          style: "solid",
+          outline: {
+            color: "white",
+          width: 5
+          }
+        }
+      }
+      delBugGLayer.add(delBufGraphic)
+      // if(!returnDist){
+    //   return false
+    // }
+    // let returnedDistGeom = returnDist[1]
+    
+    // console.log(returnLength, getOGLength)
+    if(returnDist[0]*100 > 50){
+      console.log('setTrue')
       store.commit('setOverlapError', true)
+      return true
     }
   //compareGeometryInteractions()
-    return
+    return false
   }
   catch(err){
     console.log(err)

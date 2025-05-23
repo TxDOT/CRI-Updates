@@ -2,7 +2,7 @@ import { sketch, sketchPoint, view, gLayer, clientSideGeoJson } from './map' //f
 import { criConstants } from '../../common/cri_constants';
 import {initGraphicCheck, queryEditsLayer} from './crud'
 import {store} from '../../store';
-import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic , geomToMiles, findClosestGeom, editOverlapCheck, getOGCntyRds} from './helper';
+import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic , geomToMiles, findClosestGeom, getOGCntyRds} from './helper';
 import { getNewDfoDist, epochToHumanTime } from './roadInfo'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
@@ -20,13 +20,13 @@ export async function addRoadbed(){
           let lengthMiles;
           if(event.state === "start"){
             mouseHoverDfoDisplay('addRoad');
-            getOGCntyRds()
+            getOGCntyRds() 
           }
           else if(event.state === "active"){
             let seglengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
             store.commit('setDfoReturn', seglengthMiles)
             geomCheck(event.graphic.geometry, true)
-            editOverlapCheck(event.graphic.geometry)
+            //editOverlapCheck(event.graphic.geometry)
           }
     
           if(event.state === "complete"){
@@ -35,8 +35,11 @@ export async function addRoadbed(){
             store.commit('setDfoReturn', 0)
             store.commit('setIsInitAdd', true)
             //creating the length of road in miles for user
-            let returnGeom = findClosestGeom(event.graphic.geometry, cityPolys)
-            store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
+            if(cityPolys.length){
+              let returnGeom = findClosestGeom(event.graphic, cityPolys)
+              store.commit('setClosestCity', JSON.stringify(returnGeom[1]))  
+            }
+            
             lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
             res([lengthMiles, event.graphic.geometry, 'add']);
             rej('cancel')
@@ -124,9 +127,12 @@ export async function modifyRoadbed(clickType, editType, isRename){
         view.hitTest(event, opts)
         .then(function(response){
           for(let i=0; i < response.results.length; i++){
-            console.log(response.results[i].graphic.geometry)
-            let returnGeom = findClosestGeom(response.results[i].graphic.geometry, cityPolys)
-            store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
+            getOGCntyRds() 
+            if(cityPolys.length){
+              let returnGeom = findClosestGeom(response.results[i].graphic.geometry, cityPolys)
+              store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
+            }
+            
             if(store.getters.getEditExisting === true || store.getters.getDeleteRd === true){
               store.commit('setActiveLoader',true)
             }
@@ -186,7 +192,7 @@ export function updateLength(){
   try{
     let oldLen; 
     
-    // let returnGeom;
+    //let returnGeom;
     setUpGraphic();
     sketch.on('update', (event)=>{
       
@@ -196,9 +202,13 @@ export function updateLength(){
 
       if(event.state === 'active'){ 
         if(event.toolEventInfo.type === 'reshape-stop'){
+          getOGCntyRds() 
           let cityPolys = store.getters.getCityPoly
-          let returnGeom = findClosestGeom(event.graphics[0].geometry, cityPolys)
-          store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
+          if(cityPolys.length){
+            let returnGeom = findClosestGeom(event.graphics[0], cityPolys)
+            store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
+          }
+         
           geomCheck(event.graphics[0].geometry, false)
           //controls undo/redo edtis
           sketch['_operationHandle'].history.redo.length ?  store.commit('setIsRedoDisable', false) : store.commit('setIsRedoDisable', true)
@@ -212,8 +222,10 @@ export function updateLength(){
   
       if(event.state === 'complete'){
         // console.log('test')
-        // returnGeom = findClosestGeom(event.graphics[0].geometry, cityPolys)
-        // store.commit('setClosestCity', JSON.stringify(returnGeom))
+        //console.log(cityPolys)
+        //returnGeom = findClosestGeom(event.graphics[0], cityPolys)
+        //console.log(returnGeom)
+        //store.commit('setClosestCity', JSON.stringify(returnGeom))
         geomCheck(event.graphics[0].geometry, false)
         let newLengths = Number(geometryEngine.geodesicLength(event.graphics[0].geometry, "miles").toFixed(3))//.toFixed(5)
         if(event.graphics[0].attributes.editType === 'ADD' && store.getters.getOldLength === 0){

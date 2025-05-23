@@ -136,20 +136,7 @@
     <confirmationAlert v-if="deleteConfirm"/>
     <editingVideo v-if="isVideo"/>
 
-    <div style="z-index: 9999; position: absolute; bottom: 1px; left: 0px; height:100%; width: 100%; background-color: rgba(0,0,0,.5); display: flex; flex-direction: column; justify-content: center; align-items: center;" v-if="overlapError">
-      <v-card tile style="width: 370px; text-align: left;">
-          <v-card-title style="background-color: #0056a9; color: white; height: 30px; align-content: center;">Overlap Detected</v-card-title>
-            <v-card-text>
-              <span>
-                WARNING: Your edit overlaps with another road line. Edit that substantially overlap with other roads lines are not allowed.
-              </span>
-           </v-card-text>
-           <v-card-actions style="float: right; padding-bottom: 10px;">
-              <v-btn text tile color="#0056a9" style="text-decoration: underline;" @click="discardEditOverlapRoadNoti()">Discard Edit</v-btn>
-              <v-btn text tile color="#0056a9" class="mainBtn" @click="editOverlapRoadNoti()">Make Corrections</v-btn>
-           </v-card-actions>
-      </v-card>
-    </div>
+    
     </v-container>
        
 </template>
@@ -197,7 +184,6 @@ export default {
         restartSeq: false,
         prevComment: [],
         initialVal: null,
-        overlapError: false,
       }
     },
     methods:{
@@ -359,23 +345,9 @@ export default {
                 this.returnDFOValue=0
             }
         },
-        discardEditOverlapRoadNoti(){
-            this.isOverlapError = false
-            console.log(this.overlapError)
-            stopEditing()
-            this.cancelEditAction()
-        },
-        editOverlapRoadNoti(){
-            this.isOverlapError = false
-        }
     },
     watch:{
-        isOverlapError:{
-            handler: function(){
-                this.overlapError = this.isOverlapError
-            },
-            immediate: true
-        },
+        
         radioBtnSel:{
             handler: function(){
                 //
@@ -478,15 +450,6 @@ export default {
         }
     },
     computed:{
-        isOverlapError:{
-            get(){
-                return this.$store.state.overlapError
-            },
-            set(err){
-                console.log(err)
-                this.$store.commit('setOverlapError', err)
-            }
-        },
         getDfoBool:{
             get(){
                 return this.$store.state.isDfoReturn

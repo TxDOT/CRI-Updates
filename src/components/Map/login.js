@@ -180,11 +180,6 @@ export async function createGeoJson(cntyName){
 
     geoJSONArr.features.push(geojson)
   }
-
-  let ogSetOfCntyRds = [...geoJSONArr.features]
-  console.log(ogSetOfCntyRds)
-  store.commit('setOgArrCntyRds', ogSetOfCntyRds)
-
   // create a new blob from geojson featurecollection
   const blob = new Blob([JSON.stringify(geoJSONArr)], {
     type: "application/json"
@@ -227,7 +222,7 @@ export async function goToMap(name, nbr){
     let countyQuery = txCounties.queryFeatures(query)
     
     let returnCountyObj = await countyQuery
-    returnCitiesInCounty(countyQuery)
+    returnCitiesInCounty(returnCountyObj)
     getCentroid(returnCountyObj.features[0].geometry)
     store.commit('setDistrict', returnCountyObj.features[0].attributes.TXDOT_DIST_NBR)
     //set search sources to selected county

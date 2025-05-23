@@ -165,14 +165,28 @@
      
     </div>
   </div>
+  <div style="z-index: 9999; position: absolute; bottom: 1px; left: 0px; height:100%; width: 100%; background-color: rgba(0,0,0,.5); display: flex; flex-direction: column; justify-content: center; align-items: center;" v-if="overlapError">
+    <v-card tile style="width: 370px; text-align: left;">
+      <v-card-title style="background-color: #0056a9; color: white; height: 30px; align-content: center;">Overlap Detected</v-card-title>
+      <v-card-text>
+        <span>
+          WARNING: Your edit overlaps with another road line. Edit that substantially overlap with other roads lines are not allowed.
+        </span>
+      </v-card-text>
+      <v-card-actions style="float: right; padding-bottom: 10px;">
+        <v-btn text tile color="#0056a9" style="text-decoration: underline;" @click="discardEditOverlapRoadNoti()">Discard Edit</v-btn>
+        <v-btn text tile color="#0056a9" class="mainBtn" @click="editOverlapRoadNoti()">Make Corrections</v-btn>
+      </v-card-actions>
+    </v-card>
+  </div>
   </v-container>
 </template>
 
 <script>
 //importing functions
-import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, sketchCompete, cancelEditStepper, saveToEditsLayer, geomCheck, } from './Map/edit'
+import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, sketchCompete, cancelEditStepper, saveToEditsLayer, geomCheck} from './Map/edit'
 import { removeAsstPoints, initLoadAssetGraphic } from './Map/roadInfo'
-import { geomToMiles, checkCityInteraction } from './Map/helper'
+import { geomToMiles, checkCityInteraction, editOverlapCheck} from './Map/helper'
 import { gLayer } from './Map/map'
 import * as geometryEngine from '@arcgis/core/geometry/geometryEngine'
 //importing vue components
@@ -232,10 +246,18 @@ export default {
             document.getElementsByTagName('input')
             return value
           }
-        }
+        },
+        overlapError: false,
       }
     },
     watch:{
+      isOverlapError:{
+        handler: function(){
+          console.log(this.isOverlapError)
+          this.overlapError = this.isOverlapError
+        },
+        immediate: true
+      },
       discardAlert(bool){
         if(!bool) return
         setTimeout(()=>{this.discardAlert = false}, 3000)
@@ -391,6 +413,18 @@ export default {
     },
 
     methods:{
+      discardEditOverlapRoadNoti(){
+        this.isOverlapError = false
+        console.log(this.overlapError)
+        removeGraphic()
+        return
+      },
+      editOverlapRoadNoti(){
+        this.steppClose = true
+        this.showGIDVerts()
+        this.isOverlapError = false
+        return
+      },
       editHover(){
         this.isShowVideo = true
         this.typeEdit = ["edit", "https://www.youtube.com/watch?v=qy5At3NOTpg&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5"]
@@ -468,7 +502,6 @@ export default {
         removeHighlight()
         //this.comment = ""
         this.closeSelectRoad = false
-        this.isOverlapError = false
         return
       },
       checkCityLimitInteraction(){
@@ -483,9 +516,14 @@ export default {
         return
       },
       saveAttri(){
-        this.isOverlapError = false
         let editGraphic = this.graphicObj
-        if(editGraphic.attributes.roadbedName === 'null' || JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
+        let isOverlapCheck = editOverlapCheck(editGraphic)
+        if(isOverlapCheck){
+          console.log(this.overlapError)
+          this.cancel()
+          return
+        }
+        if(editGraphic.attributes.roadbedName === 'null'|| JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
           this.finalCheck = true
           return;
         }
@@ -981,5 +1019,9 @@ export default {
 
 #cityLimitText span{
   text-align: left;
+}
+.mainBtn{
+  text-decoration: underline;
+  border: 1px black solid;
 }
 </style>

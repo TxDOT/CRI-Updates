@@ -21,6 +21,7 @@ import Expand from "@arcgis/core/widgets/Expand";
 export const gLayer = new GraphicsLayer();
 // export const delBugGLayer = new GraphicsLayer();
 export const delgLayer = new GraphicsLayer();
+export const delBugGLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
 
@@ -51,7 +52,7 @@ export const imgBasemap = new Basemap({
 //map constructor 
 export const map = new Map({
     basemap: vTBasemap,
-    layers: [rdbdAssetLine,rdbdAssetPt, gLayer] 
+    layers: [rdbdAssetLine,rdbdAssetPt, gLayer, delBugGLayer ] 
 });
 //mapview constructor
 export const view = new MapView({
