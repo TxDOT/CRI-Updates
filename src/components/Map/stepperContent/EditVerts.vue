@@ -1,6 +1,6 @@
 <!-- display cards to let users which workflow they are on and what to do next. -->
 <template>
-    <v-card>
+    <v-card flat>
         <v-card-text style="color:black; text-align: left; position: relative; right:1rem;" v-if="!info">Click and drag vertices to edit the shape of the road.</v-card-text>
         <v-card-text style="color:black; text-align: left; position: relative; right:1rem;" v-else>Click Edit Road to make changes.</v-card-text>
         <v-btn style="top:0px; left:2rem;" depressed @click="deleteRoad()" text color="#014e96" v-if="!info && modifyRoad"> 

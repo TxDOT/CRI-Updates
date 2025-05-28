@@ -55,9 +55,9 @@
                 <v-btn tile outlined depressed id="cancelBtn" v-if="edit===true || addR === true || deleteR === true" text color="#014e96" @click="cancelEditAction(); clearEditBtn=false;"><u>Cancel</u></v-btn>
             </div>
         </v-card>
-        <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style = "deleteClick ? {'height' : '11rem'} : {}"> <!-- //&& this.modifyR === false -->
+        <v-card id="delWarn" v-if="deleteSecond === true || deleteClick" :style = "deleteClick ? {'height' : '10.3rem'} : {}"> <!-- //&& this.modifyR === false -->
             <v-card-title class="editRdTitle" >
-                <v-card-text class="editActionType">
+                <v-card-text class="editActionType" style="height: 20px !important; padding-bottom: 0 !important;">
                     Remove a road from the county network
                 <div>
                     <v-icon color="white" id="addVideoDel" @mouseover="deleteHover()" @mouseleave="closeVideo()">
@@ -69,7 +69,7 @@
 
             </v-card-title>
             
-            <v-card-text class="textSymb" id="bodyTxt" :style="deleteClick ? {'text-align': 'left', 'top':'35px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
+            <v-card-text class="textSymb" id="bodyTxt" :style="deleteClick ? {'text-align': 'left', 'top':'10px', 'position': 'relative'} : {'text-align': 'left', 'bottom':'10px', 'position': 'relative'}">
                 <b>{{roadName[0].streetName}} {{roadName[0].streetType !== 'NOT APPLICABLE' ? roadName[0].streetType : null}}</b> {{ delTxt }}
             </v-card-text>
             <v-alert color="orange" height="35" dense outlined id="infoAlert" v-if="!deleteClick" >
@@ -122,15 +122,21 @@
                 </v-card>
             </v-radio-group>
             </div>
-            <v-btn depressed text color="#0056a9" @click="deleteClick ? keepDelete() : cancelDelete(); enableNewEdit(); " :style="deleteClick ? {'top':'.2rem', 'left':'.5rem', 'border-color':'black', 'width':'5rem'} : {'bottom':'.4rem', 'left':'60.9%', 'border-color':'black', 'width':'5rem', 'text-decoration':'underline'}"> 
-            Cancel
-            </v-btn>
-            <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#0056a9" :style="deleteClick ? {'bottom':'.9rem', 'left':'12.5rem', 'border-color':'black', 'width':'5rem'}:{'bottom':'.5rem', 'left':'79.8%', 'border-color':'black'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : continueEdit(); enableNewEdit()" class="continueBtn"> 
-            <u>Continue</u>
-            </v-btn>
-            <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#0056a9" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
-            <u>Discard Edit</u>
-            </v-btn>
+            <div style="">
+                <v-btn depressed text color="#0056a9" @click="deleteClick ? keepDelete() : cancelDelete(); enableNewEdit(); " :style="deleteClick ? {'border-color':'black',   'float': 'left' , 'width':'5rem', 'left': '5px'} : {'border-color':'black', 'left': '230px'}"> 
+                    Cancel
+                </v-btn>
+                <div style="float: right; width: 280px; margin-right: -5px;">
+                    <v-btn :disabled="deleteClick ? null : commentText.length === 0" :outlined="deleteClick ? outlined = false : outlined = true" depressed text color="#0056a9" :style=" deleteClick ?{'border-color': 'black', 'margin-right': '10px'} : {'border-color': 'black', 'float': 'right', 'margin-right': '10px', 'margin-bottom': '5px'}" tile elevation="0" @click="deleteClick ? restartDeleteSeq() : continueEdit(); enableNewEdit()" class="continueBtn"> 
+                    <u>Continue</u>
+                </v-btn>
+                <v-btn v-if="deleteClick" tile outlined depressed id="discardBtn" color="#0056a9" @click="deleteRoadClick(); discardEdits=true"><v-icon medium style="right:5px">mdi-trash-can</v-icon>
+                    <u>Discard Edit</u>
+                </v-btn>
+                </div>
+                
+            </div>
+           
         </v-card>
     <sketchAlert v-if="discardEdits"/>
     <confirmationAlert v-if="deleteConfirm"/>
@@ -732,13 +738,13 @@ export default {
         border-color: black;
     }
     #bodyTxt{
-        top:5px;
+        top:7px;
         position: relative;
         flex-wrap: wrap;
     }
     #infoAlert{
-        width: 95%;
-        left: 3.6%; 
+        width: 95.5%;
+        left: 3.2%; 
         text-align: left; 
         font-size: 84%; 
         border-radius: 0px;
@@ -795,15 +801,13 @@ export default {
     }
     #discardBtn{
         position: relative;
-        left: 19rem;
-        bottom:2rem;
         width: 10rem;
     }
     .rdDelSelc{
         position: inherit;
         padding-top: .5rem;
         padding-right: 3.6%;
-        padding-left : 5.8%;
+        padding-left : 5.4%;
         height: 3rem;
     }
     .radioResponse{
@@ -835,7 +839,6 @@ export default {
         left: 2rem;
     }
     .continueBtn{
-        position: absolute;
         padding-left: 1% !important;
         padding-right: 1% !important;
     

@@ -161,6 +161,18 @@
                 Yes, as long as the hours are posted, certain public roads, such as park roads or roads that provide access to landfills, may be closed during certain times of the day or parts of the year. Public roads may also be closed temporarily due to extreme weather or emergency conditions.
               </v-expansion-panel-content>
             </v-expansion-panel>
+             <v-expansion-panel>
+              <v-expansion-panel-header> Can I get a list of county roads and lengths for my county?  If so, is the list separated by county precincts?</v-expansion-panel-header>
+              <v-expansion-panel-content class="expandPanelContent">
+               Yes, a list is provided in the Advanced Page.  Click 'Download' under the 'Download Road Log' option.  This will download a CSV file of county roads in your county.  This lists all county roads and is not separated by county precincts.
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+             <v-expansion-panel>
+              <v-expansion-panel-header> Can I make updates to the Road Log of county roads and email this as my official updates?</v-expansion-panel-header>
+              <v-expansion-panel-content class="expandPanelContent">
+              Valid updates can only be made using the editing tools within the map.  No other form of updates are accepted.
+              </v-expansion-panel-content>
+            </v-expansion-panel>
           </v-expansion-panels>
           <v-btn class="closeBtnUnderline" id="faqBtn" depressed outlined color="#0056a9" tile @click="closeFaqBtn()"><u>Close</u></v-btn>
         </v-card-text>
