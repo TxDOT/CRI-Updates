@@ -1,5 +1,5 @@
 // import methods and functions into file
-import { view, clientSideGeoJson, gLayer, txCities, delBugGLayer} from './map' //importing from ESRI API via map.js
+import { view, clientSideGeoJson, gLayer, txCities} from './map' //importing from ESRI API via map.js
 import { criConstants } from '../../common/cri_constants';
 import { store } from '../../store'
 import { getTime } from '../Map/advanced'
