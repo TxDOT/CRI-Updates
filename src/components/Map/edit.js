@@ -35,10 +35,10 @@ export async function addRoadbed(){
             store.commit('setDfoReturn', 0)
             store.commit('setIsInitAdd', true)
             //creating the length of road in miles for user
-            if(cityPolys.length){
+            //if(cityPolys.length){
               let returnGeom = findClosestGeom(event.graphic, cityPolys)
-              store.commit('setClosestCity', JSON.stringify(returnGeom[1]))  
-            }
+              store.commit('setClosestCity', returnGeom[1])  
+           // }
             
             lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
             res([lengthMiles, event.graphic.geometry, 'add']);
@@ -128,10 +128,10 @@ export async function modifyRoadbed(clickType, editType, isRename){
         .then(function(response){
           for(let i=0; i < response.results.length; i++){
             getOGCntyRds() 
-            if(cityPolys.length){
+            //if(cityPolys.length){
               let returnGeom = findClosestGeom(response.results[i].graphic.geometry, cityPolys)
-              store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
-            }
+              store.commit('setClosestCity', (returnGeom[1]))
+            //}
             
             if(store.getters.getEditExisting === true || store.getters.getDeleteRd === true){
               store.commit('setActiveLoader',true)
@@ -204,10 +204,11 @@ export function updateLength(){
         if(event.toolEventInfo.type === 'reshape-stop'){
           getOGCntyRds() 
           let cityPolys = store.getters.getCityPoly
-          if(cityPolys.length){
+          //if(cityPolys.featureslength){
             let returnGeom = findClosestGeom(event.graphics[0], cityPolys)
-            store.commit('setClosestCity', JSON.stringify(returnGeom[1]))
-          }
+            console.log(returnGeom)
+            store.commit('setClosestCity', returnGeom[1])
+          //}
          
           geomCheck(event.graphics[0].geometry, false)
           //controls undo/redo edtis
@@ -526,6 +527,7 @@ function setUpGraphic(){
         return;
       }
       response.results.forEach((result)=>{
+        console.log(response.results)
         if(result.graphic.attributes.objectid !== store.getters.getObjectid){
           return;
         }

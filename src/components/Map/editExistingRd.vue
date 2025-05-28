@@ -190,6 +190,7 @@ export default {
         enableNewEdit(){
             this.nextDeleteRoadForm = false
             this.clearEditBtn = false
+            stopEditing()
         },
         editHover(){
             this.isShowVideo = true

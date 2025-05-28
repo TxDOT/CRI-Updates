@@ -18,7 +18,7 @@
                 <v-btn height="3vh" tile id="submitCertifyBtn" class="mx-3" small @click="submitStepOne();" @mouseover="isEditingVideo('https://www.youtube.com/watch?v=-9tuxBxNpko&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=6', 'Submit and Certify')"><u>Submit & Certify</u></v-btn>
         </v-app-bar>
 
-        <!-- <div class="text-center">
+        <div class="text-center">
             <v-snackbar style="bottom:50px;" v-model = snackbar timeout=-1>
                 <v-btn dark color="pink" text @click="snackbar = false; cancelEditing()" width=600> Stop Editing </v-btn>
             </v-snackbar>

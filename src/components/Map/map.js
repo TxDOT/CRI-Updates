@@ -19,16 +19,14 @@ import Search from "@arcgis/core/widgets/Search";
 import Expand from "@arcgis/core/widgets/Expand";
 
 export const gLayer = new GraphicsLayer();
-// export const delBugGLayer = new GraphicsLayer();
-export const delgLayer = new GraphicsLayer();
 export const delBugGLayer = new GraphicsLayer();
+export const delgLayer = new GraphicsLayer();
 export const rdbdAssetPt = new GraphicsLayer();
 export const rdbdAssetLine = new GraphicsLayer();
 
 export const criUtils = new FeatureLayer({
     url: criConstants.criUtils,
 })
-
 
 const txdotVectorTiles = new VectorTileLayer({
     url: "https://tiles.arcgis.com/tiles/KTcxiTD9dsQw4r7Z/arcgis/rest/services/TxDOT_Vector_Tile_Basemap/VectorTileServer",
@@ -234,12 +232,14 @@ export const advanceLayer = new FeatureLayer({
 //county polygon feature Layer
 export const txCounties = new FeatureLayer({
     url: criConstants.txCounties,
+    visible: true
     //definitionExpression: "CNTY_NM= 'Travis'"
     //effect: "blur(8px) brightness(1.2) grayscale(0.8)"
 })
 //city polygon feature Layer
 export const txCities = new FeatureLayer({
     url: criConstants.txCities,
+    visible: true
 })
 
 //county information feature layer

@@ -155,7 +155,7 @@
         <div id="cityLimitText">
           <span>WARNING: Your edit is within a city limit boundary. TxDOT classifies roads within city limits as city streets.</span>
           <span>The edit will likely be rejected. Please provide an explanation if this is an exception.</span>
-          <v-textarea solo flat no-resize label="Why do you have to make this difficult." style="border: 1px solid gray; padding: 10px; " v-model="comment"></v-textarea>
+          <v-textarea solo flat no-resize label="Leave a comment" style="border: 1px solid gray; padding: 10px; " v-model="comment"></v-textarea>
         </div>
         <div style="display: flex; flex-direction: row; justify-content: end; gap: 10px; ">
           <v-btn tile depressed color="#014e96" text style="text-decoration: underline;" @click="isCityLimit = false">Go Back</v-btn>
@@ -170,7 +170,7 @@
       <v-card-title style="background-color: #0056a9; color: white; height: 30px; align-content: center;">Overlap Detected</v-card-title>
       <v-card-text>
         <span>
-          WARNING: Your edit overlaps with another road line. Edit that substantially overlap with other roads lines are not allowed.
+          WARNING: Your edit overlaps with another road line. Edits that substantially overlap with other roads lines are not allowed.
         </span>
       </v-card-text>
       <v-card-actions style="float: right; padding-bottom: 10px;">
@@ -514,6 +514,7 @@ export default {
       checkCityLimitInteraction(){
         this.graphicObj = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
         let isInCity = checkCityInteraction(this.graphicObj.geometry)
+        console.log(isInCity)
         if(isInCity){
           this.isCityLimit = true
           console.log(isInCity)
