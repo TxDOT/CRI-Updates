@@ -2,7 +2,7 @@ import { sketch, sketchPoint, view, gLayer, clientSideGeoJson } from './map' //f
 import { criConstants } from '../../common/cri_constants';
 import {initGraphicCheck, queryEditsLayer} from './crud'
 import {store} from '../../store';
-import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic , geomToMiles, findClosestGeom, getOGCntyRds} from './helper';
+import { setDataToStore, queryFeat, queryFeatureTables, defineGraphic , geomToMiles, getOGCntyRds} from './helper';
 import { getNewDfoDist, epochToHumanTime } from './roadInfo'
 import * as geometryEngine from "@arcgis/core/geometry/geometryEngine";
 import Graphic from "@arcgis/core/Graphic";
@@ -13,7 +13,6 @@ export async function addRoadbed(){
   try{
     // let bsmapZoom = basemapDisplayOnZoom()
     let addNewRoad = new Promise(function(res,rej){
-        let cityPolys = store.getters.getCityPoly
         sketch.create("polyline",{mode:"click", hasZ: false})
         let newSketch = sketch.on('create', (event) => {
           
@@ -35,10 +34,6 @@ export async function addRoadbed(){
             store.commit('setDfoReturn', 0)
             store.commit('setIsInitAdd', true)
             //creating the length of road in miles for user
-            //if(cityPolys.length){
-              let returnGeom = findClosestGeom(event.graphic, cityPolys)
-              store.commit('setClosestCity', returnGeom[1])  
-           // }
             
             lengthMiles = geometryEngine.geodesicLength(event.graphic.geometry, "miles")
             res([lengthMiles, event.graphic.geometry, 'add']);
@@ -114,7 +109,6 @@ function createInfoSendToStore(newRoad){
 
 export async function modifyRoadbed(clickType, editType, isRename){
     let promise = new Promise(function(res, rej){
-      let cityPolys = store.getters.getCityPoly
       const removeModListener = view.on(clickType,(event) => {
         if(store.getters.getEditExisting === false && store.getters.getDeleteRd === false){
           store.commit('setEditExisting', null)
@@ -128,10 +122,6 @@ export async function modifyRoadbed(clickType, editType, isRename){
         .then(function(response){
           for(let i=0; i < response.results.length; i++){
             getOGCntyRds() 
-            //if(cityPolys.length){
-              let returnGeom = findClosestGeom(response.results[i].graphic.geometry, cityPolys)
-              store.commit('setClosestCity', (returnGeom[1]))
-            //}
             
             if(store.getters.getEditExisting === true || store.getters.getDeleteRd === true){
               store.commit('setActiveLoader',true)
@@ -203,12 +193,6 @@ export function updateLength(){
       if(event.state === 'active'){ 
         if(event.toolEventInfo.type === 'reshape-stop'){
           getOGCntyRds() 
-          let cityPolys = store.getters.getCityPoly
-          //if(cityPolys.featureslength){
-            let returnGeom = findClosestGeom(event.graphics[0], cityPolys)
-            console.log(returnGeom)
-            store.commit('setClosestCity', returnGeom[1])
-          //}
          
           geomCheck(event.graphics[0].geometry, false)
           //controls undo/redo edtis

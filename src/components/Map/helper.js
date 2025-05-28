@@ -411,24 +411,21 @@ export function getOGCntyRds(){
   clientSideGeoJson.queryFeatures({returnGeometry: true, geometry: view.extent})
     .then((geo) => {
         //let addGraphics = gLayer.graphics.items.filter(g => g.attributes.editType === 'ADD')
-        let addGraphics = []
         let graphics = gLayer.graphics.items
         let g;
         for(g=0; g < graphics.length; g++){
-          console.log(graphics[g])
-          if(graphics[g].attributes.editType === 'ADD'){
-            addGraphics.push(graphics[g])
-            continue
-          }
+          // if(graphics[g].attributes.editType === 'ADD'){
+          //   addGraphics.push(graphics[g])
+          //   continue
+          // }
           let findCurrRoad = geo.features.findIndex(c => c.attributes.RDBD_GMTRY_LN_ID === graphics[g].attributes.gid)
           if(findCurrRoad === -1){
             continue
           }
-          console.log(findCurrRoad)
           geo.features.splice(findCurrRoad, 1)
         }
 
-        cntyGeom = [...geo.features, ...addGraphics]
+        cntyGeom = [...geo.features, ...graphics]
     })
     .catch(err => console.log('error retrieving values: ', err)) 
   return
