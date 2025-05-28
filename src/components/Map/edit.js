@@ -203,12 +203,6 @@ export function updateLength(){
       if(event.state === 'active'){ 
         if(event.toolEventInfo.type === 'reshape-stop'){
           getOGCntyRds() 
-          let cityPolys = store.getters.getCityPoly
-          //if(cityPolys.featureslength){
-            let returnGeom = findClosestGeom(event.graphics[0], cityPolys)
-            console.log(returnGeom)
-            store.commit('setClosestCity', returnGeom[1])
-          //}
          
           geomCheck(event.graphics[0].geometry, false)
           //controls undo/redo edtis

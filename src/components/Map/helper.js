@@ -349,31 +349,15 @@ export function checkCityInteraction(polyline){
   return isHalfInCity
 }
 
-export function returnCitiesInCounty(county){
+export async function returnCitiesInCounty(){
 
-  //county.then((cow) => {
-    let cityQuery = txCities.createQuery()
-    cityQuery.spatialRelationship = "intersects"
-    cityQuery.returnGeometry = true
-    cityQuery.geometry = county.features[0].geometry
-    txCities.queryFeatures(cityQuery)
-      .then((c) => {
-        let geomArr = []
-        let i;
-        for(i=0; i < c.features.length; i++){
-          if(c.features[i].geometry.rings.length > 1){
-            c.features[i].geometry.rings.forEach((x) => {
-              geomArr.push({'attributes': c.features[i].attributes, 'geometry': {'type': "polygon", 'rings': [x], 'spatialReference': c.features[i].geometry.spatialReference}})
-            })
-            continue
-          }
-          geomArr.push(c.features[i])
-        }
-        store.commit('setCityPoly', geomArr)
-      })
-      .catch(err => console.log(err))
-  //})
-  return
+  let cityQuery = txCities.createQuery()
+  cityQuery.spatialRelationship = "intersects"
+  cityQuery.returnGeometry = true
+  cityQuery.geometry = view.extent
+  let city = await txCities.queryFeatures(cityQuery)
+
+  return city
 }
 
 export function findClosestGeom(polyline, compareGeom){

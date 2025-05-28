@@ -184,7 +184,8 @@
 
 <script>
 //importing functions
-import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, sketchCompete, cancelEditStepper, saveToEditsLayer, geomCheck} from './Map/edit'
+import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, 
+         sketchCompete, cancelEditStepper, saveToEditsLayer, geomCheck, returnCitiesInCounty} from './Map/edit'
 import { removeAsstPoints, initLoadAssetGraphic } from './Map/roadInfo'
 import { geomToMiles, checkCityInteraction, editOverlapCheck} from './Map/helper'
 import { gLayer } from './Map/map'
@@ -240,6 +241,7 @@ export default {
         editName: null,
         editDt: null,
         editClicked: false,
+        cityPoly: null,
         dfoRules:{
           DFO: value => !!value || 'Required',
           gather: value => {
@@ -308,11 +310,13 @@ export default {
           if(this.roadGeometry.length === 0) return
           let miles = geomToMiles(this.roadGeometry, true, 3)
           this.fetchLength = `${miles}`
+          console.log(this.cityPoly)
         },
         immediate: true
       },
       roadName: {
         handler: function(){
+          returnCitiesInCounty()
           if(!this.roadName){
             this.fetchRoadName = 'NAME HAS NOT BEEN DEFINED'
             return;
@@ -511,7 +515,7 @@ export default {
         this.closeSelectRoad = false
         return
       },
-      checkCityLimitInteraction(){
+      async checkCityLimitInteraction(){
         this.graphicObj = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
         let isInCity = checkCityInteraction(this.graphicObj.geometry)
         console.log(isInCity)
@@ -562,6 +566,11 @@ export default {
       }
     },
     computed:{
+      returnCities:{
+        get(){
+          return this.$store.state.getCityPoly
+        }
+      },
       isOverlapError:{
         get(){
           return this.$store.state.overlapError
