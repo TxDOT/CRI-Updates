@@ -124,7 +124,7 @@
           <v-btn id="clseBtnHelp" outlined tile color="#014e96" @click="close('isHelpTraining')">close</v-btn>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="faqs" id="faqDialog" persistent>
+    <v-dialog v-model="faqs" id="faqDialog" persistent width="640">
       <v-card class="card" id="dialogWidth" >
         <v-card-title class="cardTitle" id="faqTitle">
           <p id="faqsName">FAQs</p>
@@ -641,7 +641,7 @@
   position: relative;
   display: flex;
   width: 40rem;
-  left: 35%;
+  /* left: 35%; */
   min-height: 5vh;
   flex-direction: column;
   max-height: 82vh;
