@@ -1,6 +1,6 @@
 <!-- "About" content -->
 <template>
-    <v-dialog v-model="aboutClick" max-width="600" persistent id="aboutApp">
+    <v-dialog v-model="aboutClick" max-width="600" persistent width="500"  id="aboutApp">
         <v-card id="finalCheck" v-model="aboutClick">
             <v-card-title class="surfaceTitle"><span id="titleText">About the County Road Inventory Map</span></v-card-title>
         <div>
@@ -70,6 +70,8 @@ export default {
     min-height: 0px;
     display: flex;
     flex-direction: column;
+    box-shadow: none;
+    
 }
 #moveItem{
     position: relative;
