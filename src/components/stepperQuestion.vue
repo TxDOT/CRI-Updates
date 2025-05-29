@@ -565,11 +565,6 @@ export default {
       }
     },
     computed:{
-      returnCities:{
-        get(){
-          return this.$store.state.getCityPoly
-        }
-      },
       isOverlapError:{
         get(){
           return this.$store.state.overlapError
