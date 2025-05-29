@@ -9,7 +9,7 @@ import Graphic from "@arcgis/core/Graphic";
 import Query from "@arcgis/core/rest/support/Query";
 import * as webMercatorUtils from "@arcgis/core/geometry/support/webMercatorUtils";
 
-let cntyGeom; 
+let cntyGeom = []; 
 
 //Sets Road Data in the data store. 
 export async function setDataToStore( name, objectid, comment, editInfo){
@@ -337,10 +337,8 @@ function compareGeometryInteractions(geom1, geom2){
   return measureVal
 } 
 
-export function checkCityInteraction(polyline){
+export function checkCityInteraction(polyline, city){
   let ogLength = geometryEngine.geodesicLength(polyline, "miles")
-  let city = store.getters.getClosestCity
-  console.log(city)
   let interactionRespones = compareGeometryInteractions(city, polyline)
   if(interactionRespones === 0){
     return false
@@ -350,14 +348,19 @@ export function checkCityInteraction(polyline){
 }
 
 export async function returnCitiesInCounty(){
+  try{
+    let cityQuery = txCities.createQuery()
+    cityQuery.spatialRelationship = "intersects"
+    cityQuery.returnGeometry = true
+    cityQuery.geometry = view.extent
+    let city = await txCities.queryFeatures(cityQuery)
 
-  let cityQuery = txCities.createQuery()
-  cityQuery.spatialRelationship = "intersects"
-  cityQuery.returnGeometry = true
-  cityQuery.geometry = view.extent
-  let city = await txCities.queryFeatures(cityQuery)
-
-  return city
+    return city
+  }
+  catch(err){
+    console.log(err)
+  }
+  
 }
 
 export function findClosestGeom(polyline, compareGeom){
@@ -392,6 +395,9 @@ export function findClosestGeom(polyline, compareGeom){
 }
 
 export function getOGCntyRds(){
+  if(cntyGeom.length){
+    cntyGeom.length = 0
+  }
   clientSideGeoJson.queryFeatures({returnGeometry: true, geometry: view.extent})
     .then((geo) => {
         //let addGraphics = gLayer.graphics.items.filter(g => g.attributes.editType === 'ADD')

@@ -159,7 +159,7 @@
         </div>
         <div style="display: flex; flex-direction: row; justify-content: end; gap: 10px; ">
           <v-btn tile depressed color="#014e96" text style="text-decoration: underline;" @click="isCityLimit = false">Go Back</v-btn>
-          <v-btn tile depressed color="#014e96" text style="border: black 1px solid; text-decoration: underline;" @click="saveAttri(); isCityLimit = !isCityLimit">Confirm Edit</v-btn>
+          <v-btn tile depressed color="#014e96" text style="border: black 1px solid; text-decoration: underline;" @click="saveAttri(); isCityLimit = false">Confirm Edit</v-btn>
         </div>
       </div>
      
@@ -184,10 +184,9 @@
 
 <script>
 //importing functions
-import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, 
-         sketchCompete, cancelEditStepper, saveToEditsLayer, geomCheck, returnCitiesInCounty} from './Map/edit'
+import { stopEditingPoint, showVerticies, removeHighlight, removeGraphic, sketchCompete, cancelEditStepper, saveToEditsLayer, geomCheck} from './Map/edit'
 import { removeAsstPoints, initLoadAssetGraphic } from './Map/roadInfo'
-import { geomToMiles, checkCityInteraction, editOverlapCheck} from './Map/helper'
+import { geomToMiles, checkCityInteraction, editOverlapCheck, returnCitiesInCounty, findClosestGeom} from './Map/helper'
 import { gLayer } from './Map/map'
 import * as geometryEngine from '@arcgis/core/geometry/geometryEngine'
 //importing vue components
@@ -316,7 +315,6 @@ export default {
       },
       roadName: {
         handler: function(){
-          returnCitiesInCounty()
           if(!this.roadName){
             this.fetchRoadName = 'NAME HAS NOT BEEN DEFINED'
             return;
@@ -433,13 +431,11 @@ export default {
         this.isShowVideo = true
         // this.typeEdit = ["edit", "https://www.youtube.com/watch?v=qy5At3NOTpg&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=5"]
          if (this.editHeaderStr === 'Select a road from the map to edit the name|Change the name of an existing road'){
-                this.typeEdit = ["edit", "https://www.youtube.com/watch?v=JKxz7-5Pf3o&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=2"]
-            }
-            else if(this.editHeaderStr === 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road'){
-                this.typeEdit = ["edit", "https://www.youtube.com/watch?v=JMIy8Q6vnHw&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=3"]
-
-            }
-   
+            this.typeEdit = ["edit", "https://www.youtube.com/watch?v=JKxz7-5Pf3o&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=2"]
+          }
+          else if(this.editHeaderStr === 'Select a road from the map to begin editing|Extend, shorten, or realign an existing road'){
+            this.typeEdit = ["edit", "https://www.youtube.com/watch?v=JMIy8Q6vnHw&list=PLyLWQADRroOUeiQ8sXX3JMVQeu87sgig2&index=3"]
+          }
       },
       addHover(){
         this.isShowVideo = true
@@ -515,10 +511,17 @@ export default {
         this.closeSelectRoad = false
         return
       },
+      async evalCityInteraction(){
+        let cities = await returnCitiesInCounty()
+        let closestCity = findClosestGeom(this.graphicObj.geometry, cities.features)
+        let isInCity = checkCityInteraction(this.graphicObj.geometry, closestCity[1])
+        console.log(isInCity)
+        return isInCity
+      },
       async checkCityLimitInteraction(){
         this.graphicObj = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
-        let isInCity = checkCityInteraction(this.graphicObj.geometry)
-        console.log(isInCity)
+        //console.log(this.evalCityInteraction())
+        let isInCity = await this.evalCityInteraction()
         if(isInCity){
           this.isCityLimit = true
           console.log(isInCity)
