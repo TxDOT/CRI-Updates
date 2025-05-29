@@ -309,7 +309,6 @@ export default {
           if(this.roadGeometry.length === 0) return
           let miles = geomToMiles(this.roadGeometry, true, 3)
           this.fetchLength = `${miles}`
-          console.log(this.cityPoly)
         },
         immediate: true
       },
@@ -515,7 +514,6 @@ export default {
         let cities = await returnCitiesInCounty()
         let closestCity = findClosestGeom(this.graphicObj.geometry, cities.features)
         let isInCity = checkCityInteraction(this.graphicObj.geometry, closestCity[1])
-        console.log(isInCity)
         return isInCity
       },
       async checkCityLimitInteraction(){
@@ -524,7 +522,6 @@ export default {
         let isInCity = await this.evalCityInteraction()
         if(isInCity){
           this.isCityLimit = true
-          console.log(isInCity)
           return
         }
         this.saveAttri()
@@ -534,7 +531,6 @@ export default {
         let editGraphic = this.graphicObj
         let isOverlapCheck = editOverlapCheck(editGraphic)
         if(isOverlapCheck){
-          console.log(this.overlapError)
           this.cancel()
           return
         }

@@ -364,15 +364,19 @@ export async function returnCitiesInCounty(){
 }
 
 export function findClosestGeom(polyline, compareGeom){
-  console.log(compareGeom)
   if(!compareGeom){
     return [0,0]
   }
   //remove all roads from compareGeom that are graphics only mods and deletes 
   if(polyline.attributes){
-    console.log(compareGeom)
     let findCurrRoad = compareGeom.findIndex(c => c.attributes.RDBD_GMTRY_LN_ID === polyline.attributes.gid)
-    compareGeom.splice(findCurrRoad, 1)
+    if(findCurrRoad !== -1){
+      compareGeom.splice(findCurrRoad, 1)
+    }
+    else{
+      let findGraph = compareGeom.findIndex(c => c.attributes.gid === polyline.attributes.gid)
+      compareGeom.splice(findGraph, 1)
+    }
   }
 
   let c;
@@ -387,7 +391,6 @@ export function findClosestGeom(polyline, compareGeom){
     if(dist < shortestDist[0]){
       continue
     }
-    console.log(dist)
     shortestDist = [dist, compareGeom[c].geometry]
   }
 
@@ -414,7 +417,6 @@ export function getOGCntyRds(){
           }
           geo.features.splice(findCurrRoad, 1)
         }
-
         cntyGeom = [...geo.features, ...graphics]
     })
     .catch(err => console.log('error retrieving values: ', err)) 
@@ -439,8 +441,7 @@ export function editOverlapCheck(edit){
     // let returnedDistGeom = returnDist[1]
     
     // console.log(returnLength, getOGLength)
-    if(returnDist[0]*100 > 50){
-      console.log('setTrue')
+    if(returnDist[0]*100 >= 50){
       store.commit('setOverlapError', true)
       return true
     }
