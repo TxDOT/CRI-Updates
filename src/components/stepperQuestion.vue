@@ -159,7 +159,7 @@
         </div>
         <div style="display: flex; flex-direction: row; justify-content: end; gap: 10px; ">
           <v-btn tile depressed color="#014e96" text style="text-decoration: underline;" @click="isCityLimit = false">Go Back</v-btn>
-          <v-btn tile depressed color="#014e96" text style="border: black 1px solid; text-decoration: underline;" @click="saveAttri(); isCityLimit = false">Confirm Edit</v-btn>
+          <v-btn tile depressed color="#014e96" text style="border: black 1px solid; text-decoration: underline;" @click="saveAttri(); isCityLimit = false" :disabled="!comment">Confirm Edit</v-btn>
         </div>
       </div>
      

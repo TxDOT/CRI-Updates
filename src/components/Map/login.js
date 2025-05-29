@@ -188,7 +188,6 @@ export async function createGeoJson(cntyName){
   // URL reference to the blob
   const url = URL.createObjectURL(blob);
   // create new geojson layer using the blob url
-  console.log(url)
   clientSideGeoJson.url = url
   
   return;
