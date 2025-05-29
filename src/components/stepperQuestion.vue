@@ -134,7 +134,7 @@
   </div>
   <!-- alert used to confirm that the sketch has been removed -->
   <sketchAlert v-if="discardAlert"/>
-  <v-dialog persistent v-model="discardAlertQuest">
+  <v-dialog persistent v-model="discardAlertQuest" width="352"  >
     <v-card id="discardSketch" v-model="discardAlertQuest" elevation="10">
       <v-card-title class="cardTitle"><p id="discardTitleTxt">Confirm Discard</p></v-card-title>
       <v-card-text id="discardTxt">Are you sure you want to discard this edit?</v-card-text>
@@ -954,7 +954,7 @@ export default {
   position: relative;
   padding: 0%;
   top: 50%;
-  left: 45%;
+  /* left: 45%; */
   width: 22rem;
   border-radius: 0px;
   height:7.7rem
