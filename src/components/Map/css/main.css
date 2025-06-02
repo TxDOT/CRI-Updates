@@ -263,5 +263,9 @@
   width: 25.3vw;
   left: 100%;
 }
-
+.addComment-dialog{
+  position: relative;
+  width: 29% !important;
+  left: 9% !important;
+}
 

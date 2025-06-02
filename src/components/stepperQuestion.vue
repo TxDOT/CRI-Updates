@@ -112,7 +112,7 @@
         <v-card-text id="commentTxt">{{comment}}</v-card-text>
       </div>
     </v-card>
-    <v-dialog v-model="dialog" persistent>
+    <v-dialog v-model="dialog" persistent content-class="addComment-dialog">
       <v-card id="dialogComment">
         <v-card-title class="surfaceTitle">
           <v-card-text id="dialogCommentTxt">Comments</v-card-text>
@@ -852,8 +852,6 @@ export default {
   flex-direction: column
 }
 #dialogComment{
-  width:30%;
-  left: 44%;
   height: 70%;
   border-radius: 0px;
 }
