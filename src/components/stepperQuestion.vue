@@ -254,7 +254,6 @@ export default {
     watch:{
       isOverlapError:{
         handler: function(){
-          console.log(this.isOverlapError)
           this.overlapError = this.isOverlapError
         },
         immediate: true
@@ -416,7 +415,6 @@ export default {
     methods:{
       discardEditOverlapRoadNoti(){
         this.isOverlapError = false
-        console.log(this.overlapError)
         removeGraphic()
         return
       },
