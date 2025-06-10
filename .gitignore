@@ -1,7 +1,5 @@
 .DS_Store
 #/dist
-package.json
-package-lock.json
 node_modules/
 babel.config.js
 # local env files

@@ -295,7 +295,6 @@ export default {
         },
         immediate: true,
       },
-      
       e1:{
         handler: function(){
           this.returnStep = this.e1
@@ -508,25 +507,25 @@ export default {
         this.closeSelectRoad = false
         return
       },
-      async evalCityInteraction(){
+      async evalCityInteraction(graphicObj){
         let cities = await returnCitiesInCounty()
-        let closestCity = findClosestGeom(this.graphicObj.geometry, cities.features)
-        let isInCity = checkCityInteraction(this.graphicObj.geometry, closestCity[1])
+        let closestCity = findClosestGeom(graphicObj.geometry, cities.features)
+        let isInCity = checkCityInteraction(graphicObj.geometry, closestCity[1])
         return isInCity
       },
       async checkCityLimitInteraction(){
-        this.graphicObj = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
+        let graphicObj = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
         //console.log(this.evalCityInteraction())
-        let isInCity = await this.evalCityInteraction()
+        let isInCity = await this.evalCityInteraction(graphicObj)
         if(isInCity){
           this.isCityLimit = true
           return
         }
-        this.saveAttri()
+        this.saveAttri(graphicObj)
         return
       },
-      saveAttri(){
-        let editGraphic = this.graphicObj
+      saveAttri(editGraphic){
+        //let editGraphic = this.graphicObj
         let isOverlapCheck = editOverlapCheck(editGraphic)
         if(isOverlapCheck){
           this.cancel()
