@@ -407,10 +407,9 @@ export function getOGCntyRds(){
         let graphics = gLayer.graphics.items
         let g;
         for(g=0; g < graphics.length; g++){
-          // if(graphics[g].attributes.editType === 'ADD'){
-          //   addGraphics.push(graphics[g])
-          //   continue
-          // }
+          if(graphics[g].attributes.editType === 'ADD'){
+            continue
+          }
           let findCurrRoad = geo.features.findIndex(c => c.attributes.RDBD_GMTRY_LN_ID === graphics[g].attributes.gid)
           if(findCurrRoad === -1){
             continue
