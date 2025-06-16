@@ -434,6 +434,7 @@ export function editOverlapCheck(edit){
     //   console.log(cntyGeom) 
     // }
     let returnDist = findClosestGeom(edit, cntyGeom)
+  
       // if(!returnDist){
     //   return false
     // }
@@ -449,6 +450,7 @@ export function editOverlapCheck(edit){
   }
   catch(err){
     console.log(err)
+    return false
   }
  
 }
