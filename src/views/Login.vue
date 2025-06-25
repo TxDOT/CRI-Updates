@@ -179,8 +179,11 @@ export default {
           this.$router.push('/load')
           isTrainingAccess(portal.user.fetchGroups())
           this.userName = portal.user.username //portal.user.username
-          let countyInfo = await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed.
-          if(!countyInfo){return;}
+          let countyInfo = await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed. 
+          if(!countyInfo){
+            this.$router.push({name: "error"})
+            return;
+          }
           let cntyNumber = countyInfo[1]
           let cntyName = countyInfo[0]
           //search.sources._items[0].layer.definitionExpression = `CNTY_TYPE_NBR = ${cntyNumber}`
