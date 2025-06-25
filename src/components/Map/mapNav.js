@@ -80,6 +80,9 @@ export function basemapDisplayOnZoom(){
             }
             try{
                 basemapToggle.toggle()
+                if(isAdd){
+                    store.commit('setIsOverlay', true)
+                }
             }
             catch(err){
                 console.log(err)

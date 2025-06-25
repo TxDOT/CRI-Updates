@@ -96,6 +96,19 @@
                      return "First Name must be greater than 3 characters" 
                      }
                  
+                 },
+                 value => {
+                     if(!/\d/.test(value)){
+                        this.firstnvalid = true
+
+                         return true
+                     }
+                     else{
+                        this.firstnvalid = false
+
+                         return "Numbers are not allowed"
+ 
+                     }
                  }
                  ],
                  lastName:"",
@@ -118,6 +131,19 @@
                      }
                      this.lastnvalid = false
                      return "Last Name must be greater than 3 characters" 
+                 },
+                  value => {
+                     if(!/\d/.test(value)){
+                        this.lastnvalid = true
+
+                         return true
+                     }
+                     else{
+                        this.lastnvalid = false
+
+                         return "Numbers are not allowed"
+ 
+                     }
                  }
                  ],
                  email:"",
