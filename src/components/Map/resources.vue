@@ -33,7 +33,7 @@
         <v-icon id="layerIcon">mdi-layers</v-icon>
         <v-card-text class="textSymb" id="dwnldInvTxt">
           <b>DOWNLOAD INVENTORY<br>
-          Download TxDOT's county road inventory for your county.</b><br>
+          Download TxDOT's county road inventory (all roads)</b><br>
           <p class="itemText">This is GIS data which allows GIS professionals to compare TxDOT's CRI with their inventory for<br>discrepancies.</p>
         </v-card-text>
         <v-btn outlined tile small @click="display = false; exitApp = true; cntyQueryTab()" color="#0056a9" id="downloadBtn">

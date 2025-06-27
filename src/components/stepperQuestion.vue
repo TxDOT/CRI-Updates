@@ -515,7 +515,6 @@ export default {
       },
       async checkCityLimitInteraction(){
         let graphicObj = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
-        //console.log(this.evalCityInteraction())
         let isInCity = await this.evalCityInteraction(graphicObj)
         if(isInCity){
           this.isCityLimit = true

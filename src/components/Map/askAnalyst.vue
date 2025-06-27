@@ -184,7 +184,7 @@ export default {
         this.askAnalystForm = false
         this.isSpinner = true
             
-        let url = `https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_AskAnalystEmailer.fmw?QUESTION=${this.questionValue}&DISTRICT=${this.districtValue}&COUNTY=${this.countyValue}&CONTACT=${this.contactValue}&NAME=${this.nameValue}&USERNAME=${this.userNameValue}&opt_showresult=false&opt_servicemode=sync&token=427aff4b0d078d49d01524319b6686d83bd852f6`
+        let url = `https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_AskAnalystEmailer.fmw?QUESTION=${this.questionValue}&DISTRICT=${this.districtValue}&COUNTY=${this.countyValue}&CONTACT=${this.contactValue}&NAME=${this.nameValue}&USERNAME=${this.userNameValue}&opt_showresult=false&opt_servicemode=sync&token=427aff4b0d078d49d01524319b6686d83bd852f6`
         this.sendRequest(url)
     },
     cancelForm(){

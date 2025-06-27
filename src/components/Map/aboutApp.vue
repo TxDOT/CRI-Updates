@@ -18,7 +18,7 @@
 
         <div id="btnPosition"><v-btn underline tile color="#0056a9" outlined @click="close(); clearEditBtn=false"><u>close</u></v-btn></div>
 
-        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.7.0</u></v-card-text>
+        <v-card-text class="textSymb" id="buildNm"><u>Build Version: 1.7.1</u></v-card-text>
 
             
       </v-card>
@@ -30,7 +30,7 @@ export default {
     name: 'about',
     data (){
       return {
-        updateList:["Added Ask a Question feature", "Updated editing tools", "Updated short training videos", "Updated map colors to new TxDOT blue"]
+        updateList:["Update overlap interaction process", "Added Ask a Question feature", "Updated editing tools", "Updated short training videos", "Updated map colors to new TxDOT blue"]
       }
     },
     methods:{

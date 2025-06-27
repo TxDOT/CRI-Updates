@@ -293,7 +293,6 @@ export function removeGraphic(){
     //   store.commit('setIsInitAdd', false)
     //   return;
     // }
-    console.log(length)
     store.commit('setDeltaDis',[length, 'Delete'])
   }
   else if(graphicR[0].attributes.editType === 'DELETE'){

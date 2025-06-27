@@ -181,7 +181,6 @@ export default {
           this.userName = portal.user.username //portal.user.username
           let countyInfo = await this.getCountyInfo(portal.user.username) //delete local storage. no longer needed. 
           if(!countyInfo){
-            this.$router.push({name: "error"})
             return;
           }
           let cntyNumber = countyInfo[1]
@@ -192,7 +191,8 @@ export default {
           this.countyMiles = countyInfo[2]
           this.loadMap(cntyName,cntyNumber)
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err)
           this.$router.push({name: "error"})
         })
     },  
