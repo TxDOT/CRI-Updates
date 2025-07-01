@@ -59,11 +59,14 @@ export function basemapDisplayOnZoom(){
             const isAdd = store.getters.getAddRd
             if(isAdd){
                 store.commit('setIsOverlay', false)
-                addRoadbed()
-                    .then(() =>{
-                        store.commit("setAddRd", false)
-                        store.commit("setStepperClose", true)
-                    })
+                if (store.getters.getDfoReturn === 0){
+                    addRoadbed()
+                        .then(() =>{
+                            store.commit("setAddRd", false)
+                            store.commit("setStepperClose", true)
+                        })
+                }
+               
             }
             try{
                 basemapToggle.toggle()
@@ -76,7 +79,9 @@ export function basemapDisplayOnZoom(){
         if((aScale > delimeter) && basemapToggle.viewModel.activeBasemap.baseLayers.items[0].type !== "vector-tile"){
             const isAdd = store.getters.getAddRd
             if(isAdd){
-                stopEditing()
+                if (store.getters.getDfoReturn === 0){
+                     stopEditing()
+                }
             }
             try{
                 basemapToggle.toggle()
