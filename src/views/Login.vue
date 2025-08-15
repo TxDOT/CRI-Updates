@@ -161,7 +161,7 @@ export default {
         if(this.isCertify || (!this.isCertify && !hasEdits && this.restrictAccess === "Y")){
           this.$router.push('/EOY')
           return;
-       }
+        }
       }
 
       this.$router.push('/map')

@@ -525,12 +525,13 @@ export default {
       },
       saveAttri(editGraphic){
         //let editGraphic = this.graphicObj
-        let isOverlapCheck = editOverlapCheck(editGraphic)
+        let sendGraphic = editGraphic || gLayer.graphics.items.at(-1)
+        let isOverlapCheck = editOverlapCheck(sendGraphic)
         if(isOverlapCheck){
           this.cancel()
           return
         }
-        if(editGraphic.attributes.roadbedName === 'null'|| JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
+        if(sendGraphic.attributes.roadbedName === 'null'|| JSON.parse(sendGraphic.attributes.roadbedName)[0].streetName.length === 0){
           this.finalCheck = true
           return;
         }
@@ -542,9 +543,9 @@ export default {
         //add a field to Graphic to determine if graphic has been saved or not
         let timestamp = new Date().getTime()
       
-        editGraphic.attributes.editDt = timestamp
-        editGraphic.attributes.comment = this.comment
-        editGraphic.attributes.editNm = this.userName
+        sendGraphic.attributes.editDt = timestamp
+        sendGraphic.attributes.comment = this.comment
+        sendGraphic.attributes.editNm = this.userName
         this.getComment = this.comment
         
         this.firstAddToMap = false
