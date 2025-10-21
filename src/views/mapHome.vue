@@ -191,7 +191,6 @@ export default {
           return this.$store.state.overlapError
         },
         set(err){
-          console.log(err)
           this.$store.commit('setOverlapError', err)
         }
       },

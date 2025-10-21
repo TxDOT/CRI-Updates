@@ -100,6 +100,7 @@ export default {
       appId:"9XWrQUJ2eX0jXEAW",
       expiration: 10080,
       popup: false,
+      portalUrl: "https://txdot.maps.arcgis.com",
     });
 
     esriId.registerOAuthInfos([this.auth]);
