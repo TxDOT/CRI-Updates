@@ -159,7 +159,7 @@
         </div>
         <div style="display: flex; flex-direction: row; justify-content: end; gap: 10px; ">
           <v-btn tile depressed color="#014e96" text style="text-decoration: underline;" @click="isCityLimit = false">Go Back</v-btn>
-          <v-btn tile depressed color="#014e96" text style="border: black 1px solid; text-decoration: underline;" @click="saveAttri(); isCityLimit = false">Confirm Edit</v-btn>
+          <v-btn tile depressed color="#014e96" text style="border: black 1px solid; text-decoration: underline;" @click="saveAttri(); isCityLimit = false" :disabled="!comment">Confirm Edit</v-btn>
         </div>
       </div>
      
@@ -254,7 +254,6 @@ export default {
     watch:{
       isOverlapError:{
         handler: function(){
-          console.log(this.isOverlapError)
           this.overlapError = this.isOverlapError
         },
         immediate: true
@@ -296,7 +295,6 @@ export default {
         },
         immediate: true,
       },
-      
       e1:{
         handler: function(){
           this.returnStep = this.e1
@@ -309,7 +307,6 @@ export default {
           if(this.roadGeometry.length === 0) return
           let miles = geomToMiles(this.roadGeometry, true, 3)
           this.fetchLength = `${miles}`
-          console.log(this.cityPoly)
         },
         immediate: true
       },
@@ -417,7 +414,6 @@ export default {
     methods:{
       discardEditOverlapRoadNoti(){
         this.isOverlapError = false
-        console.log(this.overlapError)
         removeGraphic()
         return
       },
@@ -511,34 +507,31 @@ export default {
         this.closeSelectRoad = false
         return
       },
-      async evalCityInteraction(){
+      async evalCityInteraction(graphicObj){
         let cities = await returnCitiesInCounty()
-        let closestCity = findClosestGeom(this.graphicObj.geometry, cities.features)
-        let isInCity = checkCityInteraction(this.graphicObj.geometry, closestCity[1])
-        console.log(isInCity)
+        let closestCity = findClosestGeom(graphicObj.geometry, cities.features)
+        let isInCity = checkCityInteraction(graphicObj.geometry, closestCity[1])
         return isInCity
       },
       async checkCityLimitInteraction(){
-        this.graphicObj = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
-        //console.log(this.evalCityInteraction())
-        let isInCity = await this.evalCityInteraction()
+        let graphicObj = gLayer.graphics.items.find(x => x.attributes.objectid === this.objid)
+        let isInCity = await this.evalCityInteraction(graphicObj)
         if(isInCity){
           this.isCityLimit = true
-          console.log(isInCity)
           return
         }
-        this.saveAttri()
+        this.saveAttri(graphicObj)
         return
       },
-      saveAttri(){
-        let editGraphic = this.graphicObj
-        let isOverlapCheck = editOverlapCheck(editGraphic)
+      saveAttri(editGraphic){
+        //let editGraphic = this.graphicObj
+        let sendGraphic = editGraphic || gLayer.graphics.items.at(-1)
+        let isOverlapCheck = editOverlapCheck(sendGraphic)
         if(isOverlapCheck){
-          console.log(this.overlapError)
           this.cancel()
           return
         }
-        if(editGraphic.attributes.roadbedName === 'null'|| JSON.parse(editGraphic.attributes.roadbedName)[0].streetName.length === 0){
+        if(sendGraphic.attributes.roadbedName === 'null'|| JSON.parse(sendGraphic.attributes.roadbedName)[0].streetName.length === 0){
           this.finalCheck = true
           return;
         }
@@ -550,9 +543,9 @@ export default {
         //add a field to Graphic to determine if graphic has been saved or not
         let timestamp = new Date().getTime()
       
-        editGraphic.attributes.editDt = timestamp
-        editGraphic.attributes.comment = this.comment
-        editGraphic.attributes.editNm = this.userName
+        sendGraphic.attributes.editDt = timestamp
+        sendGraphic.attributes.comment = this.comment
+        sendGraphic.attributes.editNm = this.userName
         this.getComment = this.comment
         
         this.firstAddToMap = false
@@ -569,11 +562,6 @@ export default {
       }
     },
     computed:{
-      returnCities:{
-        get(){
-          return this.$store.state.getCityPoly
-        }
-      },
       isOverlapError:{
         get(){
           return this.$store.state.overlapError

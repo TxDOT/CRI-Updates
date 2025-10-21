@@ -188,7 +188,6 @@ export async function createGeoJson(cntyName){
   // URL reference to the blob
   const url = URL.createObjectURL(blob);
   // create new geojson layer using the blob url
-  console.log(url)
   clientSideGeoJson.url = url
   
   return;
@@ -250,6 +249,7 @@ export async function isTrainingAccess(groupsArr){
   }
 
   router.push({name: "Login"})
+  return
   // groupsArr.then((x) => {
   //   let isGroup = x.some(t => t.title === 'County Road Inventory Advanced')
   //   store.commit('setCertifiedCheck', isGroup)

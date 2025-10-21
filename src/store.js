@@ -328,9 +328,7 @@ export const store = new Vuex.Store({
             state.closestCity = obj
         },
         setCityPoly(state, arr){
-            console.log(arr)
             state.cityPoly = arr
-            console.log(state.cityPoly)
         },
         setpreventClick(state, bool){
             state.preventClick = bool

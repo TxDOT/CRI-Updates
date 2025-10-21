@@ -511,7 +511,6 @@ function setUpGraphic(){
         return;
       }
       response.results.forEach((result)=>{
-        console.log(response.results)
         if(result.graphic.attributes.objectid !== store.getters.getObjectid){
           return;
         }

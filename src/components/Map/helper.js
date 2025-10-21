@@ -276,8 +276,8 @@ export function sendJudgeEmail(step, ccDelName, ccEmailList, jdgeSign, jdgeCntyO
   let params = encodeURIComponent(JSON.stringify(theJson));
   // let theService = `https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/TPP_Email_Dev.fmw?params=${params}&opt_showresult=false&opt_servicemode=sync`;
   // let resp = fetch(theService, {headers:{'Authorization' : 'fmetoken token=baa7b875b9c229d397fb91661280ccb894559885'},'Content-Type': 'text/plain'})
-  let theService = `${criConstants.criEmailDevUrl[0]}?params=${params}&opt_showresult=false&opt_servicemode=sync`;
-  let resp = fetch(theService, {headers:{'Authorization' : `fmetoken token=${criConstants.criEmailDevUrl[1]}`},'Content-Type': 'text/plain'})
+  let theService = `${criConstants.criEmailProdUrl[0]}?params=${params}&opt_showresult=false&opt_servicemode=sync`;
+  let resp = fetch(theService, {headers:{'Authorization' : `fmetoken token=${criConstants.criEmailProdUrl[1]}`},'Content-Type': 'text/plain'})
   resp.then(x=> console.log('email fired! Check your email...',x))
 }
 
@@ -364,17 +364,21 @@ export async function returnCitiesInCounty(){
 }
 
 export function findClosestGeom(polyline, compareGeom){
-  console.log(compareGeom)
   if(!compareGeom){
     return [0,0]
   }
   //remove all roads from compareGeom that are graphics only mods and deletes 
   if(polyline.attributes){
-    console.log(compareGeom)
     let findCurrRoad = compareGeom.findIndex(c => c.attributes.RDBD_GMTRY_LN_ID === polyline.attributes.gid)
-    compareGeom.splice(findCurrRoad, 1)
+    if(findCurrRoad !== -1){
+      compareGeom.splice(findCurrRoad, 1)
+    }
+    else{
+      let findGraph = compareGeom.findIndex(c => c.attributes.objectid === polyline.attributes.objectid)
+      compareGeom.splice(findGraph, 1)
+    }
   }
-
+  
   let c;
   let shortestDist = []
   for(c=0; c < compareGeom.length; c++){
@@ -387,7 +391,6 @@ export function findClosestGeom(polyline, compareGeom){
     if(dist < shortestDist[0]){
       continue
     }
-    console.log(dist)
     shortestDist = [dist, compareGeom[c].geometry]
   }
 
@@ -404,17 +407,15 @@ export function getOGCntyRds(){
         let graphics = gLayer.graphics.items
         let g;
         for(g=0; g < graphics.length; g++){
-          // if(graphics[g].attributes.editType === 'ADD'){
-          //   addGraphics.push(graphics[g])
-          //   continue
-          // }
+          if(graphics[g].attributes.editType === 'ADD'){
+            continue
+          }
           let findCurrRoad = geo.features.findIndex(c => c.attributes.RDBD_GMTRY_LN_ID === graphics[g].attributes.gid)
           if(findCurrRoad === -1){
             continue
           }
           geo.features.splice(findCurrRoad, 1)
         }
-
         cntyGeom = [...geo.features, ...graphics]
     })
     .catch(err => console.log('error retrieving values: ', err)) 
@@ -433,14 +434,14 @@ export function editOverlapCheck(edit){
     //   console.log(cntyGeom) 
     // }
     let returnDist = findClosestGeom(edit, cntyGeom)
+  
       // if(!returnDist){
     //   return false
     // }
     // let returnedDistGeom = returnDist[1]
     
     // console.log(returnLength, getOGLength)
-    if(returnDist[0]*100 > 50){
-      console.log('setTrue')
+    if(returnDist[0]*100 >= 50){
       store.commit('setOverlapError', true)
       return true
     }
@@ -449,6 +450,7 @@ export function editOverlapCheck(edit){
   }
   catch(err){
     console.log(err)
+    return false
   }
  
 }

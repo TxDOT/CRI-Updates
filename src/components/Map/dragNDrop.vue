@@ -188,8 +188,8 @@ export default {
 </script>
 <style scoped>
     #fmeResp{
-        position: relative;
-        top: 0rem;
+        position: absolute;
+        top: 49px;
         left: 35%;
         width: 30rem;
         text-align: left;
@@ -265,8 +265,8 @@ export default {
     }
 
     #continueUpload{
-        position: relative;
-        top: 17rem;
+        position: absolute;
+        top: 40%;
         border-radius: 0%;
         color: white;
         width: 29rem;
