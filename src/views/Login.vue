@@ -175,6 +175,10 @@ export default {
       this.loginToMap = true
       portal.load()
         .then( async () => {
+          if (!this.isCriGroup(await portal.user.fetchGroups())){
+            this.$router.push({name: "error"})
+            return
+          }
           this.usrEmail = portal.user.email
           this.$router.push('/load')
           isTrainingAccess(portal.user.fetchGroups())
@@ -188,22 +192,21 @@ export default {
           this.countyNumber = cntyNumber
           this.countyMiles = countyInfo[2]
           this.loadMap(cntyName,cntyNumber)
-        })
-        .catch(() => {
-          this.$router.push({name: "error"})
+          return
         })
     },  
     async getCountyInfo(username){
       let county;
+      let userNameSplit = username.split('_')
+      if (userNameSplit.length === 1){
+        return
+      }
       let getCountyNbr = Object.keys(cntyNbrNm[0]).find((x) => {
-        let userNameSplit = username.split('_')
-
         if(userNameSplit[1].toLowerCase().replace(/\d/, '') === cntyNbrNm[0][x].replace(/\s/,'').toLowerCase()){
           county = cntyNbrNm[0][x]
           return cntyNbrNm[0]
         }
       })
-
       if(getCountyNbr){
         let totalMileage = await this.getCountyJudge(getCountyNbr)
         //localStorage.setItem('county',JSON.stringify([county,getCountyNbr, totalMileage]))
@@ -216,7 +219,19 @@ export default {
     },
     handlecaps: (str) => {
         return str ? str.toLowerCase() : "";
-      },
+    },
+    isCriGroup(groupArray){
+      if (!groupArray){
+        return false
+      }
+      for (let i = 0; i < groupArray.length; i++) {
+        const groupName = groupArray[i].title;
+        if (groupName === "County Road Inventory"){
+          return true
+        }
+        
+      }
+    }
    
   },
   watch:{
