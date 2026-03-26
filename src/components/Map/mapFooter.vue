@@ -2,7 +2,7 @@
 <template>
     <v-footer app id="footerPos">
       <div id="footerCard" style="color:white"><div id="coordsPos">{{x}}, {{y}}</div>
-        County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{userName}}</b>&nbsp;&nbsp;|<span @mouseover="mileagePopup = true" @mouseleave="handlemileagePopup">&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;</span>|&nbsp;&nbsp;Mileage Change: <b :style="[mileageChange > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(mileageChange) ===0? {'color':'white'} : null]">{{Number(mileageChange)}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
+        County: <b>{{county}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;User Name: <b>{{String(userEmail).toUpperCase()}}</b>&nbsp;&nbsp;|<span @mouseover="mileagePopup = true" @mouseleave="handlemileagePopup">&nbsp;&nbsp;Starting Mileage: <b style="color:white">{{countyTotal}}</b>&nbsp;&nbsp;</span>|&nbsp;&nbsp;Mileage Change: <b :style="[mileageChange > 0 ? {'color':'#28F832'} : {'color': 'red'}, Number(mileageChange) ===0? {'color':'white'} : null]">{{Number(mileageChange)}}</b>&nbsp;&nbsp;|&nbsp;&nbsp;Updated Mileage: <b style="color:white">{{Number(countyTots.toFixed(1))}}</b>
       </div>
       <div class="container" v-if="mileagePopup && getTime() === true" >
         <div class="callout" @mouseover="popupHoverStatus = true" @mouseleave="handlemileagePopupleave">
@@ -121,6 +121,11 @@ export default {
         this.$store.commit('setCntyEndingMiles', mi)
       }
     },
+    userEmail: {
+      get(){
+        return this.$store.state.userEmail
+      }
+    }
   },
   methods: {
     handlemileagePopup(){

@@ -300,8 +300,9 @@ function serverResponse(submitid){
     store.commit('setIsFmeProcess', [true, ""])
     // --Current -- let dataReturn = await fetch(`https://gis-batch-dnd.txdot.gov/fmejobsubmitter/TPP-MB/CRI_QAQC_dev.fmw?SUBMIT_ID=${submitid}&EMAIL=${store.getters.getUserEmail}&USERNAME=${store.getters.getUserName}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=ef92b878734df046a715c1e39d46cb40f1f321fd', 'Content-Type': 'text/plain', 'Access-Control-Allow-Private-Network': true}})
     //https://gis-batch-dev.txdot.gov/fmejobsubmitter/TPP/CRI_QAQC_dev_CORS.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync
-    let dataReturn = fetch(`https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_QAQC_AssetsRemoveDEV.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=a264041e806b7199db0384c0357c2bc08b882750', 'Content-Type': 'text/plain'}})
-    
+    // let dataReturn = fetch(`https://testportal.txdot.gov/fmejobsubmitter/TPP/TPP_DEV_CRI_QAQC_AssetsRemoveDEV.fmw?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':'fmetoken token=a264041e806b7199db0384c0357c2bc08b882750', 'Content-Type': 'text/plain'}})
+    let dataReturn = fetch(`https://testportal.txdot.gov/fmejobsubmitter/TPP/${criConstants.uploadDataWebhookName}?SUBMIT_ID=${submitid}&USERNAME=${store.getters.getUserName}&EMAIL=${store.getters.getUserEmail}&opt_showresult=false&opt_servicemode=sync`, {headers:{'Authorization':`fmetoken token=${criConstants.uploadDataWebhookToken}`, 'Content-Type': 'text/plain'}})
+
     
     
     
