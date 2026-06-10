@@ -14,7 +14,7 @@ import {store} from '../../store'
 import router from '../../router';
 
 
-//querys the Refernce Layer table return geometry/attributes
+//querys the Reference Layer table return geometry/attributes
 async function queryFeat(qry){
   let queryFeat = await featLayer.queryFeatures({
     objectIds: qry.results ? [qry.results[0].graphic.attributes.OBJECTID] : [qry.attributes.OBJECTID],
@@ -260,7 +260,7 @@ export async function modifyRoadbed(clickType, editType){
   defineGraphic(feature,clickType, editType)
   return feature
 }
-//highlightes reference layer geometry when mouse moves over
+//highlights reference layer geometry when mouse moves over
 export function hightlightFeat(eventType){
   let highlight;
   if(highlight){
@@ -367,7 +367,7 @@ export async function defineGraphic(graphics, clickType, editType){
   //   if(gLayer.graphics.items[id].attributes !== null){
   //     objectidList.push(gLayer.graphics.items[id].attributes.objectid)
   //   }
-  //   //Hides Reference Layer so it cant create multiple graphics. OBJECTID gets applied to objectidList array
+  //   //Hides Reference Layer so it can't create multiple graphics. OBJECTID gets applied to objectidList array
   //   featLayer.definitionExpression = `OBJECTID not in (${objectidList}) and CNTY_NM = '${roadInfo.getcntyName}'` //add to go first, a new functoin
     //rdbdSrfcGeom.definitionExpression = `gid not in (${objectidList}) and cnty_nm = '${roadInfo.getcntyName}'` TODO - Hide rdbdSrfcGeom (split asset feature service)
     
@@ -505,7 +505,7 @@ export function stopEditing(){
 export function stopEditingPoint(){
   sketchPoint.cancel()
 }
-//show verticies along line
+//show vertices along line
 export function showVerticies(x){
   sketch.update([x], {tool:'reshape'})
 }
@@ -1125,7 +1125,7 @@ export function initLoadAssetGraphic(asset){
       }
     }
     else{
-      console.warn('initLoadAssetGraphic didnt run!')
+      console.warn('initLoadAssetGraphic didn't run!')
     }
   }
   catch{
@@ -1341,7 +1341,7 @@ export function geomCheck(polyline){
     store.commit('setGeomCheck', 1) //road is less than .007 length
     return;
   }
-  //check for self interesecting lines
+  //check for self intersecting lines
   let splitGeom = [];
   for(let i=0; i < polyline.paths[0].length; i++){
     try{
